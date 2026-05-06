@@ -1,0 +1,66 @@
+{
+  "title": "Archivio 17 — Caso 001: Il Caso Marini",
+  "subtitle": "Atto 1: La scena non torna",
+  "betaCode": "A17-BETA",
+  "documents": [
+    {
+      "id": "A01",
+      "title": "Scheda Andrea Marini",
+      "content": "Andrea Marini, 42 anni, consulente finanziario. Mancino documentato. Nessuna diagnosi psichiatrica nota. Terapia farmacologica leggera incompatibile con consumo abituale di alcol. Ultimo accesso registrato allo studio: 18:42.",
+      "imageUrl": null
+    },
+    {
+      "id": "A02",
+      "title": "Verbale di rinvenimento",
+      "content": "Il corpo di Andrea Marini viene trovato nel suo studio privato. La porta era chiusa a chiave, senza segni di effrazione. Le chiavi personali di Andrea vengono rinvenute nella tasca interna sinistra della giacca indossata dalla vittima. Davide Serra apre la porta usando la propria copia. Pistola rinvenuta nella mano destra della vittima. Bicchiere di whisky sulla scrivania. Nessun segno evidente di colluttazione.",
+      "imageUrl": null
+    },
+    {
+      "id": "A03",
+      "title": "Relazione medico-legale preliminare",
+      "content": "Ferita compatibile con colpo d’arma da fuoco alla tempia destra. Residui da sparo presenti ma distribuzione non pienamente conclusiva. La vittima era mancina. La postura del corpo e la posizione dell’arma non permettono di escludere l’intervento di terzi. Presenza di alcol nel bicchiere, non confermata come abitudine della vittima.",
+      "imageUrl": null
+    },
+    {
+      "id": "A04",
+      "title": "Foto scena / mockup scena",
+      "content": "Scrivania ordinata illuminata da una lampada fredda. Corpo vicino alla poltrona, piegato lateralmente. Pistola nella mano destra. Bicchiere di whisky a metà sulla scrivania, senza impronte visibili ad occhio nudo. Giacca ancora indossata con tasca interna sinistra leggermente aperta. Porta dello studio chiusa a chiave, telaio integro, nessun segno di effrazione. Silenzio generale della stanza: tutto appare composto, quasi troppo.",
+      "imageUrl": null
+    },
+    {
+      "id": "A05",
+      "title": "Agenda personale",
+      "content": "Pagina del 14 novembre: 09:30 — Banca; 12:00 — Chiamare D.; 17:45 — Rivedere pratica M.; 19:30 — Cena con S. Nota scritta a margine: ‘Non posso più coprire questa cosa.’",
+      "imageUrl": null
+    }
+  ],
+  "puzzles": [
+    {
+      "id": "P01",
+      "title": "La mano sbagliata",
+      "hints": [
+        "Prima di guardare l’arma, guarda la vittima.",
+        "Una mano racconta più di una dichiarazione.",
+        "Andrea era mancino. L’arma è nella mano destra."
+      ]
+    },
+    {
+      "id": "P03",
+      "title": "Le chiavi e la porta",
+      "hints": [
+        "Una porta chiusa non è sempre una porta impossibile.",
+        "Cerca chi ha aperto e con cosa.",
+        "Davide aveva una copia. Le chiavi di Andrea erano addosso alla vittima."
+      ]
+    },
+    {
+      "id": "P04",
+      "title": "La timeline incompleta",
+      "hints": [
+        "La giornata non finisce con la morte.",
+        "Le iniziali sono spesso più importanti dei nomi completi.",
+        "‘S.’ va collegato a Stefano."
+      ]
+    }
+  ]
+}
