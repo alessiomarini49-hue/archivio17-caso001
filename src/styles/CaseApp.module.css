@@ -1,0 +1,12 @@
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 24px; display: grid; gap: 16px; }
+.header { border-bottom: 1px solid #2a2f3a; padding-bottom: 8px; }
+.card { background: linear-gradient(180deg,#11151d,#0d1118); border: 1px solid #273040; border-radius: 12px; padding: 16px; display: grid; gap: 10px; }
+.grid { display: grid; grid-template-columns: 320px 1fr; gap: 16px; }
+.input,.textarea,button { background: #0f1520; color: #f2f4fa; border: 1px solid #314159; border-radius: 8px; padding: 10px; }
+.textarea { min-height: 100px; }
+.active { border-color: #7aa2ff; box-shadow: 0 0 0 1px #7aa2ff inset; }
+.hintBlock { border-top: 1px solid #2a3342; padding-top: 10px; }
+.final { background: #121c17; border: 1px solid #356b54; border-radius: 12px; padding: 16px; display: grid; gap: 8px; }
+.error { color: #ff8e8e; margin: 0; }
+.message { color: #b7d5ff; margin: 0; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
