@@ -1,3 +1,9 @@
+
+---
+
+## 2) `src/components/CaseApp.tsx`
+
+```tsx
 'use client';
 
 import Image from 'next/image';
