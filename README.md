@@ -82,5 +82,3 @@ Valida se contiene almeno 2 concetti tra:
 - [ ] Reset sessione beta funzionante
 - [ ] UI leggibile su mobile (<768px)
 - [ ] Build deployabile su Vercel
-=======
-   npm install

@@ -39,25 +39,7 @@
 .navLink:hover { border-color: #7098db; }
 .scoreList { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
 .imageWrap { position: relative; width: 100%; min-height: 360px; border-radius: 12px; overflow: hidden; border: 1px solid #2f3f57; background: #090d14; }
-.image { object-fit: contain; }
-
-.openImageButton {
-  display: inline-block;
-  margin-top: 10px;
-  margin-bottom: 8px;
-  border: 1px solid #2b3e58;
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #bfd3f6;
-  text-decoration: none;
-  background: #0d1627;
-}
-.viewerSection {
-  margin-top: 10px;
-  border-top: 1px solid #253449;
-  padding-top: 10px;
-}
-
+.image { object-fit: cover; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 @media (max-width: 768px) {
   .wrapper { padding: 14px 12px 28px; }
