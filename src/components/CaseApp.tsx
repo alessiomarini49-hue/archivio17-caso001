@@ -23,6 +23,10 @@ type AppState = {
 
 const STORAGE_KEY = 'archivio17-caso001-progress';
 const DEFAULT_TERMINAL: TerminalState = { anomaly: '', timeline: '', synthesis: '' };
+const BASE_SCORE = 100;
+const HINT_PENALTY = 5;
+const ERROR_PENALTY = 10;
+const FEEDBACK_URL = '#';
 
 const validAnomaly = ['MANCINO', 'MANO SINISTRA', 'MANO DOMINANTE', 'PISTOLA DESTRA', 'PISTOLA NELLA MANO DESTRA'];
 const validTimeline = ['S', 'STEFANO'];
@@ -60,10 +64,10 @@ export default function CaseApp() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ accessGranted, activeDoc, hintLevels, terminal, errors, completed }));
   }, [accessGranted, activeDoc, hintLevels, terminal, errors, completed]);
 
-  const score = useMemo(() => {
-    const hintsUsed = Object.values(hintLevels).reduce((sum, lvl) => sum + lvl, 0);
-    return Math.max(0, 100 - hintsUsed * 5 - errors * 10);
-  }, [hintLevels, errors]);
+  const hintsUsed = useMemo(() => Object.values(hintLevels).reduce((sum, lvl) => sum + lvl, 0), [hintLevels]);
+  const hintPenaltyTotal = hintsUsed * HINT_PENALTY;
+  const errorPenaltyTotal = errors * ERROR_PENALTY;
+  const score = Math.max(0, BASE_SCORE - hintPenaltyTotal - errorPenaltyTotal);
 
   const rank = score >= 90 ? 'Archivista in formazione' : score >= 75 ? 'Investigatore' : score >= 60 ? 'Collaboratore' : 'Osservatore esterno';
   const currentDoc = caseData.documents.find((d) => d.id === activeDoc);
@@ -103,10 +107,26 @@ export default function CaseApp() {
     setBetaError('Codice non valido. Usa il codice beta fornito dal team Archivio 17.');
   };
 
+  const handleReset = () => {
+    const confirmed = window.confirm('Confermi il reset della sessione beta? I progressi locali verranno cancellati.');
+    if (!confirmed) return;
+
+    localStorage.removeItem(STORAGE_KEY);
+    setAccessGranted(false);
+    setBetaInput('');
+    setBetaError('');
+    setActiveDoc(caseData.documents[0].id);
+    setHintLevels({});
+    setTerminal(DEFAULT_TERMINAL);
+    setErrors(0);
+    setCompleted(false);
+    setValidationMessage('');
+  };
+
   if (!accessGranted) {
     return (
       <main className={styles.wrapper}>
-        <section className={styles.card}>
+        <section className={styles.card} id="intro">
           <h1>{caseData.title}</h1>
           <h2>{caseData.subtitle}</h2>
           <p>Accesso beta riservato. Inserisci il codice.</p>
@@ -125,12 +145,20 @@ export default function CaseApp() {
         <p>{caseData.subtitle}</p>
       </header>
 
-      <section className={styles.card}>
+      <nav className={styles.quickNav}>
+        <a href="#intro" className={styles.navLink}>Intro</a>
+        <a href="#fascicolo" className={styles.navLink}>Fascicolo</a>
+        <a href="#hint" className={styles.navLink}>Hint</a>
+        <a href="#terminale" className={styles.navLink}>Terminale</a>
+        <a href="#esito" className={styles.navLink}>Esito</a>
+      </nav>
+
+      <section className={styles.card} id="intro">
         <h3>Email dell’Archivista</h3>
         <p>Agente, il Fascicolo Marini presenta incongruenze incompatibili con una chiusura rapida. Esamina i documenti, annota le anomalie e completa il Terminale 01. L’Archivio osserva.</p>
       </section>
 
-      <section className={styles.grid}>
+      <section className={styles.grid} id="fascicolo">
         <aside className={styles.card}>
           <h3>Dashboard fascicolo</h3>
           {caseData.documents.map((doc) => (
@@ -147,7 +175,7 @@ export default function CaseApp() {
         </article>
       </section>
 
-      <section className={styles.card}>
+      <section className={styles.card} id="hint">
         <h3>Hint System</h3>
         {caseData.puzzles.map((p) => (
           <div key={p.id} className={styles.hintBlock}>
@@ -158,7 +186,7 @@ export default function CaseApp() {
         ))}
       </section>
 
-      <section className={styles.card}>
+      <section className={styles.card} id="terminale">
         <h3>Terminale 01</h3>
         <label>Qual è l’anomalia fisica principale della scena?</label>
         <input className={styles.input} value={terminal.anomaly} onChange={(e) => setTerminal({ ...terminal, anomaly: e.target.value })} />
@@ -170,16 +198,27 @@ export default function CaseApp() {
         {validationMessage && <p className={styles.message}>{validationMessage}</p>}
       </section>
 
-      <section className={styles.card}>
+      <section className={styles.card} id="esito">
         <h3>Punteggio</h3>
-        <p>{score} punti — {rank}</p>
+        <ul className={styles.scoreList}>
+          <li>Punteggio base: {BASE_SCORE}</li>
+          <li>Hint usati: {hintsUsed} (penalità: -{hintPenaltyTotal})</li>
+          <li>Errori Terminale 01: {errors} (penalità: -{errorPenaltyTotal})</li>
+          <li>Punteggio finale: {score}</li>
+          <li>Classificazione finale: {rank}</li>
+        </ul>
+        <button className={styles.button} onClick={handleReset}>Resetta sessione beta</button>
       </section>
 
       {completed && (
         <section className={styles.final}>
           <p>“Anomalia confermata. La morte di Andrea Marini non può essere trattata come suicidio semplice. L’Archivio autorizza l’accesso all’Atto 2.”</p>
           <p>“Il prossimo fascicolo non riguarda la morte. Riguarda il denaro.”</p>
-          <a href="https://example.com/feedback-beta" target="_blank" rel="noreferrer">Invia feedback beta</a>
+          {FEEDBACK_URL === '#' ? (
+            <p className={styles.message}>Link feedback non ancora configurato</p>
+          ) : (
+            <a href={FEEDBACK_URL} target="_blank" rel="noreferrer">Invia feedback beta</a>
+          )}
         </section>
       )}
     </main>
