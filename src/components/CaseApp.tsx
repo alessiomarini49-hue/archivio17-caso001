@@ -111,7 +111,7 @@ export default function CaseApp() {
           <h2>{caseData.subtitle}</h2>
           <p>Accesso beta riservato. Inserisci il codice.</p>
           <input value={betaInput} onChange={(e) => setBetaInput(e.target.value)} placeholder="Codice beta" className={styles.input} />
-          <button onClick={handleBetaAccess}>Accedi</button>
+          <button className={styles.button} onClick={handleBetaAccess}>Accedi</button>
           {betaError && <p className={styles.error}>{betaError}</p>}
         </section>
       </main>
@@ -134,7 +134,7 @@ export default function CaseApp() {
         <aside className={styles.card}>
           <h3>Dashboard fascicolo</h3>
           {caseData.documents.map((doc) => (
-            <button key={doc.id} className={activeDoc === doc.id ? styles.active : ''} onClick={() => setActiveDoc(doc.id)}>
+            <button key={doc.id} className={`${styles.button} ${activeDoc === doc.id ? styles.active : ''}`.trim()} onClick={() => setActiveDoc(doc.id)}>
               {doc.id} — {doc.title}
             </button>
           ))}
@@ -153,7 +153,7 @@ export default function CaseApp() {
           <div key={p.id} className={styles.hintBlock}>
             <strong>{p.id} — {p.title}</strong>
             <p>{p.hints.slice(0, hintLevels[p.id] ?? 0).join(' ') || 'Nessun hint richiesto.'}</p>
-            <button onClick={() => revealHint(p.id)} disabled={(hintLevels[p.id] ?? 0) >= 3}>Richiedi hint</button>
+            <button className={styles.button} onClick={() => revealHint(p.id)} disabled={(hintLevels[p.id] ?? 0) >= 3}>Richiedi hint</button>
           </div>
         ))}
       </section>
@@ -166,7 +166,7 @@ export default function CaseApp() {
         <input className={styles.input} value={terminal.timeline} onChange={(e) => setTerminal({ ...terminal, timeline: e.target.value })} />
         <label>Scrivi una sintesi investigativa dell’Atto 1.</label>
         <textarea className={styles.textarea} value={terminal.synthesis} onChange={(e) => setTerminal({ ...terminal, synthesis: e.target.value })} />
-        <button onClick={handleValidate}>Valida risposte</button>
+        <button className={styles.button} onClick={handleValidate}>Valida risposte</button>
         {validationMessage && <p className={styles.message}>{validationMessage}</p>}
       </section>
 
