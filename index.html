@@ -2619,7 +2619,7 @@ init();
       payload._tgMsg = tgMsg;
 
       // Invia al backend Apps Script (token Telegram rimane privato)
-      fetch('https://script.google.com/macros/s/AKfycbxvvMSCgLuDEiS-PiAQmXQqyW_6DezJ7C3HnzN1GRjWy6xyDVF3bGo3w47K_OWifkQ/exec', {
+      fetch('https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
