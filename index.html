@@ -1983,6 +1983,10 @@ function showApp() {
   renderDocGrid();
   renderInvPanel();
   updateIndiceDisplay();
+  // Scroll to top on app start (mobile fix)
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
   showSection(state.currentSection || 'intro', true);
 }
 
@@ -2004,7 +2008,15 @@ function showSection(id, silent) {
   document.querySelectorAll('.mnav-item').forEach(n => n.classList.remove('active'));
 
   const section = document.getElementById('section-' + id);
-  if (section) { section.classList.add('active'); document.getElementById('main-content').scrollTop = 0; }
+  if (section) {
+    section.classList.add('active');
+    // Scroll to top — main content + window (mobile fix)
+    const mc = document.getElementById('main-content');
+    if (mc) mc.scrollTop = 0;
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }
 
   const ni = document.getElementById('nav-' + id);
   if (ni) ni.classList.add('active');
