@@ -680,10 +680,6 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
             <div class="final-ipotesi-label">Elementi non allineati — ancora aperti</div>
             <div class="final-ipotesi-text">Un importo che ricorre fuori dalla pratica Manfredi.<br>Una garanzia familiare non valutata.<br>Un alibi domestico con un intervallo scoperto.<br>Un collaboratore con accesso diretto alla scena.<br>Una iniziale rimasta senza verifica.<br><br>Il fascicolo non indica ancora un colpevole. Indica troppe omissioni.</div>
           </div>
-          <div class="final-ipotesi-box" id="esito-ipotesi-box-classificazione" style="border-color:rgba(167,25,32,0.2);background:rgba(167,25,32,0.03)">
-            <div class="final-ipotesi-label" style="color:var(--red-logicus)">Classificazione ipotesi</div>
-            <div class="final-ipotesi-text" id="esito-ipotesi-feedback">—</div>
-          </div>
           <div class="final-divider"></div>
           <div class="act3-tease">
             <div class="act3-tease-unlock">Accesso autorizzato — In elaborazione</div>
@@ -1494,10 +1490,6 @@ function renderEsito(){
   document.getElementById('esito-hint-cost').textContent='−'+hc;
   document.getElementById('esito-err-cost').textContent='−'+ec;
   document.getElementById('esito-total').textContent=total;
-
-  const sosp=state.t2bSospetto||state.t2aSospetto;
-  const fb=sosp&&FEEDBACK_2B[sosp]?FEEDBACK_2B[sosp]:{label:'Ipotesi registrata.',text:'L\'Archivio ha acquisito l\'analisi dell\'Atto 2.'};
-  document.getElementById('esito-ipotesi-feedback').innerHTML=`<strong>${fb.label}</strong><br><br>${fb.text}`;
 
   if(total>=75){
     document.getElementById('esito-score').className='score-number good';
