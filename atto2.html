@@ -473,7 +473,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           <div class="fascicolo-meta-sep"></div>
           <div class="fascicolo-meta-item">Fase <span class="val">Parte 1 — Le prime crepe</span></div>
           <div class="fascicolo-meta-sep"></div>
-          <div class="fascicolo-meta-item">Reperti <span class="val" id="p1-counter">0 / 7</span></div>
+          <div class="fascicolo-meta-item">Reperti <span class="val" id="p1-counter">0 / 6</span></div>
         </div>
         <div class="docs-grid" id="docs-grid-p1"></div>
         <div class="locked-banner" style="margin-top:1.5rem">
@@ -733,7 +733,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
     </div>
     <div class="inv-section">
       <div class="inv-label">Progressione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="inv-p1">0 / 7</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="inv-p1">0 / 6</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="inv-p2">bloccati</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Terminale 02A</span><span class="inv-status-val" id="inv-t2a">non validato</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Terminale 02B</span><span class="inv-status-val blocked" id="inv-t2b">bloccato</span></div>
@@ -795,7 +795,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
     </div>
     <div class="inv-section">
       <div class="inv-label">Progressione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="m-inv-p1">0 / 7</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="m-inv-p1">0 / 6</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="m-inv-p2">bloccati</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Terminale 02A</span><span class="inv-status-val" id="m-inv-t2a">non validato</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Terminale 02B</span><span class="inv-status-val blocked" id="m-inv-t2b">bloccato</span></div>
@@ -949,20 +949,6 @@ Finalità: copertura esposizione debitoria relativa a società riconducibile a S
 
 Clausola: in caso di insolvenza del debitore principale, l'istituto potrà rivalersi integralmente sui garanti.`,
     note:'« Da rivedere prima che sia troppo tardi. »'
-  },
-  {
-    id:'B09', cat:'Agenda', title:'Agenda ricostruita · 14 novembre',
-    desc:'Pagina integrativa recuperata dalla documentazione personale.',
-    imageUrl:null,
-    transcript:`14 novembre 2024
-
-09:30 — Banca
-12:00 — Chiamare D.
-17:45 — Rivedere pratica M.
-19:30 — Cena con S.
-
-[a margine] « Non posso più coprire questa cosa. »`,
-    note:`Iniziali non verificate. L'appuntamento delle 19:30 non risulta confermato in altri reperti.`
   },
   {
     id:'B13', cat:'Nota personale', title:'Nota personale · tensione con Elena',
@@ -1544,7 +1530,7 @@ function updateUI(){
   const t2bel=document.getElementById('inv-t2b');const mt2bel=document.getElementById('m-inv-t2b');
   const faseEl=document.getElementById('inv-fase');
 
-  if(p1el)p1el.textContent=p1count+' / 7';if(mp1el)mp1el.textContent=p1count+' / 7';
+  if(p1el)p1el.textContent=p1count+' / 6';if(mp1el)mp1el.textContent=p1count+' / 6';
 
   if(state.t2aCompleted){
     if(p2el){p2el.textContent=p2count+' / 6';p2el.className='inv-status-val active';}
@@ -1578,7 +1564,7 @@ function updateUI(){
 }
 
 function updateCounters(){
-  const p1c=document.getElementById('p1-counter');if(p1c)p1c.textContent=state.p1Opened.length+' / 7';
+  const p1c=document.getElementById('p1-counter');if(p1c)p1c.textContent=state.p1Opened.length+' / 6';
   const p2c=document.getElementById('p2-counter');if(p2c)p2c.textContent=state.p2Opened.length+' / 6';
   const p1ub=document.getElementById('p1-unlock-bar');
   if(p1ub)p1ub.style.display=state.p1Opened.length>=4?'flex':'none';
