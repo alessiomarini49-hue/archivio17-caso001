@@ -12,35 +12,39 @@
    ARCHIVIO 17 — DESIGN SYSTEM v2
    ================================================ */
 :root {
-  --bg-main: #05070B;
-  --bg-secondary: #080B11;
-  --panel-1: #0B1118;
-  --panel-2: #101720;
-  --panel-3: #141D29;
-  --panel-4: #0D1520;
-  --text-main: #F2F1EE;
-  --text-secondary: #B9C0C9;
-  --text-meta: #7E8895;
-  --text-dim: #4A5260;
-  --red-logicus: #B31217;
-  --red-highlight: #E63B44;
-  --red-dark: #7D0F14;
-  --red-glow: rgba(179,18,23,0.18);
-  --success-bg: #0D2820;
-  --success-border: #1C6154;
-  --success-text: #2E9B87;
-  --error: #A93232;
-  --warning: #A8742A;
-  --warning-dim: rgba(168,116,42,0.15);
-  --border-white: rgba(255,255,255,0.07);
-  --border-white-soft: rgba(255,255,255,0.04);
-  --border-red: rgba(179,18,23,0.22);
+  --bg-main: #050506;
+  --bg-secondary: #0A0807;
+  --panel-1: #111318;
+  --panel-2: #17130F;
+  --panel-3: #1C1712;
+  --panel-4: #14100D;
+  --text-main: #EDE6D8;
+  --text-secondary: #AFA79A;
+  --text-meta: #7A7268;
+  --text-dim: #4A4440;
+  --red-logicus: #A71920;
+  --red-highlight: #C42028;
+  --red-dark: #641014;
+  --red-glow: rgba(167,25,32,0.18);
+  --amber: #B7833B;
+  --amber-dim: rgba(183,131,59,0.12);
+  --carta: #B9A174;
+  --success-bg: #0D1A14;
+  --success-border: #2A5C40;
+  --success-text: #5A9A74;
+  --error: #A71920;
+  --warning: #B7833B;
+  --warning-dim: rgba(183,131,59,0.12);
+  --border-gold: rgba(185,161,116,0.18);
+  --border-white: rgba(185,161,116,0.12);
+  --border-white-soft: rgba(185,161,116,0.07);
+  --border-red: rgba(167,25,32,0.28);
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
-  --glow-red: 0 0 24px rgba(179,18,23,0.18), 0 0 48px rgba(179,18,23,0.08);
-  --shadow-deep: 0 8px 48px rgba(0,0,0,0.75), 0 2px 12px rgba(0,0,0,0.5);
-  --shadow-panel: 0 4px 24px rgba(0,0,0,0.5);
+  --glow-red: 0 0 24px rgba(167,25,32,0.2), 0 0 48px rgba(167,25,32,0.08);
+  --shadow-deep: 0 8px 48px rgba(0,0,0,0.85), 0 2px 12px rgba(0,0,0,0.6);
+  --shadow-panel: 0 4px 24px rgba(0,0,0,0.6);
   --transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -55,10 +59,17 @@ body{
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
+/* Texture grana archivio */
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:0.5;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.055'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:1;mix-blend-mode:overlay;
+}
+/* Vignettatura */
+body::after{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);
+  pointer-events:none;z-index:1;
 }
 h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 ::-webkit-scrollbar{width:4px;height:4px}
@@ -105,6 +116,15 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
   text-transform:uppercase;cursor:pointer;transition:var(--transition);
 }
 .btn-ghost:hover{color:var(--text-secondary);border-color:var(--border-white)}
+
+/* Header act badge */
+.header-act-badge{
+  font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;
+  color:var(--text-dim);text-transform:uppercase;
+  border:1px solid var(--border-white-soft);padding:2px 8px;
+  display:none;
+}
+@media(min-width:800px){.header-act-badge{display:block}}
 
 /* ================================================
    ACCESS SCREEN
@@ -203,10 +223,11 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 #screen-app{flex-direction:column;min-height:100vh;background:var(--bg-main)}
 .app-header{
   background:var(--bg-secondary);
-  border-bottom:1px solid var(--border-white);
+  border-bottom:1px solid var(--border-gold);
   padding:0 1.5rem;height:54px;
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:200;flex-shrink:0;
+  box-shadow:0 2px 20px rgba(0,0,0,0.6);
 }
 .header-left{display:flex;align-items:center;gap:1.25rem}
 .header-brand{
@@ -300,7 +321,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 /* RIGHT INVESTIGATION PANEL */
 .investigation-panel{
   width:260px;background:var(--bg-secondary);
-  border-left:1px solid var(--border-white);
+  border-left:1px solid var(--border-gold);
   padding:0;display:flex;flex-direction:column;
   flex-shrink:0;position:sticky;top:54px;
   height:calc(100vh - 54px);overflow-y:auto;
@@ -449,8 +470,8 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .intro-transmission-line{flex:1;height:1px;background:linear-gradient(90deg,var(--red-dark),transparent)}
 
 .intro-panel{
-  background:var(--panel-1);border:1px solid var(--border-white);
-  border-left:2px solid var(--red-dark);
+  background:var(--panel-1);border:1px solid var(--border-gold);
+  border-left:2px solid var(--amber);
   padding:2.25rem 2.25rem 2rem;position:relative;
   margin-bottom:2rem;box-shadow:var(--shadow-panel);
 }
@@ -504,8 +525,8 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
   box-shadow:0 4px 28px rgba(0,0,0,.45),0 0 0 1px rgba(179,18,23,.08);
   transform:translateY(-1px);
 }
-.doc-card:hover::before{background:linear-gradient(90deg,var(--red-dark),transparent)}
-.doc-card.consulted{border-color:rgba(28,97,84,.35)}
+.doc-card:hover::before{background:linear-gradient(90deg,var(--amber),transparent)}
+.doc-card.consulted{border-color:rgba(42,92,64,.4)}
 .doc-card.consulted::before{background:linear-gradient(90deg,var(--success-border),transparent)!important}
 
 .doc-thumb{
@@ -560,7 +581,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 }
 .doc-cta{
   font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--red-logicus);
+  text-transform:uppercase;color:var(--carta);
   display:flex;align-items:center;gap:.4rem;
   margin-top:.5rem;padding-top:.85rem;
   border-top:1px solid var(--border-white-soft);
@@ -738,7 +759,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
    TERMINAL
    ================================================ */
 .terminal-frame{
-  background:#030507;border:1px solid rgba(179,18,23,.22);
+  background:#04030200;border:1px solid rgba(167,25,32,.3);
   position:relative;box-shadow:0 0 50px rgba(179,18,23,.06),var(--shadow-deep);
   max-width:700px;
 }
@@ -847,14 +868,15 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 
 /* FINALE */
 .final-scene{
-  background:var(--panel-1);border:1px solid var(--success-border);
+  background:var(--panel-1);border:1px solid var(--border-gold);
+  border-top:1px solid var(--amber);
   padding:2.5rem;position:relative;text-align:center;
-  box-shadow:0 0 50px rgba(28,97,84,.08),var(--shadow-deep);
+  box-shadow:0 0 50px rgba(167,25,32,.08),var(--shadow-deep);
   margin-bottom:1.25rem;
 }
 .final-scene::before{
   content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--success-border),transparent);
+  background:linear-gradient(90deg,transparent,var(--amber),transparent);
 }
 .final-resolved-tag{
   font-family:var(--font-mono);font-size:8.5px;letter-spacing:.35em;
@@ -973,6 +995,89 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 /* Animations */
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .anim-in{animation:fadeInUp .32s ease forwards}
+
+/* ================================================
+   ARCHIVIO 17 v3 — INVESTIGATIVE RESTYLING
+   ================================================ */
+
+#screen-access::before{
+  background:radial-gradient(ellipse 70% 50% at 50% 0%, rgba(167,25,32,0.09) 0%, transparent 70%) !important;
+}
+.access-box{
+  border-top:1px solid var(--amber) !important;
+}
+.doc-card{
+  border-color:var(--border-gold) !important;
+  background:linear-gradient(160deg, var(--panel-1), var(--panel-2)) !important;
+}
+.doc-card:hover{
+  border-color:rgba(183,131,59,0.35) !important;
+  box-shadow:0 4px 28px rgba(0,0,0,.55),0 0 0 1px rgba(183,131,59,0.1) !important;
+}
+.doc-code{color:var(--amber) !important;letter-spacing:.2em !important}
+.doc-category{letter-spacing:.22em !important}
+.doc-thumb img{
+  filter:contrast(1.08) brightness(.7) saturate(.5) sepia(.12) !important;
+}
+.doc-card:hover .doc-thumb img{
+  filter:contrast(1.08) brightness(.8) saturate(.6) sepia(.08) !important;
+}
+.nav-item.active{
+  color:var(--carta) !important;
+  border-left-color:var(--amber) !important;
+}
+.nav-section-label{
+  color:var(--amber) !important;
+  letter-spacing:.3em !important;
+  font-size:7.5px !important;
+  border-bottom:1px solid var(--border-gold) !important;
+  padding-bottom:.6rem !important;
+}
+.inv-section{border-bottom-color:var(--border-gold) !important}
+.inv-label{color:var(--amber) !important;letter-spacing:.28em !important;font-size:7.5px !important}
+.inv-tl-dot.key{border-color:var(--amber) !important;background:rgba(183,131,59,.12) !important}
+.inv-tl-dot.anomaly{border-color:var(--red-logicus) !important;background:rgba(167,25,32,.1) !important}
+.act2-locked-badge{
+  border-color:var(--border-red) !important;
+  background:rgba(167,25,32,0.04) !important;
+}
+.act2-locked-badge .lock-text{color:var(--red-logicus) !important}
+.fascicolo-meta{
+  border:none !important;
+  border-top:1px solid var(--border-gold) !important;
+  border-bottom:1px solid var(--border-gold) !important;
+  background:rgba(185,161,116,0.03) !important;
+}
+.terminal-sys-label{color:var(--carta) !important}
+.support-intro-panel{
+  border-left-color:var(--amber) !important;
+  background:rgba(183,131,59,0.04) !important;
+}
+.hint-accordion{border-color:var(--border-gold) !important}
+.hint-accordion.open{border-color:rgba(183,131,59,0.28) !important}
+.hint-level-cost{color:var(--amber) !important}
+.content-panel{border-color:var(--border-gold) !important}
+.content-panel-hdr{border-bottom-color:var(--border-gold) !important}
+.content-panel-lbl{color:var(--carta) !important}
+.fascicolo-note{
+  border-left-color:var(--border-gold) !important;
+  background:rgba(185,161,116,0.03) !important;
+}
+.evidence-frame{border-color:rgba(185,161,116,0.22) !important}
+.app-footer{border-top-color:var(--border-gold) !important}
+.intro-transmission-label{color:var(--amber) !important}
+.intro-transmission-line{background:linear-gradient(90deg,var(--amber),transparent) !important}
+.section-eyebrow{color:var(--carta) !important}
+.section-eyebrow::before{background:var(--amber) !important}
+::-webkit-scrollbar-thumb{background:rgba(185,161,116,0.1) !important}
+::-webkit-scrollbar-thumb:hover{background:rgba(185,161,116,0.2) !important}
+.score-number{color:var(--carta) !important}
+
+/* Evidence frame immagine — warm sepia */
+.evidence-frame img{
+  filter:contrast(1.06) brightness(.88) saturate(.65) sepia(.1) !important;
+}
+
 </style>
 </head>
 <body>
@@ -1012,39 +1117,40 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   <!-- HEADER -->
   <header class="app-header">
     <div class="header-left">
-      <div class="header-brand">A · 17</div>
+      <div class="header-brand">Archivio 17</div>
       <div class="header-sep"></div>
       <div class="header-case-info"><span class="header-status-dot"></span>Caso 001 — Il Caso Marini</div>
+      <div class="header-act-badge">Atto 1</div>
     </div>
     <div class="header-right">
       <div class="indice-badge">
-        <span class="indice-label">Indice</span>
+        <span class="indice-label">Indice investigativo</span>
         <span class="indice-value" id="live-indice">100</span>
       </div>
-      <button class="btn-ghost" onclick="showResetConfirm()">Reset</button>
+      <button class="btn-ghost" onclick="showResetConfirm()">Chiudi accesso</button>
     </div>
   </header>
 
   <!-- MOBILE NAV -->
   <nav class="mobile-nav" id="mobile-nav">
-    <div class="mnav-item active" onclick="showSection('intro')" id="mnav-intro">Intro</div>
-    <div class="mnav-item" onclick="showSection('fascicolo')" id="mnav-fascicolo">Fascicolo</div>
-    <div class="mnav-item" onclick="showSection('supporto')" id="mnav-supporto">Archivista</div>
-    <div class="mnav-item locked" onclick="showSection('terminale')" id="mnav-terminale">Terminale</div>
-    <div class="mnav-item locked" onclick="showSection('esito')" id="mnav-esito">Esito</div>
-    <div class="mnav-item" onclick="toggleMobileInvestigation()" id="mnav-indagine">Indagine</div>
+    <div class="mnav-item active" onclick="showSection('intro')" id="mnav-intro">Messaggio iniziale</div>
+    <div class="mnav-item" onclick="showSection('fascicolo')" id="mnav-fascicolo">Fascicolo A17-001</div>
+    <div class="mnav-item" onclick="showSection('supporto')" id="mnav-supporto">Supporto Archivista</div>
+    <div class="mnav-item locked" onclick="showSection('terminale')" id="mnav-terminale">Terminale 01</div>
+    <div class="mnav-item locked" onclick="showSection('esito')" id="mnav-esito">Esito analisi</div>
+    <div class="mnav-item" onclick="toggleMobileInvestigation()" id="mnav-indagine">Stato fascicolo</div>
   </nav>
 
   <div class="app-body">
 
     <!-- LEFT NAV SIDEBAR -->
     <nav class="nav-sidebar">
-      <div class="nav-section-label">Navigazione</div>
+      <div class="nav-section-label">Indice fascicolo</div>
       <div class="nav-item active" onclick="showSection('intro')" id="nav-intro">
-        <div class="nav-dot"></div>Intro Archivista
+        <div class="nav-dot"></div>Messaggio iniziale
       </div>
       <div class="nav-item" onclick="showSection('fascicolo')" id="nav-fascicolo">
-        <div class="nav-dot"></div>Fascicolo
+        <div class="nav-dot"></div>Fascicolo A17-001
       </div>
       <div class="nav-item" onclick="showSection('supporto')" id="nav-supporto">
         <div class="nav-dot"></div>Supporto Archivista
@@ -1053,10 +1159,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="nav-dot"></div>Terminale 01
       </div>
       <div class="nav-item locked" onclick="showSection('esito')" id="nav-esito">
-        <div class="nav-dot"></div>Esito Finale
+        <div class="nav-dot"></div>Esito analisi
       </div>
       <div class="nav-sidebar-footer">
-        <button class="btn-ghost" style="width:100%" onclick="showResetConfirm()">Resetta sessione</button>
+        <button class="btn-ghost" style="width:100%" onclick="showResetConfirm()">Azzera sessione beta</button>
       </div>
     </nav>
 
@@ -1102,7 +1208,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             <div class="section-eyebrow">Fascicolo A17-001</div>
             <h2 class="section-title">Fascicolo A17-001</h2>
             <div class="section-subtitle">Atto 1 — La scena non torna</div>
-            <p class="section-desc">Analizza i documenti disponibili e individua le anomalie nella ricostruzione ufficiale della morte di Andrea Marini.</p>
+            <p class="section-desc">Consulta i reperti del fascicolo. Ogni documento contiene elementi utili all'indagine. Esamina con attenzione prima di procedere al Terminale 01.</p>
           </div>
 
           <div class="fascicolo-meta">
@@ -1141,11 +1247,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           </div>
 
           <div class="support-intro-panel">
-            Ogni richiesta riduce il tuo <em>indice investigativo</em>. Le informazioni rivelate restano disponibili.
+            Ogni richiesta riduce il tuo <em>indice investigativo</em>. Le informazioni rivelate restano disponibili.<br>
+            Procedi con cautela: i livelli sono cumulativi per ciascun elemento del caso.
             <br><br>
             Livello 1 — Osservazione: <em>−2 pt</em> &nbsp;·&nbsp;
             Livello 2 — Connessione: <em>−5 pt</em> &nbsp;·&nbsp;
-            Livello 3 — Quasi soluzione: <em>−8 pt &nbsp;(cumulativi per puzzle)</em>
+            Livello 3 — Quasi soluzione: <em>−8 pt</em><br>
+            <span style="font-size:11.5px;color:var(--text-dim)">Se usi tutti e tre i livelli di un puzzle: <em style="color:var(--warning)">−15 pt totali</em></span>
           </div>
 
           <!-- P01 -->
@@ -1311,7 +1419,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             <div class="section-eyebrow">Analisi conclusiva — Atto 1</div>
             <h2 class="section-title">Terminale 01</h2>
             <div class="section-subtitle">Registrazione anomalia</div>
-            <p class="section-desc">Compila i tre campi di analisi. Ogni risposta errata riduce l'indice investigativo di 10 punti.</p>
+            <p class="section-desc">Registra le anomalie individuate nell'Atto 1. Ogni campo richiede una risposta precisa. Le risposte errate riducono l'indice investigativo di 10 punti.</p>
           </div>
 
           <div class="terminal-frame">
@@ -1352,7 +1460,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
               </div>
 
               <div class="terminal-confirmed" id="terminal-confirmed">
-                <div class="terminal-confirmed-label">Anomalia registrata</div>
+                <div class="terminal-confirmed-label">Anomalia registrata — Terminale 01</div>
                 <div class="terminal-confirmed-msg">L'Archivio autorizza il passaggio successivo.</div>
               </div>
 
@@ -1473,24 +1581,28 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
     <aside class="investigation-panel" id="investigation-panel">
 
       <div class="inv-panel-header">
-        <div class="inv-panel-title">Pannello Indagine</div>
+        <div class="inv-panel-title">Stato fascicolo</div>
       </div>
 
       <div class="inv-section">
-        <div class="inv-label">Stato del caso</div>
-        <div class="inv-case-status" id="inv-case-status">Caso irrisolto</div>
+        <div class="inv-label">Scheda caso</div>
+        <div class="inv-case-status" id="inv-case-status">Incongruenze non risolte</div>
         <div style="margin-top:.65rem">
           <div class="inv-status-row">
-            <span class="inv-status-label">Caso n°</span>
-            <span class="inv-status-val">001</span>
-          </div>
-          <div class="inv-status-row">
-            <span class="inv-status-label">Data fatto</span>
-            <span class="inv-status-val">14/11/2024</span>
+            <span class="inv-status-label">Caso</span>
+            <span class="inv-status-val">A17-001</span>
           </div>
           <div class="inv-status-row">
             <span class="inv-status-label">Ipotesi ufficiale</span>
             <span class="inv-status-val active">Suicidio</span>
+          </div>
+          <div class="inv-status-row">
+            <span class="inv-status-label">Stato</span>
+            <span class="inv-status-val active">Incongruenze non risolte</span>
+          </div>
+          <div class="inv-status-row">
+            <span class="inv-status-label">Atto</span>
+            <span class="inv-status-val">1 — La scena non torna</span>
           </div>
         </div>
       </div>
@@ -1563,7 +1675,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
             <div class="inv-tl-dot anomaly"></div>
             <div>
               <div class="inv-tl-time">19:30</div>
-              <div class="inv-tl-event">Cena — S. <em>[ non avvenuta ]</em></div>
+              <div class="inv-tl-event">Cena con S. <em>[ non verificata ]</em></div>
+            </div>
+          </div>
+          <div class="inv-tl-item">
+            <div class="inv-tl-dot key"></div>
+            <div>
+              <div class="inv-tl-time">21:47</div>
+              <div class="inv-tl-event">Rinvenimento</div>
+            </div>
+          </div>
+          <div class="inv-tl-item">
+            <div class="inv-tl-dot"></div>
+            <div>
+              <div class="inv-tl-time">22:05</div>
+              <div class="inv-tl-event">Scena sigillata</div>
             </div>
           </div>
         </div>
@@ -1573,7 +1699,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
         <div class="inv-label">Accesso Atto 2</div>
         <div class="act2-locked-badge" id="act2-badge">
           <span class="lock-icon">⊘</span>
-          <span class="lock-text">Bloccato — Completa Atto 1</span>
+          <span class="lock-text">Atto 2 — Il denaro: accesso non autorizzato</span>
         </div>
       </div>
 
@@ -1593,7 +1719,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <div id="mobile-inv-drawer" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85)" onclick="closeMobileInvestigation()">
   <div style="position:absolute;right:0;top:0;bottom:0;width:min(320px,95vw);background:var(--bg-secondary);border-left:1px solid var(--border-white);overflow-y:auto" onclick="event.stopPropagation()">
     <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border-white);display:flex;align-items:center;justify-content:space-between">
-      <div style="font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-meta);text-transform:uppercase">Pannello Indagine</div>
+      <div style="font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-meta);text-transform:uppercase">Stato fascicolo</div>
       <button class="btn-ghost" style="padding:.3rem .65rem" onclick="closeMobileInvestigation()">✕</button>
     </div>
     <div id="mobile-inv-content" style="padding:.5rem 0"></div>
@@ -1613,11 +1739,11 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 <!-- CONFIRM RESET -->
 <div class="confirm-overlay" id="confirm-reset">
   <div class="confirm-box">
-    <h3>Reset sessione</h3>
-    <p>Vuoi davvero cancellare il progresso di questa sessione beta? Il punteggio, i documenti consultati e tutti i dati verranno azzerati.</p>
+    <h3>Azzera sessione</h3>
+    <p>Vuoi davvero chiudere l'accesso e azzerare l'intera sessione beta? Tutti i dati, i documenti consultati e il tuo indice investigativo verranno persi.</p>
     <div class="confirm-actions">
       <button class="btn-secondary" onclick="hideResetConfirm()">Annulla</button>
-      <button class="btn-primary" style="width:auto;margin-top:0" onclick="confirmReset()">Sì, resetta</button>
+      <button class="btn-primary" style="width:auto;margin-top:0" onclick="confirmReset()">Azzera sessione</button>
     </div>
   </div>
 </div>
@@ -1637,7 +1763,7 @@ const DOCUMENTS = [
   {
     id: 'A01',
     title: 'Profilo Andrea Marini',
-    category: 'Anagrafica',
+    category: 'Profilo personale',
     imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/cede456dc_generated_image.png',
     summary: 'Dati biografici, nucleo familiare, abitudini note e informazioni preliminari.',
     transcript: `Andrea Marini, 42 anni, consulente finanziario.
@@ -1707,10 +1833,10 @@ Presenza di alcol nel bicchiere, non confermata come abitudine documentata della
   },
   {
     id: 'A04',
-    title: 'Foto scena — studio privato',
-    category: 'Fotografia',
+    title: 'Rilievo fotografico dello studio',
+    category: 'Rilievo fotografico',
     imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/eb363749a_generated_image.png',
-    summary: 'Documentazione fotografica della scena nello studio privato di Andrea Marini.',
+    summary: 'Documentazione visiva della scena nello studio privato. Rilievo effettuato la sera del 14/11/2024.',
     transcript: `Scena documentata nello studio privato di Andrea Marini, 14/11/2024.
 
 Il corpo è a terra in prossimità della scrivania. Sulla scrivania è visibile il bicchiere di whisky segnalato nel verbale.
@@ -1944,7 +2070,7 @@ function renderDocGrid() {
         <div class="doc-category">${doc.category}</div>
         <div class="doc-title">${doc.title}</div>
         <div class="doc-summary">${doc.summary}</div>
-        <div class="doc-cta ${consulted ? 'consulted-cta' : ''}">${consulted ? 'Riesamina documento' : 'Apri documento'}</div>
+        <div class="doc-cta ${consulted ? 'consulted-cta' : ''}">${consulted ? 'Consulta reperto' : 'Esamina reperto'}</div>
       </div>
     `;
     grid.appendChild(card);
@@ -2008,7 +2134,8 @@ function renderDocViewer(doc) {
     <div class="viewer-doc-meta">
       <div class="doc-code">${doc.id}</div>
       <div class="doc-category">${doc.category}</div>
-      <div class="doc-status-badge consulted">Esaminato</div>
+      <div class="doc-status-badge" style="border-color:var(--border-red);color:var(--red-logicus);background:rgba(167,25,32,0.06)">Riservato</div>
+      <div class="doc-status-badge consulted">Consultato</div>
     </div>
     <h2 class="viewer-title">${doc.title}</h2>
 
