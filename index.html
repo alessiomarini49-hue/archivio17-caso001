@@ -1530,7 +1530,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 Il tuo contributo guida lo sviluppo dell'Archivio 17.
               </p>
 
-              <div class="fb-form" id="fb-form-inner" style="position:relative;z-index:5;">
+              <div class="fb-form" id="fb-form-inner" style="position:relative;z-index:1001;">
 
                 <div class="fb-field">
                   <label class="fb-label">01 — TEMPO IMPIEGATO (minuti)</label>
@@ -1594,7 +1594,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                 </div>
 
                 <button onclick="submitFeedbackInternal()" id="fb-submit-btn"
-                  style="display:block;width:100%;text-align:center;background:var(--accent);color:#fff;padding:0.9rem 2rem;border-radius:6px;font-weight:700;letter-spacing:0.12em;border:none;font-size:13px;margin-top:0.5rem;cursor:pointer;font-family:var(--font-mono);position:relative;z-index:10;">
+                  style="display:block;width:100%;text-align:center;background:var(--accent);color:#fff;padding:0.9rem 2rem;border-radius:6px;font-weight:700;letter-spacing:0.12em;border:none;font-size:13px;margin-top:0.5rem;cursor:pointer;font-family:var(--font-mono);position:relative;z-index:1002;pointer-events:auto;">
                   ▶ INVIA RAPPORTO
                 </button>
 
@@ -2023,6 +2023,9 @@ function showApp() {
 
 // --- NAVIGATION ---
 function showSection(id, silent) {
+    // Chiudi sempre il mobile drawer
+    var drawer = document.getElementById('mobile-inv-drawer');
+    if (drawer) drawer.style.display = 'none';
   if (!silent) {
     if (id === 'terminale' && state.documentsOpened.length < 5) {
       showToast('Esamina tutte le prove del fascicolo prima di accedere al Terminale.');
