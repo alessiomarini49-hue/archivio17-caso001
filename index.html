@@ -1593,8 +1593,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
                     style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-main);padding:0.6rem 0.8rem;border-radius:4px;font-family:var(--font-mono);font-size:12px;box-sizing:border-box;resize:vertical;"></textarea>
                 </div>
 
-                <button onclick="submitFeedbackInternal()" id="fb-submit-btn"
-                  style="display:block;width:100%;text-align:center;background:var(--accent);color:#fff;padding:0.9rem 2rem;border-radius:6px;font-weight:700;letter-spacing:0.12em;border:none;font-size:13px;margin-top:0.5rem;cursor:pointer;font-family:var(--font-mono);position:relative;z-index:10;">
+                <button id="fb-submit-btn"
+                  style="display:block;width:100%;text-align:center;background:var(--accent);color:#fff;padding:0.9rem 2rem;border-radius:6px;font-weight:700;letter-spacing:0.12em;border:none;font-size:13px;margin-top:0.5rem;cursor:pointer;font-family:var(--font-mono);position:relative;z-index:999;pointer-events:all;">
                   ▶ INVIA RAPPORTO
                 </button>
 
@@ -2566,6 +2566,17 @@ init();
       btn.classList.add('selected');
       document.getElementById('fb-cifra-row').style.display = (val === 'si' || val === 'forse') ? 'block' : 'none';
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var btn = document.getElementById('fb-submit-btn');
+      if (btn) {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          e.preventDefault();
+          submitFeedbackInternal();
+        });
+      }
+    });
 
     async function submitFeedbackInternal() {
       var tempo = parseInt(document.getElementById('fb-tempo').value) || 0;
