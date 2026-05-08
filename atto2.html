@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Archivio 17 — Caso 001 · Atto 2 · Il Denaro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-main: #050506;
+      --bg-secondary: #0A0807;
+      --panel-1: #111318;
+      --panel-2: #17130F;
+      --panel-3: #1C1712;
+      --panel-4: #14100D;
+      --text-main: #EDE6D8;
+      --text-secondary: #AFA79A;
+      --text-meta: #7A7268;
+      --text-dim: #4A4440;
+      --red-logicus: #A71920;
+      --red-highlight: #C42028;
+      --red-dark: #641014;
+      --red-glow: rgba(167,25,32,0.18);
+      --amber: #B7833B;
+      --amber-dim: rgba(183,131,59,0.12);
+      --paper: #B9A174;
+      --border-gold: rgba(185,161,116,0.18);
+      --border-gold-dim: rgba(185,161,116,0.10);
+      --border-white: rgba(255,255,255,0.08);
+      --glow-red: 0 0 18px rgba(167,25,32,0.25);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,h2,h3,h4 { font-family: var(--font-serif); font-weight: 400; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: var(--border-gold); border-radius: 2px; }
+
+    /* ===== BUTTONS ===== */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--red-logicus); color: var(--text-main);
+      border: none; padding: .75rem 1.5rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .22em;
+      text-transform: uppercase; transition: background .2s, box-shadow .2s;
+    }
+    .btn-primary:hover { background: var(--red-highlight); box-shadow: var(--glow-red); }
+    .btn-primary.full { width: 100%; justify-content: center; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border-white); padding: .65rem 1.25rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .18em;
+      text-transform: uppercase; transition: all .2s;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.18); color: var(--text-main); }
+    .btn-ghost {
+      display: inline-flex; align-items: center;
+      background: transparent; color: var(--text-meta);
+      border: 1px solid transparent; padding: .55rem 1rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
+      text-transform: uppercase; transition: all .2s;
+    }
+    .btn-ghost:hover { color: var(--text-secondary); border-color: var(--border-white); }
+
+    /* ===== HEADER ===== */
+    .app-header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 1.5rem; height: 54px;
+      background: rgba(5,5,6,0.92); border-bottom: 1px solid var(--border-gold);
+      backdrop-filter: blur(8px); gap: 1rem;
+    }
+    .header-left { display: flex; align-items: center; gap: 1rem; }
+    .header-brand {
+      font-family: var(--font-serif); font-size: 1.1rem;
+      letter-spacing: .12em; color: var(--paper);
+    }
+    .header-sep { width: 1px; height: 18px; background: var(--border-gold); }
+    .header-case-info {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: .2em; color: var(--text-secondary); text-transform: uppercase;
+      display: flex; align-items: center; gap: .5rem;
+    }
+    .header-status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--amber); box-shadow: 0 0 6px var(--amber);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{ opacity:1; } 50%{ opacity:.4; } }
+    .header-act-badge {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .2em;
+      color: var(--amber); border: 1px solid rgba(183,131,59,0.35);
+      padding: 2px 8px; text-transform: uppercase;
+    }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .indice-badge {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em;
+      color: var(--text-meta); text-transform: uppercase;
+    }
+    .indice-value {
+      font-family: var(--font-serif); font-size: 1.3rem;
+      font-weight: 300; color: var(--text-main);
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-nav {
+      display: none; overflow-x: auto; white-space: nowrap;
+      border-bottom: 1px solid var(--border-gold);
+      background: var(--panel-1); padding: 0 1rem;
+    }
+    .mnav-item {
+      display: inline-block; padding: .75rem 1rem;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--text-meta); cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all .2s;
+    }
+    .mnav-item.active { color: var(--paper); border-bottom-color: var(--amber); }
+    .mnav-item.locked { color: var(--text-dim); cursor: default; }
+    @media (max-width: 1180px) {
+      .mobile-nav { display: block; }
+    }
+
+    /* ===== APP BODY ===== */
+    .app-body {
+      display: flex; min-height: calc(100vh - 54px);
+    }
+
+    /* ===== LEFT NAV ===== */
+    .nav-sidebar {
+      width: 220px; background: var(--panel-1);
+      border-right: 1px solid var(--border-gold);
+      padding: 1.5rem 0; display: flex; flex-direction: column;
+      flex-shrink: 0; position: sticky; top: 54px;
+      height: calc(100vh - 54px); overflow-y: auto;
+    }
+    @media (max-width: 1180px) { .nav-sidebar { display: none; } }
+    .nav-section-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .32em;
+      color: var(--text-dim); text-transform: uppercase;
+      padding: 0 1.25rem 1rem; border-bottom: 1px solid var(--border-gold-dim);
+      margin-bottom: .5rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .6rem 1.25rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em;
+      color: var(--text-secondary); transition: all .2s;
+      border-left: 2px solid transparent;
+    }
+    .nav-item:hover { color: var(--text-main); background: rgba(255,255,255,0.02); }
+    .nav-item.active { color: var(--paper); border-left-color: var(--amber); background: var(--amber-dim); }
+    .nav-item.locked { color: var(--text-dim); cursor: default; }
+    .nav-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      border: 1px solid currentColor; flex-shrink: 0;
+    }
+    .nav-item.active .nav-dot { background: var(--amber); border-color: var(--amber); }
+    .nav-sidebar-footer { margin-top: auto; padding: 1rem 1rem 0; border-top: 1px solid var(--border-gold-dim); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content { flex: 1; overflow-y: auto; min-width: 0; }
+
+    /* ===== SECTIONS ===== */
+    .app-section { display: none; }
+    .app-section.active { display: block; }
+    .section-wrapper { padding: 2.5rem 2rem; max-width: 820px; }
+    @media (max-width: 700px) { .section-wrapper { padding: 1.5rem 1rem; } }
+
+    .section-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-gold-dim); }
+    .section-eyebrow {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .38em;
+      color: var(--red-logicus); text-transform: uppercase; margin-bottom: .5rem;
+    }
+    .section-title { font-size: 2.2rem; color: var(--text-main); margin-bottom: .3rem; line-height: 1.1; }
+    .section-subtitle { font-style: italic; color: var(--paper); font-family: var(--font-serif); font-size: 1.1rem; }
+    .section-desc { color: var(--text-secondary); margin-top: 1rem; max-width: 60ch; line-height: 1.7; }
+
+    /* ===== ARCHIVISTA MESSAGE ===== */
+    .archivista-card {
+      background: var(--panel-2); border: 1px solid var(--border-gold);
+      padding: 2rem; position: relative; margin-bottom: 1.5rem;
+    }
+    .archivista-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 2px; height: 100%; background: var(--red-logicus);
+    }
+    .archivista-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .38em;
+      color: var(--red-logicus); text-transform: uppercase; margin-bottom: 1rem;
+    }
+    .archivista-body {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: 1.05rem; color: var(--text-main); line-height: 1.85;
+    }
+    .archivista-body p { margin-bottom: .9rem; }
+    .archivista-body p:last-child { margin-bottom: 0; }
+    .archivista-sig {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em;
+      color: var(--paper); text-align: right; margin-top: 1.25rem;
+      padding-top: 1rem; border-top: 1px solid var(--border-gold-dim);
+    }
+    .archivista-objective {
+      background: rgba(167,25,32,0.04); border: 1px dashed rgba(167,25,32,0.25);
+      padding: 1rem 1.25rem; margin-top: 1.5rem;
+    }
+    .archivista-objective-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .28em;
+      color: var(--red-logicus); text-transform: uppercase; margin-bottom: .5rem;
+    }
+    .archivista-objective p { color: var(--text-secondary); font-size: 13px; line-height: 1.7; }
+
+    /* ===== DOCUMENTS GRID ===== */
+    .docs-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; flex-wrap: wrap; gap: .5rem;
+    }
+    .docs-meta-label {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .28em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .docs-counter {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .15em;
+      color: var(--amber); border: 1px solid rgba(183,131,59,0.25); padding: 3px 10px;
+    }
+    .docs-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1px;
+      background: var(--border-gold-dim); border: 1px solid var(--border-gold-dim);
+    }
+    .doc-card {
+      background: var(--panel-1); padding: 1.1rem; cursor: pointer;
+      transition: background .2s; position: relative;
+    }
+    .doc-card:hover { background: var(--panel-2); }
+    .doc-card.opened { background: var(--panel-2); }
+    .doc-card-id {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em;
+      color: var(--amber); text-transform: uppercase; margin-bottom: .5rem;
+    }
+    .doc-card-title {
+      font-family: var(--font-serif); font-size: .95rem;
+      color: var(--text-main); line-height: 1.3; margin-bottom: .4rem;
+    }
+    .doc-card-cat {
+      font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .15em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .doc-card-opened-badge {
+      position: absolute; top: .6rem; right: .6rem;
+      font-family: var(--font-mono); font-size: 8px; letter-spacing: .1em;
+      color: var(--amber); opacity: .7;
+    }
+    .doc-thumbnail {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      margin-bottom: .75rem; display: block;
+      background: var(--panel-4);
+    }
+    .doc-placeholder {
+      width: 100%; aspect-ratio: 4/3; background: var(--panel-4);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: .75rem;
+      font-family: var(--font-mono); font-size: 7px; letter-spacing: .18em;
+      color: var(--text-dim); text-transform: uppercase; text-align: center;
+      line-height: 1.8; border: 1px solid var(--border-gold-dim);
+    }
+
+    /* ===== DOCUMENT VIEWER (MODAL) ===== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(5,5,6,0.88); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .viewer-card {
+      background: var(--panel-2); border: 1px solid var(--border-gold);
+      max-width: 680px; width: 100%; max-height: 90vh;
+      display: flex; flex-direction: column; position: relative;
+    }
+    .viewer-header {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .85rem 1.25rem; border-bottom: 1px solid var(--border-gold-dim);
+      flex-shrink: 0;
+    }
+    .viewer-header-id {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em;
+      color: var(--amber); text-transform: uppercase;
+    }
+    .viewer-header-cat {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .viewer-header-class {
+      font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .18em;
+      color: var(--red-logicus); text-transform: uppercase;
+      border: 1px solid rgba(167,25,32,0.3); padding: 2px 6px;
+    }
+    .viewer-header-spacer { flex: 1; }
+    .viewer-close {
+      background: none; border: none; color: var(--text-dim); font-size: 1.2rem;
+      cursor: pointer; padding: .2rem .4rem; transition: color .2s; line-height: 1;
+    }
+    .viewer-close:hover { color: var(--text-main); }
+    .viewer-body { overflow-y: auto; padding: 1.5rem; flex: 1; }
+    .viewer-title {
+      font-family: var(--font-serif); font-size: 1.5rem;
+      color: var(--text-main); margin-bottom: 1.25rem; line-height: 1.2;
+    }
+    .viewer-img {
+      width: 100%; max-height: 300px; object-fit: contain;
+      background: var(--panel-4); margin-bottom: 1.25rem; display: block;
+    }
+    .viewer-img-placeholder {
+      width: 100%; height: 200px; background: var(--panel-4);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.25rem; border: 1px solid var(--border-gold-dim);
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em;
+      color: var(--text-dim); text-transform: uppercase; text-align: center; line-height: 2;
+    }
+    .viewer-section { margin-bottom: 1.25rem; }
+    .viewer-section h4 {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .28em;
+      color: var(--text-dim); text-transform: uppercase; margin-bottom: .65rem;
+    }
+    .viewer-transcript {
+      background: var(--panel-4); border-left: 2px solid var(--border-gold);
+      padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: 11.5px;
+      color: var(--text-secondary); line-height: 1.9; white-space: pre-wrap;
+    }
+    .viewer-note {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: .95rem; color: var(--text-secondary); line-height: 1.75;
+      padding: .75rem 1rem; border: 1px dashed var(--border-gold-dim);
+      background: var(--amber-dim);
+    }
+    .viewer-actions {
+      display: flex; gap: .75rem; padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border-gold-dim); flex-shrink: 0; flex-wrap: wrap;
+    }
+
+    /* ===== SUPPORTO ARCHIVISTA ===== */
+    .puzzle-card {
+      background: var(--panel-1); border: 1px solid var(--border-gold-dim);
+      margin-bottom: 1rem;
+    }
+    .puzzle-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; cursor: pointer; transition: background .2s;
+    }
+    .puzzle-header:hover { background: rgba(255,255,255,0.02); }
+    .puzzle-id {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .22em;
+      color: var(--amber); text-transform: uppercase; margin-bottom: .25rem;
+    }
+    .puzzle-title { font-size: 1rem; color: var(--text-main); font-family: var(--font-serif); }
+    .puzzle-scope { font-family: var(--font-mono); font-size: 10px; color: var(--text-meta); margin-top: .2rem; }
+    .puzzle-toggle {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
+      flex-shrink: 0; margin-left: 1rem;
+    }
+    .puzzle-hints { padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--border-gold-dim); display: none; }
+    .puzzle-hints.open { display: block; }
+    .hint-btn {
+      display: flex; align-items: center; gap: .75rem;
+      width: 100%; background: none; border: 1px solid var(--border-white);
+      padding: .75rem 1rem; cursor: pointer; margin-top: .75rem;
+      text-align: left; transition: all .2s; color: var(--text-secondary);
+      font-family: var(--font-sans); font-size: 13px;
+    }
+    .hint-btn:hover { border-color: var(--border-gold); background: rgba(255,255,255,0.02); }
+    .hint-btn.revealed { border-color: var(--border-gold-dim); cursor: default; background: var(--amber-dim); color: var(--text-main); }
+    .hint-cost {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .15em;
+      color: var(--red-logicus); text-transform: uppercase; flex-shrink: 0;
+      border: 1px solid rgba(167,25,32,0.3); padding: 2px 6px;
+    }
+    .hint-cost.paid { color: var(--text-dim); border-color: var(--border-gold-dim); }
+    .hint-text { display: none; font-style: italic; color: var(--text-secondary); }
+    .hint-text.visible { display: block; }
+    .supporto-warning {
+      background: rgba(167,25,32,0.06); border: 1px dashed rgba(167,25,32,0.25);
+      padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+      color: var(--text-secondary); line-height: 1.7;
+    }
+
+    /* ===== TERMINALE ===== */
+    .terminal-frame {
+      background: #050A07; border: 1px solid #1a3a22;
+      font-family: var(--font-mono); color: #7ec88a;
+      text-shadow: 0 0 8px rgba(126,200,138,0.4);
+      position: relative; overflow: hidden;
+    }
+    .terminal-frame::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      z-index: 0;
+    }
+    .terminal-topbar {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .65rem 1rem; border-bottom: 1px solid #1a3a22; position: relative; z-index: 1;
+    }
+    .terminal-pulse {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #5ab068; box-shadow: 0 0 8px rgba(90,176,104,0.6);
+      animation: pulse-dot 1.5s infinite;
+    }
+    .terminal-sys-label {
+      font-size: 9px; letter-spacing: .22em; color: #5ab068; text-transform: uppercase;
+    }
+    .terminal-body { padding: 1.25rem; position: relative; z-index: 1; }
+    .terminal-boot {
+      font-size: 10.5px; color: #4a8055; line-height: 1.9;
+      margin-bottom: 1.5rem; opacity: .8;
+    }
+    .terminal-field { margin-bottom: 1.5rem; }
+    .terminal-field-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .4rem;
+    }
+    .terminal-field-id {
+      font-size: 9px; letter-spacing: .2em; color: #7ec88a; text-transform: uppercase;
+    }
+    .terminal-field-state {
+      font-size: 8.5px; letter-spacing: .18em; text-transform: uppercase;
+      padding: 2px 6px; border: 1px solid;
+    }
+    .terminal-field-state.pending { color: #4a8055; border-color: #1a3a22; }
+    .terminal-field-state.ok { color: #7ec88a; border-color: #5ab068; }
+    .terminal-field-state.error { color: #c88a7e; border-color: #8a3a2a; }
+    .terminal-q { font-size: 11px; color: #5ab068; margin-bottom: .5rem; line-height: 1.6; font-style: italic; }
+    .terminal-input {
+      width: 100%; background: transparent; border: none;
+      border-bottom: 1px solid #1a3a22; color: #7ec88a;
+      font-family: var(--font-mono); font-size: 12.5px;
+      padding: .4rem 0; outline: none; letter-spacing: .04em;
+      transition: border-color .2s;
+    }
+    .terminal-input:focus { border-bottom-color: #7ec88a; }
+    .terminal-textarea {
+      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid #1a3a22;
+      color: #7ec88a; font-family: var(--font-mono); font-size: 12px;
+      padding: .65rem; outline: none; resize: vertical; min-height: 80px;
+      line-height: 1.7; letter-spacing: .02em; transition: border-color .2s;
+    }
+    .terminal-textarea:focus { border-color: #7ec88a; }
+    .terminal-feedback {
+      margin-top: .6rem; font-size: 11px; padding: .6rem .75rem;
+      border-left: 2px solid; line-height: 1.6; display: none;
+    }
+    .terminal-feedback.show { display: block; }
+    .terminal-feedback.ok { color: #7ec88a; border-color: #5ab068; background: rgba(90,176,104,0.06); }
+    .terminal-feedback.error { color: #c88a7e; border-color: #8a3a2a; background: rgba(200,138,126,0.06); }
+    .terminal-confirmed {
+      background: rgba(90,176,104,0.06); border: 1px solid #1a3a22;
+      padding: 1rem 1.25rem; margin-bottom: 1rem; display: none;
+    }
+    .terminal-confirmed.show { display: block; }
+    .terminal-confirmed-label {
+      font-size: 9px; letter-spacing: .28em; color: #7ec88a; text-transform: uppercase; margin-bottom: .3rem;
+    }
+    .terminal-confirmed-msg { font-size: 12px; color: #5ab068; font-style: italic; }
+    .terminal-submit {
+      background: #1a3a22; color: #7ec88a; border: 1px solid #2a5a32;
+      padding: .75rem 1.5rem; cursor: pointer; font-family: var(--font-mono);
+      font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+      transition: all .2s; display: block; width: 100%; margin-top: .5rem;
+    }
+    .terminal-submit:hover { background: #2a5a32; }
+    .terminal-submit:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ===== ESITO ===== */
+    .score-card {
+      background: var(--panel-2); border: 1px solid var(--border-gold);
+      padding: 2rem; max-width: 580px;
+    }
+    .score-card-header {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .32em;
+      color: var(--text-dim); text-transform: uppercase; margin-bottom: 1.5rem;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--border-gold-dim);
+    }
+    .score-number {
+      font-family: var(--font-serif); font-size: 4rem; font-weight: 300;
+      color: var(--text-main); line-height: 1;
+    }
+    .score-number span { font-family: var(--font-mono); font-size: 1rem; color: var(--text-dim); }
+    .score-classification {
+      font-family: var(--font-serif); font-style: italic; font-size: 1.2rem;
+      color: var(--paper); margin: .5rem 0 1.5rem;
+    }
+    .score-breakdown { border-top: 1px solid var(--border-gold-dim); padding-top: 1rem; }
+    .score-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: .5rem 0; border-bottom: 1px dotted var(--border-gold-dim);
+      font-size: 12.5px;
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-row .lbl { color: var(--text-secondary); letter-spacing: .04em; }
+    .score-row .val { font-family: var(--font-mono); color: var(--text-main); }
+    .score-row.total { border-top: 1px solid var(--border-gold); border-bottom: none; padding-top: 1rem; margin-top: .5rem; }
+    .score-row.total .lbl { color: var(--text-main); font-weight: 500; }
+    .score-row.total .val { color: var(--amber); font-size: 1.1rem; }
+    .esito-hook {
+      margin-top: 2rem; padding: 1.5rem;
+      border-top: 1px solid var(--border-gold-dim); border-bottom: 1px solid var(--border-gold-dim);
+      font-family: var(--font-serif); font-style: italic; font-size: 1.05rem;
+      color: var(--paper); line-height: 1.8;
+    }
+    .esito-stamp {
+      display: inline-block; margin-bottom: 1.5rem;
+      padding: 5px 14px; border: 2px solid var(--red-logicus); color: var(--red-logicus);
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: .28em;
+      text-transform: uppercase; transform: rotate(-2deg);
+    }
+
+    /* ===== INVESTIGATION PANEL ===== */
+    .investigation-panel {
+      width: 260px; background: var(--bg-secondary);
+      border-left: 1px solid var(--border-gold);
+      padding: 0; display: flex; flex-direction: column;
+      flex-shrink: 0; position: sticky; top: 54px;
+      height: calc(100vh - 54px); overflow-y: auto;
+    }
+    @media (max-width: 1180px) { .investigation-panel { display: none; } }
+    .inv-panel-header {
+      padding: .9rem 1.1rem; border-bottom: 1px solid var(--border-gold-dim);
+    }
+    .inv-panel-title {
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .28em;
+      color: var(--text-dim); text-transform: uppercase;
+    }
+    .inv-section { padding: .9rem 1.1rem; border-bottom: 1px solid var(--border-gold-dim); }
+    .inv-label {
+      font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .28em;
+      color: var(--text-dim); text-transform: uppercase; margin-bottom: .5rem;
+    }
+    .inv-case-status {
+      font-family: var(--font-serif); font-style: italic;
+      font-size: .95rem; color: var(--amber); margin-bottom: .5rem;
+    }
+    .inv-status-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: .3rem 0; border-bottom: 1px dotted var(--border-gold-dim); font-size: 11px;
+    }
+    .inv-status-row:last-child { border-bottom: none; }
+    .inv-status-label { color: var(--text-dim); font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em; }
+    .inv-status-val { color: var(--text-secondary); font-family: var(--font-mono); font-size: 9.5px; text-align: right; max-width: 55%; }
+    .inv-status-val.active { color: var(--amber); }
+    .inv-indice-bar {
+      height: 3px; background: var(--panel-3); border-radius: 2px; margin: .4rem 0;
+    }
+    .inv-indice-fill {
+      height: 100%; border-radius: 2px; transition: width .4s ease, background .4s;
+    }
+    .inv-indice-fill.high { background: var(--amber); }
+    .inv-indice-fill.mid { background: #c4a43a; }
+    .inv-indice-fill.low { background: var(--red-logicus); }
+    .inv-doc-item {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .2rem 0; font-family: var(--font-mono); font-size: 9.5px;
+      color: var(--text-dim);
+    }
+    .inv-doc-item.opened { color: var(--text-secondary); }
+    .inv-doc-check { color: var(--amber); font-size: 9px; flex-shrink: 0; }
+    .inv-tl-item {
+      display: flex; gap: .5rem; padding: .3rem 0;
+      border-top: 1px solid var(--border-gold-dim); font-size: 11px;
+    }
+    .inv-tl-item:first-child { border-top: none; }
+    .inv-tl-date { font-family: var(--font-mono); font-size: 9px; color: var(--amber); flex-shrink: 0; min-width: 40px; }
+    .inv-tl-event { color: var(--text-dim); line-height: 1.5; font-size: 10px; }
+
+    /* ===== MOBILE DRAWER ===== */
+    .mobile-inv-btn {
+      display: none; position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 90;
+      background: var(--red-logicus); color: #fff; border: none;
+      padding: .7rem 1rem; cursor: pointer;
+      font-family: var(--font-mono); font-size: 9px; letter-spacing: .18em;
+      text-transform: uppercase; box-shadow: var(--glow-red);
+    }
+    @media (max-width: 1180px) { .mobile-inv-btn { display: block; } }
+    .mobile-inv-drawer {
+      display: none; position: fixed; inset: 0; z-index: 150;
+      background: rgba(5,5,6,0.75); backdrop-filter: blur(3px);
+    }
+    .mobile-inv-drawer.open { display: block; }
+    .mobile-inv-panel {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      width: min(320px, 90vw); background: var(--bg-secondary);
+      border-left: 1px solid var(--border-gold); overflow-y: auto;
+    }
+    .mobile-inv-close {
+      display: flex; justify-content: flex-end; padding: .75rem 1rem;
+      border-bottom: 1px solid var(--border-gold-dim);
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--panel-2); border: 1px solid var(--border-gold);
+      padding: .7rem 1.25rem; font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: .12em; color: var(--text-secondary); z-index: 300;
+      opacity: 0; transition: all .3s; white-space: nowrap; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== RESET CONFIRM ===== */
+    .reset-overlay {
+      display: none; position: fixed; inset: 0; z-index: 250;
+      background: rgba(5,5,6,0.9); align-items: center; justify-content: center; padding: 1rem;
+    }
+    .reset-overlay.open { display: flex; }
+    .reset-card {
+      background: var(--panel-2); border: 1px solid var(--border-gold);
+      padding: 2rem; max-width: 380px; width: 100%; text-align: center;
+    }
+    .reset-title { font-size: 1.4rem; color: var(--text-main); margin-bottom: .75rem; }
+    .reset-body { color: var(--text-secondary); font-size: 13px; line-height: 1.7; margin-bottom: 1.5rem; }
+    .reset-actions { display: flex; gap: .75rem; justify-content: center; }
+
+    /* ===== ANIM ===== */
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .anim-in { animation: fadeIn .4s ease forwards; }
+
+    /* ===== DIVIDER ===== */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--red-dark), transparent);
+      margin: 2rem 0;
+    }
+    .section-cap {
+      font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .45em;
+      color: var(--red-logicus); text-transform: uppercase; text-align: center;
+      padding: 1.25rem; background: var(--panel-4); border-bottom: 1px solid var(--border-gold-dim);
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-left">
+    <div class="header-brand">Archivio 17</div>
+    <div class="header-sep"></div>
+    <div class="header-case-info">
+      <span class="header-status-dot"></span>
+      Caso 001 — Il Caso Marini
+    </div>
+    <div class="header-act-badge">Atto 2</div>
+  </div>
+  <div class="header-right">
+    <div class="indice-badge">
+      <span class="indice-label">Indice investigativo</span>
+      <span class="indice-value" id="live-indice">100</span>
+    </div>
+    <button class="btn-ghost" onclick="showResetConfirm()">Azzera sessione</button>
+  </div>
+</header>
+
+<!-- MOBILE NAV -->
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mnav-item active" onclick="showSection('intro')" id="mnav-intro">Messaggio Archivista</div>
+  <div class="mnav-item" onclick="showSection('fascicolo')" id="mnav-fascicolo">Fascicolo A17-002</div>
+  <div class="mnav-item" onclick="showSection('supporto')" id="mnav-supporto">Supporto Archivista</div>
+  <div class="mnav-item locked" onclick="showSection('terminale')" id="mnav-terminale">Terminale 02</div>
+  <div class="mnav-item locked" onclick="showSection('esito')" id="mnav-esito">Esito analisi</div>
+  <div class="mnav-item" onclick="toggleMobileDrawer()" id="mnav-indagine">Stato fascicolo</div>
+</nav>
+
+<div class="app-body">
+
+  <!-- LEFT NAV SIDEBAR -->
+  <nav class="nav-sidebar">
+    <div class="nav-section-label">Indice fascicolo</div>
+    <div class="nav-item active" onclick="showSection('intro')" id="nav-intro">
+      <div class="nav-dot"></div>Messaggio Archivista
+    </div>
+    <div class="nav-item" onclick="showSection('fascicolo')" id="nav-fascicolo">
+      <div class="nav-dot"></div>Fascicolo A17-002
+    </div>
+    <div class="nav-item" onclick="showSection('supporto')" id="nav-supporto">
+      <div class="nav-dot"></div>Supporto Archivista
+    </div>
+    <div class="nav-item locked" onclick="showSection('terminale')" id="nav-terminale">
+      <div class="nav-dot"></div>Terminale 02
+    </div>
+    <div class="nav-item locked" onclick="showSection('esito')" id="nav-esito">
+      <div class="nav-dot"></div>Esito analisi
+    </div>
+    <div class="nav-sidebar-footer">
+      <button class="btn-ghost" style="width:100%" onclick="showResetConfirm()">Azzera sessione</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="section-cap">Archivio 17 · Caso 001 · Atto 2 · Il Denaro · Fascicolo Riservato</div>
+
+    <!-- INTRO -->
+    <div class="app-section active" id="section-intro">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Comunicazione riservata — Atto 2</div>
+          <h2 class="section-title">Il Denaro</h2>
+          <div class="section-subtitle">La pista più visibile non è sempre quella più importante.</div>
+        </div>
+
+        <div class="archivista-card anim-in">
+          <div class="archivista-label">Messaggio dell'Archivista</div>
+          <div class="archivista-body">
+            <p>L'Atto 1 ha dimostrato che la scena non regge.</p>
+            <p>Ora il fascicolo cambia direzione.</p>
+            <p>Non cerchi più soltanto chi avrebbe potuto entrare nello studio. Cerchi chi avrebbe tratto vantaggio dalla morte di Andrea Marini.</p>
+            <p>Segua il denaro. Ma non confonda il denaro più visibile con quello più importante.</p>
+            <p>Il fascicolo economico è stato integrato con nuova documentazione. Alcune piste portano lontano. Altre riportano vicino.</p>
+          </div>
+          <div class="archivista-sig">— L'Archivista · Archivio 17</div>
+        </div>
+
+        <div class="archivista-objective">
+          <div class="archivista-objective-label">Obiettivo — Atto 2</div>
+          <p>Esaminare il fascicolo economico. Identificare il movente più forte, la cifra ricorrente e l'elemento dichiarativo incongruente. Registrare l'ipotesi nel Terminale 02.</p>
+        </div>
+
+        <div style="margin-top:2rem">
+          <button class="btn-primary" onclick="showSection('fascicolo')">Apri fascicolo A17-002 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASCICOLO -->
+    <div class="app-section" id="section-fascicolo">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Fascicolo A17-002</div>
+          <h2 class="section-title">Fascicolo A17-002</h2>
+          <div class="section-subtitle">Atto 2 — Il denaro</div>
+          <p class="section-desc">Documenti acquisiti nella fase di indagine economica. Esamina ogni reperto con attenzione. Le risposte si trovano nei dettagli.</p>
+        </div>
+
+        <div class="docs-meta">
+          <span class="docs-meta-label">Reperti acquisiti</span>
+          <span class="docs-counter" id="docs-counter">0 / 12 esaminati</span>
+        </div>
+
+        <div class="docs-grid" id="docs-grid">
+          <!-- Popolato da JS -->
+        </div>
+
+        <div style="margin-top:2rem; display:flex; gap:.75rem; flex-wrap:wrap;">
+          <button class="btn-secondary" onclick="showSection('supporto')">Supporto Archivista</button>
+          <button class="btn-primary" id="btn-open-terminal" onclick="tryOpenTerminal()" disabled>Terminale 02 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPORTO -->
+    <div class="app-section" id="section-supporto">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Sistema di supporto — Atto 2</div>
+          <h2 class="section-title">Supporto Archivista</h2>
+          <div class="section-subtitle">Consulta con prudenza</div>
+        </div>
+
+        <div class="supporto-warning">
+          Ogni livello di supporto consultato riduce l'indice investigativo.<br>
+          L1 → −2 pt · L2 → −5 pt · L3 → −8 pt (cumulativi per puzzle)
+        </div>
+
+        <div id="puzzles-container">
+          <!-- Popolato da JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINALE -->
+    <div class="app-section" id="section-terminale">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Analisi conclusiva — Atto 2</div>
+          <h2 class="section-title">Terminale 02</h2>
+          <div class="section-subtitle">Registrazione movente</div>
+          <p class="section-desc">Registra le conclusioni dell'indagine economica. Ogni campo richiede una risposta precisa basata sui reperti esaminati. Le risposte errate riducono l'indice investigativo di 10 punti.</p>
+        </div>
+
+        <div class="terminal-frame">
+          <div class="terminal-topbar">
+            <div class="terminal-pulse"></div>
+            <div class="terminal-sys-label">A17 — Terminale 02 — Caso Marini — Atto 2</div>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-boot">
+              ARCHIVIO 17 / TERM-02 v1.0 — ROMA<br>
+              CONNESSIONE STABILE · FASC. 001 · ATTO 2<br>
+              ────────────────────────────────────<br>
+              &gt; ANALISI DEL MOVENTE ECONOMICO<br>
+              &gt; COMPILARE I CAMPI E INVIARE PER VALIDAZIONE<br>
+              ────────────────────────────────────
+            </div>
+
+            <div class="terminal-field" id="tfield-1">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.01 — Movente apparente più forte</div>
+                <div class="terminal-field-state pending" id="tstate-1">In attesa</div>
+              </div>
+              <div class="terminal-q">Chi o cosa rappresenta il movente economico più evidente nel fascicolo?</div>
+              <input type="text" class="terminal-input" id="tinput-1" placeholder="Inserisci la tua risposta..." autocomplete="off" spellcheck="false">
+              <div class="terminal-feedback" id="tfb-1"></div>
+            </div>
+
+            <div class="terminal-field" id="tfield-2">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02 — Importo ricorrente</div>
+                <div class="terminal-field-state pending" id="tstate-2">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale cifra compare in più documenti del fascicolo economico?</div>
+              <input type="text" class="terminal-input" id="tinput-2" placeholder="Inserisci la tua risposta..." autocomplete="off" spellcheck="false">
+              <div class="terminal-feedback" id="tfb-2"></div>
+            </div>
+
+            <div class="terminal-field" id="tfield-3">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.03 — Elemento non allineato</div>
+                <div class="terminal-field-state pending" id="tstate-3">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale persona o iniziale nella timeline risulta incoerente con le dichiarazioni?</div>
+              <input type="text" class="terminal-input" id="tinput-3" placeholder="Inserisci la tua risposta..." autocomplete="off" spellcheck="false">
+              <div class="terminal-feedback" id="tfb-3"></div>
+            </div>
+
+            <div class="terminal-field" id="tfield-4">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.04 — Sintesi investigativa</div>
+                <div class="terminal-field-state pending" id="tstate-4">In attesa</div>
+              </div>
+              <div class="terminal-q">Redigi la tua ipotesi investigativa. Collega almeno due elementi del fascicolo economico.</div>
+              <textarea class="terminal-textarea" id="tinput-4" placeholder="La tua ipotesi investigativa..."></textarea>
+              <div class="terminal-feedback" id="tfb-4"></div>
+            </div>
+
+            <div class="terminal-confirmed" id="terminal-confirmed">
+              <div class="terminal-confirmed-label">Analisi registrata — Terminale 02</div>
+              <div class="terminal-confirmed-msg">L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.</div>
+            </div>
+
+            <button class="terminal-submit" id="terminal-submit" onclick="submitTerminal()">
+              Invia analisi al Terminale 02
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESITO -->
+    <div class="app-section" id="section-esito">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Risultato — Atto 2</div>
+          <h2 class="section-title">Esito Finale</h2>
+        </div>
+
+        <div class="score-card anim-in">
+          <div class="score-card-header">Valutazione performance — Atto 2</div>
+          <div style="display:flex;align-items:baseline;gap:.5rem;margin-bottom:.25rem">
+            <div class="score-number" id="esito-score">100<span>/100</span></div>
+          </div>
+          <div class="score-classification" id="esito-classification">—</div>
+
+          <div class="score-breakdown">
+            <div class="score-row">
+              <span class="lbl">Punteggio base</span>
+              <span class="val">100</span>
+            </div>
+            <div class="score-row">
+              <span class="lbl">Penalità supporto Archivista</span>
+              <span class="val" id="esito-hint-cost">−0</span>
+            </div>
+            <div class="score-row">
+              <span class="lbl">Penalità errori Terminale</span>
+              <span class="val" id="esito-err-cost">−0</span>
+            </div>
+            <div class="score-row total">
+              <span class="lbl">Indice investigativo finale</span>
+              <span class="val" id="esito-total">100</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="esito-hook" id="esito-hook">
+          —
+        </div>
+
+        <div class="divider"></div>
+
+        <div style="margin-top:1.5rem;">
+          <div class="esito-stamp" id="esito-stamp">ANALISI COMPLETATA</div>
+        </div>
+
+        <div style="margin-top:2rem; display:flex; gap:.75rem; flex-wrap:wrap;">
+          <button class="btn-ghost" onclick="showResetConfirm()">Azzera e ricomincia</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- INVESTIGATION PANEL -->
+  <aside class="investigation-panel" id="investigation-panel">
+    <div class="inv-panel-header">
+      <div class="inv-panel-title">Stato fascicolo</div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-label">Scheda caso</div>
+      <div class="inv-case-status">Indagine economica in corso</div>
+      <div style="margin-top:.65rem">
+        <div class="inv-status-row">
+          <span class="inv-status-label">Caso</span>
+          <span class="inv-status-val">A17-001</span>
+        </div>
+        <div class="inv-status-row">
+          <span class="inv-status-label">Fase</span>
+          <span class="inv-status-val active">Analisi movente</span>
+        </div>
+        <div class="inv-status-row">
+          <span class="inv-status-label">Stato</span>
+          <span class="inv-status-val active">Aperto</span>
+        </div>
+        <div class="inv-status-row">
+          <span class="inv-status-label">Atto</span>
+          <span class="inv-status-val">2 — Il denaro</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-label">Indice investigativo</div>
+      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
+        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="inv-score-big">100</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
+      </div>
+      <div class="inv-indice-bar">
+        <div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">Archivista in formazione</div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-label">Reperti esaminati</div>
+      <div class="inv-docs-list" id="inv-docs-list">
+        <!-- popolato da JS -->
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-label">Dati sessione</div>
+      <div class="inv-status-row">
+        <span class="inv-status-label">Supporti richiesti</span>
+        <span class="inv-status-val" id="inv-hints-used">0 livelli</span>
+      </div>
+      <div class="inv-status-row">
+        <span class="inv-status-label">Errori Terminale</span>
+        <span class="inv-status-val" id="inv-errors">0</span>
+      </div>
+      <div class="inv-status-row">
+        <span class="inv-status-label">Terminale 02</span>
+        <span class="inv-status-val" id="inv-terminal-status">In attesa</span>
+      </div>
+    </div>
+
+    <div class="inv-section">
+      <div class="inv-label">Timeline — Atto 2</div>
+      <div>
+        <div class="inv-tl-item"><div class="inv-tl-date">10/11</div><div class="inv-tl-event">Pressione su pratica Manfredi</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">12/11</div><div class="inv-tl-event">Telefonata Andrea–Manfredi</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">13/11</div><div class="inv-tl-event">Chiamata a Stefano</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">14/11</div><div class="inv-tl-event">Appuntamento banca</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">14/11</div><div class="inv-tl-event">«Cena con S.» — non verificata</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">15/11</div><div class="inv-tl-event">Documenti bancari in sospeso</div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- MOBILE INVESTIGATION DRAWER -->
+<button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
+<div class="mobile-inv-drawer" id="mobile-inv-drawer" onclick="closeMobileDrawer(event)">
+  <div class="mobile-inv-panel">
+    <div class="mobile-inv-close">
+      <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
+    </div>
+    <!-- contenuto identico al pannello destro, popolato da JS -->
+    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
+    <div class="inv-section">
+      <div class="inv-label">Scheda caso</div>
+      <div class="inv-case-status">Indagine economica in corso</div>
+      <div style="margin-top:.65rem">
+        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active">Analisi movente</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">2 — Il denaro</span></div>
+      </div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Indice investigativo</div>
+      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
+        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="m-inv-score-big">100</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
+      </div>
+      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="m-inv-score-bar" style="width:100%"></div></div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="m-inv-class-label">Archivista in formazione</div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Reperti esaminati</div>
+      <div id="m-inv-docs-list"></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Dati sessione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="m-inv-hints-used">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Errori Terminale</span><span class="inv-status-val" id="m-inv-errors">0</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 02</span><span class="inv-status-val" id="m-inv-terminal-status">In attesa</span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Timeline — Atto 2</div>
+      <div>
+        <div class="inv-tl-item"><div class="inv-tl-date">10/11</div><div class="inv-tl-event">Pressione su pratica Manfredi</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">12/11</div><div class="inv-tl-event">Telefonata Andrea–Manfredi</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">13/11</div><div class="inv-tl-event">Chiamata a Stefano</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">14/11</div><div class="inv-tl-event">Appuntamento banca</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">14/11</div><div class="inv-tl-event">«Cena con S.» — non verificata</div></div>
+        <div class="inv-tl-item"><div class="inv-tl-date">15/11</div><div class="inv-tl-event">Documenti bancari in sospeso</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOCUMENT VIEWER MODAL -->
+<div class="modal-overlay" id="doc-modal">
+  <div class="viewer-card">
+    <div class="viewer-header">
+      <span class="viewer-header-id" id="v-id">—</span>
+      <span class="viewer-header-cat" id="v-cat">—</span>
+      <span class="viewer-header-class">RISERVATO</span>
+      <span class="viewer-header-spacer"></span>
+      <span id="v-consulted" style="font-size:9px;letter-spacing:.18em;color:var(--text-dim)"></span>
+      <button class="viewer-close" onclick="closeViewer()">×</button>
+    </div>
+    <div class="viewer-body">
+      <h2 class="viewer-title" id="v-title">—</h2>
+      <div id="v-img-container"></div>
+      <div class="viewer-section">
+        <h4>Trascrizione leggibile</h4>
+        <div class="viewer-transcript" id="v-transcript">—</div>
+      </div>
+      <div class="viewer-section" id="v-note-section">
+        <h4>Note del fascicolo</h4>
+        <div class="viewer-note" id="v-note">—</div>
+      </div>
+    </div>
+    <div class="viewer-actions">
+      <button class="btn-primary" onclick="closeViewer()">✓ Esamina reperto</button>
+      <button class="btn-ghost" onclick="closeViewer()">Torna al fascicolo</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESET CONFIRM -->
+<div class="reset-overlay" id="reset-overlay">
+  <div class="reset-card">
+    <h3 class="reset-title">Azzera sessione?</h3>
+    <p class="reset-body">Tutti i progressi dell'Atto 2 verranno cancellati. L'indice investigativo verrà azzerato.</p>
+    <div class="reset-actions">
+      <button class="btn-primary" onclick="confirmReset()">Conferma</button>
+      <button class="btn-secondary" onclick="document.getElementById('reset-overlay').classList.remove('open')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+//  ARCHIVIO 17 — ATTO 2 — GAME ENGINE
+// ============================================================
+
+const LS_KEY = 'a17_atto2_v1';
+const HINT_COSTS = { 1: 2, 2: 5, 3: 8 };
+
+// ===== REPERTI =====
+const DOCUMENTS = [
+  {
+    id: 'B01', cat: 'Comunicazione Archivista', title: 'Apertura Atto 2',
+    desc: 'Autorizzazione all\'analisi economica del fascicolo.',
+    imageUrl: null,
+    transcript: `L'Atto 1 ha dimostrato che la scena non regge.
+
+Ora il fascicolo cambia direzione.
+
+Non cerchi più soltanto chi avrebbe potuto entrare nello studio. Cerchi chi avrebbe tratto vantaggio dalla morte di Andrea Marini.
+
+Segua il denaro. Ma non confonda il denaro più visibile con quello più importante.
+
+— L'Archivista`,
+    note: 'Reperto di apertura narrativa. Non costituisce indizio probatorio.'
+  },
+  {
+    id: 'B02', cat: 'Documento contabile', title: 'Cartella Manfredi · Irregolarità',
+    desc: 'Estratto da una cartella professionale relativa al cliente Roberto Manfredi.',
+    imageUrl: null,
+    transcript: `Cartella cliente: Roberto Manfredi / Gruppo Manfredi S.r.l.
+Oggetto: verifica interna movimenti contabili anomali.
+Periodo esaminato: settembre–novembre 2024.
+
+Note studio:
+— movimenti ricorrenti non giustificati;
+— fatture con causali generiche;
+— flussi di cassa incompatibili con i contratti dichiarati;
+— richiesta di revisione urgente da parte di Andrea Marini;
+— possibile esposizione penale in caso di trasmissione atti a consulente esterno.`,
+    note: '« Se questa pratica esce dallo studio, Manfredi non la prenderà bene. »'
+  },
+  {
+    id: 'B03', cat: 'Contratto', title: 'Contratto Studio – Manfredi',
+    desc: 'Accordo professionale tra Studio Marini e società riconducibile a Manfredi.',
+    imageUrl: null,
+    transcript: `Contratto di consulenza continuativa tra Studio Marini & Associati e Gruppo Manfredi S.r.l.
+
+Importo mensile: € 12.500
+
+Clausole accessorie:
+— consulenza fiscale straordinaria;
+— revisione contabile;
+— ottimizzazione flussi operativi;
+— gestione documentazione integrativa.`,
+    note: '« Compensi fuori scala rispetto alle prestazioni dichiarate. »'
+  },
+  {
+    id: 'B04', cat: 'Audio · Trascrizione', title: 'Telefonata Andrea – Manfredi',
+    desc: 'Trascrizione parziale di una telefonata registrata due giorni prima del decesso.',
+    imageUrl: null,
+    transcript: `Data: 12/11/2024
+Partecipanti: Andrea Marini / Roberto Manfredi
+
+ANDREA:
+« Non posso più coprire questa cosa. Mi hai chiesto di chiudere gli occhi, ma ora stanno controllando. »
+
+MANFREDI:
+« Tu hai firmato carte, Andrea. Non fare finta di essere fuori. »
+
+ANDREA:
+« Io sto parlando con un legale. »
+
+MANFREDI:
+« Parla con chi vuoi. Ma sai cosa succede se questa storia esce. »
+
+ANDREA:
+« È una minaccia? »
+
+MANFREDI:
+« È un promemoria. »`,
+    note: 'L\'audio completo risulta degradato. La trascrizione è stata prodotta da analisi interna dell\'Archivio.'
+  },
+  {
+    id: 'B05', cat: 'Tabulati', title: 'Tabulati telefonici Andrea',
+    desc: 'Estratto chiamate degli ultimi giorni prima della morte.',
+    imageUrl: null,
+    transcript: `10/11 — 18:12 — Roberto Manfredi — 07:42
+11/11 — 09:33 — Studio Legale Rinaldi — 02:16
+12/11 — 20:41 — Roberto Manfredi — 04:58
+13/11 — 11:05 — Stefano Marini — 01:12
+14/11 — 18:06 — Davide Serra — 00:43
+14/11 — 18:51 — Numero non salvato — 00:21
+14/11 — 19:04 — Stefano Marini — chiamata non risposta`,
+    note: 'Nessuna chiamata registrata dopo le 19:04.'
+  },
+  {
+    id: 'B06', cat: 'Documento bancario', title: 'Estratto conto Andrea',
+    desc: 'Movimenti selezionati del conto personale di Andrea Marini.',
+    imageUrl: null,
+    transcript: `Estratto conto sintetico · ottobre–novembre 2024
+
+Movimenti rilevanti:
+03/10 — Premio assicurativo · Copertura debiti — € 412,00
+03/11 — Premio assicurativo · Copertura debiti — € 412,00
+06/11 — Bonifico Studio Marini — € 8.750,00
+08/11 — Pagamento consulenza esterna · Studio Legale Rinaldi — € 650,00
+13/11 — Prelievo contanti — € 1.200,00`,
+    note: 'Polizza collegata a copertura debitoria. Capitale assicurato: € 280.000.'
+  },
+  {
+    id: 'B07', cat: 'Documento bancario', title: 'Atto di fideiussione',
+    desc: 'Documento personale archiviato tra pratiche bancarie.',
+    imageUrl: null,
+    transcript: `Atto di fideiussione bancaria solidale.
+Data sottoscrizione: 18/05/2024.
+
+Soggetti garanti:
+— Andrea Marini
+— Stefano Marini
+
+Importo massimo garantito: € 280.000
+
+Finalità: copertura esposizione debitoria relativa a società riconducibile a Stefano Marini.
+
+Clausola: in caso di insolvenza del debitore principale, l'istituto potrà rivalersi integralmente sui garanti.`,
+    note: '« Da rivedere prima che sia troppo tardi. »'
+  },
+  {
+    id: 'B08', cat: 'Comunicazione bancaria', title: 'Sollecito bancario',
+    desc: 'Comunicazione collegata a una posizione debitoria familiare.',
+    imageUrl: null,
+    transcript: `Oggetto: richiesta di rientro posizione debitoria.
+Destinatario: Stefano Marini.
+Importo esposizione: € 280.000.
+Termine di regolarizzazione: 30 giorni.
+
+In assenza di rientro o piano di copertura accettato, l'istituto procederà all'attivazione delle garanzie sottoscritte.`,
+    note: 'Documento acquisito da cartella personale non classificata.'
+  },
+  {
+    id: 'B09', cat: 'Agenda', title: 'Pagina agenda · 14 novembre',
+    desc: 'Pagina integrativa recuperata dalla documentazione personale.',
+    imageUrl: null,
+    transcript: `14 novembre 2024
+
+09:30 — Banca
+12:00 — Chiamare D.
+17:45 — Rivedere pratica M.
+19:30 — Cena con S.
+
+[a margine] « Non posso più coprire questa cosa. »`,
+    note: 'Iniziali non verificate. L\'appuntamento delle 19:30 non risulta confermato in altri reperti.'
+  },
+  {
+    id: 'B10', cat: 'Verbale interrogatorio', title: 'Interrogatorio · Roberto Manfredi',
+    desc: 'Seconda dichiarazione del cliente Manfredi.',
+    imageUrl: null,
+    transcript: `Roberto Manfredi conferma di aver avuto discussioni accese con Andrea Marini nei giorni precedenti alla morte.
+
+Dichiara:
+« Andrea voleva tirarsi indietro da una situazione che aveva accettato per anni. »
+
+Alla domanda sulle minacce:
+« Ho detto che ci sarebbero state conseguenze. Economiche. Legali. Non altro. »
+
+Alla domanda sulla sera del 14 novembre:
+« Ero impegnato fuori sede per un incontro aziendale. Possono confermarlo. »`,
+    note: 'Alibi non ancora verificato in questa fase.'
+  },
+  {
+    id: 'B11', cat: 'Verbale interrogatorio', title: 'Interrogatorio · Stefano Marini',
+    desc: 'Seconda dichiarazione del fratello della vittima.',
+    imageUrl: null,
+    transcript: `Stefano Marini dichiara di non aver incontrato Andrea la sera del 14 novembre.
+
+Dichiara:
+« L\'ho sentito nei giorni precedenti, ma non quella sera. Eravamo entrambi sotto pressione. »
+
+Alla domanda sui rapporti economici:
+« C\'erano alcune questioni, ma niente che riguardasse la sua morte. »
+
+Alla domanda sulla fideiussione:
+« Era una garanzia temporanea. Andrea voleva aiutarmi, tutto qui. »
+
+Alla domanda sull\'appuntamento "Cena con S.":
+« Non so a chi si riferisse. »`,
+    note: 'Dichiarazione registrata. Coerenza interna da verificare.'
+  },
+  {
+    id: 'B12', cat: 'Nota interna', title: 'Nota Archivista · Confronto',
+    desc: 'Nota dell\'Archivio sulla ricorrenza di alcune cifre e iniziali.',
+    imageUrl: null,
+    transcript: `Il fascicolo presenta due linee di lettura.
+
+Linea evidente:
+Manfredi · frode · minaccia · rischio professionale.
+
+Linea secondaria:
+importi ricorrenti · coperture debitorie · garanzie familiari · iniziali non verificate.
+
+Indicazione:
+non formulare una conclusione prima di aver confrontato importi, date e dichiarazioni.`,
+    note: '— L\'Archivista'
+  }
+];
+
+// ===== PUZZLES =====
+const PUZZLES = [
+  {
+    id: 'P05', title: 'Il movente apparente',
+    scope: 'Capire perché Manfredi sembra il sospetto più forte.',
+    hints: [
+      { lvl: 1, cost: 2, txt: 'Non partire dal corpo. Parti dalla persona che Andrea stava per esporre.' },
+      { lvl: 2, cost: 5, txt: 'Confronta la cartella Manfredi (B02) con la trascrizione della telefonata (B04).' },
+      { lvl: 3, cost: 8, txt: 'Manfredi aveva movente, pressione diretta e una minaccia registrata. Ma questo non basta a chiudere il caso.' }
+    ]
+  },
+  {
+    id: 'P06', title: 'Il numero che ritorna',
+    scope: 'Notare che € 280.000 compare in più documenti.',
+    hints: [
+      { lvl: 1, cost: 2, txt: 'Alcuni numeri non sono casuali.' },
+      { lvl: 2, cost: 5, txt: 'Confronta l\'estratto conto (B06) con i documenti bancari personali (B07, B08).' },
+      { lvl: 3, cost: 8, txt: 'La cifra € 280.000 compare sia nella copertura debiti sia nella fideiussione Andrea–Stefano.' }
+    ]
+  },
+  {
+    id: 'P07', title: 'La dichiarazione fragile',
+    scope: 'Notare la contraddizione tra «Cena con S.» e Stefano che nega l\'incontro.',
+    hints: [
+      { lvl: 1, cost: 2, txt: 'Le iniziali non sono nomi, ma possono diventarlo.' },
+      { lvl: 2, cost: 5, txt: 'Confronta l\'agenda (B09) con l\'interrogatorio di Stefano (B11).' },
+      { lvl: 3, cost: 8, txt: 'Stefano nega l\'incontro, ma l\'agenda indica «Cena con S.» per la sera del 14 novembre.' }
+    ]
+  },
+  {
+    id: 'P08', title: 'Ipotesi incompleta',
+    scope: 'Capire che Manfredi è una pista forte, ma non conclusiva.',
+    hints: [
+      { lvl: 1, cost: 2, txt: 'Una pista evidente può essere vera e incompleta allo stesso tempo.' },
+      { lvl: 2, cost: 5, txt: 'Chiediti quale documento non riguarda Manfredi, ma compare comunque nel fascicolo economico.' },
+      { lvl: 3, cost: 8, txt: 'La pista Manfredi spiega la minaccia. La cifra € 280.000 e Stefano spiegano qualcosa di diverso.' }
+    ]
+  }
+];
+
+// ===== VALIDATORI TERMINALE =====
+const VALID_F1 = ['MANFREDI','FRODE','RICICLAGGIO','MINACCIA','IRREGOLARITA','IRREGOLARITÀ','DENARO','PRATICA M','GRUPPO MANFREDI'];
+const VALID_F2_RAW = ['280000','280.000','€280000','€ 280.000','DUECENTOTTANTAMILA'];
+const VALID_F3 = ['S','STEFANO','STEFANO MARINI','S.'];
+const SYNTH_KW = ['MANFREDI','FRODE','MINACCIA','280','FIDEIUSS','POLIZZA','COPERTURA','STEFANO','AGENDA','ECONOMIC','TELEFON','DICHIARAZ','IRREGOLAR','MOVENTE','GARANZIA','DEBITORIA'];
+
+// ===== STATE =====
+const defaultState = () => ({
+  score: 100,
+  hintLevelsUsed: 0,
+  hintPenaltyTotal: 0,
+  errorsTerminal: 0,
+  documentsOpened: [],
+  terminalCompleted: false,
+  finalUnlocked: false,
+  hintsRevealed: {},
+  hintPuzzleCost: { P05: 0, P06: 0, P07: 0, P08: 0 },
+  currentSection: 'intro',
+  terminalCorrect: { 1: false, 2: false, 3: false, 4: false },
+  puzzleOpen: {}
+});
+
+let state = defaultState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) state = Object.assign(defaultState(), JSON.parse(raw));
+  } catch(e) {}
+}
+
+function saveState() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+// ===== INIT =====
+function init() {
+  loadState();
+  renderDocsGrid();
+  renderPuzzles();
+  renderInvPanel();
+  showSection(state.currentSection, true);
+  updateUI();
+  if (state.terminalCompleted) {
+    document.getElementById('terminal-submit').disabled = true;
+    document.getElementById('terminal-confirmed').classList.add('show');
+  }
+}
+
+// ===== SEZIONI =====
+function showSection(id, silent) {
+  // chiudi sempre il drawer mobile
+  document.getElementById('mobile-inv-drawer').classList.remove('open');
+
+  if (!silent) {
+    if (id === 'terminale' && !state.terminalCompleted && state.documentsOpened.length < 6) {
+      showToast('Esamina almeno 6 reperti prima di accedere al Terminale 02');
+      return;
+    }
+    if (id === 'esito' && !state.finalUnlocked) {
+      showToast('Completa il Terminale 02 per accedere all\'esito');
+      return;
+    }
+  }
+
+  document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
+  const sec = document.getElementById('section-' + id);
+  if (sec) sec.classList.add('active');
+
+  // nav desktop
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const ni = document.getElementById('nav-' + id);
+  if (ni) ni.classList.add('active');
+
+  // nav mobile
+  document.querySelectorAll('.mnav-item').forEach(n => n.classList.remove('active'));
+  const mi = document.getElementById('mnav-' + id);
+  if (mi) mi.classList.add('active');
+
+  state.currentSection = id;
+  saveState();
+}
+
+// ===== DOCS GRID =====
+function renderDocsGrid() {
+  const grid = document.getElementById('docs-grid');
+  grid.innerHTML = '';
+  DOCUMENTS.forEach(doc => {
+    const opened = state.documentsOpened.includes(doc.id);
+    const div = document.createElement('div');
+    div.className = 'doc-card' + (opened ? ' opened' : '');
+    div.onclick = () => openDoc(doc.id);
+
+    const imgHtml = doc.imageUrl
+      ? `<img class="doc-thumbnail" src="${doc.imageUrl}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="doc-placeholder" style="display:none">DOCUMENTO<br>IN TRASCRIZIONE<br>CONTROLLATA<br>· ${doc.id} ·</div>`
+      : `<div class="doc-placeholder">DOCUMENTO<br>IN TRASCRIZIONE<br>CONTROLLATA<br>· ${doc.id} ·</div>`;
+
+    div.innerHTML = `
+      ${imgHtml}
+      <div class="doc-card-id">${doc.id}</div>
+      <div class="doc-card-title">${doc.title}</div>
+      <div class="doc-card-cat">${doc.cat}</div>
+      ${opened ? '<div class="doc-card-opened-badge">✓</div>' : ''}
+    `;
+    grid.appendChild(div);
+  });
+
+  const count = state.documentsOpened.length;
+  document.getElementById('docs-counter').textContent = `${count} / 12 esaminati`;
+
+  // abilita terminale dopo 6 reperti
+  const btnTerm = document.getElementById('btn-open-terminal');
+  if (btnTerm) {
+    btnTerm.disabled = count < 6;
+  }
+  // unlock nav terminale
+  ['nav-terminale','mnav-terminale'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      if (count >= 6) el.classList.remove('locked');
+      else el.classList.add('locked');
+    }
+  });
+}
+
+// ===== OPEN DOC =====
+function openDoc(id) {
+  const doc = DOCUMENTS.find(d => d.id === id);
+  if (!doc) return;
+
+  if (!state.documentsOpened.includes(id)) {
+    state.documentsOpened.push(id);
+    saveState();
+    renderDocsGrid();
+    renderInvPanel();
+  }
+
+  // popola viewer
+  document.getElementById('v-id').textContent = doc.id;
+  document.getElementById('v-cat').textContent = doc.cat;
+  document.getElementById('v-title').textContent = doc.title;
+  document.getElementById('v-transcript').textContent = doc.transcript;
+
+  // immagine
+  const imgContainer = document.getElementById('v-img-container');
+  if (doc.imageUrl) {
+    imgContainer.innerHTML = `<img class="viewer-img" src="${doc.imageUrl}" alt="" onerror="this.outerHTML='<div class=viewer-img-placeholder>IMMAGINE NON ANCORA ACQUISITA<br>Trascrizione disponibile sotto.</div>'">`;
+  } else {
+    imgContainer.innerHTML = `<div class="viewer-img-placeholder">DOCUMENTO IN TRASCRIZIONE CONTROLLATA<br>· ${doc.id} ·</div>`;
+  }
+
+  // note
+  if (doc.note) {
+    document.getElementById('v-note').textContent = doc.note;
+    document.getElementById('v-note-section').style.display = '';
+  } else {
+    document.getElementById('v-note-section').style.display = 'none';
+  }
+
+  document.getElementById('v-consulted').textContent = state.documentsOpened.includes(id) ? '✓ CONSULTATO' : '';
+  document.getElementById('v-consulted').style.color = 'var(--amber)';
+
+  document.getElementById('doc-modal').classList.add('open');
+}
+
+function closeViewer() {
+  document.getElementById('doc-modal').classList.remove('open');
+}
+
+// ===== PUZZLES =====
+function renderPuzzles() {
+  const container = document.getElementById('puzzles-container');
+  container.innerHTML = '';
+  PUZZLES.forEach(puzzle => {
+    const revealed = state.hintsRevealed[puzzle.id] || 0;
+    const isOpen = state.puzzleOpen[puzzle.id];
+
+    const card = document.createElement('div');
+    card.className = 'puzzle-card';
+    card.id = 'puzzle-card-' + puzzle.id;
+
+    let hintsHtml = '';
+    puzzle.hints.forEach(h => {
+      const isRevealed = revealed >= h.lvl;
+      const prevRevealed = h.lvl === 1 ? true : (revealed >= h.lvl - 1);
+      hintsHtml += `
+        <div class="hint-btn ${isRevealed ? 'revealed' : ''}" onclick="useHint('${puzzle.id}', ${h.lvl})" id="hint-${puzzle.id}-${h.lvl}">
+          <span class="hint-cost ${isRevealed ? 'paid' : ''}">−${h.cost} pt</span>
+          <span class="hint-text ${isRevealed ? 'visible' : ''}">${isRevealed ? h.txt : 'Supporto Livello ' + h.lvl + ' — clicca per rivelare'}</span>
+        </div>
+      `;
+    });
+
+    card.innerHTML = `
+      <div class="puzzle-header" onclick="togglePuzzle('${puzzle.id}')">
+        <div>
+          <div class="puzzle-id">${puzzle.id}</div>
+          <div class="puzzle-title">${puzzle.title}</div>
+          <div class="puzzle-scope">${puzzle.scope}</div>
+        </div>
+        <div class="puzzle-toggle">${isOpen ? '▲' : '▼'}</div>
+      </div>
+      <div class="puzzle-hints ${isOpen ? 'open' : ''}" id="puzzle-hints-${puzzle.id}">
+        ${hintsHtml}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function togglePuzzle(pid) {
+  state.puzzleOpen[pid] = !state.puzzleOpen[pid];
+  saveState();
+  renderPuzzles();
+}
+
+function useHint(pid, lvl) {
+  const current = state.hintsRevealed[pid] || 0;
+  if (lvl <= current) return; // già rivelato
+
+  const puzzle = PUZZLES.find(p => p.id === pid);
+  if (!puzzle) return;
+
+  // calcola costo cumulativo
+  let cost = 0;
+  for (let l = current + 1; l <= lvl; l++) {
+    const h = puzzle.hints.find(x => x.lvl === l);
+    if (h) cost += h.cost;
+  }
+
+  state.hintsRevealed[pid] = lvl;
+  state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid] || 0) + cost;
+  state.hintPenaltyTotal += cost;
+  state.hintLevelsUsed += (lvl - current);
+  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+
+  saveState();
+  renderPuzzles();
+  updateUI();
+}
+
+// ===== TERMINALE =====
+function tryOpenTerminal() {
+  if (state.documentsOpened.length < 6) {
+    showToast('Esamina almeno 6 reperti prima di accedere al Terminale 02');
+    return;
+  }
+  showSection('terminale');
+}
+
+function submitTerminal() {
+  if (state.terminalCompleted) return;
+
+  const v1 = (document.getElementById('tinput-1').value || '').trim().toUpperCase();
+  const v2 = (document.getElementById('tinput-2').value || '').replace(/[\s.€,]/g,'').toUpperCase();
+  const v3 = (document.getElementById('tinput-3').value || '').trim().toUpperCase();
+  const v4 = (document.getElementById('tinput-4').value || '').toUpperCase();
+
+  const ok1 = VALID_F1.some(k => v1.includes(k));
+  const ok2 = VALID_F2_RAW.includes(v2) || v2.includes('280000') || v2.includes('280.000');
+  const ok3 = VALID_F3.some(k => v3 === k || v3 === k.toUpperCase());
+  const matchKw = SYNTH_KW.filter(k => v4.includes(k)).length;
+  const ok4 = matchKw >= 2;
+
+  // feedback campi
+  setFieldFeedback(1, ok1, ok1 ? 'Movente riconosciuto. Registrato.' : 'Elemento non identificato. Revisiona i reperti B02–B04.');
+  setFieldFeedback(2, ok2, ok2 ? 'Importo corrispondente. Registrato.' : 'Cifra non corretta. Cerca l\'importo ricorrente nei documenti bancari.');
+  setFieldFeedback(3, ok3, ok3 ? 'Elemento incongruente identificato. Registrato.' : 'Iniziale o nome non corretto. Confronta agenda e interrogatori.');
+  setFieldFeedback(4, ok4, ok4 ? 'Sintesi accettata. Ipotesi coerente registrata.' : 'Sintesi insufficiente. Collega almeno due elementi del fascicolo economico.');
+
+  const allOk = ok1 && ok2 && ok3 && ok4;
+
+  if (allOk) {
+    state.terminalCompleted = true;
+    state.finalUnlocked = true;
+    document.getElementById('terminal-submit').disabled = true;
+    document.getElementById('terminal-confirmed').classList.add('show');
+    ['nav-esito','mnav-esito'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('locked');
+    });
+    saveState();
+    renderInvPanel();
+    updateUI();
+    setTimeout(() => {
+      showSection('esito');
+      renderEsito();
+    }, 1800);
+  } else {
+    state.errorsTerminal++;
+    state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+    saveState();
+    updateUI();
+    showToast('Analisi incompleta — indice investigativo ridotto di 10 punti');
+  }
+}
+
+function setFieldFeedback(n, ok, msg) {
+  const fb = document.getElementById('tfb-' + n);
+  const st = document.getElementById('tstate-' + n);
+  fb.textContent = msg;
+  fb.className = 'terminal-feedback show ' + (ok ? 'ok' : 'error');
+  st.textContent = ok ? 'Validato' : 'Errore';
+  st.className = 'terminal-field-state ' + (ok ? 'ok' : 'error');
+}
+
+// ===== ESITO =====
+function renderEsito() {
+  const hintCost = state.hintPenaltyTotal;
+  const errCost = state.errorsTerminal * 10;
+  const total = Math.max(0, 100 - hintCost - errCost);
+
+  let cls = 'Osservatore esterno';
+  if (total >= 90) cls = 'Archivista in formazione';
+  else if (total >= 75) cls = 'Investigatore';
+  else if (total >= 60) cls = 'Collaboratore';
+
+  document.getElementById('esito-score').innerHTML = `${total}<span>/100</span>`;
+  document.getElementById('esito-classification').textContent = cls;
+  document.getElementById('esito-hint-cost').textContent = `−${hintCost}`;
+  document.getElementById('esito-err-cost').textContent = `−${errCost}`;
+  document.getElementById('esito-total').textContent = total;
+
+  const hookEl = document.getElementById('esito-hook');
+  const stamp = document.getElementById('esito-stamp');
+
+  if (total >= 90) {
+    hookEl.textContent = 'Hai visto quello che pochi vedono. Manfredi è reale. Ma la cifra rimanda a qualcosa di più vicino. L\'Archivio non ha ancora chiuso il caso.';
+    stamp.textContent = 'ANALISI AVANZATA';
+    stamp.style.borderColor = 'var(--amber)';
+    stamp.style.color = 'var(--amber)';
+  } else if (total >= 75) {
+    hookEl.textContent = 'La pista economica è solida. Hai individuato i nodi principali. Alcune connessioni restano in ombra — ma il quadro prende forma.';
+    stamp.textContent = 'ANALISI COMPLETATA';
+  } else if (total >= 60) {
+    hookEl.textContent = 'Il fascicolo è stato analizzato. Alcuni elementi sono stati identificati. Ci sono connessioni che potrebbero sfuggire a una prima lettura.';
+    stamp.textContent = 'ANALISI PARZIALE';
+  } else {
+    hookEl.textContent = 'Il fascicolo richiede una seconda lettura. Gli indizi economici nascondono una struttura complessa. L\'Archivio resta aperto.';
+    stamp.textContent = 'ANALISI INCOMPLETA';
+  }
+}
+
+// ===== UPDATE UI =====
+function updateUI() {
+  const score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  state.score = score;
+
+  document.getElementById('live-indice').textContent = score;
+
+  let cls = 'Osservatore esterno';
+  if (score >= 90) cls = 'Archivista in formazione';
+  else if (score >= 75) cls = 'Investigatore';
+  else if (score >= 60) cls = 'Collaboratore';
+
+  // pannello destro
+  document.getElementById('inv-score-big').textContent = score;
+  document.getElementById('inv-class-label').textContent = cls;
+  const bar = document.getElementById('inv-score-bar');
+  bar.style.width = score + '%';
+  bar.className = 'inv-indice-fill ' + (score >= 75 ? 'high' : score >= 50 ? 'mid' : 'low');
+
+  // pannello mobile
+  document.getElementById('m-inv-score-big').textContent = score;
+  document.getElementById('m-inv-class-label').textContent = cls;
+  const mbar = document.getElementById('m-inv-score-bar');
+  mbar.style.width = score + '%';
+  mbar.className = 'inv-indice-fill ' + (score >= 75 ? 'high' : score >= 50 ? 'mid' : 'low');
+
+  document.getElementById('inv-hints-used').textContent = state.hintLevelsUsed + ' livelli';
+  document.getElementById('inv-errors').textContent = state.errorsTerminal;
+  document.getElementById('inv-terminal-status').textContent = state.terminalCompleted ? 'Completato' : 'In attesa';
+
+  document.getElementById('m-inv-hints-used').textContent = state.hintLevelsUsed + ' livelli';
+  document.getElementById('m-inv-errors').textContent = state.errorsTerminal;
+  document.getElementById('m-inv-terminal-status').textContent = state.terminalCompleted ? 'Completato' : 'In attesa';
+}
+
+// ===== INV PANEL DOCS =====
+function renderInvPanel() {
+  const listDesktop = document.getElementById('inv-docs-list');
+  const listMobile = document.getElementById('m-inv-docs-list');
+
+  let html = '';
+  DOCUMENTS.forEach(doc => {
+    const opened = state.documentsOpened.includes(doc.id);
+    html += `<div class="inv-doc-item ${opened ? 'opened' : ''}">
+      <span class="inv-doc-check">${opened ? '✓' : '·'}</span>
+      <span>${doc.id} — ${doc.title}</span>
+    </div>`;
+  });
+
+  if (listDesktop) listDesktop.innerHTML = html;
+  if (listMobile) listMobile.innerHTML = html;
+}
+
+// ===== MOBILE DRAWER =====
+function toggleMobileDrawer() {
+  document.getElementById('mobile-inv-drawer').classList.toggle('open');
+}
+function closeMobileDrawer(e) {
+  if (e.target === document.getElementById('mobile-inv-drawer')) {
+    document.getElementById('mobile-inv-drawer').classList.remove('open');
+  }
+}
+
+// ===== RESET =====
+function showResetConfirm() {
+  document.getElementById('reset-overlay').classList.add('open');
+}
+function confirmReset() {
+  localStorage.removeItem(LS_KEY);
+  state = defaultState();
+  saveState();
+  document.getElementById('reset-overlay').classList.remove('open');
+  // ripulisci campi terminale
+  [1,2,3,4].forEach(n => {
+    const inp = document.getElementById('tinput-' + n);
+    if (inp) inp.value = '';
+    setFieldFeedbackClear(n);
+  });
+  document.getElementById('terminal-confirmed').classList.remove('show');
+  document.getElementById('terminal-submit').disabled = false;
+  renderDocsGrid();
+  renderPuzzles();
+  renderInvPanel();
+  updateUI();
+  showSection('intro', true);
+  showToast('Sessione azzerata');
+}
+
+function setFieldFeedbackClear(n) {
+  const fb = document.getElementById('tfb-' + n);
+  const st = document.getElementById('tstate-' + n);
+  if (fb) { fb.textContent = ''; fb.className = 'terminal-feedback'; }
+  if (st) { st.textContent = 'In attesa'; st.className = 'terminal-field-state pending'; }
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== CHIUDI MODAL CON OVERLAY =====
+document.getElementById('doc-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeViewer();
+});
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeViewer();
+    document.getElementById('mobile-inv-drawer').classList.remove('open');
+  }
+});
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>
