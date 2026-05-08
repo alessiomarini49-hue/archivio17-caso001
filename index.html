@@ -2609,23 +2609,30 @@ init();
         classification: classification
       };
 
+      // Costruisci messaggio Telegram
+        var tgScore = payload.final_score || 0;
+        var tgDot = tgScore >= 90 ? '🟢' : tgScore >= 75 ? '🟡' : tgScore >= 60 ? '🟠' : '🔴';
+        var tgPaga = payload.would_pay ? 'Sì - ' + (payload.pay_amount || '?') + ' EUR' : 'No';
+        var tgMsg = tgDot + ' ARCHIVIO 17 — Nuovo Feedback\n\n'
+          + 'Punteggio: ' + tgScore + '/100 — ' + (payload.classification || '?') + '\n'
+          + 'Tempo: ' + (payload.time_spent_minutes || '?') + ' min\n'
+          + 'Hint usati: ' + (payload.hints_used_count || 0) + '\n'
+          + 'Investigatore: ' + (payload.felt_investigator_score || '?') + '/10\n'
+          + 'Atto 2: ' + (payload.want_act2_score || '?') + '/10\n'
+          + 'Pagherebbe: ' + tgPaga + '\n'
+          + (payload.blocked_where ? 'Bloccato: ' + payload.blocked_where + '\n' : '')
+          + (payload.additional_notes ? 'Note: ' + payload.additional_notes : '');
+
       try {
-        var resp = await fetch('https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions/saveFeedback', {
+        await fetch('https://api.telegram.org/bot8271624738:AAH6bVoS73Cm7pJLix3-DygcW7FetgyH3Jw/sendMessage', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ chat_id: '5048450692', text: tgMsg })
         });
-        if (resp.ok) {
-          document.getElementById('fb-form-inner').style.display = 'none';
-          document.getElementById('fb-thanks').classList.remove('hidden');
-        } else {
-          throw new Error('Errore ' + resp.status);
-        }
-      } catch(err) {
-        btn.textContent = '▶ INVIA RAPPORTO';
-        btn.disabled = false;
-        alert('Errore invio. Riprova tra un momento.');
-      }
+      } catch(tgErr) { console.log('Telegram error:', tgErr); }
+
+      document.getElementById('fb-form-inner').style.display = 'none';
+      document.getElementById('fb-thanks').classList.remove('hidden');
     }
 
   </script>
