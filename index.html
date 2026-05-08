@@ -2577,8 +2577,10 @@ init();
       var atto2 = parseInt(document.getElementById('fb-atto2').value);
       var cifra = document.getElementById('fb-cifra').value || '';
       var note = document.getElementById('fb-note').value || '';
-      var finalScore = score;
-      var classification = getClassification(score);
+
+      // FIX: usa state.score invece di variabili inesistenti
+      var finalScore = state.score;
+      var classification = getClassification(state.score);
 
       if (!fbPayChoice) { alert('Indica se pagheresti per l\'Atto 2'); return; }
 
@@ -2587,23 +2589,23 @@ init();
       btn.disabled = true;
 
       var payload = {
-        session_id: sessionId || ('sess-' + Date.now()),
+        session_id: 'sess-' + Date.now(),
         time_spent_minutes: tempo,
         blocked_where: bloccato,
-        hints_used_count: hintsUsed || 0,
+        hints_used_count: state.hintLevelsUsed || 0,
         felt_investigator_score: inv,
         want_act2_score: atto2,
-        would_pay: fbPayChoice === 'si',
+        would_pay: fbPayChoice,
         pay_amount: cifra,
         additional_notes: note,
         final_score: finalScore,
         classification: classification
       };
 
-      // Notifica Telegram (fire-and-forget, non blocca mai)
+      // Notifica via Apps Script (token Telegram mai esposto lato client)
       var tgScore = payload.final_score || 0;
       var tgDot = tgScore >= 90 ? '[VERDE]' : tgScore >= 75 ? '[GIALLO]' : tgScore >= 60 ? '[ARANCIO]' : '[ROSSO]';
-      var tgPaga = payload.would_pay ? 'Si - ' + (payload.pay_amount || '?') + ' EUR' : 'No';
+      var tgPaga = (payload.would_pay === 'si') ? 'Si - ' + (payload.pay_amount || '?') + ' EUR' : (payload.would_pay === 'forse') ? 'Forse - ' + (payload.pay_amount || '?') + ' EUR' : 'No';
       var tgMsg = tgDot + ' ARCHIVIO 17 - Nuovo Feedback\n\n'
         + 'Punteggio: ' + tgScore + '/100 - ' + (payload.classification || '?') + '\n'
         + 'Tempo: ' + (payload.time_spent_minutes || '?') + ' min\n'
@@ -2614,15 +2616,24 @@ init();
         + (payload.blocked_where && payload.blocked_where !== 'Mai bloccato' ? 'Bloccato: ' + payload.blocked_where + '\n' : '')
         + (payload.additional_notes ? 'Note: ' + payload.additional_notes : '');
 
-      fetch('https://api.telegram.org/bot8271624738:AAH6bVoS73Cm7pJLix3-DygcW7FetgyH3Jw/sendMessage', {
+      payload._tgMsg = tgMsg;
+
+      // Invia al backend Apps Script (token Telegram rimane privato)
+      fetch('https://script.google.com/macros/s/AKfycbxvvMSCgLuDEiS-PiAQmXQqyW_6DezJ7C3HnzN1GRjWy6xyDVF3bGo3w47K_OWifkQ/exec', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: '5048450692', text: tgMsg })
-      }).catch(function(e){ console.log('TG:', e); });
+        body: JSON.stringify(payload)
+      }).catch(function(e){ console.log('FB:', e); });
 
-      // Mostra ringraziamento SEMPRE, immediatamente
-      document.getElementById('fb-form-inner').style.display = 'none';
-      document.getElementById('fb-thanks').classList.remove('hidden');
+      // FIX: marca feedback come inviato in state
+      state.feedbackSubmitted = true;
+      saveState();
+
+      // Mostra ringraziamento sempre, subito
+      var formEl = document.getElementById('fb-form-inner');
+      var thanksEl = document.getElementById('fb-thanks');
+      if (formEl) formEl.style.display = 'none';
+      if (thanksEl) thanksEl.classList.remove('hidden');
     }
 
   </script>
