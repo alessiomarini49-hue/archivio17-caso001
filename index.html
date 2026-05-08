@@ -1078,7 +1078,14 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
   filter:contrast(1.06) brightness(.88) saturate(.65) sepia(.1) !important;
 }
 
-</style>
+
+    /* ── FEEDBACK FORM INTERNO ── */
+    .fb-field { margin-bottom: 1.1rem; }
+    .fb-label { display:block; font-family:var(--font-mono); font-size:10px; letter-spacing:0.12em; color:var(--text-secondary); margin-bottom:0.4rem; text-transform:uppercase; }
+    .fb-slider-row { display:flex; align-items:center; gap:0.8rem; }
+    .fb-pay-btn.selected { background:var(--accent) !important; color:#fff !important; border-color:var(--accent) !important; }
+
+    </style>
 </head>
 <body>
 
@@ -1518,56 +1525,80 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
           <div>
             <div class="section-eyebrow" style="margin-bottom:1rem">Feedback beta</div>
             <div class="feedback-panel" id="fb-panel">
-              <p style="font-size:13px;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.7">
-                Aiutaci a migliorare il Caso 001. Il tuo contributo guida lo sviluppo dell'Archivio 17.
+              <p style="font-size:12px;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.7;font-family:var(--font-mono);letter-spacing:0.05em;">
+                RAPPORTO DI VALUTAZIONE — USO INTERNO<br>
+                Il tuo contributo guida lo sviluppo dell'Archivio 17.
               </p>
-              <div class="fb-field">
-                <label class="fb-label">Quanto tempo hai impiegato? (minuti)</label>
-                <input type="number" class="fb-input" id="fb-time" min="1" max="180" placeholder="es. 30">
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Dove ti sei bloccato, se mai?</label>
-                <textarea class="fb-textarea" id="fb-blocked" placeholder="Descrivilo brevemente..."></textarea>
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Livelli di supporto consultati (calcolati: <span id="fb-hint-auto">0</span>)</label>
-                <input type="number" class="fb-input" id="fb-hints-n" min="0" max="9" placeholder="0">
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Da 1 a 10, quanto ti sei sentito investigatore? (<span id="fb-inv-val">5</span>)</label>
-                <div class="fb-range-wrap">
-                  <span class="fb-range-end">1</span>
-                  <input type="range" id="fb-inv" min="1" max="10" value="5" oninput="document.getElementById('fb-inv-val').textContent=this.value;document.getElementById('fb-inv-badge').textContent=this.value">
-                  <span class="fb-range-end">10</span>
-                  <div class="fb-range-val" id="fb-inv-badge">5</div>
+
+              <div class="fb-form" id="fb-form-inner" style="position:relative;z-index:5;">
+
+                <div class="fb-field">
+                  <label class="fb-label">01 — TEMPO IMPIEGATO (minuti)</label>
+                  <input type="number" id="fb-tempo" min="1" max="999" placeholder="es. 25"
+                    style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-main);padding:0.6rem 0.8rem;border-radius:4px;font-family:var(--font-mono);font-size:13px;box-sizing:border-box;">
                 </div>
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Da 1 a 10, quanto vuoi continuare con l'Atto 2? (<span id="fb-act2-val">5</span>)</label>
-                <div class="fb-range-wrap">
-                  <span class="fb-range-end">1</span>
-                  <input type="range" id="fb-act2" min="1" max="10" value="5" oninput="document.getElementById('fb-act2-val').textContent=this.value;document.getElementById('fb-act2-badge').textContent=this.value">
-                  <span class="fb-range-end">10</span>
-                  <div class="fb-range-val" id="fb-act2-badge">5</div>
+
+                <div class="fb-field">
+                  <label class="fb-label">02 — DOVE SEI RIMASTO BLOCCATO?</label>
+                  <select id="fb-bloccato"
+                    style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-main);padding:0.6rem 0.8rem;border-radius:4px;font-family:var(--font-mono);font-size:13px;box-sizing:border-box;">
+                    <option value="Mai">Mai bloccato</option>
+                    <option value="Documenti">Analisi documenti</option>
+                    <option value="Terminale">Terminale di validazione</option>
+                    <option value="Entrambi">Entrambe le fasi</option>
+                  </select>
                 </div>
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Pagheresti per il caso completo?</label>
-                <div class="fb-radio-grp">
-                  <label class="fb-radio"><input type="radio" name="pay" value="si"><span>Sì</span></label>
-                  <label class="fb-radio"><input type="radio" name="pay" value="forse"><span>Forse</span></label>
-                  <label class="fb-radio"><input type="radio" name="pay" value="no"><span>No</span></label>
+
+                <div class="fb-field">
+                  <label class="fb-label">03 — TI SEI SENTITO UN INVESTIGATORE? <span style="color:var(--accent)">(1–10)</span></label>
+                  <div class="fb-slider-row">
+                    <input type="range" id="fb-investigatore" min="1" max="10" value="7"
+                      oninput="document.getElementById('fb-inv-val').textContent=this.value"
+                      style="flex:1;accent-color:var(--accent);">
+                    <span id="fb-inv-val" style="font-family:var(--font-mono);color:var(--accent);font-size:1.1rem;min-width:24px;text-align:right;">7</span>
+                  </div>
                 </div>
+
+                <div class="fb-field">
+                  <label class="fb-label">04 — VUOI CONTINUARE CON L'ATTO 2? <span style="color:var(--accent)">(1–10)</span></label>
+                  <div class="fb-slider-row">
+                    <input type="range" id="fb-atto2" min="1" max="10" value="7"
+                      oninput="document.getElementById('fb-atto2-val').textContent=this.value"
+                      style="flex:1;accent-color:var(--accent);">
+                    <span id="fb-atto2-val" style="font-family:var(--font-mono);color:var(--accent);font-size:1.1rem;min-width:24px;text-align:right;">7</span>
+                  </div>
+                </div>
+
+                <div class="fb-field">
+                  <label class="fb-label">05 — PAGHERESTI PER L'ATTO 2?</label>
+                  <div style="display:flex;gap:0.5rem;">
+                    <button onclick="selectPay(this,'si')" class="fb-pay-btn" data-val="si"
+                      style="flex:1;padding:0.5rem;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-secondary);border-radius:4px;font-family:var(--font-mono);font-size:12px;cursor:pointer;">SÌ</button>
+                    <button onclick="selectPay(this,'no')" class="fb-pay-btn" data-val="no"
+                      style="flex:1;padding:0.5rem;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-secondary);border-radius:4px;font-family:var(--font-mono);font-size:12px;cursor:pointer;">NO</button>
+                    <button onclick="selectPay(this,'forse')" class="fb-pay-btn" data-val="forse"
+                      style="flex:1;padding:0.5rem;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-secondary);border-radius:4px;font-family:var(--font-mono);font-size:12px;cursor:pointer;">FORSE</button>
+                  </div>
+                </div>
+
+                <div class="fb-field" id="fb-cifra-row" style="display:none;">
+                  <label class="fb-label">06 — QUANTO PAGHERESTI? (EUR)</label>
+                  <input type="number" id="fb-cifra" min="0" max="99" placeholder="es. 5"
+                    style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-main);padding:0.6rem 0.8rem;border-radius:4px;font-family:var(--font-mono);font-size:13px;box-sizing:border-box;">
+                </div>
+
+                <div class="fb-field">
+                  <label class="fb-label">07 — NOTE AGGIUNTIVE <span style="color:var(--text-secondary)">(opzionale)</span></label>
+                  <textarea id="fb-note" rows="3" placeholder="Impressioni, suggerimenti, anomalie riscontrate..."
+                    style="width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--border);color:var(--text-main);padding:0.6rem 0.8rem;border-radius:4px;font-family:var(--font-mono);font-size:12px;box-sizing:border-box;resize:vertical;"></textarea>
+                </div>
+
+                <button onclick="submitFeedbackInternal()" id="fb-submit-btn"
+                  style="display:block;width:100%;text-align:center;background:var(--accent);color:#fff;padding:0.9rem 2rem;border-radius:6px;font-weight:700;letter-spacing:0.12em;border:none;font-size:13px;margin-top:0.5rem;cursor:pointer;font-family:var(--font-mono);position:relative;z-index:10;">
+                  ▶ INVIA RAPPORTO
+                </button>
+
               </div>
-              <div class="fb-field">
-                <label class="fb-label">Quanto pagheresti?</label>
-                <input type="text" class="fb-input" id="fb-price" placeholder="es. 5€, 9,99€, abbonamento...">
-              </div>
-              <div class="fb-field">
-                <label class="fb-label">Note aggiuntive</label>
-                <textarea class="fb-textarea" id="fb-notes" placeholder="Qualsiasi altro commento..."></textarea>
-              </div>
-              <button class="btn-primary full" style="margin-top:.75rem" onclick="submitFeedback()">Invia feedback beta</button>
             </div>
             <div class="success-banner hidden" id="fb-thanks">✓ Feedback ricevuto. Grazie per aver testato l'Archivio 17.</div>
           </div>
@@ -1764,7 +1795,7 @@ const DOCUMENTS = [
     id: 'A01',
     title: 'Profilo Andrea Marini',
     category: 'Profilo personale',
-    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/22bae8e61_ChatGPTImage8mag202615_31_35.png',
+    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f54f592df_ChatGPTImage8mag202617_41_40.png',
     summary: 'Dati biografici, nucleo familiare, abitudini note e informazioni preliminari.',
     transcript: `Andrea Marini, 42 anni, consulente finanziario.
 
@@ -2475,28 +2506,21 @@ function closeMobileInvestigation() {
 }
 
 // --- FEEDBACK ---
-function submitFeedback() {
-  const data = {
-    time_spent_minutes: parseInt(document.getElementById('fb-time').value) || 0,
-    blocked_where: document.getElementById('fb-blocked').value,
-    hints_used_count: parseInt(document.getElementById('fb-hints-n').value) || state.hintLevelsUsed,
-    felt_investigator_score: parseInt(document.getElementById('fb-inv').value),
-    want_act2_score: parseInt(document.getElementById('fb-act2').value),
-    would_pay: (document.querySelector('input[name="pay"]:checked') || {}).value || '',
-    pay_amount: document.getElementById('fb-price').value,
-    additional_notes: document.getElementById('fb-notes').value,
-    final_score: state.score,
-    classification: getClassification(state.score),
-    session_id: 'b-' + Date.now()
-  };
-  const fbs = JSON.parse(lsGet('a17_feedbacks') || '[]');
-  fbs.push(data);
-  lsSet('a17_feedbacks', JSON.stringify(fbs));
+function feedbackOpened() {
+  // Apre il form esterno
+}
+
+function markFeedbackDone() {
   state.feedbackSubmitted = true;
   saveState();
   document.getElementById('fb-panel').classList.add('hidden');
   document.getElementById('fb-thanks').classList.remove('hidden');
-  showToast('Feedback inviato. Grazie!');
+  showToast('Grazie per aver compilato il feedback!');
+}
+
+async function submitFeedback() {
+  // Ora il feedback avviene tramite Google Form esterno
+  markFeedbackDone();
 }
 
 // --- LIGHTBOX ---
@@ -2532,6 +2556,66 @@ function showToast(msg, dur) {
 
 // --- BOOT ---
 init();
-</script>
+
+    // ── FEEDBACK INTERNO ──
+    var fbPayChoice = '';
+
+    function selectPay(btn, val) {
+      fbPayChoice = val;
+      document.querySelectorAll('.fb-pay-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('fb-cifra-row').style.display = (val === 'si' || val === 'forse') ? 'block' : 'none';
+    }
+
+    async function submitFeedbackInternal() {
+      var tempo = parseInt(document.getElementById('fb-tempo').value) || 0;
+      var bloccato = document.getElementById('fb-bloccato').value;
+      var inv = parseInt(document.getElementById('fb-investigatore').value);
+      var atto2 = parseInt(document.getElementById('fb-atto2').value);
+      var cifra = document.getElementById('fb-cifra').value || '';
+      var note = document.getElementById('fb-note').value || '';
+      var finalScore = score;
+      var classification = getClassification(score);
+
+      if (!fbPayChoice) { alert('Indica se pagheresti per l\'Atto 2'); return; }
+
+      var btn = document.getElementById('fb-submit-btn');
+      btn.textContent = 'Invio in corso...';
+      btn.disabled = true;
+
+      var payload = {
+        session_id: sessionId || ('sess-' + Date.now()),
+        time_spent_minutes: tempo,
+        blocked_where: bloccato,
+        hints_used_count: hintsUsed || 0,
+        felt_investigator_score: inv,
+        want_act2_score: atto2,
+        would_pay: fbPayChoice === 'si',
+        pay_amount: cifra,
+        additional_notes: note,
+        final_score: finalScore,
+        classification: classification
+      };
+
+      try {
+        var resp = await fetch('https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/entities/BetaFeedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (resp.ok) {
+          document.getElementById('fb-form-inner').style.display = 'none';
+          document.getElementById('fb-thanks').classList.remove('hidden');
+        } else {
+          throw new Error('Errore ' + resp.status);
+        }
+      } catch(err) {
+        btn.textContent = '▶ INVIA RAPPORTO';
+        btn.disabled = false;
+        alert('Errore invio. Riprova tra un momento.');
+      }
+    }
+
+  </script>
 </body>
 </html>
