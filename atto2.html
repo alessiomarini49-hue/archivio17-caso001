@@ -284,7 +284,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .hint-level-row{display:flex;gap:.85rem;align-items:flex-start;padding:.65rem .85rem;background:rgba(0,0,0,.18);border:1px solid var(--border-white-soft);}
 .hint-level-row.used{border-color:rgba(183,131,59,.2);background:rgba(183,131,59,.04)}
 .hint-level-meta{display:flex;flex-direction:column;gap:.25rem;min-width:80px;flex-shrink:0}
-.hint-level-name{font-family:var(--font-mono);font-size:8px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase}
+.hint-level-name{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;line-height:1.4}
 .hint-level-cost{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.05em}
 .hint-level-content{flex:1}
 .hint-reveal-btn{background:rgba(183,131,59,.08);border:1px solid rgba(183,131,59,.2);color:var(--text-meta);padding:.42rem .9rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);width:100%;text-align:left;}
@@ -665,6 +665,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           </div>
           <div class="score-breakdown">
             <div class="bd-row"><span>Punteggio base</span><span class="bd-val">100</span></div>
+            <div class="bd-row"><span>Supporti Archivista richiesti</span><span class="bd-val" id="esito-hint-count" style="color:var(--text-secondary)">0 livelli</span></div>
             <div class="bd-row"><span>Penalità supporto Archivista</span><span class="bd-val penalty" id="esito-hint-cost">−0</span></div>
             <div class="bd-row"><span>Penalità errori Terminale</span><span class="bd-val penalty" id="esito-err-cost">−0</span></div>
             <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>
@@ -702,7 +703,8 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           <div class="section-subtitle">Consulta con prudenza</div>
         </div>
         <div class="support-intro-panel">
-          <p>Ogni livello di supporto consultato riduce l'indice investigativo. <strong>L1 → −2 pt · L2 → −5 pt · L3 → −8 pt</strong> (cumulativi per puzzle). Nessun hint rivela il colpevole.</p>
+          <p>Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 pt · L2 → −5 pt · L3 → −8 pt</strong> (cumulativi per puzzle — massimo −15 per puzzle).</p>
+          <p style="margin-top:.6rem;font-style:italic;color:var(--text-meta)">Gli aiuti dell'Archivista non indicano un colpevole. Indicano un metodo di confronto.</p>
         </div>
         <div id="puzzles-container"></div>
       </div>
@@ -1076,78 +1078,86 @@ Alla domanda sull'archivio interno:
 
 // ===== PUZZLES =====
 const PUZZLES = [
-  // PARTE 1
+  // PARTE 1 — Le prime crepe
   {
-    id:'P1A', part:1, title:'Pista economica evidente',
-    scope:'Capire quale sospetto emerge dalla documentazione finanziaria di Parte 1.',
+    id:'P05', part:1,
+    title:'La pista economica evidente',
+    scope:'Individuare la linea professionale più rumorosa senza obbligarsi a una sola risposta.',
     hints:[
-      {lvl:1,cost:2,txt:'Non fermarti al primo nome che emerge. I documenti economici mostrano più di una relazione.'},
-      {lvl:2,cost:5,txt:'Confronta il contratto B03 con la cartella B02. Chi aveva qualcosa da perdere se Andrea parlava?'},
-      {lvl:3,cost:8,txt:'Manfredi è la pista più visibile. Ma B06 e B07 mostrano una seconda rete economica, più silenziosa.'}
+      {lvl:1,cost:2,txt:'Non partire dalla morte. Parti da ciò che Andrea stava cercando di contenere nei giorni precedenti.'},
+      {lvl:2,cost:5,txt:'Confronta i documenti professionali con i tabulati. Una pressione economica lascia quasi sempre tracce ripetute.'},
+      {lvl:3,cost:8,txt:'La pratica Manfredi, il contratto anomalo e le chiamate recenti compongono la linea più rumorosa del fascicolo. Non è detto che sia l'unica.'}
     ]
   },
   {
-    id:'P1B', part:1, title:'Il numero ricorrente',
-    scope:'Notare che una cifra compare in più documenti della Parte 1.',
+    id:'P06', part:1,
+    title:'L'importo ricorrente',
+    scope:'Notare la cifra che compare in più documenti, in contesti diversi.',
     hints:[
-      {lvl:1,cost:2,txt:'Un numero che compare due volte in documenti diversi raramente è casuale.'},
-      {lvl:2,cost:5,txt:'Confronta la nota in calce a B06 con l\'importo in B07.'},
-      {lvl:3,cost:8,txt:'€ 280.000 compare sia nella polizza di copertura debiti che nella fideiussione. Stesso importo, due contesti diversi.'}
+      {lvl:1,cost:2,txt:'In un fascicolo economico, i numeri che ritornano raramente sono casuali.'},
+      {lvl:2,cost:5,txt:'Confronta i movimenti bancari personali con i documenti di garanzia. Cerca una cifra che compare in contesti diversi.'},
+      {lvl:3,cost:8,txt:'La cifra €280.000 compare sia nella copertura debitoria sia nella garanzia sottoscritta. Il dato non appartiene solo alla pista Manfredi.'}
     ]
   },
   {
-    id:'P1C', part:1, title:'La timeline non verificata',
-    scope:'Capire cosa manca nella ricostruzione degli ultimi movimenti del 14 novembre.',
+    id:'P07', part:1,
+    title:'La timeline incompleta',
+    scope:'Identificare gli elementi temporali del 14 novembre che non trovano ancora conferma.',
     hints:[
-      {lvl:1,cost:2,txt:'L\'agenda B09 e i tabulati B05 parlano della stessa sera. Confrontali.'},
-      {lvl:2,cost:5,txt:'Chi era previsto alla cena delle 19:30? I tabulati mostrano una chiamata alle 19:04 a Stefano — non risposta.'},
-      {lvl:3,cost:8,txt:'«Cena con S.» non è verificata. Stefano non risponde la sera del 14. Il numero non salvato delle 18:51 è anonimo.'}
+      {lvl:1,cost:2,txt:'Non tutte le incongruenze sono nei soldi. Alcune sono negli orari.'},
+      {lvl:2,cost:5,txt:'Confronta agenda e tabulati. C'è almeno un elemento del 14 novembre che non trova ancora conferma.'},
+      {lvl:3,cost:8,txt:'«Cena con S.», la chiamata non risposta e l'assenza di comunicazioni dopo le 19:04 indicano una porzione di timeline ancora scoperta.'}
     ]
   },
   {
-    id:'P1D', part:1, title:'La zona domestica',
-    scope:'Capire cosa suggerisce la nota personale B13 sul contesto familiare.',
+    id:'P08', part:1,
+    title:'Le zone d'ombra iniziali',
+    scope:'Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.',
     hints:[
-      {lvl:1,cost:2,txt:'B13 non è un documento professionale. Che tipo di tensione descrive?'},
-      {lvl:2,cost:5,txt:'Andrea nasconde qualcosa a Elena. Ma non sappiamo se Elena stia nascondendo qualcosa ad Andrea.'},
-      {lvl:3,cost:8,txt:'La polizza da € 280.000 è citata in B06. Elena affermerà di sapere della copertura. Confronta questi elementi nella Parte 2.'}
+      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno lo stesso peso. Ma anche un dettaglio minore può impedire una conclusione definitiva.'},
+      {lvl:2,cost:5,txt:'Guarda chi aveva accesso, chi viveva la pressione domestica e chi conosceva le pratiche riservate dello studio.'},
+      {lvl:3,cost:8,txt:'Elena introduce una tensione domestica e una copertura non chiarita. Davide introduce accesso fisico, chiavi e conoscenza dei fascicoli. Sono linee laterali, non soluzioni.'}
     ]
   },
-  // PARTE 2
+  // PARTE 2 — Reperti ad alta sensibilità
   {
-    id:'P2A', part:2, title:'La minaccia Manfredi',
-    scope:'Valutare il peso della telefonata B04 nell\'analisi del movente.',
+    id:'P09', part:2,
+    title:'La minaccia più rumorosa',
+    scope:'Valutare il peso reale della telefonata e dell'interrogatorio Manfredi.',
     hints:[
-      {lvl:1,cost:2,txt:'Una minaccia registrata è forte. Ma una minaccia economico-legale è diversa da un omicidio.'},
-      {lvl:2,cost:5,txt:'Manfredi dice «conseguenze economiche e legali». Non minaccia la vita di Andrea. Qual è il peso reale?'},
-      {lvl:3,cost:8,txt:'La pista Manfredi spiega pressione e frode. Non spiega la ricorrenza di € 280.000 nei documenti personali di Andrea.'}
-    ]
-  },
-  {
-    id:'P2B', part:2, title:'Il sollecito di Stefano',
-    scope:'Capire la portata del debito descritto in B08.',
-    hints:[
-      {lvl:1,cost:2,txt:'Il sollecito ha un termine di 30 giorni. Quando è stato emesso rispetto al 14 novembre?'},
-      {lvl:2,cost:5,txt:'Stefano aveva 30 giorni per rientrare di € 280.000. Andrea era garante. Cosa succede se Andrea muore?'},
-      {lvl:3,cost:8,txt:'In caso di decesso del garante, alcune polizze e garanzie cambiano. B06 mostra una copertura legata a debiti. Confronta con B07.'}
+      {lvl:1,cost:2,txt:'Una minaccia è una prova di pressione. Non sempre è una prova di omicidio.'},
+      {lvl:2,cost:5,txt:'Confronta la telefonata con l'interrogatorio di Manfredi. La pressione è reale, ma resta da capire quanto spieghi.'},
+      {lvl:3,cost:8,txt:'Manfredi ha movente, minaccia e rapporto economico anomalo. La sua linea è forte, ma non chiude da sola accesso, scena e ricorrenze personali.'}
     ]
   },
   {
-    id:'P2C', part:2, title:'Le omissioni di Elena e Davide',
-    scope:'Valutare le dichiarazioni integrative di B14 e B15.',
+    id:'P10', part:2,
+    title:'La linea familiare',
+    scope:'Collegare fideiussione, sollecito bancario e dichiarazione di Stefano senza trarre conclusioni affrettate.',
     hints:[
-      {lvl:1,cost:2,txt:'Entrambi dichiarano qualcosa che non possono dimostrare completamente. Qual è il dettaglio mancante?'},
-      {lvl:2,cost:5,txt:'Elena esce per venti minuti durante una cena. Davide è il primo ad entrare. Nessuno dei due ha un alibi pieno.'},
-      {lvl:3,cost:8,txt:'Davide sapeva dove stava il fascicolo Manfredi. Elena sapeva della copertura assicurativa. Sono piste laterali, ma non irrilevanti.'}
+      {lvl:1,cost:2,txt:'La pressione economica non riguarda solo il lavoro di Andrea.'},
+      {lvl:2,cost:5,txt:'Confronta fideiussione, sollecito bancario e dichiarazione di Stefano. La stessa cifra attraversa documenti diversi.'},
+      {lvl:3,cost:8,txt:'Stefano è collegato a garanzia, esposizione debitoria e appuntamento non verificato. È una linea avanzata, ma non ancora una prova finale.'}
     ]
   },
   {
-    id:'P2D', part:2, title:'L\'ipotesi incompleta',
-    scope:'Capire perché nessuna pista chiude il caso da sola.',
+    id:'P11', part:2,
+    title:'Omissioni laterali',
+    scope:'Leggere Elena e Davide come zone d'ombra rilevanti, non come false piste.',
     hints:[
-      {lvl:1,cost:2,txt:'Nessuno dei quattro sospetti ha sia il movente che il mezzo che l\'opportunità verificati. Qual è il nodo?'},
-      {lvl:2,cost:5,txt:'Manfredi: movente sì, accesso non verificato. Stefano: movente economico, alibi negato ma non smentito. Elena: tensioni, uscita di 20 minuti. Davide: accesso, nessun movente forte.'},
-      {lvl:3,cost:8,txt:'L\'Atto 2 non ha una soluzione unica. Serve l\'Atto 3 per completare l\'analisi della catena movente-accesso-opportunità.'}
+      {lvl:1,cost:2,txt:'Una zona d'ombra non equivale a una colpa. Serve a misurare quanto una dichiarazione è completa.'},
+      {lvl:2,cost:5,txt:'Confronta Elena e Davide: una linea riguarda la casa, l'altra l'accesso alla scena.'},
+      {lvl:3,cost:8,txt:'Elena ha un intervallo non verificato e conosceva parzialmente la copertura. Davide aveva chiavi, primo accesso e conoscenza dei fascicoli. Entrambi restano laterali.'}
+    ]
+  },
+  {
+    id:'P12', part:2,
+    title:'Ipotesi non conclusiva',
+    scope:'Costruire una lettura solida per il Terminale 02B: pista principale, limite e linea alternativa.',
+    hints:[
+      {lvl:1,cost:2,txt:'Un'ipotesi solida non è quella che spiega tutto. È quella che dichiara anche cosa non riesce a spiegare.'},
+      {lvl:2,cost:5,txt:'Scegli una pista principale, poi individua almeno un elemento che quella pista non riesce a chiudere.'},
+      {lvl:3,cost:8,txt:'Manfredi spiega pressione e minaccia. Stefano spiega la linea economica familiare. Elena e Davide aggiungono omissioni laterali. Nessuna linea, da sola, chiude ancora il caso.'}
     ]
   }
 ];
@@ -1487,6 +1497,7 @@ function renderEsito(){
 
   document.getElementById('esito-score').textContent=total;
   document.getElementById('esito-classname').textContent=cls;
+  document.getElementById('esito-hint-count').textContent=state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
   document.getElementById('esito-hint-cost').textContent='−'+hc;
   document.getElementById('esito-err-cost').textContent='−'+ec;
   document.getElementById('esito-total').textContent=total;
@@ -1584,13 +1595,13 @@ function renderPuzzles(){
   const p2puzzles=PUZZLES.filter(p=>p.part===2);
 
   const g1=document.createElement('div');
-  g1.innerHTML=`<div class="hints-group-label">Parte 1 — Le prime crepe</div>`;
+  g1.innerHTML=`<div class="hints-group-label">Sezione 1 — Parte 1 · Le prime crepe</div>`;
   c.appendChild(g1);
   p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p)));
 
   const g2=document.createElement('div');
   g2.style.marginTop='1.5rem';
-  g2.innerHTML=`<div class="hints-group-label">Parte 2 — Reperti ad alta sensibilità ${!state.t2aCompleted?'· <span style="color:var(--text-dim)">bloccati fino al Terminale 02A</span>':''}</div>`;
+  g2.innerHTML=`<div class="hints-group-label">Sezione 2 — Parte 2 · Reperti ad alta sensibilità ${!state.t2aCompleted?'<span style="color:var(--text-dim);font-size:8px"> · BLOCCATI FINO AL TERMINALE 02A</span>':''}</div>`;
   c.appendChild(g2);
   p2puzzles.forEach(p=>{
     const el=buildPuzzleEl(p,!state.t2aCompleted);
@@ -1606,13 +1617,13 @@ function buildPuzzleEl(puzzle, locked=false){
   puzzle.hints.forEach(h=>{
     const isRev=revealed>=h.lvl;
     hintsHtml+=`<div class="hint-level-row ${isRev?'used':''}">
-      <div class="hint-level-meta"><span class="hint-level-name">Livello ${h.lvl}</span><span class="hint-level-cost">−${h.cost} pt</span></div>
+      <div class="hint-level-meta"><span class="hint-level-name">${h.lvl===1?'Osservazione':h.lvl===2?'Connessione':'Quasi soluzione'} · Lv.${h.lvl}</span><span class="hint-level-cost">−${h.cost} pt</span></div>
       <div class="hint-level-content">
         ${isRev
           ?`<div class="hint-text revealed">${h.txt}</div><div class="hint-used-label visible">Supporto utilizzato</div>`
           :locked
             ?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.12em">Bloccato — sblocca la Parte 2</div>`
-            :`<button class="hint-reveal-btn" onclick="useHint('${puzzle.id}',${h.lvl})">Rivela supporto livello ${h.lvl} (−${h.cost} pt)</button>`
+            :`<button class="hint-reveal-btn" onclick="useHint('${puzzle.id}',${h.lvl})">— Richiedi supporto (−${h.cost} pt)</button>`
         }
       </div>
     </div>`;
