@@ -396,6 +396,11 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .locked-hdr{cursor:default!important}
 .locked-title{color:var(--text-dim)!important;font-style:italic;letter-spacing:.04em}
 .hints-p2-unlocked-banner{background:rgba(90,180,100,.05);border:1px solid rgba(90,180,100,.2);padding:.85rem 1.25rem;margin:.75rem 0 .6rem;text-align:center}
+
+/* ===== TERMINALE — STATO AMBIGUOUS ===== */
+.terminal-feedback-line.ambiguous{color:#c8922a;background:rgba(200,146,42,.07);border-left:2px solid #c8922a;padding:.4rem .6rem;margin-top:.3rem;font-size:12px;border-radius:2px}
+.terminal-field-state.ambiguous{color:#c8922a;background:rgba(200,146,42,.12);border-color:rgba(200,146,42,.3)}
+.terminal-global-feedback.ambiguous{background:rgba(200,146,42,.06);border:1px solid rgba(200,146,42,.25);color:#c8922a;padding:1rem 1.25rem;margin-top:1rem;font-size:13px;line-height:1.6;border-radius:2px}
 </style>
 </head>
 <body>
@@ -1186,212 +1191,144 @@ const SOSPETTI = {
   DAVIDE:   ['DAVIDE','DAVIDE SERRA','COLLEGA','SERRA']
 };
 
+function // ===== NORMALIZZAZIONE =====
+function normalize(str) {
+  return str
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // rimuovi accenti
+    .replace(/[€£$]/g,'')
+    .replace(/[.,;:!?'"()\[\]\/\\]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function normNum(str) {
+  // normalizza cifre monetarie equivalenti
+  return str
+    .replace(/280[\s._]?000/g,'280000')
+    .replace(/280\s*mila/gi,'280000')
+    .replace(/duecentoottantamila/gi,'280000')
+    .replace(/duecentottantamila/gi,'280000');
+}
+
+function prep(val) {
+  return normNum(normalize(val));
+}
+
+// ===== DIZIONARI SOSPETTI =====
+const SOSPETTI = {
+  MANFREDI: ['manfredi','roberto manfredi','gruppo manfredi','pratica manfredi','cliente manfredi','il cliente','frode manfredi','pista manfredi','irregolarita manfredi'],
+  STEFANO:  ['stefano','stefano marini','il fratello','fratello','pista familiare','linea familiare','garanzia familiare','debito del fratello','fideiussione del fratello','pista di stefano'],
+  ELENA:    ['elena','elena ricci','moglie','la moglie','coniuge','linea domestica','pista domestica','tensione coniugale','alibi della moglie'],
+  DAVIDE:   ['davide','davide serra','collega','il collega','collaboratore','primo ad entrare','chiavi','accesso allo studio','copia delle chiavi']
+};
+
+// Keyword troppo generiche → AMBIGUOUS
+const AMBIGUOUS_GENERIC = ['soldi','denaro','lavoro','famiglia','documenti','qualcuno','alibi','cliente','qualcuno mente','non so','forse','debito','casa'];
+
 function detectSospetto(val) {
-  const v = val.trim().toUpperCase();
+  const v = prep(val);
   for (const [key, aliases] of Object.entries(SOSPETTI)) {
     if (aliases.some(a => v.includes(a))) return key;
   }
   return null;
 }
 
+function isAmbiguousGeneric(val) {
+  const v = prep(val);
+  return AMBIGUOUS_GENERIC.some(k => v === k || v === k+'i' || v === k+'e');
+}
+
+// ===== KEYWORD PER CAMPO 2 — ELEMENTO SOSTENUTO =====
 const ELEM_P1 = {
-  MANFREDI:['FRODE','IRREGOLAR','CONTRATTO','MINACCIA','PRATICA','TELEFON','PRESSIONE','PROFESSIONALI','CONSULENZA','B02','B03','B04'],
-  STEFANO: ['FIDEIUSSION','280000','280.000','€280','COPERTURA','DEBITO','GARANZIA','CENA CON S','S.','CHIAMATA NON RISPOSTA','B07','B06'],
-  ELENA:   ['TENSIONE','POLIZZA','COPERTURA','OMISSION','ALIBI','TELEFONATA','MOGLIE','NASCONDEVA','B13'],
-  DAVIDE:  ['CHIAVI','ACCESSO','COPIA','PRIMO','FASCICOLO','SCRIVANIA','COLLEGA','STUDIO','B15']
+  MANFREDI:['frode','irregolar','contratto','minaccia','pratica manfredi','telefon','pressione','consulenza','compensi fuori scala','movimenti anomali','flussi di cassa','rapporto economico','b02','b03','b04'],
+  STEFANO: ['fideiussion','280000','copertura','debito','garanzia','cena con s','appuntamento con s','chiamata non risposta','sollecito bancario','esposizione','polizza','b07','b06'],
+  ELENA:   ['tensione','tensione coniugale','polizza','copertura','omission','alibi','telefonata','moglie','nascondeva','non voleva','sapeva della copertura','b13'],
+  DAVIDE:  ['chiavi','copia delle chiavi','accesso','primo ingresso','primo ad entrare','fascicolo','scrivania','collega','studio','b15']
 };
 
 const ELEM_P2 = {
-  MANFREDI:['FRODE','MINACCIA','TELEFONATA','IRREGOLAR','CONTRATTO','PRESSIONE','PROFESSIONALI'],
-  STEFANO: ['280000','280.000','€280','FIDEIUSSION','SOLLECITO','COPERTURA DEBITI','CENA CON S','CHIAMATA NON RISPOSTA','NEGAZIONE','GARANZIA FAMILIARE'],
-  ELENA:   ['TENSIONE','POLIZZA','ALIBI PARZIALE','TELEFONATA','OMISSION','COPERTURA','USCITA','VENTI MINUTI'],
-  DAVIDE:  ['CHIAVI','PRIMO ACCESSO','COPIA','FASCICOLO','ACCESSO','CONOSCENZA','COLLEGA']
+  MANFREDI:['frode','minaccia','telefonata','audio','chiamata','irregolar','contratto anomalo','compensi fuori scala','pratica manfredi','pressione professionale','movimenti anomali','flussi di cassa','consulenza sospetta'],
+  STEFANO: ['280000','fideiussion','sollecito bancario','copertura debiti','cena con s','chiamata non risposta','negazione','garanzia familiare','garanzia bancaria','debito','esposizione debitoria','polizza'],
+  ELENA:   ['tensione coniugale','alibi parziale','uscita','venti minuti','telefonata','polizza','copertura','omission','moglie','non voleva che guardasse','sapeva della copertura'],
+  DAVIDE:  ['chiavi','copia delle chiavi','primo accesso','primo ad entrare','fascicolo','accesso allo studio','conoscenza pratica manfredi','collaboratore','scena','studio']
 };
 
-const LIMIT_KW = ['ALIBI NON VERIFICATO','MANCA PROVA','MANCA ACCESSO','MANCA MOVENTE','INCOMPLETA','TROPPI ELEMENTI','280000','280.000','S. NON VERIFICATO','MANFREDI TROPPO EVIDENTE','PISTA INCOMPLETE','NON CONCLUSIVA'];
-const ALT_KW   = ['MANFREDI','STEFANO','ELENA','DAVIDE','280000','280.000','FIDEIUSSION','POLIZZA','CENA CON S','CHIAVI','TELEFONATA'];
-const SYNTH_KW = ['MOVENTE','MANFREDI','FRODE','MINACCIA','TELEFONATA','280000','280.000','FIDEIUSSION','COPERTURA','STEFANO','CENA CON S','ELENA','DAVIDE','CHIAVI','ALIBI','PISTA','SECONDA LINEA','INCOMPLETA','ECONOMIA','GARANZIA'];
+// Campo 3 — limite/non verificato
+const LIMIT_KW = ['alibi non verificato','manca prova','manca una prova','manca accesso','manca movente','incompleta','non conclusiva','non conclusivo','280000','s. non verificato','manfredi troppo evidente','pista incomplete','troppe omissioni','non spiega tutto','non chiude','altre linee','altri sospetti','ci sono incongruenze','intervallo scoperto','timeline','orari','movimenti bancari'];
+const LIMIT_AMBIGUOUS = ['non basta','non e sicuro','manca qualcosa','non e definitivo','non so','incerto','boh'];
 
-const FEEDBACK_2B = {
-  MANFREDI:{
-    label:'Ipotesi coerente ma incompleta.',
-    text:'La linea Manfredi spiega pressione, frode e minaccia. Resta però incompleta: non chiarisce la ricorrenza dell\'importo, la garanzia familiare e l\'iniziale non verificata.'
-  },
-  STEFANO:{
-    label:'Ipotesi avanzata ma non ancora dimostrata.',
-    text:'La linea Stefano collega importo ricorrente, garanzia familiare e incongruenze di timeline. Resta però da spiegare il peso della minaccia Manfredi e il ruolo dei reperti professionali.'
-  },
-  ELENA:{
-    label:'Ipotesi laterale, non conclusiva.',
-    text:'La linea Elena presenta tensioni e omissioni, ma non dispone ancora di un movente economico sufficiente o di un accesso dimostrato.'
-  },
-  DAVIDE:{
-    label:'Ipotesi laterale, non conclusiva.',
-    text:'La linea Davide spiega accesso e prossimità alla scena, ma non chiarisce il movente economico principale.'
-  }
-};
+// Campo 3 T2A — elemento non verificato
+const UNVER_KW = ['stefano','cena con s','appuntamento con s','chiamata non risposta','numero non salvato','280000','fideiussion','garanzia','polizza','copertura debiti','alibi manfredi','alibi elena','uscita di venti minuti','accesso davide','chiavi','telefonata','intervallo scoperto','timeline','orario','movimenti bancari','documenti economici','s.'];
+const UNVER_AMBIGUOUS = ['la cena','l appuntamento','l alibi','le chiamate','qualcosa','non so','non ricordo'];
 
-// ===== STATE =====
-const defaultState = () => ({
-  score:100,
-  hintPenaltyTotal:0,
-  hintLevelsUsed:0,
-  errorsTerminal:0,
-  p1Opened:[],
-  p2Opened:[],
-  t2aCompleted:false,
-  t2aErrors:0,
-  t2aSospetto:null,
-  t2bCompleted:false,
-  t2bErrors:0,
-  t2bSospetto:null,
-  finalUnlocked:false,
-  hintsRevealed:{},
-  hintPuzzleCost:{},
-  puzzleOpen:{},
-  currentSection:'intro'
-});
+// Campo 4 — altra linea
+const ALT_KW = ['manfredi','stefano','elena','davide','280000','fideiussion','polizza','cena con s','chiavi','telefonata','accesso','alibi','numero non salvato','sollecito bancario','tensione coniugale','cliente','fratello','moglie','collega','garanzia'];
 
-let state = defaultState();
+// Campo 5 — sintesi (min 3 concetti)
+const SYNTH_KW = ['movente','manfredi','frode','minaccia','telefonata','280000','fideiussion','copertura','stefano','cena con s','elena','davide','chiavi','alibi','pista','seconda linea','incompleta','economia','garanzia','pressione','omission','accesso'];
 
-function loadState(){try{const r=localStorage.getItem(LS_KEY);if(r)state=Object.assign(defaultState(),JSON.parse(r));}catch(e){}}
-function saveState(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+// ===== STATO AMBIGUOUS PER TENTATIVO =====
+// Traccia se un campo ha già ricevuto risposta ambigua (senza penalità)
+const ambiguousAttempt = {};
 
-// ===== INIT =====
-function init(){
-  loadState();
-  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
-  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
-  renderPuzzles();
-  showSection(state.currentSection, true);
-  updateUI();
-  if(state.t2aCompleted){
-    document.getElementById('t2a-submit').disabled=true;
-    document.getElementById('t2a-confirmed').classList.add('visible');
-  }
-  if(state.t2bCompleted){
-    document.getElementById('t2b-submit').disabled=true;
-    document.getElementById('t2b-confirmed').classList.add('visible');
-  }
-  if(state.t2bCompleted) renderEsito();
+// ===== HELPER — setFieldState a 3 stati =====
+function setFieldState(term, n, state_val, msg) {
+  // state_val: 'ok' | 'ambiguous' | 'error'
+  const fb = document.getElementById(term+'-fb-'+n);
+  const st = document.getElementById(term+'-state-'+n);
+  const labelMap = { ok:'Validato', ambiguous:'Chiarire', error:'Errore' };
+  if(fb){ fb.textContent=msg; fb.className='terminal-feedback-line '+state_val; }
+  if(st){ st.textContent=labelMap[state_val]||''; st.className='terminal-field-state '+state_val; }
 }
-
-// ===== SEZIONI =====
-function showSection(id, silent){
-  document.getElementById('mobile-inv-drawer').classList.remove('open');
-  if(!silent){
-    if(id==='terminale2a' && state.p1Opened.length < 4){showToast('Esamina almeno 4 reperti prima di accedere al Terminale 02A');return;}
-    if(id==='parte2' && !state.t2aCompleted){showToast('Completa il Terminale 02A per sbloccare la Parte 2');return;}
-    if(id==='terminale2b' && (!state.t2aCompleted || state.p2Opened.length < 3)){showToast('Esamina almeno 3 reperti della Parte 2 prima del Terminale 02B');return;}
-    if(id==='esito' && !state.finalUnlocked){showToast('Completa il Terminale 02B per accedere all\'esito');return;}
-  }
-  document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
-  const sec=document.getElementById('section-'+id);if(sec)sec.classList.add('active');
-  ['nav-','mnav-'].forEach(pfx=>{
-    document.querySelectorAll('[id^="'+pfx+'"]').forEach(n=>n.classList.remove('active'));
-    const el=document.getElementById(pfx+id);if(el)el.classList.add('active');
-  });
-  state.currentSection=id;
-  saveState();
-}
-
-// ===== DOCS GRID =====
-function renderDocsGrid(part, docs, containerId){
-  const grid=document.getElementById(containerId);
-  if(!grid)return;
-  grid.innerHTML='';
-  const opened = part==='p1' ? state.p1Opened : state.p2Opened;
-  const isLocked = part==='p2' && !state.t2aCompleted;
-
-  docs.forEach(doc=>{
-    const isOpen=opened.includes(doc.id);
-    const div=document.createElement('div');
-    div.className='doc-card'+(isOpen?' consulted':'')+(isLocked?' locked-card':'');
-    div.onclick=isLocked ? null : ()=>openDoc(doc.id, part);
-
-    const imgHtml = doc.imageUrl
-      ? `<div class="doc-thumb"><img src="${doc.imageUrl}" alt="" onerror="this.parentElement.innerHTML='<div class=doc-thumb-placeholder><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>'"></div>`
-      : (isLocked
-          ? `<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>`
-          : `<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>`);
-
-    div.innerHTML=`${imgHtml}
-      <div class="doc-card-body">
-        <div class="doc-card-top">
-          <span class="doc-code">${doc.id}</span>
-          <span class="doc-status-badge ${isLocked?'locked':isOpen?'consulted':'available'}">${isLocked?'Bloccato':isOpen?'Consultato':'Disponibile'}</span>
-        </div>
-        <div class="doc-category">${doc.cat}</div>
-        <div class="doc-title">${doc.title}</div>
-        <div class="doc-summary">${doc.desc}</div>
-        ${!isLocked?`<div class="doc-cta ${isOpen?'consulted-cta':''}">${isOpen?'Rileggi reperto':'Esamina reperto'}</div>`:''}
-      </div>`;
-    grid.appendChild(div);
-  });
-
-  updateCounters();
-}
-
-// ===== OPEN DOC =====
-function openDoc(id, part){
-  const allDocs=[...DOCS_P1,...DOCS_P2];
-  const doc=allDocs.find(d=>d.id===id);
-  if(!doc)return;
-
-  const arr = part==='p1' ? state.p1Opened : state.p2Opened;
-  if(!arr.includes(id)){
-    arr.push(id);
-    saveState();
-    renderDocsGrid(part, part==='p1'?DOCS_P1:DOCS_P2, part==='p1'?'docs-grid-p1':'docs-grid-p2');
-    updateUI();
-  }
-
-  document.getElementById('v-code').textContent=doc.id;
-  document.getElementById('v-cat').textContent=doc.cat;
-  document.getElementById('v-title').textContent=doc.title;
-  document.getElementById('v-transcript').textContent=doc.transcript;
-  document.getElementById('v-consulted').textContent=arr.includes(id)?'✓ CONSULTATO':'';
-
-  const imgC=document.getElementById('v-img-container');
-  imgC.innerHTML=doc.imageUrl
-    ?`<div class="evidence-frame"><img src="${doc.imageUrl}" alt=""><div class="evidence-frame-label"><span>${doc.id} — ${doc.cat}</span><span>RISERVATO</span></div></div>`
-    :`<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· ${doc.id} · Immagine non ancora acquisita ·</small></div>`;
-
-  if(doc.note){
-    document.getElementById('v-note').textContent=doc.note;
-    document.getElementById('v-note-panel').style.display='';
-  } else {
-    document.getElementById('v-note-panel').style.display='none';
-  }
-
-  document.getElementById('viewer-overlay').classList.add('open');
-}
-
-function closeViewer(){document.getElementById('viewer-overlay').classList.remove('open');}
 
 // ===== TERMINALE 02A =====
 function submitTerminal2A(){
   if(state.t2aCompleted)return;
-  const v1=(document.getElementById('t2a-input-1').value||'').trim().toUpperCase();
-  const v2=(document.getElementById('t2a-input-2').value||'').trim().toUpperCase();
-  const v3=(document.getElementById('t2a-input-3').value||'').trim().toUpperCase();
+  const raw1 = document.getElementById('t2a-input-1').value||'';
+  const raw2 = document.getElementById('t2a-input-2').value||'';
+  const raw3 = document.getElementById('t2a-input-3').value||'';
+  const v1=prep(raw1), v2=prep(raw2), v3=prep(raw3);
 
-  const sosp=detectSospetto(v1);
-  const ok1=!!sosp;
+  // --- Campo 1: linea investigativa ---
+  const sosp = detectSospetto(v1);
+  let s1, m1;
+  if(sosp){ s1='ok'; m1='Linea investigativa registrata.'; }
+  else if(isAmbiguousGeneric(v1) || (!sosp && v1.length>0 && v1.length<6)){ s1='ambiguous'; m1='Risposta troppo generica. Indica: Manfredi, Stefano, Elena o Davide, oppure usa un sinonimo del fascicolo.'; }
+  else if(v1.length===0){ s1='error'; m1='Campo obbligatorio.'; }
+  else { s1='error'; m1='Linea non riconosciuta. Indica: Manfredi / Stefano / Elena / Davide.'; }
 
-  let ok2=false;
+  // --- Campo 2: elemento sostenuto ---
+  let s2, m2;
   if(sosp && ELEM_P1[sosp]){
-    ok2=ELEM_P1[sosp].some(k=>v2.includes(k));
+    const match = ELEM_P1[sosp].some(k=>v2.includes(k));
+    if(match){ s2='ok'; m2='Elemento coerente con la pista scelta.'; }
+    else if(v2.length<4){ s2='ambiguous'; m2='Risposta troppo breve. Collega un reperto, un importo o un documento specifico.'; }
+    else { s2='error'; m2='Elemento non coerente con la pista indicata. Rivedi i reperti disponibili.'; }
+  } else if(!sosp){
+    s2='error'; m2='Identifica prima il sospetto nel Campo 1.';
+  } else {
+    s2='error'; m2='Elemento non coerente con la pista indicata.';
   }
 
-  const unverKW=['S.','STEFANO','CENA CON S','280000','280.000','FIDEIUSSION','POLIZZA','NUMERO NON SALVATO','ALIBI','ACCESSO DAVIDE','CHIAVI','TELEFONATA','MANFREDI FUORI SEDE','ELENA'];
-  const ok3=unverKW.some(k=>v3.includes(k));
+  // --- Campo 3: elemento non verificato ---
+  let s3, m3;
+  const matchUnver = UNVER_KW.some(k=>v3.includes(k));
+  const matchUnverAmb = UNVER_AMBIGUOUS.some(k=>v3.includes(k));
+  if(matchUnver){ s3='ok'; m3='Elemento non verificato registrato.'; }
+  else if(matchUnverAmb || (v3.length>2 && v3.length<8)){ s3='ambiguous'; m3='Elemento parziale. Specifica: quale alibi, quale cifra, quale appuntamento resta da chiarire.'; }
+  else if(v3.length===0){ s3='error'; m3='Campo obbligatorio.'; }
+  else { s3='error'; m3='Indica un elemento concreto ancora da chiarire nei reperti esaminati.'; }
 
-  setFieldState('t2a',1,ok1,ok1?'Linea investigativa registrata.':'Sospetto non riconosciuto. Indica: Manfredi / Stefano / Elena / Davide.');
-  setFieldState('t2a',2,ok2,ok2?'Elemento coerente con la pista scelta.':'Elemento non coerente con la pista indicata. Rivedi i reperti disponibili.');
-  setFieldState('t2a',3,ok3,ok3?'Elemento non verificato registrato.':'Indica un elemento concreto ancora da chiarire.');
+  setFieldState('t2a',1,s1,m1);
+  setFieldState('t2a',2,s2,m2);
+  setFieldState('t2a',3,s3,m3);
 
-  if(ok1 && ok2 && ok3){
+  const allOk = s1==='ok' && s2==='ok' && s3==='ok';
+  const hasError = s1==='error' || s2==='error' || s3==='error';
+  const hasAmbiguous = !allOk && !hasError;
+
+  if(allOk){
     state.t2aCompleted=true;
     state.t2aSospetto=sosp;
     document.getElementById('t2a-submit').disabled=true;
@@ -1407,7 +1344,6 @@ function submitTerminal2A(){
     const gfb=document.getElementById('t2a-global-fb');
     gfb.innerHTML=`Linea investigativa registrata.<br><br>L'Archivio non conferma ancora una responsabilità. Conferma che la pista selezionata presenta elementi sufficienti per accedere ai reperti ad alta sensibilità.<br><br>${feedbackMap[sosp]||''}<br><br><em>Accesso intermedio autorizzato.</em>`;
     gfb.className='terminal-global-feedback show ok';
-
     document.getElementById('t2a-confirmed-msg').textContent=feedbackMap[sosp]||'Accesso ai reperti ad alta sensibilità autorizzato.';
 
     ['nav-parte2','mnav-parte2','nav-terminale2b','mnav-terminale2b'].forEach(id=>{
@@ -1416,51 +1352,95 @@ function submitTerminal2A(){
 
     saveState();
     renderDocsGrid('p2',DOCS_P2,'docs-grid-p2');
+    renderPuzzles();
     updateUI();
     setTimeout(()=>showSection('parte2'),2000);
+
+  } else if(hasAmbiguous && !hasError){
+    // Solo ambiguous — no penalità, chiedi chiarimento
+    const gfb=document.getElementById('t2a-global-fb');
+    gfb.innerHTML='Il Terminale rileva una pista coerente, ma richiede elementi più specifici del fascicolo. Nessuna penalità applicata — correggi i campi evidenziati.';
+    gfb.className='terminal-global-feedback show ambiguous';
+
   } else {
+    // Almeno un errore reale → penalità
     state.t2aErrors++;
     state.errorsTerminal++;
-    state.score=Math.max(0,100-state.hintPenaltyTotal-(state.errorsTerminal*5));
+    state.score=Math.max(0,100-state.hintPenaltyTotal-(state.errorsTerminal*7));
     const gfb=document.getElementById('t2a-global-fb');
-    gfb.textContent='Analisi incompleta. Rivedi i campi segnalati.';
+    gfb.innerHTML='Analisi incompleta. Rivedi i campi segnalati e collega le risposte ai reperti.';
     gfb.className='terminal-global-feedback show warn';
     saveState();
     updateUI();
-    showToast('Analisi incompleta — indice ridotto di 5 punti');
+    showToast('Analisi incompleta — indice ridotto');
   }
 }
 
 // ===== TERMINALE 02B =====
 function submitTerminal2B(){
   if(state.t2bCompleted)return;
-  const v1=(document.getElementById('t2b-input-1').value||'').trim().toUpperCase();
-  const v2=(document.getElementById('t2b-input-2').value||'').toUpperCase();
-  const v3=(document.getElementById('t2b-input-3').value||'').toUpperCase();
-  const v4=(document.getElementById('t2b-input-4').value||'').toUpperCase();
-  const v5=(document.getElementById('t2b-input-5').value||'').toUpperCase();
+  const raw1=document.getElementById('t2b-input-1').value||'';
+  const raw2=document.getElementById('t2b-input-2').value||'';
+  const raw3=document.getElementById('t2b-input-3').value||'';
+  const raw4=document.getElementById('t2b-input-4').value||'';
+  const raw5=document.getElementById('t2b-input-5').value||'';
+  const v1=prep(raw1),v2=prep(raw2),v3=prep(raw3),v4=prep(raw4),v5=prep(raw5);
 
+  // --- Campo 1: sospetto principale ---
   const sosp=detectSospetto(v1);
-  const ok1=!!sosp;
+  let s1,m1;
+  if(sosp){ s1='ok'; m1='Sospetto registrato.'; }
+  else if(isAmbiguousGeneric(v1)||(v1.length>0&&v1.length<5)){ s1='ambiguous'; m1='Risposta troppo generica. Indica: Manfredi, Stefano, Elena o Davide, oppure usa un sinonimo del fascicolo.'; }
+  else if(v1.length===0){ s1='error'; m1='Campo obbligatorio.'; }
+  else { s1='error'; m1='Sospetto non riconosciuto. Indica: Manfredi / Stefano / Elena / Davide.'; }
 
-  let ok2=false;
+  // --- Campo 2: elementi sostenuti (min 2) ---
+  let s2,m2;
   if(sosp && ELEM_P2[sosp]){
     const matches=ELEM_P2[sosp].filter(k=>v2.includes(k));
-    ok2=matches.length>=2;
+    if(matches.length>=2){ s2='ok'; m2=`Elementi sufficienti registrati (${matches.length} rilevati).`; }
+    else if(matches.length===1){ s2='ambiguous'; m2='Il Terminale rileva un elemento coerente, ma ne richiede almeno un secondo. Collega un altro reperto alla tua ipotesi.'; }
+    else if(v2.length<5){ s2='ambiguous'; m2='Risposta troppo breve. Indica almeno due elementi concreti del fascicolo che sostengono la tua ipotesi.'; }
+    else { s2='error'; m2='Elementi non coerenti con il sospetto scelto. Rivedi i reperti della Parte 2.'; }
+  } else if(!sosp){
+    s2='error'; m2='Identifica prima il sospetto nel Campo 1.';
+  } else {
+    s2='error'; m2='Elementi non riconosciuti. Collega la risposta ai reperti esaminati.';
   }
 
-  const ok3=LIMIT_KW.some(k=>v3.includes(k)) || v3.length>6;
-  const ok4=ALT_KW.some(k=>v4.includes(k));
+  // --- Campo 3: limite ipotesi ---
+  let s3,m3;
+  const matchLimit=LIMIT_KW.some(k=>v3.includes(k));
+  const matchLimitAmb=LIMIT_AMBIGUOUS.some(k=>v3.includes(k));
+  if(matchLimit){ s3='ok'; m3='Limite dell\'ipotesi registrato.'; }
+  else if(matchLimitAmb||(v3.length>3&&v3.length<12)){ s3='ambiguous'; m3='Risposta accettabile come direzione, ma troppo generica. Specifica: quale prova manca, quale alibi è incerto, quale elemento non si chiude.'; }
+  else if(v3.length===0){ s3='error'; m3='Campo obbligatorio.'; }
+  else { s3='error'; m3='Specifica un elemento concreto che rende l\'ipotesi non conclusiva.'; }
+
+  // --- Campo 4: altra linea ---
+  let s4,m4;
+  const matchAlt=ALT_KW.some(k=>v4.includes(k));
+  if(matchAlt){ s4='ok'; m4='Linea alternativa registrata.'; }
+  else if(v4.length>0&&v4.length<4){ s4='ambiguous'; m4='Risposta troppo generica. Indica un sospetto, un documento o un importo del fascicolo.'; }
+  else if(v4.length===0){ s4='error'; m4='Campo obbligatorio.'; }
+  else { s4='error'; m4='Indica almeno una seconda linea investigativa del fascicolo (sospetto, importo, documento).'; }
+
+  // --- Campo 5: sintesi (min 3 concetti) ---
+  let s5,m5;
   const synthMatches=SYNTH_KW.filter(k=>v5.includes(k)).length;
-  const ok5=synthMatches>=3;
+  if(synthMatches>=3){ s5='ok'; m5=`Sintesi accettata (${synthMatches} concetti rilevati).`; }
+  else if(synthMatches===2){ s5='ambiguous'; m5=`Sintesi parziale (${synthMatches}/3 concetti). Aggiungi un terzo elemento: un sospetto, un importo o una linea alternativa.`; }
+  else if(v5.length<10){ s5='ambiguous'; m5='Sintesi troppo breve. Collega i reperti principali, la tua pista e almeno un\'altra linea del fascicolo.'; }
+  else { s5='error'; m5=`Sintesi insufficiente (${synthMatches}/3 concetti rilevati). Collega più elementi del fascicolo.`; }
 
-  setFieldState('t2b',1,ok1,ok1?'Sospetto registrato.':'Sospetto non riconosciuto. Indica: Manfredi / Stefano / Elena / Davide.');
-  setFieldState('t2b',2,ok2,ok2?'Elementi sufficienti registrati.':'Indica almeno due elementi coerenti con il sospetto scelto.');
-  setFieldState('t2b',3,ok3,ok3?'Limite dell\'ipotesi registrato.':'Specifica un elemento concreto che rende l\'ipotesi non conclusiva.');
-  setFieldState('t2b',4,ok4,ok4?'Linea alternativa registrata.':'Indica almeno una seconda linea investigativa del fascicolo.');
-  setFieldState('t2b',5,ok5,ok5?`Sintesi accettata (${synthMatches} concetti rilevati).`:`Sintesi insufficiente (${synthMatches}/3 concetti rilevati). Collega più elementi del fascicolo.`);
+  setFieldState('t2b',1,s1,m1);
+  setFieldState('t2b',2,s2,m2);
+  setFieldState('t2b',3,s3,m3);
+  setFieldState('t2b',4,s4,m4);
+  setFieldState('t2b',5,s5,m5);
 
-  const allOk=ok1&&ok2&&ok3&&ok4&&ok5;
+  const allOk = s1==='ok'&&s2==='ok'&&s3==='ok'&&s4==='ok'&&s5==='ok';
+  const hasError = [s1,s2,s3,s4,s5].some(s=>s==='error');
 
   if(allOk){
     state.t2bCompleted=true;
@@ -1469,9 +1449,8 @@ function submitTerminal2B(){
     document.getElementById('t2b-submit').disabled=true;
     document.getElementById('t2b-confirmed').classList.add('visible');
 
-    const fb=FEEDBACK_2B[sosp]||{label:'Ipotesi registrata.',text:'L\'Archivio ha acquisito l\'analisi.'};
     const gfb=document.getElementById('t2b-global-fb');
-    gfb.innerHTML=`<strong>${fb.label}</strong><br><br>${fb.text}`;
+    gfb.innerHTML='<strong>Analisi acquisita dall\'Archivio.</strong><br><br>Il fascicolo non è ancora chiuso. I dati raccolti saranno verificati nell\'Atto 3.';
     gfb.className='terminal-global-feedback show ok';
 
     ['nav-esito','mnav-esito'].forEach(id=>{
@@ -1481,25 +1460,30 @@ function submitTerminal2B(){
     saveState();
     updateUI();
     setTimeout(()=>{showSection('esito');renderEsito();},2000);
+
+  } else if(!hasError){
+    // Solo campi ambiguous — no penalità
+    const gfb=document.getElementById('t2b-global-fb');
+    gfb.innerHTML='Il Terminale rileva elementi coerenti, ma alcuni campi richiedono maggiore specificità. Nessuna penalità applicata — correggi i campi evidenziati in ambra.';
+    gfb.className='terminal-global-feedback show ambiguous';
+
   } else {
+    // Errori reali → penalità
     state.t2bErrors++;
     state.errorsTerminal++;
-    state.score=Math.max(0,100-state.hintPenaltyTotal-(state.errorsTerminal*10));
+    state.score=Math.max(0,100-state.hintPenaltyTotal-(state.errorsTerminal*7));
     const gfb=document.getElementById('t2b-global-fb');
-    gfb.textContent='Analisi incompleta. Rivedi i campi segnalati e approfondisci la sintesi.';
+    gfb.innerHTML='Analisi incompleta. Rivedi i campi segnalati e approfondisci la sintesi.';
     gfb.className='terminal-global-feedback show warn';
     saveState();
     updateUI();
-    showToast('Analisi incompleta — indice ridotto di 10 punti');
+    showToast('Analisi incompleta — indice ridotto');
   }
 }
 
-function setFieldState(term, n, ok, msg){
-  const fb=document.getElementById(term+'-fb-'+n);
-  const st=document.getElementById(term+'-state-'+n);
-  if(fb){fb.textContent=msg;fb.className='terminal-feedback-line '+(ok?'ok':'error');}
-  if(st){st.textContent=ok?'Validato':'Errore';st.className='terminal-field-state '+(ok?'ok':'error');}
-}
+
+
+// setFieldState definita nel blocco validatori
 
 // ===== ESITO =====
 function renderEsito(){
