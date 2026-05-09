@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Archivio 17 — Caso 001 · Atto 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-main: #050506;
+  --bg-secondary: #0A0807;
+  --panel-1: #111318;
+  --panel-2: #17130F;
+  --panel-3: #1C1712;
+  --panel-4: #14100D;
+  --text-main: #EDE6D8;
+  --text-secondary: #AFA79A;
+  --text-meta: #7A7268;
+  --text-dim: #4A4440;
+  --red-logicus: #A71920;
+  --red-highlight: #C42028;
+  --red-dark: #641014;
+  --red-glow: rgba(167,25,32,0.18);
+  --amber: #B7833B;
+  --amber-dim: rgba(183,131,59,0.12);
+  --carta: #B9A174;
+  --success-bg: #0D1A14;
+  --success-border: #2A5C40;
+  --success-text: #5A9A74;
+  --error: #A71920;
+  --warning: #B7833B;
+  --border-gold: rgba(185,161,116,0.18);
+  --border-white: rgba(185,161,116,0.12);
+  --border-white-soft: rgba(185,161,116,0.07);
+  --border-red: rgba(167,25,32,0.28);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+  --glow-red: 0 0 24px rgba(167,25,32,0.2), 0 0 48px rgba(167,25,32,0.08);
+  --shadow-deep: 0 8px 48px rgba(0,0,0,0.85), 0 2px 12px rgba(0,0,0,0.6);
+  --shadow-panel: 0 4px 24px rgba(0,0,0,0.6);
+  --transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--bg-main);color:var(--text-main);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;z-index:1;mix-blend-mode:overlay;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);pointer-events:none;z-index:1;}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg-main)}
+::-webkit-scrollbar-thumb{background:rgba(185,161,116,0.1);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(185,161,116,0.2)}
+.app-section{display:none}.app-section.active{display:block}
+.btn-primary{background:var(--red-logicus);color:var(--text-main);border:none;padding:.9rem 1.75rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:var(--transition);display:inline-block;touch-action:manipulation;user-select:none;}
+.btn-primary:hover{background:var(--red-highlight);box-shadow:var(--glow-red)}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border-white);padding:.55rem 1rem;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);touch-action:manipulation;}
+.btn-ghost:hover{border-color:var(--border-gold);color:var(--text-main)}
+.btn-secondary{background:transparent;color:var(--carta);border:1px solid var(--border-gold);padding:.75rem 1.4rem;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);touch-action:manipulation;}
+.btn-secondary:hover{background:var(--amber-dim);color:var(--text-main)}
+
+/* HEADER */
+.app-header{position:fixed;top:0;left:0;right:0;height:56px;background:rgba(5,5,6,0.96);border-bottom:1px solid var(--border-white-soft);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;z-index:100;backdrop-filter:blur(12px);}
+.header-left{display:flex;align-items:center;gap:1rem}
+.header-brand{font-family:var(--font-serif);font-size:1.05rem;font-weight:400;letter-spacing:.05em;color:var(--text-main)}
+.header-sep{width:1px;height:18px;background:var(--border-white)}
+.header-case-info{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--text-meta);text-transform:uppercase;display:flex;align-items:center;gap:.5rem}
+.header-status-dot{width:5px;height:5px;border-radius:50%;background:var(--red-logicus);display:inline-block;animation:pulse-dot 2.5s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+.header-act-badge{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--amber);border:1px solid rgba(183,131,59,.3);padding:.2rem .55rem;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:1rem}
+.indice-badge{display:flex;align-items:baseline;gap:.4rem}
+.indice-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase}
+.indice-value{font-family:var(--font-serif);font-size:1.15rem;font-weight:300;color:var(--carta)}
+
+/* MOBILE NAV */
+.mobile-nav{display:none;position:fixed;top:56px;left:0;right:0;background:rgba(10,8,7,0.97);border-bottom:1px solid var(--border-white-soft);z-index:99;overflow-x:auto;white-space:nowrap;padding:.4rem .75rem;gap:.25rem;scrollbar-width:none;}
+.mobile-nav::-webkit-scrollbar{display:none}
+@media(max-width:900px){.mobile-nav{display:flex}}
+.mnav-item{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-meta);padding:.45rem .75rem;cursor:pointer;transition:var(--transition);border:1px solid transparent;flex-shrink:0;touch-action:manipulation;}
+.mnav-item:hover{color:var(--text-main)}
+.mnav-item.active{color:var(--text-main);border-color:var(--border-white)}
+.mnav-item.locked{opacity:.35;cursor:not-allowed}
+
+/* LAYOUT */
+.app-body{display:grid;grid-template-columns:220px 1fr 240px;min-height:100vh;padding-top:56px;}
+@media(max-width:1100px){.app-body{grid-template-columns:200px 1fr 200px}}
+@media(max-width:900px){.app-body{grid-template-columns:1fr;padding-top:96px}}
+
+/* SIDEBAR NAV */
+.nav-sidebar{position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;border-right:1px solid var(--border-white-soft);padding:1.5rem 0;background:var(--bg-secondary);display:flex;flex-direction:column;}
+@media(max-width:900px){.nav-sidebar{display:none}}
+.nav-section-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;padding:.25rem 1.25rem;margin-bottom:.25rem}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.55rem 1.25rem;font-size:12.5px;color:var(--text-secondary);cursor:pointer;transition:var(--transition);border-left:2px solid transparent;touch-action:manipulation;}
+.nav-item:hover{color:var(--text-main);background:rgba(185,161,116,0.04)}
+.nav-item.active{color:var(--text-main);border-left-color:var(--red-logicus);background:rgba(167,25,32,0.06)}
+.nav-item.locked{opacity:.35;cursor:not-allowed}
+.nav-dot{width:5px;height:5px;border-radius:50%;border:1px solid currentColor;flex-shrink:0;opacity:.6}
+.nav-sidebar-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border-white-soft)}
+
+/* MAIN */
+.main-content{min-height:calc(100vh - 56px);padding:0}
+.section-wrapper{max-width:760px;margin:0 auto;padding:3rem 2rem 4rem;}
+@media(max-width:600px){.section-wrapper{padding:2rem 1.25rem 3rem}}
+.section-header{margin-bottom:2.5rem}
+.section-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.75rem}
+.section-title{font-family:var(--font-serif);font-size:2.2rem;font-weight:300;color:var(--text-main);line-height:1.2;margin-bottom:.65rem}
+.section-subtitle{font-size:13px;color:var(--text-secondary);font-style:italic;line-height:1.6}
+
+/* INTRO PANEL */
+.intro-transmission{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem}
+.intro-transmission-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;white-space:nowrap}
+.intro-transmission-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border-white),transparent)}
+.intro-panel{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.75rem;position:relative;}
+.intro-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
+.intro-text p{color:var(--text-secondary);font-size:14px;line-height:1.75;margin-bottom:.85rem}
+.intro-text p:last-child{margin-bottom:0}
+.intro-signature{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--text-dim);margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border-white-soft)}
+.anim-in{animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* PROMEMORIA */
+.promemoria-card{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1.5rem;margin-bottom:2rem;position:relative;}
+.promemoria-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber),transparent);opacity:.4}
+.promemoria-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--amber);text-transform:uppercase;margin-bottom:.85rem}
+.promemoria-text p{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:.6rem}
+.promemoria-text p:last-child{margin-bottom:0}
+
+/* DOCS GRID */
+.docs-section-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-white-soft)}
+.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.85rem;margin-bottom:1.75rem}
+@media(max-width:500px){.docs-grid{grid-template-columns:1fr}}
+.doc-card{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.1rem;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden;}
+.doc-card::after{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--red-logicus);opacity:0;transition:var(--transition)}
+.doc-card:hover{border-color:var(--border-gold);background:var(--panel-3)}
+.doc-card:hover::after{opacity:1}
+.doc-card.opened{border-color:rgba(185,161,116,0.2);opacity:.7}
+.doc-card.locked{opacity:.35;cursor:not-allowed;pointer-events:none}
+.doc-card-code{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.22em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.45rem}
+.doc-card-title{font-family:var(--font-serif);font-size:1rem;font-weight:400;color:var(--text-main);line-height:1.3;margin-bottom:.35rem}
+.doc-card-cat{font-size:11px;color:var(--text-meta);margin-bottom:.5rem}
+.doc-card-desc{font-size:11.5px;color:var(--text-secondary);line-height:1.5}
+.doc-card-consulted{font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--success-text);margin-top:.65rem;text-transform:uppercase}
+
+/* UNLOCK BANNER */
+.unlock-banner{display:none;align-items:center;gap:.75rem;background:rgba(13,26,20,0.8);border:1px solid var(--success-border);padding:1rem 1.25rem;margin-bottom:1.5rem;}
+.unlock-banner.show{display:flex}
+.unlock-banner-dot{width:7px;height:7px;border-radius:50%;background:var(--success-text);flex-shrink:0}
+.unlock-banner-text{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--success-text);text-transform:uppercase}
+
+/* COUNTER ROW */
+.counter-row{display:flex;gap:1.5rem;margin-bottom:1.75rem;flex-wrap:wrap}
+.counter-chip{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-meta);text-transform:uppercase}
+.counter-chip span{color:var(--text-main);font-weight:500}
+
+/* VIEWER */
+#viewer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:200;overflow-y:auto;padding:2rem 1rem;}
+#viewer-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.viewer-card{background:var(--panel-2);border:1px solid var(--border-white);max-width:680px;width:100%;position:relative;margin:auto;}
+.viewer-back-bar{padding:.75rem 1.25rem;border-bottom:1px solid var(--border-white-soft);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.viewer-doc-meta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.viewer-doc-code{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;color:var(--red-logicus);text-transform:uppercase}
+.viewer-doc-cat{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--text-meta);text-transform:uppercase}
+.viewer-class-badge{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.2em;color:var(--amber);border:1px solid rgba(183,131,59,.3);padding:.15rem .45rem;text-transform:uppercase}
+.viewer-consulted{font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--success-text);text-transform:uppercase}
+.viewer-close{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--text-meta);background:transparent;border:1px solid var(--border-white-soft);padding:.35rem .75rem;cursor:pointer;transition:var(--transition);text-transform:uppercase;touch-action:manipulation;}
+.viewer-close:hover{color:var(--text-main);border-color:var(--border-white)}
+.viewer-body{padding:1.75rem 1.75rem 2rem}
+.viewer-title{font-family:var(--font-serif);font-size:1.5rem;font-weight:300;color:var(--text-main);margin-bottom:.35rem}
+.viewer-cat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--text-meta);text-transform:uppercase;margin-bottom:1.5rem}
+.viewer-image{width:100%;max-height:340px;object-fit:cover;border:1px solid var(--border-white-soft);margin-bottom:1.5rem;display:block}
+.viewer-section-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.65rem;margin-top:1.25rem}
+.viewer-transcript{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1.25rem;font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap;font-family:var(--font-mono);font-size:12px;}
+.viewer-note{background:rgba(183,131,59,0.06);border:1px solid rgba(183,131,59,0.15);padding:1rem 1.25rem;margin-top:1.25rem;}
+.viewer-note-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--amber);text-transform:uppercase;margin-bottom:.5rem}
+.viewer-note-text{font-size:12.5px;color:var(--text-secondary);line-height:1.65;font-style:italic}
+
+/* EMAIL VIEWER */
+.viewer-email{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1.25rem;margin-top:.75rem}
+.viewer-email-meta{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim);margin-bottom:.75rem;line-height:1.8}
+.viewer-email-body{font-size:13px;color:var(--text-secondary);line-height:1.8;white-space:pre-wrap}
+
+/* CASELLA PRIVATA */
+.casella-panel{background:var(--panel-1);border:1px solid var(--border-red);padding:1.75rem;position:relative;margin-top:1.5rem;}
+.casella-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
+.casella-eyebrow{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.75rem}
+.casella-title{font-family:var(--font-serif);font-size:1.25rem;color:var(--text-main);margin-bottom:.5rem}
+.casella-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.65;margin-bottom:1.25rem}
+.casella-format-info{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-bottom:1.25rem;line-height:1.8}
+.casella-input-row{display:flex;gap:.75rem;align-items:center;margin-bottom:.75rem;flex-wrap:wrap}
+.casella-input{background:var(--bg-main);border:1px solid var(--border-white);color:var(--text-main);font-family:var(--font-mono);font-size:1.1rem;letter-spacing:.25em;padding:.65rem 1rem;width:220px;text-align:center;transition:var(--transition);}
+.casella-input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2px rgba(183,131,59,.1)}
+.casella-attempts{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--text-meta);margin-bottom:1rem}
+.casella-msg{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;margin-top:.65rem;padding:.65rem 1rem;display:none}
+.casella-msg.error{display:block;color:var(--error);background:rgba(167,25,32,0.08);border:1px solid rgba(167,25,32,0.2)}
+.casella-msg.success{display:block;color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border)}
+.casella-msg.blocked{display:block;color:var(--text-meta);background:var(--panel-2);border:1px solid var(--border-white-soft)}
+.casella-hint{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--amber);border-top:1px solid var(--border-white-soft);padding-top:1rem;margin-top:1rem}
+.casella-note{font-size:11.5px;color:var(--text-dim);font-style:italic;margin-top:.75rem}
+
+/* NOTE DI VERIFICA */
+.verifica-notes{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+.verifica-note-card{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1.25rem;position:relative;}
+.verifica-note-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:100%;background:var(--success-border)}
+.verifica-note-id{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--success-text);text-transform:uppercase;margin-bottom:.5rem}
+.verifica-note-title{font-family:var(--font-serif);font-size:1rem;color:var(--text-main);margin-bottom:.65rem}
+.verifica-note-text{font-size:12.5px;color:var(--text-secondary);line-height:1.7;white-space:pre-line}
+.verifica-note-nota{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim);margin-top:.65rem;padding-top:.65rem;border-top:1px solid var(--border-white-soft)}
+
+/* TERMINAL */
+.terminal-panel{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1.75rem;position:relative;margin-top:1rem;}
+.terminal-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
+.terminal-eyebrow{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.75rem}
+.terminal-title{font-family:var(--font-serif);font-size:1.25rem;color:var(--text-main);margin-bottom:.35rem}
+.terminal-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.65;margin-bottom:1.5rem}
+.terminal-fields{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1.5rem}
+.terminal-field{background:var(--bg-main);border:1px solid var(--border-white-soft);padding:1rem 1.25rem;}
+.terminal-field-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem}
+.terminal-field-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase}
+.terminal-field-state{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.15em;text-transform:uppercase}
+.terminal-field-state.pending{color:var(--text-dim)}
+.terminal-field-state.ok{color:var(--success-text)}
+.terminal-field-state.error{color:var(--error)}
+.terminal-field-state.ambiguous{color:var(--amber)}
+.terminal-q{font-size:12.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:.75rem}
+.terminal-input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border-white-soft);color:var(--text-main);font-family:var(--font-sans);font-size:13.5px;padding:.5rem 0;transition:var(--transition);resize:none;min-height:42px;}
+.terminal-input:focus{outline:none;border-bottom-color:var(--amber)}
+.terminal-feedback-line{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;color:transparent;margin-top:.5rem;min-height:16px;transition:var(--transition)}
+.terminal-feedback-line.ok{color:var(--success-text)}
+.terminal-feedback-line.error{color:var(--error)}
+.terminal-feedback-line.ambiguous{color:var(--amber)}
+.terminal-submit{background:var(--red-logicus);color:var(--text-main);border:none;padding:.8rem 1.5rem;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:var(--transition);touch-action:manipulation;}
+.terminal-submit:hover{background:var(--red-highlight);box-shadow:var(--glow-red)}
+.terminal-submit:disabled{opacity:.4;cursor:not-allowed}
+.terminal-global-feedback{font-size:12.5px;color:transparent;line-height:1.65;padding:.85rem 1rem;margin-top:.75rem;font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;display:none}
+.terminal-global-feedback.show{display:block}
+.terminal-global-feedback.show.ok{color:var(--success-text);background:var(--success-bg);border:1px solid var(--success-border)}
+.terminal-global-feedback.show.warn{color:var(--amber);background:rgba(183,131,59,0.06);border:1px solid rgba(183,131,59,0.2)}
+.terminal-global-feedback.show.ambiguous{color:var(--amber);background:rgba(183,131,59,0.06);border:1px solid rgba(183,131,59,0.2)}
+.terminal-confirmed{display:none;background:var(--success-bg);border:1px solid var(--success-border);padding:1rem 1.25rem;margin-top:.75rem}
+.terminal-confirmed.visible{display:block}
+.terminal-confirmed-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--success-text);text-transform:uppercase;margin-bottom:.4rem}
+.terminal-confirmed-msg{font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+
+/* INVESTIGATION PANEL (right) */
+.investigation-panel{position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;border-left:1px solid var(--border-white-soft);padding:1.25rem;background:var(--bg-secondary);}
+@media(max-width:900px){.investigation-panel{display:none}}
+.inv-panel-header{margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border-white-soft)}
+.inv-panel-title{font-family:var(--font-mono);font-size:9px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase}
+.inv-section{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border-white-soft)}
+.inv-section:last-child{border-bottom:none}
+.inv-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.65rem}
+.inv-case-status{font-family:var(--font-serif);font-size:1rem;color:var(--amber);margin-bottom:.5rem}
+.inv-status-row{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem;padding:.28rem 0;border-bottom:1px solid var(--border-white-soft)}
+.inv-status-row:last-child{border-bottom:none}
+.inv-status-label{font-size:10.5px;color:var(--text-meta)}
+.inv-status-val{font-family:var(--font-mono);font-size:9.5px;color:var(--text-secondary);text-align:right}
+.inv-status-val.active{color:var(--amber)}
+.inv-status-val.blocked{color:var(--text-dim)}
+.inv-status-val.ok{color:var(--success-text)}
+.inv-status-val.closed{color:var(--red-logicus)}
+.inv-indice-bar{height:3px;background:var(--border-white-soft);border-radius:2px;margin-bottom:.5rem;overflow:hidden}
+.inv-indice-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.inv-indice-fill.high{background:var(--success-text)}
+.inv-indice-fill.mid{background:var(--amber)}
+.inv-indice-fill.low{background:var(--red-logicus)}
+
+/* MOBILE DRAWER */
+.mobile-inv-drawer{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.7)}
+@media(max-width:900px){.mobile-inv-drawer{display:none}}
+.mobile-inv-drawer.open{display:block}
+.mobile-inv-panel{position:absolute;right:0;top:0;bottom:0;width:280px;background:var(--bg-secondary);border-left:1px solid var(--border-white-soft);overflow-y:auto;padding:1.25rem;}
+.mobile-inv-close{display:flex;justify-content:flex-end;margin-bottom:1rem}
+
+/* SCORE / ESITO */
+.score-card{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:2rem;margin-bottom:2rem;position:relative;}
+.score-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
+.score-main-panel{text-align:center;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border-white-soft)}
+.score-number{font-family:var(--font-serif);font-size:4rem;font-weight:300;color:var(--carta);line-height:1}
+.score-number.good{color:var(--success-text)}
+.score-classlabel{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;margin-top:.75rem;margin-bottom:.35rem}
+.score-classname{font-family:var(--font-serif);font-size:1.35rem;color:var(--text-secondary)}
+.score-classname.good{color:var(--success-text)}
+.score-breakdown{display:flex;flex-direction:column;gap:.5rem}
+.bd-row{display:flex;justify-content:space-between;align-items:baseline;padding:.35rem 0;border-bottom:1px solid var(--border-white-soft);font-size:12.5px;color:var(--text-secondary)}
+.bd-row:last-child{border-bottom:none}
+.bd-row.total{font-family:var(--font-serif);font-size:1.1rem;color:var(--text-main)}
+.bd-val{font-family:var(--font-mono);font-size:11px;color:var(--text-main)}
+.bd-val.penalty{color:var(--error)}
+
+/* FINAL SCENE */
+.final-scene{margin-top:2rem}
+.final-tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem}
+.final-headline{font-family:var(--font-serif);font-size:1.6rem;font-weight:300;color:var(--text-main);margin-bottom:.85rem;line-height:1.3}
+.final-headline.risolto{color:var(--success-text)}
+.final-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-white),transparent);margin:1.25rem 0}
+.final-body{font-size:13.5px;color:var(--text-secondary);line-height:1.8;margin-bottom:1.25rem}
+.final-caso-chiuso{background:var(--success-bg);border:1px solid var(--success-border);padding:1.5rem;margin-bottom:1.5rem;position:relative;}
+.final-caso-chiuso::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--success-border),transparent)}
+.final-caso-chiuso-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.35em;color:var(--success-text);text-transform:uppercase;margin-bottom:.75rem}
+.final-caso-chiuso-text{font-size:13px;color:var(--text-secondary);line-height:1.8}
+.final-epilogo{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.5rem;position:relative;}
+.final-epilogo::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
+.final-epilogo-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.75rem}
+.final-epilogo-text{font-size:13.5px;color:var(--text-secondary);line-height:1.85;font-style:italic}
+.final-epilogo-firm{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--text-dim);margin-top:1rem;padding-top:.75rem;border-top:1px solid var(--border-white-soft)}
+.final-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+
+/* SUPPORT / HINTS */
+.support-intro-panel{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.25rem;margin-bottom:2rem;font-size:12.5px;color:var(--text-secondary);line-height:1.7}
+.hint-accordion{background:var(--panel-2);border:1px solid var(--border-white-soft);margin-bottom:.65rem;transition:var(--transition)}
+.hint-hdr{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;cursor:pointer;}
+.hint-hdr:hover{background:rgba(185,161,116,0.03)}
+.hint-hdr-left{display:flex;align-items:center;gap:.75rem;flex:1;min-width:0}
+.hint-puzzle-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.2em;color:var(--red-logicus);flex-shrink:0}
+.hint-puzzle-name{font-size:13px;color:var(--text-main);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hint-hdr-right{display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.hint-cost-total{font-family:var(--font-mono);font-size:8.5px;color:var(--text-dim)}
+.hint-arrow{font-size:10px;color:var(--text-dim);transition:transform .2s}
+.hint-accordion.open .hint-arrow{transform:rotate(180deg)}
+.hint-body{display:none;padding:0 1.1rem 1.1rem;border-top:1px solid var(--border-white-soft)}
+.hint-accordion.open .hint-body{display:block}
+.hint-scope{font-size:12px;color:var(--text-meta);font-style:italic;margin:.75rem 0 .85rem}
+.hint-level-row{padding:.65rem 0;border-bottom:1px solid var(--border-white-soft)}
+.hint-level-row:last-child{border-bottom:none}
+.hint-level-row.used{opacity:.7}
+.hint-level-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem}
+.hint-level-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase}
+.hint-level-cost{font-family:var(--font-mono);font-size:9px;color:var(--amber)}
+.hint-text.revealed{font-size:12.5px;color:var(--text-secondary);line-height:1.65}
+.hint-used-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;color:var(--success-text);text-transform:uppercase;margin-top:.35rem;display:none}
+.hint-used-label.visible{display:block}
+.hint-reveal-btn{background:transparent;border:1px solid var(--border-white-soft);color:var(--text-meta);font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;padding:.4rem .75rem;cursor:pointer;transition:var(--transition);text-transform:uppercase;touch-action:manipulation;}
+.hint-reveal-btn:hover{border-color:var(--amber);color:var(--amber)}
+.hints-group-wrapper{margin-bottom:.5rem}
+.hints-group-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+.hints-group-label span:first-child{font-family:var(--font-mono);font-size:8px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase}
+.hints-group-badge{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.2em;padding:.2rem .5rem;text-transform:uppercase}
+.hints-group-badge.unlocked{color:var(--success-text);border:1px solid var(--success-border)}
+.hints-group-badge.locked{color:var(--text-dim);border:1px solid var(--border-white-soft)}
+.hints-p2-locked-banner,.hints-p2-unlocked-banner{background:var(--panel-1);border:1px solid var(--border-white-soft);padding:1rem 1.25rem;margin-bottom:.65rem;display:flex;align-items:flex-start;gap:.75rem;flex-direction:column}
+.hints-locked-icon{font-family:var(--font-mono);font-size:12px;color:var(--text-dim)}
+.hints-locked-title{font-size:12.5px;color:var(--text-secondary);line-height:1.6}
+.hints-locked-sub{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--text-dim);margin-top:.25rem}
+.hint-accordion.locked-card{opacity:.35;pointer-events:none}
+.locked-hdr{cursor:default}
+.locked-title{color:var(--text-dim)}
+
+/* EMAIL GRID */
+.email-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.75rem;margin-top:1rem}
+.email-card{background:var(--panel-3);border:1px solid var(--border-white-soft);padding:1rem;cursor:pointer;transition:var(--transition);}
+.email-card:hover{border-color:var(--border-gold);background:var(--panel-2)}
+.email-card-id{font-family:var(--font-mono);font-size:8px;letter-spacing:.22em;color:var(--amber);margin-bottom:.35rem;text-transform:uppercase}
+.email-card-obj{font-family:var(--font-serif);font-size:.95rem;color:var(--text-main);margin-bottom:.3rem}
+.email-card-cat{font-size:10.5px;color:var(--text-meta)}
+
+/* TOAST */
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--panel-1);border:1px solid var(--border-white);padding:.75rem 1.5rem;font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-secondary);z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;max-width:90vw}
+#toast.visible{opacity:1}
+
+/* CONFIRM OVERLAY */
+#confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;align-items:center;justify-content:center}
+#confirm-overlay.visible{display:flex}
+.confirm-box{background:var(--panel-2);border:1px solid var(--border-white);padding:2rem;max-width:380px;width:90%}
+.confirm-box h3{font-family:var(--font-serif);font-size:1.25rem;color:var(--text-main);margin-bottom:.75rem}
+.confirm-box p{font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:1.5rem}
+.confirm-actions{display:flex;gap:.75rem}
+
+/* FOOTER */
+.app-footer{border-top:1px solid var(--border-white-soft);padding:1.25rem 2rem;font-family:var(--font-mono);font-size:8.5px;letter-spacing:.15em;color:var(--text-dim);text-align:center}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-left">
+    <div class="header-brand">Archivio 17</div>
+    <div class="header-sep"></div>
+    <div class="header-case-info"><span class="header-status-dot"></span>Caso 001 — Il Caso Marini</div>
+    <div class="header-act-badge">Atto 3</div>
+  </div>
+  <div class="header-right">
+    <div class="indice-badge">
+      <span class="indice-label">Indice investigativo</span>
+      <span class="indice-value" id="live-indice">100</span>
+    </div>
+    <button class="btn-ghost" onclick="showResetConfirm()">Azzera sessione</button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobile-nav">
+  <div class="mnav-item active" onclick="showSection('intro')" id="mnav-intro">Archivista</div>
+  <div class="mnav-item" onclick="showSection('parte1')" id="mnav-parte1">Parte 1</div>
+  <div class="mnav-item locked" onclick="showSection('terminale3a')" id="mnav-terminale3a">Term. 03A</div>
+  <div class="mnav-item locked" onclick="showSection('parte2')" id="mnav-parte2">Parte 2</div>
+  <div class="mnav-item locked" onclick="showSection('terminale3b')" id="mnav-terminale3b">Term. 03B</div>
+  <div class="mnav-item locked" onclick="showSection('verifiche')" id="mnav-verifiche">Verifiche</div>
+  <div class="mnav-item locked" onclick="showSection('terminale3c')" id="mnav-terminale3c">Term. 03C</div>
+  <div class="mnav-item locked" onclick="showSection('esito')" id="mnav-esito">Esito</div>
+  <div class="mnav-item" onclick="showSection('supporto')" id="mnav-supporto">Supporto</div>
+  <div class="mnav-item" onclick="toggleMobileDrawer()">Stato</div>
+</nav>
+
+<div id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
+  <div class="mobile-inv-panel">
+    <div class="mobile-inv-close">
+      <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
+    </div>
+    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
+    <div class="inv-section">
+      <div class="inv-label">Scheda caso</div>
+      <div class="inv-case-status">Indagine aperta</div>
+      <div style="margin-top:.65rem">
+        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="minv-fase">Omissioni e accessi</span></div>
+      </div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Indice investigativo</div>
+      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
+        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="minv-score-big">100</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
+      </div>
+      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Progressione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="minv-p1">0 / 7</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="minv-casella">non disponibile</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="minv-p2">bloccati</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="minv-t3a">non validato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="minv-t3b">bloccato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="minv-t3c">bloccato</span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Dati sessione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="minv-hints">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="minv-errors">0</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="app-body">
+
+  <nav class="nav-sidebar">
+    <div class="nav-section-label">Indice fascicolo</div>
+    <div class="nav-item active" onclick="showSection('intro')" id="nav-intro"><div class="nav-dot"></div>Messaggio Archivista</div>
+    <div class="nav-item" onclick="showSection('parte1')" id="nav-parte1"><div class="nav-dot"></div>Parte 1 — Omissioni e accessi</div>
+    <div class="nav-item locked" onclick="showSection('terminale3a')" id="nav-terminale3a"><div class="nav-dot"></div>Terminale 03A</div>
+    <div class="nav-item locked" onclick="showSection('parte2')" id="nav-parte2"><div class="nav-dot"></div>Parte 2 — Verifiche incrociate</div>
+    <div class="nav-item locked" onclick="showSection('terminale3b')" id="nav-terminale3b"><div class="nav-dot"></div>Terminale 03B</div>
+    <div class="nav-item locked" onclick="showSection('verifiche')" id="nav-verifiche"><div class="nav-dot"></div>Note di verifica</div>
+    <div class="nav-item locked" onclick="showSection('terminale3c')" id="nav-terminale3c"><div class="nav-dot"></div>Terminale 03C</div>
+    <div class="nav-item locked" onclick="showSection('esito')" id="nav-esito"><div class="nav-dot"></div>Esito finale</div>
+    <div class="nav-section-label" style="margin-top:.5rem">Strumenti</div>
+    <div class="nav-item" onclick="showSection('supporto')" id="nav-supporto"><div class="nav-dot"></div>Supporto Archivista</div>
+    <div class="nav-sidebar-footer">
+      <button class="btn-ghost" style="width:100%" onclick="showResetConfirm()">Azzera sessione</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <!-- INTRO -->
+    <div class="app-section active" id="section-intro">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Comunicazione Archivista — Atto 3</div>
+          <h2 class="section-title">Il punto cieco</h2>
+          <div class="section-subtitle">La prima indagine ha privilegiato la pista più rumorosa.</div>
+        </div>
+        <div class="intro-transmission">
+          <span class="intro-transmission-label">Trasmissione archivio · riservata</span>
+          <span class="intro-transmission-line"></span>
+        </div>
+        <div class="intro-panel anim-in">
+          <div class="intro-text">
+            <p>La prima indagine ha privilegiato la pista più rumorosa.</p>
+            <p>Questo fascicolo richiede l'opposto.</p>
+            <p>Non cerchi nuovi sospetti.<br>Cerchi ciò che è rimasto fuori dalla lettura iniziale.</p>
+            <p>Un accesso ignorato.<br>Un alibi non verificato.<br>Una data personale.<br>Una linea familiare rimasta ai margini.</p>
+            <p>Proceda con cautela.</p>
+          </div>
+          <div class="intro-signature">— L'Archivista · Archivio 17 · Caso 001</div>
+        </div>
+        <div style="margin-top:2rem">
+          <button class="btn-primary" onclick="showSection('parte1')">Apri Atto 3 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTE 1 -->
+    <div class="app-section" id="section-parte1">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Fascicolo — Atto 3 · Fase 1</div>
+          <h2 class="section-title">Parte 1 — Omissioni e accessi</h2>
+          <div class="section-subtitle">Esamini i reperti. Noti le sovrapposizioni.</div>
+        </div>
+        <div class="counter-row">
+          <span class="counter-chip">Reperti consultati: <span id="p1-count">0</span> / 7</span>
+        </div>
+        <div class="unlock-banner" id="p1-unlock-banner">
+          <div class="unlock-banner-dot"></div>
+          <span class="unlock-banner-text">Terminale 03A disponibile</span>
+        </div>
+        <div class="docs-section-label">Reperti disponibili</div>
+        <div class="docs-grid" id="docs-grid-p1"></div>
+        <div style="margin-top:1.5rem">
+          <button class="btn-primary" onclick="showSection('terminale3a')">Accedi al Terminale 03A →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINALE 03A -->
+    <div class="app-section" id="section-terminale3a">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Analisi — Terminale 03A</div>
+          <h2 class="section-title">Linee intrecciate</h2>
+          <div class="section-subtitle">Identifichi le sovrapposizioni. Non concluda ancora.</div>
+        </div>
+        <div class="terminal-panel">
+          <div class="terminal-eyebrow">Terminale 03A · Analisi delle linee intrecciate</div>
+          <div class="terminal-desc">Il fascicolo presenta più nomi con omissioni, accessi e intervalli non verificati. Risponda con precisione.</div>
+          <div class="terminal-fields">
+
+            <div class="terminal-field" id="t3a-field-1">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.01 — Linee intrecciate</div>
+                <div class="terminal-field-state pending" id="t3a-state-1">In attesa</div>
+              </div>
+              <div class="terminal-q">Quali nomi o linee del fascicolo sembrano intrecciarsi in questa fase?</div>
+              <textarea class="terminal-input" id="t3a-input-1" rows="2" placeholder="Identifichi almeno due soggetti o linee…"></textarea>
+              <div class="terminal-feedback-line" id="t3a-fb-1"></div>
+            </div>
+
+            <div class="terminal-field" id="t3a-field-2">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02 — Coinvolgimento multiplo</div>
+                <div class="terminal-field-state pending" id="t3a-state-2">In attesa</div>
+              </div>
+              <div class="terminal-q">Quali elementi fanno pensare che possa esserci più di un possibile coinvolto?</div>
+              <textarea class="terminal-input" id="t3a-input-2" rows="2" placeholder="Identifichi almeno un elemento concreto…"></textarea>
+              <div class="terminal-feedback-line" id="t3a-fb-2"></div>
+            </div>
+
+            <div class="terminal-field" id="t3a-field-3">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.03 — Elementi non verificati</div>
+                <div class="terminal-field-state pending" id="t3a-state-3">In attesa</div>
+              </div>
+              <div class="terminal-q">Quali elementi non sono ancora stati verificati con certezza?</div>
+              <textarea class="terminal-input" id="t3a-input-3" rows="2" placeholder="Identifichi almeno un elemento aperto…"></textarea>
+              <div class="terminal-feedback-line" id="t3a-fb-3"></div>
+            </div>
+
+          </div>
+          <button class="terminal-submit" id="t3a-submit" onclick="submitTerminal3A()">Invia al Terminale 03A</button>
+          <div class="terminal-global-feedback" id="t3a-global-fb"></div>
+          <div class="terminal-confirmed" id="t3a-confirmed">
+            <div class="terminal-confirmed-label">Analisi registrata — Terminale 03A</div>
+            <div class="terminal-confirmed-msg" id="t3a-confirmed-msg">Linee intrecciate registrate. Accesso alla Parte 2 autorizzato.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTE 2 -->
+    <div class="app-section" id="section-parte2">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Fascicolo — Atto 3 · Fase 2</div>
+          <h2 class="section-title">Parte 2 — Verifiche incrociate</h2>
+        </div>
+        <div class="promemoria-card anim-in">
+          <div class="promemoria-label">Promemoria Archivista — dopo Terminale 03A</div>
+          <div class="promemoria-text">
+            <p>Il fascicolo non presenta ancora una soluzione.</p>
+            <p>Presenta accessi, omissioni e intervalli non verificati.</p>
+            <p>Non cerchi il nome più rumoroso. Cerchi chi unisce movente, accesso e assenza di alibi verificato.</p>
+            <p>Proceda con ordine.</p>
+          </div>
+        </div>
+
+        <!-- CASELLA PRIVATA -->
+        <div id="casella-privata-container">
+          <div class="casella-panel" id="casella-panel">
+            <div class="casella-eyebrow">Accesso opzionale — Casella privata</div>
+            <div class="casella-title">Casella privata Andrea Marini</div>
+            <div class="casella-desc">È stata individuata una sessione locale non sincronizzata nel profilo di Andrea Marini. L'accesso richiede una password numerica.</div>
+            <div class="casella-format-info">
+              Formato password: 8 cifre<br>
+              Tentativi disponibili: <span id="casella-attempts-label">3</span><br>
+              Supporto Archivista: non disponibile
+            </div>
+            <div class="casella-input-row">
+              <input type="text" class="casella-input" id="casella-input" maxlength="10" placeholder="00000000" inputmode="numeric">
+              <button class="btn-primary" onclick="submitCasella()" id="casella-btn">Accedi</button>
+            </div>
+            <div class="casella-msg" id="casella-msg"></div>
+            <div class="casella-hint">▸ Suggerimento di sistema: data familiare significativa</div>
+            <div class="casella-note">Il fascicolo resta risolvibile anche senza accesso alla casella privata.</div>
+          </div>
+
+          <!-- EMAIL dopo accesso -->
+          <div id="casella-email-section" style="display:none">
+            <div class="promemoria-card" style="border-color:var(--success-border)">
+              <div class="promemoria-label" style="color:var(--success-text)">Sincronizzazione completata — 5 elementi recuperati</div>
+              <div class="promemoria-text"><p>L'Archivio ha recuperato corrispondenza parziale dalla sessione locale di Andrea Marini. Esamini con attenzione.</p></div>
+            </div>
+            <div class="docs-section-label">Email recuperate</div>
+            <div class="email-grid" id="email-grid"></div>
+          </div>
+
+          <!-- Casella bloccata -->
+          <div id="casella-bloccata-section" style="display:none">
+            <div class="promemoria-card" style="border-color:var(--border-red)">
+              <div class="promemoria-label" style="color:var(--text-dim)">Accesso bloccato</div>
+              <div class="promemoria-text"><p>La casella privata non è più disponibile in questa sessione. Il fascicolo resta risolvibile attraverso i reperti standard.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem">
+          <div class="counter-row">
+            <span class="counter-chip">Reperti P2 consultati: <span id="p2-count">0</span> / 5</span>
+          </div>
+          <div class="unlock-banner" id="p2-unlock-banner">
+            <div class="unlock-banner-dot"></div>
+            <span class="unlock-banner-text">Terminale 03B disponibile</span>
+          </div>
+          <div class="docs-section-label">Reperti — Verifiche incrociate</div>
+          <div class="docs-grid" id="docs-grid-p2"></div>
+        </div>
+        <div style="margin-top:1.5rem">
+          <button class="btn-primary" onclick="showSection('terminale3b')">Accedi al Terminale 03B →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINALE 03B -->
+    <div class="app-section" id="section-terminale3b">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Analisi — Terminale 03B</div>
+          <h2 class="section-title">Movente · Accesso · Alibi</h2>
+          <div class="section-subtitle">Valuti ciascuna linea per convergenza, non per rumore.</div>
+        </div>
+        <div class="terminal-panel">
+          <div class="terminal-eyebrow">Terminale 03B · Analisi movente / accesso / alibi</div>
+          <div class="terminal-desc">Il fascicolo ha accumulato elementi su quattro linee. Risponda con precisione su ciascuna.</div>
+          <div class="terminal-fields">
+
+            <div class="terminal-field" id="t3b-field-1">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.01 — Accesso invisibile</div>
+                <div class="terminal-field-state pending" id="t3b-state-1">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale accesso consentiva di entrare nello studio senza comparire nelle riprese principali?</div>
+              <textarea class="terminal-input" id="t3b-input-1" rows="2" placeholder="Identifichi l'accesso non sorvegliato…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-1"></div>
+            </div>
+
+            <div class="terminal-field" id="t3b-field-2">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02A — Movente Elena Ricci</div>
+                <div class="terminal-field-state pending" id="t3b-state-2">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale potenziale movente emerge per Elena Ricci?</div>
+              <textarea class="terminal-input" id="t3b-input-2" rows="2" placeholder="Valuti la linea domestica…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-2"></div>
+            </div>
+
+            <div class="terminal-field" id="t3b-field-3">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02B — Movente Davide Serra</div>
+                <div class="terminal-field-state pending" id="t3b-state-3">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale potenziale movente emerge per Davide Serra?</div>
+              <textarea class="terminal-input" id="t3b-input-3" rows="2" placeholder="Valuti la linea professionale…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-3"></div>
+            </div>
+
+            <div class="terminal-field" id="t3b-field-4">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02C — Movente Stefano Marini</div>
+                <div class="terminal-field-state pending" id="t3b-state-4">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale potenziale movente emerge per Stefano Marini?</div>
+              <textarea class="terminal-input" id="t3b-input-4" rows="2" placeholder="Valuti la linea familiare…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-4"></div>
+            </div>
+
+            <div class="terminal-field" id="t3b-field-5">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02D — Movente Roberto Manfredi</div>
+                <div class="terminal-field-state pending" id="t3b-state-5">In attesa</div>
+              </div>
+              <div class="terminal-q">Quale potenziale movente emerge per Roberto Manfredi?</div>
+              <textarea class="terminal-input" id="t3b-input-5" rows="2" placeholder="Valuti la linea professionale esterna…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-5"></div>
+            </div>
+
+            <div class="terminal-field" id="t3b-field-6">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.03 — Convergenza</div>
+                <div class="terminal-field-state pending" id="t3b-state-6">In attesa</div>
+              </div>
+              <div class="terminal-q">Chi presenta contemporaneamente un potenziale movente, un potenziale accesso alla scena e nessun alibi verificato?</div>
+              <textarea class="terminal-input" id="t3b-input-6" rows="2" placeholder="Identifichi il soggetto…"></textarea>
+              <div class="terminal-feedback-line" id="t3b-fb-6"></div>
+            </div>
+
+          </div>
+          <button class="terminal-submit" id="t3b-submit" onclick="submitTerminal3B()">Invia al Terminale 03B</button>
+          <div class="terminal-global-feedback" id="t3b-global-fb"></div>
+          <div class="terminal-confirmed" id="t3b-confirmed">
+            <div class="terminal-confirmed-label">Analisi registrata — Terminale 03B</div>
+            <div class="terminal-confirmed-msg" id="t3b-confirmed-msg">La linea Stefano collega movente economico, accesso potenziale e assenza di alibi verificato. Accesso alle verifiche pre-finali autorizzato.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTE DI VERIFICA -->
+    <div class="app-section" id="section-verifiche">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Fascicolo — Atto 3 · Pre-finale</div>
+          <h2 class="section-title">Note di verifica</h2>
+          <div class="section-subtitle">Il fascicolo integra i riscontri raccolti. Alcune linee vengono ridimensionate.</div>
+        </div>
+        <div class="verifica-notes">
+
+          <div class="verifica-note-card">
+            <div class="verifica-note-id">N01 — Riscontro telefonico Elena</div>
+            <div class="verifica-note-title">Chiamata Elena Ricci — 14/11</div>
+            <div class="verifica-note-text">Il numero chiamato da Elena Ricci durante l'intervallo dichiarato risulta associato alla Dott.ssa Marta Valenti, psicologa clinica.
+
+Chiamata: 14/11 — durata 19:48</div>
+            <div class="verifica-note-nota">La chiamata risulta compatibile con l'intervallo riferito da Elena durante la cena.</div>
+          </div>
+
+          <div class="verifica-note-card">
+            <div class="verifica-note-id">N02 — Riscontro telefonico Davide</div>
+            <div class="verifica-note-title">Chiamata ricevuta Davide Serra — 14/11</div>
+            <div class="verifica-note-text">La chiamata ricevuta da Davide Serra risulta provenire dal numero intestato a Sara Loi, coniuge di Davide Serra.
+
+Chiamata: 14/11 — durata 03:21</div>
+            <div class="verifica-note-nota">La chiamata non coincide con il numero contattato da Elena Ricci.</div>
+          </div>
+
+          <div class="verifica-note-card">
+            <div class="verifica-note-id">N03 — Ricevuta / posizione Davide</div>
+            <div class="verifica-note-title">Transazione elettronica Davide Serra — 14/11</div>
+            <div class="verifica-note-text">Ricevuta ristorante intestata a pagamento elettronico riconducibile a Davide Serra.
+
+Orario transazione: 14/11 — 20:31
+Luogo: ristorante a circa 20 minuti dallo Studio Marini.</div>
+            <div class="verifica-note-nota">Il dato conferma la presenza di Davide nell'area dichiarata, ma non risulta sufficiente da solo a ricostruire ogni spostamento successivo.</div>
+          </div>
+
+          <div class="verifica-note-card">
+            <div class="verifica-note-id">N04 — Verifica logistica Roberto Manfredi</div>
+            <div class="verifica-note-title">Alibi logistico Roberto Manfredi — 14/11</div>
+            <div class="verifica-note-text">Dalla documentazione acquisita risultano:
+— prenotazione veicolo a noleggio aziendale;
+— registrazione ingresso presso sala riunioni esterna;
+— pagamento parcheggio;
+— presenza confermata da due partecipanti all'incontro.
+
+Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
+            <div class="verifica-note-nota">Gli elementi confermano la presenza di Manfredi fuori sede nella fascia compatibile con il decesso.</div>
+          </div>
+
+        </div>
+        <div style="margin-top:1.5rem">
+          <button class="btn-primary" onclick="showSection('terminale3c')">Accedi al Terminale 03C →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERMINALE 03C -->
+    <div class="app-section" id="section-terminale3c">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Terminale finale — 03C</div>
+          <h2 class="section-title">Chiusura del caso</h2>
+          <div class="section-subtitle">Quattro domande. Risponda con precisione.</div>
+        </div>
+        <div class="terminal-panel">
+          <div class="terminal-eyebrow">Terminale 03C · Chiusura del caso</div>
+          <div class="terminal-desc">Il fascicolo è pronto per la chiusura. Risponda alle quattro domande finali.</div>
+          <div class="terminal-fields">
+
+            <div class="terminal-field" id="t3c-field-1">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.01 — Responsabile</div>
+                <div class="terminal-field-state pending" id="t3c-state-1">In attesa</div>
+              </div>
+              <div class="terminal-q">Chi ha ucciso Andrea Marini?</div>
+              <textarea class="terminal-input" id="t3c-input-1" rows="2" placeholder="Identifichi il responsabile…"></textarea>
+              <div class="terminal-feedback-line" id="t3c-fb-1"></div>
+            </div>
+
+            <div class="terminal-field" id="t3c-field-2">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.02 — Movente principale</div>
+                <div class="terminal-field-state pending" id="t3c-state-2">In attesa</div>
+              </div>
+              <div class="terminal-q">Qual era il movente principale?</div>
+              <textarea class="terminal-input" id="t3c-input-2" rows="2" placeholder="Identifichi il movente…"></textarea>
+              <div class="terminal-feedback-line" id="t3c-fb-2"></div>
+            </div>
+
+            <div class="terminal-field" id="t3c-field-3">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.03 — Modalità di accesso</div>
+                <div class="terminal-field-state pending" id="t3c-state-3">In attesa</div>
+              </div>
+              <div class="terminal-q">Come è entrato nello studio senza comparire nelle riprese principali?</div>
+              <textarea class="terminal-input" id="t3c-input-3" rows="2" placeholder="Identifichi l'accesso…"></textarea>
+              <div class="terminal-feedback-line" id="t3c-fb-3"></div>
+            </div>
+
+            <div class="terminal-field" id="t3c-field-4">
+              <div class="terminal-field-head">
+                <div class="terminal-field-id">CAMPO.04 — Provenienza arma</div>
+                <div class="terminal-field-state pending" id="t3c-state-4">In attesa</div>
+              </div>
+              <div class="terminal-q">Di chi era l'arma utilizzata per uccidere Andrea Marini?</div>
+              <textarea class="terminal-input" id="t3c-input-4" rows="2" placeholder="Identifichi la provenienza dell'arma…"></textarea>
+              <div class="terminal-feedback-line" id="t3c-fb-4"></div>
+            </div>
+
+          </div>
+          <button class="terminal-submit" id="t3c-submit" onclick="submitTerminal3C()">Chiudi il caso</button>
+          <div class="terminal-global-feedback" id="t3c-global-fb"></div>
+          <div class="terminal-confirmed" id="t3c-confirmed">
+            <div class="terminal-confirmed-label">Caso chiuso — Archivio 17</div>
+            <div class="terminal-confirmed-msg" id="t3c-confirmed-msg">Analisi conclusiva acquisita. Accesso all'esito finale autorizzato.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESITO FINALE -->
+    <div class="app-section" id="section-esito">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Risultato — Atto 3</div>
+          <h2 class="section-title">Esito finale</h2>
+        </div>
+        <div class="score-card anim-in">
+          <div class="score-main-panel">
+            <div class="score-number" id="esito-score">100</div>
+            <div class="score-classlabel">Classificazione</div>
+            <div class="score-classname" id="esito-classname">—</div>
+          </div>
+          <div class="score-breakdown">
+            <div class="bd-row"><span>Punteggio base</span><span class="bd-val">100</span></div>
+            <div class="bd-row"><span>Supporti Archivista richiesti</span><span class="bd-val" id="esito-hint-count" style="color:var(--text-secondary)">0 livelli</span></div>
+            <div class="bd-row"><span>Penalità supporto Archivista</span><span class="bd-val penalty" id="esito-hint-cost">−0</span></div>
+            <div class="bd-row"><span>Penalità errori Terminale</span><span class="bd-val penalty" id="esito-err-cost">−0</span></div>
+            <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>
+          </div>
+        </div>
+
+        <div class="final-scene" id="esito-final-scene">
+          <div class="final-tag">CASO 001 — ARCHIVIATO</div>
+          <div class="final-headline risolto">Caso chiuso.</div>
+          <div class="final-divider"></div>
+
+          <div class="final-caso-chiuso">
+            <div class="final-caso-chiuso-label">Archivio 17 · Fascicolo A17-001 · Risolto</div>
+            <div class="final-caso-chiuso-text">La morte di Andrea Marini non era il risultato della pista più rumorosa.<br><br>Era il punto di convergenza di una linea rimasta fuori dalla prima indagine: un movente economico familiare, un accesso non sorvegliato, un'arma di famiglia, un'assenza di alibi verificato.<br><br>Stefano Marini aveva ciò che agli altri mancava: un motivo sufficiente, una via d'accesso, un mezzo disponibile e il tempo per costruire una scena leggibile come suicidio.<br><br>Il fascicolo A17-001 viene archiviato come risolto.<br><br>— L'Archivista</div>
+          </div>
+
+          <div class="final-divider"></div>
+
+          <div class="final-epilogo">
+            <div class="final-epilogo-label">Epilogo</div>
+            <div class="final-epilogo-text">Stefano Marini non è mai stato indagato per l'omicidio del fratello.<br><br>La fideiussione è stata estinta.<br>La madre, Giuseppina, non ha mai saputo perché Andrea è morto davvero.<br><br>L'Archivio non decide cosa fare della verità.<br>La conserva.</div>
+            <div class="final-epilogo-firm">Fine fascicolo A17-001.</div>
+          </div>
+
+          <div class="final-actions">
+            <button class="btn-primary" onclick="showSection('intro')">Torna al riepilogo del caso</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUPPORTO -->
+    <div class="app-section" id="section-supporto">
+      <div class="section-wrapper">
+        <div class="section-header">
+          <div class="section-eyebrow">Sistema di supporto — Atto 3</div>
+          <h2 class="section-title">Supporto Archivista</h2>
+          <div class="section-subtitle">Consulta con prudenza</div>
+        </div>
+        <div class="support-intro-panel">
+          <p>Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 pt · L2 → −5 pt · L3 → −8 pt</strong> (cumulativi per puzzle — massimo −15 per puzzle).</p>
+          <p style="margin-top:.6rem;font-style:italic;color:var(--text-dim)">Nessun supporto disponibile per l'accesso alla casella privata.</p>
+        </div>
+        <div id="puzzles-container"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <aside class="investigation-panel" id="investigation-panel">
+    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
+    <div class="inv-section">
+      <div class="inv-label">Scheda caso</div>
+      <div class="inv-case-status">Indagine aperta</div>
+      <div style="margin-top:.65rem">
+        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="inv-fase">Omissioni e accessi</span></div>
+      </div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Indice investigativo</div>
+      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
+        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="inv-score-big">100</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
+      </div>
+      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Progressione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="inv-p1">0 / 7</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="inv-casella">non disponibile</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="inv-p2">bloccati</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="inv-t3a">non validato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="inv-t3b">bloccato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="inv-t3c">bloccato</span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Dati sessione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="inv-hints-used">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="inv-errors">0</span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Timeline — 14 novembre</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--text-dim);background:var(--bg-main);flex-shrink:0;margin-top:3px"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">19:04</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Ultima chiamata registrata di Andrea</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--amber);background:rgba(183,131,59,.12);flex-shrink:0;margin-top:3px"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:12</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Chiamata ricevuta Davide — moglie</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--amber);background:rgba(183,131,59,.12);flex-shrink:0;margin-top:3px"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:14</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Chiamata Elena — psicologa</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--text-dim);background:var(--bg-main);flex-shrink:0;margin-top:3px"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:31</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Transazione Davide — ristorante</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--red-logicus);background:rgba(167,25,32,.1);flex-shrink:0;margin-top:3px"></div>
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">15/11</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Rinvenimento — Studio Marini</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- VIEWER -->
+<div id="viewer-overlay">
+  <div class="viewer-card">
+    <div class="viewer-back-bar">
+      <div class="viewer-doc-meta">
+        <span class="viewer-doc-code" id="v-code">—</span>
+        <span class="viewer-doc-cat" id="v-cat">—</span>
+        <span class="viewer-class-badge">RISERVATO</span>
+        <span class="viewer-consulted" id="v-consulted"></span>
+      </div>
+      <button class="viewer-close" onclick="closeViewer()">× Chiudi</button>
+    </div>
+    <div class="viewer-body">
+      <div class="viewer-title" id="v-title">—</div>
+      <div class="viewer-cat-label" id="v-cat-label">—</div>
+      <img class="viewer-image" id="v-image" src="" alt="" style="display:none">
+      <div class="viewer-section-label">Trascrizione</div>
+      <div class="viewer-transcript" id="v-transcript"></div>
+      <div class="viewer-note" id="v-note-block" style="display:none">
+        <div class="viewer-note-label">Nota Archivio</div>
+        <div class="viewer-note-text" id="v-note"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <h3>Azzera sessione?</h3>
+    <p>Tutti i progressi dell'Atto 3 verranno cancellati. L'indice investigativo verrà azzerato.</p>
+    <div class="confirm-actions">
+      <button class="btn-primary" onclick="confirmReset()">Conferma</button>
+      <button class="btn-ghost" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono interamente inventati. — Archivio 17 · Caso 001 · Atto 3</footer>
+
+<script>
+// ===== DATI =====
+const LS_KEY = 'a17_atto3_v1';
+
+const DOCS_P1 = [
+  {
+    id:'C01', cat:'Profilo familiare', title:'Profilo nucleo familiare Marini',
+    desc:'Dati anagrafici del nucleo familiare diretto di Andrea Marini.',
+    transcript:"Nucleo familiare diretto — Andrea Marini\n\nMadre:\nGiuseppina Fabbri\nnata il 12/04/1945\n\nPadre:\nGiovanni Marini\nnato il 08/09/1940\ndeceduto il 17/11/2009\n\nFratello:\nStefano Marini\nnato il 03/09/1975\n\nConiuge:\nElena Ricci\nnata il 21/06/1978\n\nFiglio:\nLorenzo Marini\nnato il 18/02/2005",
+    note:'Andrea Marini risultava referente principale per la gestione medica e amministrativa della madre.'
+  },
+  {
+    id:'C02', cat:'Verbale integrativo', title:'Dichiarazione integrativa Elena Ricci',
+    desc:'Dichiarazione aggiuntiva della moglie di Andrea.',
+    transcript:'Elena Ricci conferma tensioni crescenti con Andrea nelle ultime settimane.\n\nDichiara:\n"Non era più lui. Nascondeva telefonate, usciva dallo studio tardi e non voleva che guardassi i documenti."\n\nAlla domanda sulla sera del 14 novembre:\n"Ero a cena da mia sorella. Durante la serata sono uscita per circa venti minuti per una telefonata. Non era una cosa legata ad Andrea."\n\nAlla domanda sulla copertura assicurativa:\n"Sapevo che esisteva una copertura, ma Andrea diceva che era una formalità bancaria."\n\nNota marginale:\nElena riferisce di aver parlato, negli ultimi mesi, con una professionista per difficoltà personali e coniugali.',
+    note:'Il dettaglio della professionista non viene approfondito nella prima dichiarazione.'
+  },
+  {
+    id:'C03', cat:'Verbale integrativo', title:'Dichiarazione integrativa Davide Serra',
+    desc:'Dichiarazione aggiuntiva del collaboratore dello studio.',
+    transcript:'Davide Serra conferma di aver cenato la sera del 14 novembre con un amico in un ristorante a circa venti minuti di macchina dallo Studio Marini.\n\nDichiara:\n"Sono andato via prima perché ho ricevuto una chiamata urgente da mia moglie. Dovevo rientrare a casa."\n\nAlla domanda sulle chiavi:\n"Avevo una copia dello studio. La usavo per aprire la mattina quando arrivavo prima degli altri."\n\nAlla domanda sulla scena:\n"Il fascicolo Manfredi era già sulla scrivania quando sono entrato. Io non l\'ho toccato."',
+    note:'Davide aveva accesso allo studio e una finestra logistica potenzialmente compatibile con uno spostamento rapido.'
+  },
+  {
+    id:'C04', cat:'Planimetria', title:'Piantina edificio / accessi',
+    desc:'Schema dell\'edificio e degli accessi allo studio.',
+    transcript:"Piantina sintetica edificio — Studio Marini\n\nAccesso principale:\n— ingresso da portone principale\n— copertura telecamera condominiale\n— passaggio registrato\n\nAccesso secondario:\n— scala di servizio interna\n— ingresso laterale non coperto da telecamere\n— collegamento con area retrostante\n— serratura meccanica non integrata nel sistema di videosorveglianza",
+    note:'La prima indagine ha valorizzato l\'accesso principale, ma non ha sviluppato l\'ipotesi dell\'accesso secondario.'
+  },
+  {
+    id:'C05', cat:'Tabulati', title:'Tabulati serali parziali',
+    desc:'Estratto parziale delle comunicazioni serali del 14 novembre.',
+    transcript:"14 novembre — fascia serale\n\nElena Ricci:\n20:14 — chiamata uscente — numero non salvato — durata 19:48\n\nDavide Serra:\n20:12 — chiamata in entrata — numero privato / non annotato in fascicolo iniziale — durata 03:21\n\nAndrea Marini:\n19:04 — chiamata non risposta — Stefano Marini\nnessuna comunicazione registrata dopo le 19:04",
+    note:'Due intervalli temporali risultano non completamente verificati nella prima indagine.'
+  },
+  {
+    id:'C06', cat:'Comunicazione', title:'Richiamo pista Manfredi',
+    desc:'Messaggio riconducibile a Roberto Manfredi.',
+    transcript:"Oggetto: Domani\n\nAndrea,\nbasta telefonate.\n\nCi vediamo di persona e sistemiamo questa storia.\nPorta i documenti che sai.\n\nSe hai già parlato con qualcuno, hai fatto un errore.\n\nR.M.",
+    note:'Manfredi resta una presenza nel fascicolo. La pressione è reale.'
+  },
+  {
+    id:'C07', cat:'Nota economica', title:'Richiamo pista Stefano',
+    desc:'Richiamo alla linea economica familiare.',
+    transcript:"Riepilogo interno — garanzia familiare\n\nLa posizione Andrea-Stefano resta collegata a:\n— garanzia bancaria solidale\n— importo massimo garantito di €280.000\n— richiesta di regolarizzazione non ancora chiusa\n— documentazione incompleta sulla gestione successiva alla morte di Andrea",
+    note:'La linea economica familiare non è stata oggetto di approfondimento nella prima indagine.'
+  }
+];
+
+const DOCS_P2 = [
+  {
+    id:'C08', cat:'Registro interno', title:'Registro copie chiavi',
+    desc:'Documento relativo alle copie delle chiavi dello studio.',
+    transcript:"Registro copie chiavi — Studio Marini\n\nCopie note:\n— Andrea Marini — titolare\n— Davide Serra — collaboratore autorizzato apertura mattutina\n— Elena Ricci — copia domestica non confermata in uso recente\n— Stefano Marini — copia consegnata anni prima per emergenze familiari",
+    note:'La copia consegnata a Stefano non risulta menzionata nella prima relazione investigativa.'
+  },
+  {
+    id:'C09', cat:'Nota tecnica', title:'Accesso secondario / scala di servizio',
+    desc:'Approfondimento sull\'accesso secondario non sorvegliato.',
+    transcript:"Accesso secondario edificio\n\nLa scala di servizio collega l'area retrostante al piano dello studio.\nL'accesso non risulta coperto dalla telecamera condominiale principale.\nLa porta interna utilizza serratura meccanica.\n\nL'accesso secondario era noto ai residenti e ai familiari che frequentavano l'edificio.",
+    note:'Un accesso senza riprese è un accesso senza traccia registrata.'
+  },
+  {
+    id:'C10', cat:'Registro arma', title:'Arma di famiglia / provenienza',
+    desc:'Documento sulla provenienza dell\'arma utilizzata.',
+    transcript:"Arma registrata:\nPistola Beretta calibro 9\n\nIntestatario originario:\nGiovanni Marini\n\nStato:\narma non regolarmente aggiornata dopo il decesso dell'intestatario.",
+    note:"L'arma risulta riconducibile alla linea familiare Marini e non a una disponibilità professionale dello studio."
+  },
+  {
+    id:'C11', cat:'Dichiarazione integrativa', title:'Chiavi date a Stefano',
+    desc:'Dichiarazione relativa alla copia delle chiavi.',
+    transcript:"Dichiarazione Elena Ricci — integrazione\n\n\"Andrea aveva dato una copia delle chiavi a Stefano anni fa, dopo un problema al condominio. Diceva che poteva servire in caso di emergenza.\n\nNon ricordo che qualcuno gliel'abbia mai chiesta indietro.\"",
+    note:'La copia delle chiavi in possesso di Stefano non risulta approfondita nella prima indagine.'
+  },
+  {
+    id:'C12', cat:'Nota scena', title:'Elemento aggiuntivo sulla scena',
+    desc:'Confronto tra accesso, posizione scena e ricostruzione iniziale.',
+    transcript:"La scena è stata valutata inizialmente come compatibile con suicidio.\n\nLa ricostruzione non ha però integrato:\n— accesso secondario\n— copie chiavi non censite\n— provenienza familiare dell'arma\n— incongruenze economiche già presenti nei documenti personali",
+    note:'Un singolo elemento non chiude il caso. La convergenza di più elementi modifica la lettura.'
+  }
+];
+
+const EMAILS = [
+  {
+    id:'E01', cat:'Email recuperata', obj:'Domani',
+    body:"Andrea,\nbasta telefonate.\n\nCi vediamo di persona e sistemiamo questa storia.\nPorta i documenti che sai.\n\nSe hai già parlato con qualcuno, hai fatto un errore.\n\nR.M.",
+    from:'Roberto Manfredi', to:'Andrea Marini'
+  },
+  {
+    id:'E02', cat:'Bozza email', obj:'Fascicolo Manfredi',
+    body:"Davide,\ndomani non aprire il fascicolo Manfredi senza di me.\n\nSo che hai visto alcune carte sulla scrivania.\nPer ora non parlarne con nessuno.\n\nSe qualcuno dovesse chiederti qualcosa, dimmi prima chi.\n\nA.",
+    from:'Andrea Marini', to:'Davide Serra — bozza non inviata'
+  },
+  {
+    id:'E03', cat:'Email bancaria', obj:'Garanzia solidale — documentazione integrativa',
+    body:"Gentile Dott. Marini,\nla posizione collegata alla garanzia solidale risulta ancora esposta.\n\nImporto massimo garantito:\n€280.000\n\nIn assenza di integrazioni, la banca procederà secondo i termini contrattuali.",
+    from:'Istituto bancario', to:'Andrea Marini'
+  },
+  {
+    id:'E04', cat:'Bozza email', obj:'Dobbiamo parlarne',
+    body:"Stefano,\nnon posso più tenere tutto sospeso.\n\nHo provato ad aiutarti, ma la banca non aspetterà ancora.\nSe la pratica Manfredi esplode prima che sistemiamo la garanzia, ci travolge entrambi.\n\nDomani dobbiamo parlare di persona.\nNiente telefonate.\n\nA.",
+    from:'Andrea Marini', to:'Stefano Marini — bozza non inviata'
+  },
+  {
+    id:'E05', cat:'Appunto personale', obj:'Appunti seduta — riservato',
+    body:"Mi ha chiesto di annotare quando torna quella sensazione.\n\nElena è distante.\nNon so se mi stia mentendo o se sia solo stanca di me.\n\nContinuo a pensare che mi nasconda qualcosa.\nForse un altro uomo.\nForse sono io che non riesco più a fidarmi di nessuno.\n\nDott.ssa V., ore 19:10 — richiamare se peggiora.",
+    from:'Appunto personale — Andrea Marini', to:'—'
+  }
+];
+
+const PUZZLES = [
+  {
+    id:'H03A1', part:1,
+    title:'Linee intrecciate',
+    scope:'Identificare le sovrapposizioni tra i soggetti presenti nel fascicolo.',
+    hints:[
+      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca sovrapposizioni.'},
+      {lvl:2,cost:5,txt:'Confronta chiamate, accessi e omissioni.'},
+      {lvl:3,cost:8,txt:'Elena, Davide, Manfredi e Stefano compaiono in linee diverse. Nessuna è ancora conclusiva.'}
+    ]
+  },
+  {
+    id:'H03A2', part:1,
+    title:'Accesso secondario',
+    scope:'Comprendere il ruolo dell\'ingresso non sorvegliato nel fascicolo.',
+    hints:[
+      {lvl:1,cost:2,txt:'Una telecamera copre solo ciò che vede.'},
+      {lvl:2,cost:5,txt:"Confronta l'ingresso principale con la piantina dell'edificio."},
+      {lvl:3,cost:8,txt:"L'accesso secondario permetteva di arrivare allo studio senza passare dalla ripresa principale."}
+    ]
+  },
+  {
+    id:'H03B1', part:2,
+    title:'Moventi a confronto',
+    scope:'Valutare il peso reale di ciascuna linea investigativa.',
+    hints:[
+      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno un movente dello stesso peso.'},
+      {lvl:2,cost:5,txt:'Elena e Davide hanno omissioni. Manfredi ha pressione. Stefano ha esposizione economica.'},
+      {lvl:3,cost:8,txt:'Solo una linea unisce movente economico, accesso potenziale e assenza di alibi verificato.'}
+    ]
+  },
+  {
+    id:'H03C1', part:3,
+    title:'Chiusura del caso',
+    scope:'Costruire la risposta finale con convergenza di movente, accesso, arma e alibi.',
+    hints:[
+      {lvl:1,cost:2,txt:'Cerca la convergenza, non il dettaglio più rumoroso.'},
+      {lvl:2,cost:5,txt:'Movente, accesso, arma e alibi devono appartenere alla stessa linea.'},
+      {lvl:3,cost:8,txt:'La linea familiare collega debito, chiavi, arma di famiglia e assenza di alibi.'}
+    ]
+  }
+];
+
+// ===== STATE =====
+function defaultState(){
+  return {
+    score:100,
+    hintPenaltyTotal:0,
+    hintLevelsUsed:0,
+    errorsTerminal:0,
+    p1Opened:[],
+    p2Opened:[],
+    casellaAttempts:3,
+    casellaUnlocked:false,
+    casellaBlocked:false,
+    emailsOpened:[],
+    t3aCompleted:false,
+    t3aErrors:0,
+    t3bCompleted:false,
+    t3bErrors:0,
+    t3cCompleted:false,
+    t3cErrors:0,
+    finalUnlocked:false,
+    hintsRevealed:{},
+    hintPuzzleCost:{},
+    puzzleOpen:{},
+    currentSection:'intro'
+  };
+}
+
+let state = defaultState();
+
+function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+function loadState(){
+  const s = localStorage.getItem(LS_KEY);
+  if(s){ try{ state = Object.assign(defaultState(), JSON.parse(s)); }catch(e){} }
+}
+
+// ===== NORMALIZE =====
+function normalize(str){
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9\s]/g,'')
+    .replace(/\s+/g,' ').trim();
+}
+function normNum(str){
+  return str.replace(/280[\s.,]?000/g,'280000').replace(/€/g,'').replace(/280k/gi,'280000');
+}
+function prep(str){ return normalize(normNum(str)); }
+
+function hasAny(text, keywords){
+  return keywords.some(kw => text.includes(prep(kw)));
+}
+function hasAnyPartial(text, roots){
+  return roots.some(r => text.includes(r));
+}
+
+function isAmbiguousGeneric(text){
+  const generics = ['non so','non saprei','forse','qualcosa','qualcuno','manca qualcosa','non capisco','incerto','difficile','complicato','non riesco'];
+  return generics.some(g => prep(text).includes(g));
+}
+
+function setFieldState(terminal, field, st, msg){
+  const stEl = document.getElementById(terminal+'-state-'+field);
+  const fbEl = document.getElementById(terminal+'-fb-'+field);
+  if(stEl){ stEl.textContent = st==='ok'?'Verificato':st==='error'?'Non valido':'Da specificare'; stEl.className='terminal-field-state '+st; }
+  if(fbEl){ fbEl.textContent = msg; fbEl.className='terminal-feedback-line '+st; }
+}
+
+// ===== TERMINALE 03A =====
+function submitTerminal3A(){
+  if(state.t3aCompleted) return;
+
+  const v1 = document.getElementById('t3a-input-1').value.trim();
+  const v2 = document.getElementById('t3a-input-2').value.trim();
+  const v3 = document.getElementById('t3a-input-3').value.trim();
+
+  if(!v1||!v2||!v3){ showToast('Completa tutti i campi prima di inviare'); return; }
+
+  const t1 = prep(v1), t2 = prep(v2), t3 = prep(v3);
+  let errors = 0;
+  let allOk = true;
+
+  // Campo 1 — almeno 2 nomi/linee
+  const nomi1 = ['elena','davide','manfredi','stefano','moglie','collega','fratello','cliente',
+    'linea domestica','linea economica','linea professionale','accesso','chiavi','chiamate','serra','ricci'];
+  const matchCount1 = nomi1.filter(n => t1.includes(prep(n))).length;
+  if(matchCount1 >= 2){
+    setFieldState('t3a',1,'ok','Sovrapposizioni identificate correttamente.');
+  } else if(matchCount1 === 1 || isAmbiguousGeneric(v1)){
+    setFieldState('t3a',1,'ambiguous','Direzione plausibile, ma troppo generica. Specifichi almeno due soggetti o linee.');
+    allOk = false;
+  } else {
+    setFieldState('t3a',1,'error','Risposta non coerente con il fascicolo. Identifichi almeno due linee o soggetti.');
+    errors++; allOk = false;
+  }
+
+  // Campo 2 — elementi coinvolgimento multiplo
+  const kw2 = ['buco temporale','buco','intervallo','chiamata elena','chiamata davide','chiavi','venti minuti',
+    'accesso secondario','ingresso','280000','280','garanzia','fideiussione','sollecito','fascicolo manfredi',
+    'alibi','omissioni','piu persone','piu alibi','nascondeva'];
+  if(hasAny(t2, kw2)){
+    setFieldState('t3a',2,'ok','Elemento concreto identificato.');
+  } else if(isAmbiguousGeneric(v2)){
+    setFieldState('t3a',2,'ambiguous','Direzione plausibile, ma troppo generica. Specifichi un reperto, un soggetto o un collegamento.');
+    allOk = false;
+  } else {
+    setFieldState('t3a',2,'error','Risposta non supportata dal fascicolo. Identifichi un elemento concreto.');
+    errors++; allOk = false;
+  }
+
+  // Campo 3 — elementi non verificati
+  const kw3 = ['numero','numero chiamato','psicologa','chiamata elena','chiamata davide','posizione davide',
+    'accesso secondario','scala di servizio','ingresso laterale','chiavi stefano','chiavi','alibi manfredi',
+    'alibi elena','alibi davide','arma','data','password','casella','linea familiare','280000'];
+  if(hasAny(t3, kw3)){
+    setFieldState('t3a',3,'ok','Elemento aperto identificato correttamente.');
+  } else if(isAmbiguousGeneric(v3)){
+    setFieldState('t3a',3,'ambiguous','Direzione plausibile. Specifichi l\'elemento non ancora verificato.');
+    allOk = false;
+  } else {
+    setFieldState('t3a',3,'error','Risposta non supportata. Identifichi un elemento aperto nel fascicolo.');
+    errors++; allOk = false;
+  }
+
+  state.t3aErrors += errors;
+  state.errorsTerminal += errors;
+  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  saveState(); updateUI();
+
+  const gfb = document.getElementById('t3a-global-fb');
+
+  if(allOk){
+    state.t3aCompleted = true;
+    document.getElementById('t3a-submit').disabled = true;
+    document.getElementById('t3a-confirmed').classList.add('visible');
+    const cm = document.getElementById('t3a-confirmed-msg'); if(cm) cm.textContent = 'Linee intrecciate registrate. Il fascicolo autorizza la prosecuzione dell\'analisi.';
+    gfb.textContent = 'Linee intrecciate registrate.\n\nIl fascicolo non presenta ancora una soluzione.\nPresenta accessi, omissioni e intervalli non verificati.\n\nL\'Archivio autorizza la prosecuzione dell\'analisi.';
+    gfb.className = 'terminal-global-feedback show ok';
+    ['nav-parte2','mnav-parte2','nav-terminale3b','mnav-terminale3b'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.classList.remove('locked');
+    });
+    const casellaEl = document.getElementById('inv-casella'); if(casellaEl){ casellaEl.textContent='disponibile'; casellaEl.className='inv-status-val active'; }
+    const mCasellaEl = document.getElementById('minv-casella'); if(mCasellaEl){ mCasellaEl.textContent='disponibile'; mCasellaEl.className='inv-status-val active'; }
+    saveState(); updateUI();
+    setTimeout(()=> showSection('parte2'), 2500);
+  } else if(errors > 0){
+    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
+    gfb.className = 'terminal-global-feedback show warn';
+  } else {
+    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
+    gfb.className = 'terminal-global-feedback show ambiguous';
+  }
+}
+
+// ===== CASELLA PRIVATA =====
+function submitCasella(){
+  if(state.casellaBlocked || state.casellaUnlocked) return;
+  const input = document.getElementById('casella-input');
+  const raw = (input.value || '').replace(/[\s\/\-]/g,'');
+  const msg = document.getElementById('casella-msg');
+
+  const correct = '12041945';
+  if(raw === correct){
+    state.casellaUnlocked = true;
+    state.casellaAttempts = 0;
+    saveState();
+    msg.textContent = 'Accesso autorizzato. Sincronizzazione parziale della casella privata completata. Sono stati recuperati 5 elementi.';
+    msg.className = 'casella-msg success';
+    document.getElementById('casella-btn').disabled = true;
+    input.disabled = true;
+    setTimeout(()=>{
+      document.getElementById('casella-panel').style.display='none';
+      document.getElementById('casella-email-section').style.display='block';
+      renderEmailGrid();
+      const ci = document.getElementById('inv-casella'); if(ci){ ci.textContent='sincronizzata'; ci.className='inv-status-val ok'; }
+      const mci = document.getElementById('minv-casella'); if(mci){ mci.textContent='sincronizzata'; mci.className='inv-status-val ok'; }
+    }, 1500);
+    updateUI();
+  } else {
+    state.casellaAttempts--;
+    if(state.casellaAttempts <= 0){
+      state.casellaBlocked = true;
+      state.casellaAttempts = 0;
+      saveState();
+      msg.textContent = 'Accesso bloccato. La casella privata non è più disponibile in questa sessione. Il fascicolo resta risolvibile attraverso i reperti standard.';
+      msg.className = 'casella-msg blocked';
+      document.getElementById('casella-btn').disabled = true;
+      input.disabled = true;
+      document.getElementById('casella-attempts-label').textContent = '0';
+      setTimeout(()=>{
+        document.getElementById('casella-panel').style.display='none';
+        document.getElementById('casella-bloccata-section').style.display='block';
+        const ci = document.getElementById('inv-casella'); if(ci){ ci.textContent='bloccata'; ci.className='inv-status-val blocked'; }
+        const mci = document.getElementById('minv-casella'); if(mci){ mci.textContent='bloccata'; mci.className='inv-status-val blocked'; }
+      }, 1500);
+    } else {
+      saveState();
+      msg.textContent = 'Tentativo non valido. Tentativi residui: ' + state.casellaAttempts + '.';
+      msg.className = 'casella-msg error';
+      document.getElementById('casella-attempts-label').textContent = state.casellaAttempts;
+    }
+    input.value = '';
+  }
+}
+
+function renderEmailGrid(){
+  const grid = document.getElementById('email-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  EMAILS.forEach(e=>{
+    const card = document.createElement('div');
+    card.className = 'email-card';
+    card.innerHTML = '<div class="email-card-id">'+e.id+'</div><div class="email-card-obj">'+e.obj+'</div><div class="email-card-cat">'+e.cat+'</div>';
+    card.onclick = ()=> openEmail(e.id);
+    grid.appendChild(card);
+  });
+}
+
+function openEmail(eid){
+  const e = EMAILS.find(x=>x.id===eid);
+  if(!e) return;
+  if(!state.emailsOpened.includes(eid)) state.emailsOpened.push(eid);
+  saveState();
+  document.getElementById('v-code').textContent = e.id;
+  document.getElementById('v-cat').textContent = e.cat;
+  document.getElementById('v-consulted').textContent = '';
+  document.getElementById('v-title').textContent = e.obj;
+  document.getElementById('v-cat-label').textContent = e.cat;
+  const img = document.getElementById('v-image'); img.style.display='none';
+  document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
+  const noteBlock = document.getElementById('v-note-block'); noteBlock.style.display='none';
+  const ov = document.getElementById('viewer-overlay');
+  ov.classList.add('open');
+  ov.scrollTop = 0;
+}
+
+// ===== TERMINALE 03B =====
+function submitTerminal3B(){
+  if(state.t3bCompleted) return;
+
+  const vals = [1,2,3,4,5,6].map(i=> document.getElementById('t3b-input-'+i).value.trim());
+  if(vals.some(v=>!v)){ showToast('Completa tutti i campi prima di inviare'); return; }
+
+  const texts = vals.map(v => prep(v));
+  let errors = 0;
+  let allOk = true;
+
+  // Campo 1 — accesso secondario
+  const kw_acc = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto','senza telecamere','senza riprese','ingresso sul retro','porta sul retro','porta laterale'];
+  if(hasAny(texts[0], kw_acc)){
+    setFieldState('t3b',1,'ok','Accesso non sorvegliato identificato.');
+  } else if(isAmbiguousGeneric(vals[0]) || texts[0].includes('ingresso') || texts[0].includes('accesso')){
+    setFieldState('t3b',1,'ambiguous','Direzione plausibile. Specifichi quale tipo di accesso.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',1,'error','Risposta non coerente. Identifichi l\'accesso non sorvegliato nel fascicolo.');
+    errors++; allOk = false;
+  }
+
+  // Campo 2 — movente Elena (accetta anche "manca movente" / "debole")
+  const kw_elena = ['tensione','coniugale','problemi','gelosia','sfiducia','polizza','assicurazione','omissioni','alibi parziale',
+    'manca movente','nessun movente','movente debole','non conclusivo','debole','copertura','domestica'];
+  if(hasAny(texts[1], kw_elena)){
+    setFieldState('t3b',2,'ok','Linea Elena valutata.');
+  } else if(isAmbiguousGeneric(vals[1])){
+    setFieldState('t3b',2,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',2,'error','Risposta non supportata dal fascicolo.');
+    errors++; allOk = false;
+  }
+
+  // Campo 3 — movente Davide
+  const kw_davide = ['pratica manfredi','fascicolo manfredi','conosceva','accesso','chiavi','paura','timore','coinvolgimento',
+    'lavorativo','professionale','manca movente','nessun movente','movente debole','non conclusivo','debole'];
+  if(hasAny(texts[2], kw_davide)){
+    setFieldState('t3b',3,'ok','Linea Davide valutata.');
+  } else if(isAmbiguousGeneric(vals[2])){
+    setFieldState('t3b',3,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',3,'error','Risposta non supportata dal fascicolo.');
+    errors++; allOk = false;
+  }
+
+  // Campo 4 — movente Stefano (richiede keyword economiche)
+  const kw_stefano = ['debito','fideiussione','garanzia','bancaria','familiare','esposizione','280000','copertura',
+    'polizza','sollecito','rischio economico','crollo','salvare','evitare'];
+  if(hasAny(texts[3], kw_stefano)){
+    setFieldState('t3b',4,'ok','Linea Stefano identificata correttamente.');
+  } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('soldi') || texts[3].includes('denaro')){
+    setFieldState('t3b',4,'ambiguous','Direzione economica corretta. Specifichi il tipo di esposizione.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',4,'error','Risposta non coerente con il fascicolo.');
+    errors++; allOk = false;
+  }
+
+  // Campo 5 — movente Manfredi
+  const kw_manfredi = ['frode','irregolarita','minaccia','pressione','pratica','riciclaggio','rischio legale','rischio economico',
+    'denunciarlo','tirarsi indietro','contratti anomali','compensi','fuori scala','professionali'];
+  if(hasAny(texts[4], kw_manfredi)){
+    setFieldState('t3b',5,'ok','Linea Manfredi valutata.');
+  } else if(isAmbiguousGeneric(vals[4]) || texts[4].includes('minaccioso') || texts[4].includes('pericoloso')){
+    setFieldState('t3b',5,'ambiguous','Direzione corretta. Specifichi il tipo di rischio o pressione.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',5,'error','Risposta non supportata dal fascicolo.');
+    errors++; allOk = false;
+  }
+
+  // Campo 6 — convergenza su Stefano
+  const kw_conv = ['stefano','fratello'];
+  if(hasAny(texts[5], kw_conv)){
+    setFieldState('t3b',6,'ok','Convergenza identificata correttamente.');
+  } else if(isAmbiguousGeneric(vals[5])){
+    setFieldState('t3b',6,'ambiguous','Risposta troppo generica. Identifichi il soggetto specifico.');
+    allOk = false;
+  } else {
+    setFieldState('t3b',6,'error','Risposta non coerente. La convergenza di movente, accesso e alibi punta a un soggetto specifico.');
+    errors++; allOk = false;
+  }
+
+  state.t3bErrors += errors;
+  state.errorsTerminal += errors;
+  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  saveState(); updateUI();
+
+  const gfb = document.getElementById('t3b-global-fb');
+
+  if(allOk){
+    state.t3bCompleted = true;
+    document.getElementById('t3b-submit').disabled = true;
+    document.getElementById('t3b-confirmed').classList.add('visible');
+    const cm = document.getElementById('t3b-confirmed-msg'); if(cm) cm.textContent = 'La linea Stefano collega movente economico, accesso potenziale e assenza di alibi verificato. Accesso alle verifiche pre-finali autorizzato.';
+    gfb.textContent = 'Analisi movente/accesso/alibi registrata.\n\nIl fascicolo può procedere alla verifica conclusiva.';
+    gfb.className = 'terminal-global-feedback show ok';
+    ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.classList.remove('locked');
+    });
+    saveState(); updateUI();
+    setTimeout(()=> showSection('verifiche'), 2500);
+  } else if(errors > 0){
+    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
+    gfb.className = 'terminal-global-feedback show warn';
+  } else {
+    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
+    gfb.className = 'terminal-global-feedback show ambiguous';
+  }
+}
+
+// ===== TERMINALE 03C =====
+function submitTerminal3C(){
+  if(state.t3cCompleted) return;
+
+  const vals = [1,2,3,4].map(i=> document.getElementById('t3c-input-'+i).value.trim());
+  if(vals.some(v=>!v)){ showToast('Completa tutti i campi prima di inviare'); return; }
+
+  const texts = vals.map(v => prep(v));
+  let errors = 0;
+  let allOk = true;
+
+  // Campo 1 — chi ha ucciso
+  const kw_chi = ['stefano','fratello'];
+  if(hasAny(texts[0], kw_chi)){
+    setFieldState('t3c',1,'ok','Responsabile identificato.');
+  } else if(isAmbiguousGeneric(vals[0])){
+    setFieldState('t3c',1,'ambiguous','Risposta generica. Identifichi il responsabile per nome o ruolo.');
+    allOk = false;
+  } else {
+    setFieldState('t3c',1,'error','Identificazione non corretta.');
+    errors++; allOk = false;
+  }
+
+  // Campo 2 — movente
+  const kw_mov = ['fideiussione','debito','garanzia','bancaria','familiare','esposizione','280000','copertura',
+    'polizza','sollecito','evitare il crollo','salvare','estinzione','morte estingueva','crollo finanziario'];
+  if(hasAny(texts[1], kw_mov)){
+    setFieldState('t3c',2,'ok','Movente correttamente identificato.');
+  } else if(isAmbiguousGeneric(vals[1]) || texts[1].includes('soldi') || texts[1].includes('denaro') || texts[1].includes('economico')){
+    setFieldState('t3c',2,'ambiguous','Direzione corretta. Specifichi il tipo di esposizione economica.');
+    allOk = false;
+  } else {
+    setFieldState('t3c',2,'error','Movente non corretto.');
+    errors++; allOk = false;
+  }
+
+  // Campo 3 — accesso
+  const kw_acc2 = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto',
+    'senza telecamere','porta sul retro','ingresso laterale','con le chiavi','copia delle chiavi','chiavi'];
+  if(hasAny(texts[2], kw_acc2)){
+    setFieldState('t3c',3,'ok','Modalità di accesso identificata correttamente.');
+  } else if(isAmbiguousGeneric(vals[2]) || texts[2].includes('ingresso') || texts[2].includes('accesso')){
+    setFieldState('t3c',3,'ambiguous','Direzione corretta. Specifichi quale ingresso o quale strumento.');
+    allOk = false;
+  } else {
+    setFieldState('t3c',3,'error','Accesso non corretto.');
+    errors++; allOk = false;
+  }
+
+  // Campo 4 — provenienza arma
+  const kw_arma = ['padre','giovanni marini','giovanni','marini giovanni','famiglia','arma di famiglia',
+    'pistola di famiglia','ereditata','apparteneva al padre','pistola del padre','intestata al padre'];
+  if(hasAny(texts[3], kw_arma)){
+    setFieldState('t3c',4,'ok','Provenienza dell\'arma identificata correttamente.');
+  } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('famiglia') || texts[3].includes('familiare')){
+    setFieldState('t3c',4,'ambiguous','Direzione corretta. Specifichi a chi apparteneva l\'arma.');
+    allOk = false;
+  } else {
+    setFieldState('t3c',4,'error','Provenienza dell\'arma non corretta.');
+    errors++; allOk = false;
+  }
+
+  state.t3cErrors += errors;
+  state.errorsTerminal += errors;
+  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  saveState(); updateUI();
+
+  const gfb = document.getElementById('t3c-global-fb');
+
+  if(allOk){
+    state.t3cCompleted = true;
+    state.finalUnlocked = true;
+    document.getElementById('t3c-submit').disabled = true;
+    document.getElementById('t3c-confirmed').classList.add('visible');
+    const cm = document.getElementById('t3c-confirmed-msg'); if(cm) cm.textContent = 'Analisi conclusiva acquisita. Accesso all\'esito finale autorizzato.';
+    gfb.textContent = 'Il fascicolo A17-001 viene archiviato come risolto.';
+    gfb.className = 'terminal-global-feedback show ok';
+    ['nav-esito','mnav-esito'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.classList.remove('locked');
+    });
+    renderEsito();
+    saveState(); updateUI();
+    setTimeout(()=> showSection('esito'), 2500);
+  } else if(errors > 0){
+    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
+    gfb.className = 'terminal-global-feedback show warn';
+  } else {
+    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
+    gfb.className = 'terminal-global-feedback show ambiguous';
+  }
+}
+
+// ===== RENDER ESITO =====
+function renderEsito(){
+  const hc = state.hintPenaltyTotal;
+  const ec = state.errorsTerminal * 10;
+  const total = Math.max(0, 100 - hc - ec);
+  let cls = 'Osservatore esterno';
+  if(total>=90) cls='Archivista in formazione';
+  else if(total>=75) cls='Investigatore';
+  else if(total>=60) cls='Collaboratore';
+
+  const scoreEl = document.getElementById('esito-score'); if(scoreEl) scoreEl.textContent = total;
+  const classEl = document.getElementById('esito-classname'); if(classEl) classEl.textContent = cls;
+  const hcEl = document.getElementById('esito-hint-count'); if(hcEl) hcEl.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
+  const hcostEl = document.getElementById('esito-hint-cost'); if(hcostEl) hcostEl.textContent = '−'+hc;
+  const ecostEl = document.getElementById('esito-err-cost'); if(ecostEl) ecostEl.textContent = '−'+ec;
+  const totEl = document.getElementById('esito-total'); if(totEl) totEl.textContent = total;
+
+  if(scoreEl) scoreEl.className = total>=75?'score-number good':'score-number';
+  if(classEl) classEl.className = total>=75?'score-classname good':'score-classname';
+}
+
+// ===== DOCS =====
+function renderDocsGrid(part, docs, gridId){
+  const grid = document.getElementById(gridId);
+  if(!grid) return;
+  grid.innerHTML = '';
+  const opened = part==='p1' ? state.p1Opened : state.p2Opened;
+  docs.forEach(doc=>{
+    const isOpened = opened.includes(doc.id);
+    const div = document.createElement('div');
+    div.className = 'doc-card' + (isOpened?' opened':'');
+    div.innerHTML =
+      '<div class="doc-card-code">'+doc.id+'</div>'+
+      '<div class="doc-card-title">'+doc.title+'</div>'+
+      '<div class="doc-card-cat">'+doc.cat+'</div>'+
+      '<div class="doc-card-desc">'+doc.desc+'</div>'+
+      (isOpened?'<div class="doc-card-consulted">✓ Consultato</div>':'');
+    div.onclick = ()=> openDoc(doc.id, part);
+    grid.appendChild(div);
+  });
+}
+
+function openDoc(docId, part){
+  const allDocs = [...DOCS_P1, ...DOCS_P2];
+  const doc = allDocs.find(d=>d.id===docId);
+  if(!doc) return;
+  const opened = part==='p1' ? state.p1Opened : state.p2Opened;
+  if(!opened.includes(docId)){
+    opened.push(docId);
+    saveState();
+    renderDocsGrid(part, part==='p1'?DOCS_P1:DOCS_P2, part==='p1'?'docs-grid-p1':'docs-grid-p2');
+    updateUI();
+  }
+  document.getElementById('v-code').textContent = doc.id;
+  document.getElementById('v-cat').textContent = doc.cat;
+  document.getElementById('v-consulted').textContent = '✓ Consultato';
+  document.getElementById('v-title').textContent = doc.title;
+  document.getElementById('v-cat-label').textContent = doc.cat;
+  const img = document.getElementById('v-image'); img.style.display='none';
+  document.getElementById('v-transcript').textContent = doc.transcript;
+  const noteBlock = document.getElementById('v-note-block');
+  if(doc.note){ noteBlock.style.display='block'; document.getElementById('v-note').textContent = doc.note; }
+  else { noteBlock.style.display='none'; }
+  const ov = document.getElementById('viewer-overlay');
+  ov.classList.add('open');
+  ov.scrollTop = 0;
+}
+
+function closeViewer(){
+  document.getElementById('viewer-overlay').classList.remove('open');
+}
+
+// ===== SHOW SECTION =====
+function showSection(id, silent){
+  const drawer = document.getElementById('mobile-inv-drawer');
+  if(drawer) drawer.classList.remove('open');
+  if(!silent){
+    if(id==='terminale3a' && state.p1Opened.length < 4){ showToast('Esamini almeno 4 reperti prima di accedere al Terminale 03A'); return; }
+    if(id==='parte2' && !state.t3aCompleted){ showToast('Completa il Terminale 03A per sbloccare la Parte 2'); return; }
+    if(id==='terminale3b' && (!state.t3aCompleted || state.p2Opened.length < 3)){ showToast('Esamini almeno 3 reperti della Parte 2 prima del Terminale 03B'); return; }
+    if(id==='verifiche' && !state.t3bCompleted){ showToast('Completa il Terminale 03B per accedere alle note di verifica'); return; }
+    if(id==='terminale3c' && !state.t3bCompleted){ showToast('Completa il Terminale 03B prima del Terminale 03C'); return; }
+    if(id==='esito' && !state.finalUnlocked){ showToast("Completa il Terminale 03C per accedere all'esito finale"); return; }
+  }
+  document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
+  const sec = document.getElementById('section-'+id); if(sec) sec.classList.add('active');
+  ['nav-','mnav-'].forEach(pfx=>{
+    document.querySelectorAll('[id^="'+pfx+'"]').forEach(n=>n.classList.remove('active'));
+    const el = document.getElementById(pfx+id); if(el) el.classList.add('active');
+  });
+  state.currentSection = id;
+  saveState();
+  if(id==='esito') renderEsito();
+  window.scrollTo(0,0);
+}
+
+// ===== UPDATE UI =====
+function updateUI(){
+  const score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+
+  // header
+  const liv = document.getElementById('live-indice'); if(liv) liv.textContent = score;
+
+  // right panel
+  const sb = document.getElementById('inv-score-big'); if(sb) sb.textContent = score;
+  const bar = document.getElementById('inv-score-bar');
+  if(bar){ bar.style.width = score+'%'; bar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
+
+  let cls = '—';
+  if(score>=90) cls='Archivista in formazione';
+  else if(score>=75) cls='Investigatore';
+  else if(score>=60) cls='Collaboratore';
+  else if(score>0) cls='Osservatore esterno';
+  const cl = document.getElementById('inv-class-label'); if(cl) cl.textContent = cls;
+
+  // contatori
+  const p1c = document.getElementById('inv-p1'); if(p1c) p1c.textContent = state.p1Opened.length+' / 7';
+  const p2c = document.getElementById('inv-p2');
+  if(p2c){ p2c.textContent = state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati'; p2c.className = state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
+  const t3aEl = document.getElementById('inv-t3a'); if(t3aEl){ t3aEl.textContent = state.t3aCompleted?'validato':'non validato'; t3aEl.className = state.t3aCompleted?'inv-status-val ok':'inv-status-val'; }
+  const t3bEl = document.getElementById('inv-t3b'); if(t3bEl){ t3bEl.textContent = state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato'; t3bEl.className = state.t3bCompleted?'inv-status-val ok':state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
+  const t3cEl = document.getElementById('inv-t3c'); if(t3cEl){ t3cEl.textContent = state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato'; t3cEl.className = state.t3cCompleted?'inv-status-val ok':state.t3bCompleted?'inv-status-val':'inv-status-val blocked'; }
+
+  const hintsEl = document.getElementById('inv-hints-used'); if(hintsEl) hintsEl.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
+  const errEl = document.getElementById('inv-errors'); if(errEl) errEl.textContent = state.errorsTerminal;
+
+  // fase
+  let fase = 'Omissioni e accessi';
+  if(state.finalUnlocked) fase = 'Caso archiviato';
+  else if(state.t3bCompleted) fase = 'Chiusura del caso';
+  else if(state.t3aCompleted) fase = 'Verifiche incrociate';
+  const faseEl = document.getElementById('inv-fase'); if(faseEl){ faseEl.textContent = fase; }
+
+  // caso status
+  const caseStatusEl = document.querySelector('.inv-case-status');
+  if(caseStatusEl && state.finalUnlocked) caseStatusEl.textContent = 'Caso archiviato';
+
+  // mobile mirror
+  const msb = document.getElementById('minv-score-big'); if(msb) msb.textContent = score;
+  const mbar = document.getElementById('minv-score-bar');
+  if(mbar){ mbar.style.width = score+'%'; mbar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
+  const mp1 = document.getElementById('minv-p1'); if(mp1) mp1.textContent = state.p1Opened.length+' / 7';
+  const mp2 = document.getElementById('minv-p2'); if(mp2){ mp2.textContent = state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati'; mp2.className = state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
+  const mt3a = document.getElementById('minv-t3a'); if(mt3a){ mt3a.textContent = state.t3aCompleted?'validato':'non validato'; mt3a.className = state.t3aCompleted?'inv-status-val ok':'inv-status-val'; }
+  const mt3b = document.getElementById('minv-t3b'); if(mt3b){ mt3b.textContent = state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato'; mt3b.className = state.t3bCompleted?'inv-status-val ok':state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
+  const mt3c = document.getElementById('minv-t3c'); if(mt3c){ mt3c.textContent = state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato'; mt3c.className = state.t3cCompleted?'inv-status-val ok':state.t3bCompleted?'inv-status-val':'inv-status-val blocked'; }
+  const mh = document.getElementById('minv-hints'); if(mh) mh.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
+  const me = document.getElementById('minv-errors'); if(me) me.textContent = state.errorsTerminal;
+  const mf = document.getElementById('minv-fase'); if(mf) mf.textContent = fase;
+
+  // p1 counter
+  const p1count = document.getElementById('p1-count'); if(p1count) p1count.textContent = state.p1Opened.length;
+  const p2count = document.getElementById('p2-count'); if(p2count) p2count.textContent = state.p2Opened.length;
+
+  // unlock banners
+  const ub1 = document.getElementById('p1-unlock-banner'); if(ub1) ub1.className = 'unlock-banner'+(state.p1Opened.length>=4?' show':'');
+  const ub2 = document.getElementById('p2-unlock-banner'); if(ub2) ub2.className = 'unlock-banner'+(state.p2Opened.length>=3?' show':'');
+
+  // nav lock/unlock
+  if(state.p1Opened.length>=4){
+    ['nav-terminale3a','mnav-terminale3a'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
+  }
+  if(state.t3aCompleted){
+    ['nav-parte2','mnav-parte2','nav-terminale3b','mnav-terminale3b'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
+  }
+  if(state.t3bCompleted){
+    ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
+  }
+  if(state.finalUnlocked){
+    ['nav-esito','mnav-esito'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
+  }
+}
+
+// ===== HINT SYSTEM =====
+function useHint(pid, lvl){
+  const puzzle = PUZZLES.find(p=>p.id===pid);
+  if(!puzzle) return;
+  if(puzzle.part===2 && !state.t3aCompleted){ showToast('Completa il Terminale 03A prima di accedere a questi supporti'); return; }
+  if(puzzle.part===3 && !state.t3bCompleted){ showToast('Completa il Terminale 03B prima di accedere a questi supporti'); return; }
+  const cur = state.hintsRevealed[pid] || 0;
+  if(lvl <= cur) return;
+  let cost = 0;
+  for(let l=cur+1;l<=lvl;l++){
+    const h = puzzle.hints.find(x=>x.lvl===l);
+    if(h) cost += h.cost;
+  }
+  state.hintsRevealed[pid] = lvl;
+  state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
+  state.hintPenaltyTotal += cost;
+  state.hintLevelsUsed += (lvl - cur);
+  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal*10));
+  saveState();
+  renderPuzzles();
+  updateUI();
+}
+
+function buildPuzzleEl(puzzle){
+  const revealed = state.hintsRevealed[puzzle.id] || 0;
+  const isOpen = state.puzzleOpen[puzzle.id];
+  const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
+  let hintsHtml = '';
+  puzzle.hints.forEach(h=>{
+    const isRev = revealed >= h.lvl;
+    const lvlName = h.lvl===1?'Osservazione':h.lvl===2?'Connessione':'Quasi soluzione';
+    hintsHtml +=
+      '<div class="hint-level-row '+(isRev?'used':'')+'">' +
+        '<div class="hint-level-meta">' +
+          '<span class="hint-level-name">'+lvlName+' · Lv.'+h.lvl+'</span>' +
+          '<span class="hint-level-cost">−'+h.cost+' pt</span>' +
+        '</div>' +
+        '<div class="hint-level-content">' +
+          (isRev
+            ? '<div class="hint-text revealed">'+h.txt+'</div><div class="hint-used-label visible">Supporto utilizzato</div>'
+            : '<button class="hint-reveal-btn" onclick="useHint(\''+puzzle.id+'\','+h.lvl+')">— Richiedi supporto (−'+h.cost+' pt)</button>'
+          ) +
+        '</div>' +
+      '</div>';
+  });
+  const costLabel = totalSpent>0 ? '−'+totalSpent+' pt usati' : '0 pt usati';
+  const acc = document.createElement('div');
+  acc.className = 'hint-accordion' + (isOpen?' open':'');
+  acc.innerHTML =
+    '<div class="hint-hdr" onclick="togglePuzzle(\''+puzzle.id+'\')">' +
+      '<div class="hint-hdr-left">' +
+        '<span class="hint-puzzle-id">'+puzzle.id+'</span>' +
+        '<span class="hint-puzzle-name">'+puzzle.title+'</span>' +
+      '</div>' +
+      '<div class="hint-hdr-right">' +
+        '<span class="hint-cost-total">'+costLabel+'</span>' +
+        '<span class="hint-arrow">▼</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="hint-body">' +
+      '<div class="hint-scope">'+puzzle.scope+'</div>' +
+      hintsHtml +
+    '</div>';
+  return acc;
+}
+
+function togglePuzzle(pid){
+  state.puzzleOpen[pid] = !state.puzzleOpen[pid];
+  saveState();
+  renderPuzzles();
+}
+
+function renderPuzzles(){
+  const c = document.getElementById('puzzles-container');
+  if(!c) return;
+  c.innerHTML = '';
+
+  const p1puzzles = PUZZLES.filter(p=>p.part===1);
+  const p2puzzles = PUZZLES.filter(p=>p.part===2);
+  const p3puzzles = PUZZLES.filter(p=>p.part===3);
+
+  const g1 = document.createElement('div');
+  g1.className = 'hints-group-wrapper';
+  g1.innerHTML = '<div class="hints-group-label"><span>PARTE 1 — OMISSIONI E ACCESSI</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>';
+  c.appendChild(g1);
+  p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p)));
+
+  const g2 = document.createElement('div');
+  g2.className = 'hints-group-wrapper';
+  g2.style.marginTop = '1.75rem';
+  if(!state.t3aCompleted){
+    g2.innerHTML = '<div class="hints-group-label"><span>PARTE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Parte 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l\'accesso.</div></div>';
+  } else {
+    g2.innerHTML = '<div class="hints-group-label"><span>PARTE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>';
+    p2puzzles.forEach(p=>g2.appendChild(buildPuzzleEl(p)));
+  }
+  c.appendChild(g2);
+
+  const g3 = document.createElement('div');
+  g3.className = 'hints-group-wrapper';
+  g3.style.marginTop = '1.75rem';
+  if(!state.t3bCompleted){
+    g3.innerHTML = '<div class="hints-group-label"><span>TERMINALE 03C — CHIUSURA CASO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l\'accesso.</div></div>';
+  } else {
+    g3.innerHTML = '<div class="hints-group-label"><span>TERMINALE 03C — CHIUSURA CASO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>';
+    p3puzzles.forEach(p=>g3.appendChild(buildPuzzleEl(p)));
+  }
+  c.appendChild(g3);
+}
+
+// ===== RESET =====
+function showResetConfirm(){ document.getElementById('confirm-overlay').classList.add('visible'); }
+function confirmReset(){
+  localStorage.removeItem(LS_KEY);
+  state = defaultState();
+  saveState();
+  document.getElementById('confirm-overlay').classList.remove('visible');
+  ['t3a','t3b','t3c'].forEach(t=>{
+    [1,2,3,4,5,6].forEach(n=>{
+      const inp = document.getElementById(t+'-input-'+n); if(inp) inp.value='';
+      const fb = document.getElementById(t+'-fb-'+n); if(fb){ fb.textContent=''; fb.className='terminal-feedback-line'; }
+      const st = document.getElementById(t+'-state-'+n); if(st){ st.textContent='In attesa'; st.className='terminal-field-state pending'; }
+    });
+    const sub = document.getElementById(t+'-submit'); if(sub) sub.disabled=false;
+    const conf = document.getElementById(t+'-confirmed'); if(conf) conf.classList.remove('visible');
+    const gfb = document.getElementById(t+'-global-fb'); if(gfb){ gfb.textContent=''; gfb.className='terminal-global-feedback'; }
+  });
+  // casella reset
+  const ci = document.getElementById('casella-input'); if(ci){ ci.value=''; ci.disabled=false; }
+  const cb = document.getElementById('casella-btn'); if(cb) cb.disabled=false;
+  const cm = document.getElementById('casella-msg'); if(cm){ cm.textContent=''; cm.className='casella-msg'; }
+  const cal = document.getElementById('casella-attempts-label'); if(cal) cal.textContent='3';
+  document.getElementById('casella-panel').style.display='block';
+  document.getElementById('casella-email-section').style.display='none';
+  document.getElementById('casella-bloccata-section').style.display='none';
+  ['nav-terminale3a','mnav-terminale3a','nav-parte2','mnav-parte2',
+   'nav-terminale3b','mnav-terminale3b','nav-verifiche','mnav-verifiche',
+   'nav-terminale3c','mnav-terminale3c','nav-esito','mnav-esito'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.classList.add('locked');
+  });
+  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
+  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
+  renderPuzzles();
+  updateUI();
+  showSection('intro', true);
+  showToast('Sessione azzerata');
+}
+
+// ===== MOBILE =====
+function toggleMobileDrawer(){ document.getElementById('mobile-inv-drawer').classList.toggle('open'); }
+function closeMobileDrawerOutside(e){ if(e.target===document.getElementById('mobile-inv-drawer')) document.getElementById('mobile-inv-drawer').classList.remove('open'); }
+
+// ===== TOAST =====
+function showToast(msg, dur=3000){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('visible');
+  setTimeout(()=>t.classList.remove('visible'), dur);
+}
+
+// ===== INIT =====
+function init(){
+  loadState();
+  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
+  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
+  renderPuzzles();
+
+  // ripristino stato casella
+  if(state.casellaUnlocked){
+    document.getElementById('casella-panel').style.display='none';
+    document.getElementById('casella-email-section').style.display='block';
+    renderEmailGrid();
+  } else if(state.casellaBlocked){
+    document.getElementById('casella-panel').style.display='none';
+    document.getElementById('casella-bloccata-section').style.display='block';
+  } else {
+    const cal = document.getElementById('casella-attempts-label'); if(cal) cal.textContent=state.casellaAttempts;
+  }
+
+  // ripristino terminali
+  ['t3a','t3b','t3c'].forEach(t=>{
+    const done = t==='t3a'?state.t3aCompleted:t==='t3b'?state.t3bCompleted:state.t3cCompleted;
+    if(done){
+      const sub = document.getElementById(t+'-submit'); if(sub) sub.disabled=true;
+      const conf = document.getElementById(t+'-confirmed'); if(conf) conf.classList.add('visible');
+    }
+  });
+
+  updateUI();
+  showSection(state.currentSection || 'intro', true);
+}
+
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeViewer(); });
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
