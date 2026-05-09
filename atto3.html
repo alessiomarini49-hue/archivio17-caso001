@@ -1108,27 +1108,32 @@ const EMAILS = [
     id:'E01', cat:'Email recuperata', obj:'Domani',
     body:"Andrea,\nbasta telefonate.\n\nCi vediamo di persona e sistemiamo questa storia.\nPorta i documenti che sai.\n\nSe hai già parlato con qualcuno, hai fatto un errore.\n\nR.M.",
     from:'Roberto Manfredi', to:'Andrea Marini'
-  },
+  ,
+    imageUrl:'https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/files/mp/public/69fdda0ce13e22a1cc6cd63c/2dbea3623_email_E01.png'},
   {
     id:'E02', cat:'Bozza email', obj:'Fascicolo Manfredi',
     body:"Davide,\ndomani non aprire il fascicolo Manfredi senza di me.\n\nSo che hai visto alcune carte sulla scrivania.\nPer ora non parlarne con nessuno.\n\nSe qualcuno dovesse chiederti qualcosa, dimmi prima chi.\n\nA.",
     from:'Andrea Marini', to:'Davide Serra — bozza non inviata'
-  },
+  ,
+    imageUrl:'https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/files/mp/public/69fdda0ce13e22a1cc6cd63c/9787e2b13_email_E02.png'},
   {
     id:'E03', cat:'Email bancaria', obj:'Garanzia solidale — documentazione integrativa',
     body:"Gentile Dott. Marini,\nla posizione collegata alla garanzia solidale risulta ancora esposta.\n\nImporto massimo garantito:\n€280.000\n\nIn assenza di integrazioni, la banca procederà secondo i termini contrattuali.",
     from:'Istituto bancario', to:'Andrea Marini'
-  },
+  ,
+    imageUrl:'https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/files/mp/public/69fdda0ce13e22a1cc6cd63c/0d0d8d603_email_E03.png'},
   {
     id:'E04', cat:'Bozza email', obj:'Dobbiamo parlarne',
     body:"Stefano,\nnon posso più tenere tutto sospeso.\n\nHo provato ad aiutarti, ma la banca non aspetterà ancora.\nSe la pratica Manfredi esplode prima che sistemiamo la garanzia, ci travolge entrambi.\n\nDomani dobbiamo parlare di persona.\nNiente telefonate.\n\nA.",
     from:'Andrea Marini', to:'Stefano Marini — bozza non inviata'
-  },
+  ,
+    imageUrl:'https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/files/mp/public/69fdda0ce13e22a1cc6cd63c/8c3a277f3_email_E04.png'},
   {
     id:'E05', cat:'Appunto personale', obj:'Appunti seduta — riservato',
     body:"Mi ha chiesto di annotare quando torna quella sensazione.\n\nElena è distante.\nNon so se mi stia mentendo o se sia solo stanca di me.\n\nContinuo a pensare che mi nasconda qualcosa.\nForse un altro uomo.\nForse sono io che non riesco più a fidarmi di nessuno.\n\nDott.ssa V., ore 19:10 — richiamare se peggiora.",
     from:'Appunto personale — Andrea Marini', to:'—'
-  }
+  ,
+    imageUrl:'https://base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/files/mp/public/69fdda0ce13e22a1cc6cd63c/107cc7a8f_email_E05.png'}
 ];
 
 const PUZZLES = [
@@ -1403,12 +1408,17 @@ function openEmail(eid){
   saveState();
   document.getElementById('v-code').textContent = e.id;
   document.getElementById('v-cat').textContent = e.cat;
-  document.getElementById('v-consulted').textContent = '';
+  document.getElementById('v-consulted').textContent = '✓ CONSULTATO';
   document.getElementById('v-title').textContent = e.obj;
   const vcl=document.getElementById('v-cat-label'); if(vcl) vcl.textContent = e.cat;
-  const img = document.getElementById('v-image'); img.style.display='none';
   document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
-  const noteBlock = document.getElementById('v-note-block'); noteBlock.style.display='none';
+  const notePanel = document.getElementById('v-note-panel'); if(notePanel) notePanel.style.display='none';
+  const imgC = document.getElementById('v-img-container');
+  if(imgC){
+    imgC.innerHTML = e.imageUrl
+      ? '<div class="evidence-frame"><img src="'+e.imageUrl+'" alt="" style="width:100%;display:block;border-radius:2px"><div class="evidence-frame-label"><span>'+e.id+' — '+e.cat+'</span><span>RISERVATO</span></div></div>'
+      : '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+e.id+' · Immagine non acquisita ·</small></div>';
+  }
   const ov = document.getElementById('viewer-overlay');
   ov.classList.add('open');
   ov.scrollTop = 0;
