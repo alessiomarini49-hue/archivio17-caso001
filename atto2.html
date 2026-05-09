@@ -1485,6 +1485,145 @@ function submitTerminal2B(){
 
 // setFieldState definita nel blocco validatori
 
+// ===== STATE =====
+const defaultState = () => ({
+  score:100,
+  hintPenaltyTotal:0,
+  hintLevelsUsed:0,
+  errorsTerminal:0,
+  p1Opened:[],
+  p2Opened:[],
+  t2aCompleted:false,
+  t2aErrors:0,
+  t2aSospetto:null,
+  t2bCompleted:false,
+  t2bErrors:0,
+  t2bSospetto:null,
+  finalUnlocked:false,
+  hintsRevealed:{},
+  hintPuzzleCost:{},
+  puzzleOpen:{},
+  currentSection:'intro'
+});
+
+let state = defaultState();
+
+function loadState(){try{const r=localStorage.getItem(LS_KEY);if(r)state=Object.assign(defaultState(),JSON.parse(r));}catch(e){}}
+function saveState(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+
+// ===== INIT =====
+function init(){
+  loadState();
+  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
+  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
+  renderPuzzles();
+  showSection(state.currentSection, true);
+  updateUI();
+  if(state.t2aCompleted){
+    document.getElementById('t2a-submit').disabled=true;
+    document.getElementById('t2a-confirmed').classList.add('visible');
+  }
+  if(state.t2bCompleted){
+    document.getElementById('t2b-submit').disabled=true;
+    document.getElementById('t2b-confirmed').classList.add('visible');
+  }
+  if(state.t2bCompleted) renderEsito();
+}
+
+// ===== SEZIONI =====
+function showSection(id, silent){
+  document.getElementById('mobile-inv-drawer').classList.remove('open');
+  if(!silent){
+    if(id==='terminale2a' && state.p1Opened.length < 4){showToast('Esamina almeno 4 reperti prima di accedere al Terminale 02A');return;}
+    if(id==='parte2' && !state.t2aCompleted){showToast('Completa il Terminale 02A per sbloccare la Parte 2');return;}
+    if(id==='terminale2b' && (!state.t2aCompleted || state.p2Opened.length < 3)){showToast('Esamina almeno 3 reperti della Parte 2 prima del Terminale 02B');return;}
+    if(id==='esito' && !state.finalUnlocked){showToast('Completa il Terminale 02B per accedere all'esito');return;}
+  }
+  document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById('section-'+id);if(sec)sec.classList.add('active');
+  ['nav-','mnav-'].forEach(pfx=>{
+    document.querySelectorAll('[id^="'+pfx+'"]').forEach(n=>n.classList.remove('active'));
+    const el=document.getElementById(pfx+id);if(el)el.classList.add('active');
+  });
+  state.currentSection=id;
+  saveState();
+}
+
+// ===== DOCS GRID =====
+function renderDocsGrid(part, docs, containerId){
+  const grid=document.getElementById(containerId);
+  if(!grid)return;
+  grid.innerHTML='';
+  const opened = part==='p1' ? state.p1Opened : state.p2Opened;
+  const isLocked = part==='p2' && !state.t2aCompleted;
+
+  docs.forEach(doc=>{
+    const isOpen=opened.includes(doc.id);
+    const div=document.createElement('div');
+    div.className='doc-card'+(isOpen?' consulted':'')+(isLocked?' locked-card':'');
+    div.onclick=isLocked ? null : ()=>openDoc(doc.id, part);
+
+    const imgHtml = doc.imageUrl
+      ? `<div class="doc-thumb"><img src="${doc.imageUrl}" alt="" onerror="this.parentElement.innerHTML='<div class=doc-thumb-placeholder><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>'"></div>`
+      : (isLocked
+          ? `<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>`
+          : `<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>`);
+
+    div.innerHTML=`${imgHtml}
+      <div class="doc-card-body">
+        <div class="doc-card-top">
+          <span class="doc-code">${doc.id}</span>
+          <span class="doc-status-badge ${isLocked?'locked':isOpen?'consulted':'available'}">${isLocked?'Bloccato':isOpen?'Consultato':'Disponibile'}</span>
+        </div>
+        <div class="doc-category">${doc.cat}</div>
+        <div class="doc-title">${doc.title}</div>
+        <div class="doc-summary">${doc.desc}</div>
+        ${!isLocked?`<div class="doc-cta ${isOpen?'consulted-cta':''}">${isOpen?'Rileggi reperto':'Esamina reperto'}</div>`:''}
+      </div>`;
+    grid.appendChild(div);
+  });
+
+  updateCounters();
+}
+
+// ===== OPEN DOC =====
+function openDoc(id, part){
+  const allDocs=[...DOCS_P1,...DOCS_P2];
+  const doc=allDocs.find(d=>d.id===id);
+  if(!doc)return;
+
+  const arr = part==='p1' ? state.p1Opened : state.p2Opened;
+  if(!arr.includes(id)){
+    arr.push(id);
+    saveState();
+    renderDocsGrid(part, part==='p1'?DOCS_P1:DOCS_P2, part==='p1'?'docs-grid-p1':'docs-grid-p2');
+    updateUI();
+  }
+
+  document.getElementById('v-code').textContent=doc.id;
+  document.getElementById('v-cat').textContent=doc.cat;
+  document.getElementById('v-title').textContent=doc.title;
+  document.getElementById('v-transcript').textContent=doc.transcript;
+  document.getElementById('v-consulted').textContent=arr.includes(id)?'✓ CONSULTATO':'';
+
+  const imgC=document.getElementById('v-img-container');
+  imgC.innerHTML=doc.imageUrl
+    ?`<div class="evidence-frame"><img src="${doc.imageUrl}" alt=""><div class="evidence-frame-label"><span>${doc.id} — ${doc.cat}</span><span>RISERVATO</span></div></div>`
+    :`<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· ${doc.id} · Immagine non ancora acquisita ·</small></div>`;
+
+  if(doc.note){
+    document.getElementById('v-note').textContent=doc.note;
+    document.getElementById('v-note-panel').style.display='';
+  } else {
+    document.getElementById('v-note-panel').style.display='none';
+  }
+
+  document.getElementById('viewer-overlay').classList.add('open');
+}
+
+function closeViewer(){document.getElementById('viewer-overlay').classList.remove('open');}
+
+
 // ===== ESITO =====
 function renderEsito(){
   const hc=state.hintPenaltyTotal;
