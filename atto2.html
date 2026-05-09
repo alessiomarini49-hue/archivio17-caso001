@@ -593,7 +593,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
             <div class="terminal-global-feedback" id="t2b-global-fb"></div>
             <div class="terminal-confirmed" id="t2b-confirmed">
               <div class="terminal-confirmed-label">Analisi registrata — Terminale 02B</div>
-              <div class="terminal-confirmed-msg">L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.</div>
+              <div class="terminal-confirmed-msg" id="t2b-confirmed-msg">L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.</div>
             </div>
             <button class="terminal-submit" id="t2b-submit" onclick="submitTerminal2B()">Invia al Terminale 02B</button>
           </div>
@@ -1303,7 +1303,7 @@ function submitTerminal2A(){
     const gfb = document.getElementById('t2a-global-fb');
     gfb.innerHTML = "Linea investigativa registrata.<br><br>L'Archivio non conferma ancora una responsabilità. La pista selezionata presenta elementi sufficienti per accedere ai reperti ad alta sensibilità.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso intermedio autorizzato.</em>";
     gfb.className = 'terminal-global-feedback show ok';
-    document.getElementById('t2a-confirmed-msg').textContent = feedbackMap[sosp] || 'Accesso ai reperti ad alta sensibilità autorizzato.';
+    const cmsg2a = document.getElementById('t2a-confirmed-msg'); if(cmsg2a) cmsg2a.textContent = feedbackMap[sosp] || 'Accesso ai reperti ad alta sensibilità autorizzato.';
 
     ['nav-parte2','mnav-parte2','nav-terminale2b','mnav-terminale2b'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
@@ -1471,7 +1471,7 @@ function submitTerminal2B(){
     const gfb = document.getElementById('t2b-global-fb');
     gfb.innerHTML = "Ipotesi investigativa acquisita dall'Archivio.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso all'esito autorizzato.</em>";
     gfb.className = 'terminal-global-feedback show ok';
-    document.getElementById('t2b-confirmed-msg').textContent = feedbackMap[sosp] || "Accesso all'esito autorizzato.";
+    const cmsg2b = document.getElementById('t2b-confirmed-msg'); if(cmsg2b) cmsg2b.textContent = feedbackMap[sosp] || "Accesso all'esito autorizzato.";
 
     ['nav-esito','mnav-esito'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
