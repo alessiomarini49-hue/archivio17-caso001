@@ -663,7 +663,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
             <div class="terminal-global-feedback" id="t2b-global-fb"></div>
             <div class="terminal-confirmed" id="t2b-confirmed">
               <div class="terminal-confirmed-label">Analisi registrata — Terminale 02B</div>
-              <div class="terminal-confirmed-msg">L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.</div>
+              <div class="terminal-confirmed-msg" id="t2b-confirmed-msg">L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.</div>
             </div>
             <button class="terminal-submit" id="t2b-submit" onclick="submitTerminal2B()">Invia al Terminale 02B</button>
           </div>
@@ -729,7 +729,6 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         </div>
         <div id="puzzles-container"></div>
       </div>
-    </div>
 
   </main>
 
@@ -882,6 +881,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
       <button class="btn-secondary" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
     </div>
   </div>
+</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1880,4 +1880,3 @@ init();
 </script>
 </body>
 </html>
-  if(PUZZLES.find(p=>p.id===puzzleId&&p.part===2)&&!state.t2aCompleted)return;
