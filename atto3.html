@@ -371,45 +371,6 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
   <div class="mnav-item" onclick="toggleMobileDrawer()">Stato</div>
 </nav>
 
-<div id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
-  <div class="mobile-inv-panel">
-    <div class="mobile-inv-close">
-      <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
-    </div>
-    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
-    <div class="inv-section">
-      <div class="inv-label">Scheda caso</div>
-      <div class="inv-case-status">Indagine aperta</div>
-      <div style="margin-top:.65rem">
-        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="minv-fase">Omissioni e accessi</span></div>
-      </div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Indice investigativo</div>
-      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
-        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="minv-score-big">100</span>
-        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
-      </div>
-      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Progressione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="minv-p1">0 / 7</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="minv-casella">non disponibile</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="minv-p2">bloccati</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="minv-t3a">non validato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="minv-t3b">bloccato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="minv-t3c">bloccato</span></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Dati sessione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="minv-hints">0 livelli</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="minv-errors">0</span></div>
-    </div>
-  </div>
-</div>
 
 <div class="app-body">
 
@@ -956,6 +917,46 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
       </div>
     </div>
   </aside>
+<button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
+<div id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
+  <div class="mobile-inv-panel">
+    <div class="mobile-inv-close">
+      <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
+    </div>
+    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
+    <div class="inv-section">
+      <div class="inv-label">Scheda caso</div>
+      <div class="inv-case-status">Indagine aperta</div>
+      <div style="margin-top:.65rem">
+        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
+        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="minv-fase">Omissioni e accessi</span></div>
+      </div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Indice investigativo</div>
+      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
+        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="minv-score-big">100</span>
+        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
+      </div>
+      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Progressione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="minv-p1">0 / 7</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="minv-casella">non disponibile</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="minv-p2">bloccati</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="minv-t3a">non validato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="minv-t3b">bloccato</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="minv-t3c">bloccato</span></div>
+    </div>
+    <div class="inv-section">
+      <div class="inv-label">Dati sessione</div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="minv-hints">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="minv-errors">0</span></div>
+    </div>
+  </div>
+</div>
 
 </div>
 
