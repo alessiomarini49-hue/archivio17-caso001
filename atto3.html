@@ -1405,7 +1405,7 @@ function openEmail(eid){
   document.getElementById('v-cat').textContent = e.cat;
   document.getElementById('v-consulted').textContent = '';
   document.getElementById('v-title').textContent = e.obj;
-  document.getElementById('v-cat-label').textContent = e.cat;
+  const vcl=document.getElementById('v-cat-label'); if(vcl) vcl.textContent = e.cat;
   const img = document.getElementById('v-image'); img.style.display='none';
   document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
   const noteBlock = document.getElementById('v-note-block'); noteBlock.style.display='none';
@@ -1651,7 +1651,7 @@ function renderDocsGrid(part, docs, containerId){
   if(!grid) return;
   grid.innerHTML = '';
   const opened = part==='p1' ? state.p1Opened : state.p2Opened;
-  const isLocked = part==='p2' && !state.t2aCompleted;
+  const isLocked = part==='p2' && !state.t3aCompleted;
 
   docs.forEach(doc=>{
     const isOpen = opened.includes(doc.id);
