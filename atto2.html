@@ -380,7 +380,23 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .mobile-inv-close{display:flex;justify-content:flex-end;padding:.75rem 1rem;border-bottom:1px solid var(--border-white)}
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .anim-in{animation:fadeInUp .32s ease forwards}
-  </style>
+  
+/* ===== SUPPORTO ARCHIVISTA — LOCKED/UNLOCKED ===== */
+.hints-group-wrapper{margin-bottom:.25rem}
+.hints-group-badge{font-family:var(--font-mono);font-size:7px;letter-spacing:.22em;padding:2px 7px;border-radius:2px;text-transform:uppercase;vertical-align:middle;margin-left:.6rem}
+.hints-group-badge.unlocked{background:rgba(90,180,100,.12);color:var(--success-text);border:1px solid rgba(90,180,100,.25)}
+.hints-group-badge.locked{background:rgba(167,25,32,.1);color:var(--red-logicus);border:1px solid rgba(167,25,32,.25)}
+.hints-p2-locked-banner{background:rgba(5,7,11,.6);border:1px solid rgba(167,25,32,.18);padding:1.25rem 1.5rem;margin:.75rem 0 .6rem;text-align:center;position:relative}
+.hints-p2-locked-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(167,25,32,.4),transparent)}
+.hints-locked-icon{font-size:1.1rem;color:rgba(167,25,32,.4);margin-bottom:.5rem;letter-spacing:.5em}
+.hints-locked-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--text-secondary);text-transform:uppercase;margin-bottom:.35rem;line-height:1.5}
+.hints-locked-sub{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.06em;color:var(--text-dim);font-style:italic}
+.hints-p2-locked-cards{display:flex;flex-direction:column;gap:.4rem;opacity:.45;pointer-events:none}
+.locked-card{border-color:rgba(255,255,255,.06)!important;background:rgba(5,7,11,.4)!important}
+.locked-hdr{cursor:default!important}
+.locked-title{color:var(--text-dim)!important;font-style:italic;letter-spacing:.04em}
+.hints-p2-unlocked-banner{background:rgba(90,180,100,.05);border:1px solid rgba(90,180,100,.2);padding:.85rem 1.25rem;margin:.75rem 0 .6rem;text-align:center}
+</style>
 </head>
 <body>
 
@@ -1593,23 +1609,62 @@ function renderPuzzles(){
 
   const p1puzzles=PUZZLES.filter(p=>p.part===1);
   const p2puzzles=PUZZLES.filter(p=>p.part===2);
+  const p2locked=!state.t2aCompleted;
 
+  // ----- SEZIONE 1 -----
   const g1=document.createElement('div');
-  g1.innerHTML=`<div class="hints-group-label">Sezione 1 — Parte 1 · Le prime crepe</div>`;
+  g1.className='hints-group-wrapper';
+  g1.innerHTML=`
+    <div class="hints-group-label">
+      <span>PARTE 1 — LE PRIME CREPE</span>
+      <span class="hints-group-badge unlocked">DISPONIBILE</span>
+    </div>`;
   c.appendChild(g1);
-  p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p)));
+  p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p,false)));
 
+  // ----- SEZIONE 2 -----
   const g2=document.createElement('div');
-  g2.style.marginTop='1.5rem';
-  g2.innerHTML=`<div class="hints-group-label">Sezione 2 — Parte 2 · Reperti ad alta sensibilità ${!state.t2aCompleted?'<span style="color:var(--text-dim);font-size:8px"> · BLOCCATI FINO AL TERMINALE 02A</span>':''}</div>`;
+  g2.className='hints-group-wrapper';
+  g2.style.marginTop='1.75rem';
+  if(p2locked){
+    g2.innerHTML=`
+      <div class="hints-group-label">
+        <span>PARTE 2 — SUPPORTO NON DISPONIBILE</span>
+        <span class="hints-group-badge locked">ACCESSO BLOCCATO</span>
+      </div>
+      <div class="hints-p2-locked-banner">
+        <div class="hints-locked-icon">▬</div>
+        <div class="hints-locked-title">Gli aiuti relativi ai reperti ad alta sensibilità sono temporaneamente oscurati.</div>
+        <div class="hints-locked-sub">Completa il Terminale 02A per autorizzare l'accesso.</div>
+      </div>
+      <div class="hints-p2-locked-cards">
+        ${p2puzzles.map((_,i)=>`
+          <div class="hint-accordion locked-card">
+            <div class="hint-hdr locked-hdr">
+              <div class="hint-hdr-left">
+                <span class="hint-puzzle-id" style="opacity:.35">P${String(9+i).padStart(2,'0')}</span>
+                <span class="hint-puzzle-name locked-title">Reperto ad alta sensibilità ${['I','II','III','IV'][i]}</span>
+              </div>
+              <div class="hint-hdr-right"><span class="hint-arrow" style="opacity:.2">▼</span></div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    g2.innerHTML=`
+      <div class="hints-group-label">
+        <span>PARTE 2 — REPERTI AD ALTA SENSIBILITÀ</span>
+        <span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span>
+      </div>
+      <div class="hints-p2-unlocked-banner">
+        <div class="hints-locked-title" style="color:var(--success-text)">I nuovi supporti sono disponibili.</div>
+        <div class="hints-locked-sub">Ogni richiesta riduce il tuo Indice Investigativo.</div>
+      </div>`;
+    p2puzzles.forEach(p=>g2.appendChild(buildPuzzleEl(p,false)));
+  }
   c.appendChild(g2);
-  p2puzzles.forEach(p=>{
-    const el=buildPuzzleEl(p,!state.t2aCompleted);
-    c.appendChild(el);
-  });
 }
 
-function buildPuzzleEl(puzzle, locked=false){
+function buildPuzzleEl(puzzle){
   const revealed=state.hintsRevealed[puzzle.id]||0;
   const isOpen=state.puzzleOpen[puzzle.id];
   const totalSpent=state.hintPuzzleCost[puzzle.id]||0;
@@ -1617,13 +1672,14 @@ function buildPuzzleEl(puzzle, locked=false){
   puzzle.hints.forEach(h=>{
     const isRev=revealed>=h.lvl;
     hintsHtml+=`<div class="hint-level-row ${isRev?'used':''}">
-      <div class="hint-level-meta"><span class="hint-level-name">${h.lvl===1?'Osservazione':h.lvl===2?'Connessione':'Quasi soluzione'} · Lv.${h.lvl}</span><span class="hint-level-cost">−${h.cost} pt</span></div>
+      <div class="hint-level-meta">
+        <span class="hint-level-name">${h.lvl===1?'Osservazione':h.lvl===2?'Connessione':'Quasi soluzione'} · Lv.${h.lvl}</span>
+        <span class="hint-level-cost">−${h.cost} pt</span>
+      </div>
       <div class="hint-level-content">
         ${isRev
           ?`<div class="hint-text revealed">${h.txt}</div><div class="hint-used-label visible">Supporto utilizzato</div>`
-          :locked
-            ?`<div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.12em">Bloccato — sblocca la Parte 2</div>`
-            :`<button class="hint-reveal-btn" onclick="useHint('${puzzle.id}',${h.lvl})">— Richiedi supporto (−${h.cost} pt)</button>`
+          :`<button class="hint-reveal-btn" onclick="useHint('${puzzle.id}',${h.lvl})">— Richiedi supporto (−${h.cost} pt)</button>`
         }
       </div>
     </div>`;
@@ -1701,3 +1757,4 @@ init();
 </script>
 </body>
 </html>
+  if(PUZZLES.find(p=>p.id===puzzleId&&p.part===2)&&!state.t2aCompleted)return;
