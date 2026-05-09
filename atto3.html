@@ -1230,8 +1230,14 @@ function hasAnyPartial(text, roots){
 }
 
 function isAmbiguousGeneric(text){
-  const generics = ['non so','non saprei','forse','qualcosa','qualcuno','manca qualcosa','non capisco','incerto','difficile','complicato','non riesco'];
-  return generics.some(g => prep(text).includes(g));
+  const t = prep(text).trim();
+  if(!t) return true;
+  if(t.length < 4) return true;
+  const generic = ['soldi','famiglia','arma','qualcosa','non so','manca','forse','boh','denaro','accesso',
+    'nulla','niente','non saprei','qualcuno','manca qualcosa','non capisco','incerto','difficile','complicato','non riesco'];
+  const tokens = t.split(/\s+/);
+  if(tokens.length <= 2 && tokens.every(tok => generic.includes(tok))) return true;
+  return generic.some(g => t === g);
 }
 
 function setFieldState(terminal, field, st, msg){
@@ -1548,8 +1554,9 @@ function submitTerminal3C(){
   }
 
   // Campo 2 — movente
-  const kw_mov = ['fideiussione','debito','garanzia','bancaria','familiare','esposizione','280000','copertura',
-    'polizza','sollecito','evitare il crollo','salvare','estinzione','morte estingueva','crollo finanziario'];
+  const kw_mov = ['fideiussion','fideiussione','debito','garanzia','bancaria','familiare','esposizion','esposizione',
+    '280000','280','copertur','copertura','polizza','sollecito','crollo','salv','salvare','finanziar',
+    'estingu','estinzione','morte estingueva','crollo finanziario','evitare il crollo'];
   if(hasAny(texts[1], kw_mov)){
     setFieldState('t3c',2,'ok','Movente correttamente identificato.');
   } else if(isAmbiguousGeneric(vals[1]) || texts[1].includes('soldi') || texts[1].includes('denaro') || texts[1].includes('economico')){
@@ -1561,8 +1568,9 @@ function submitTerminal3C(){
   }
 
   // Campo 3 — accesso
-  const kw_acc2 = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto',
-    'senza telecamere','porta sul retro','ingresso laterale','con le chiavi','copia delle chiavi','chiavi'];
+  const kw_acc2 = ['secondari','secondario','scala di servizio','scala','retro','laterale',
+    'non sorvegliato','sorvegliato','non coperto','senza telecamere','telecamere','servizio',
+    'porta sul retro','ingresso laterale','chiavi','copia'];
   if(hasAny(texts[2], kw_acc2)){
     setFieldState('t3c',3,'ok','Modalità di accesso identificata correttamente.');
   } else if(isAmbiguousGeneric(vals[2]) || texts[2].includes('ingresso') || texts[2].includes('accesso')){
@@ -1574,8 +1582,9 @@ function submitTerminal3C(){
   }
 
   // Campo 4 — provenienza arma
-  const kw_arma = ['padre','giovanni marini','giovanni','marini giovanni','famiglia','arma di famiglia',
-    'pistola di famiglia','ereditata','apparteneva al padre','pistola del padre','intestata al padre'];
+  const kw_arma = ['padre','giovanni marini','giovanni','marini giovanni','famiglia','familiar',
+    'arma di famiglia','pistola di famiglia','eredit','ereditata','apparteneva al padre',
+    'pistola del padre','intestata al padre'];
   if(hasAny(texts[3], kw_arma)){
     setFieldState('t3c',4,'ok','Provenienza dell\'arma identificata correttamente.');
   } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('famiglia') || texts[3].includes('familiare')){
@@ -1611,8 +1620,8 @@ function submitTerminal3C(){
     gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
     gfb.className = 'terminal-global-feedback show warn';
   } else {
-    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
-    gfb.className = 'terminal-global-feedback show ambiguous';
+    gfb.textContent = 'Verifica conclusiva incompleta. Rileggere le note di verifica e i reperti chiave.';
+    gfb.className = 'terminal-global-feedback show warn';
   }
 }
 
