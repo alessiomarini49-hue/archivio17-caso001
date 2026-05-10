@@ -811,7 +811,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 
 <div class="confirm-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
-    <h3>Azzera sessione?</h3>
+    <h3 id="confirm-title">Azzera sessione?</h3>
     <p>Tutti i progressi dell'Atto 2 verranno cancellati. L'indice investigativo verrà azzerato.</p>
     <div class="confirm-actions">
       <button class="btn-primary" onclick="confirmReset()">Conferma</button>
@@ -1080,7 +1080,7 @@ function detectSospetto(val){
 
 function isAmbiguousGeneric(val){
   const v = prep(val);
-  return AMBIGUOUS_GENERIC.some(k => v === k || v === k+'i' || v === k+'e' || v === k+'a');
+  return AMBIGUOUS_GENERIC.some(k => v === k);
 }
 
 // ===== ELEM P1 — dizionario elementi Terminale 02A =====
@@ -1301,6 +1301,7 @@ function submitTerminal2A(){
     state.t2aCompleted = true;
     state.t2aSospetto  = sosp;
     document.getElementById('t2a-submit').disabled = true;
+    document.getElementById('t2a-submit').style.display = 'none';
     document.getElementById('t2a-confirmed').classList.add('visible');
 
     const feedbackMap = {
@@ -1463,6 +1464,7 @@ function submitTerminal2B(){
     state.t2bSospetto  = sosp;
     state.finalUnlocked= true;
     document.getElementById('t2b-submit').disabled = true;
+    document.getElementById('t2b-submit').style.display = 'none';
     document.getElementById('t2b-confirmed').classList.add('visible');
 
     const feedbackMap = {
@@ -1541,7 +1543,7 @@ function renderDocsGrid(part, docs, containerId){
     if(!isLocked) div.onclick = ()=> openDoc(doc.id, part);
 
     const imgHtml = doc.imageUrl
-      ? '<div class="doc-thumb"><img src="'+doc.imageUrl+'" alt="" onerror="this.parentElement.innerHTML=\'<div class=&quot;doc-thumb-placeholder&quot;><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>\'"></div>'
+      ? '<div class="doc-thumb"><img src="'+doc.imageUrl+'" alt="" data-doc="'+doc.id+'"></div>'
       : (isLocked
           ? '<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>'
           : '<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>');
@@ -1558,6 +1560,14 @@ function renderDocsGrid(part, docs, containerId){
         (!isLocked ? '<div class="doc-cta '+(isOpen?'consulted-cta':'')+'">'+(isOpen?'Rileggi reperto':'Esamina reperto')+'</div>' : '') +
       '</div>';
     grid.appendChild(div);
+  });
+
+  // Gestione errore immagini senza onerror inline
+  grid.querySelectorAll('img[data-doc]').forEach(img => {
+    img.addEventListener('error', function(){
+      const wrap = img.parentElement;
+      if(wrap) wrap.innerHTML = '<div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>';
+    }, {once:true});
   });
 
   updateCounters();
@@ -1615,6 +1625,8 @@ function renderEsito(){
   document.getElementById('esito-score').textContent = total;
   document.getElementById('esito-classname').textContent = cls;
   document.getElementById('esito-hint-count').textContent = state.hintLevelsUsed + ' richieste';
+  document.getElementById('esito-hint-cost').textContent = '\u2212' + hc;
+  document.getElementById('esito-err-cost').textContent = '\u2212' + ec;
   document.getElementById('esito-total').textContent = total;
 
   if(total>=75){
@@ -1627,15 +1639,16 @@ function renderEsito(){
 
   // Copy finale differenziato per sospetto scelto in T02B
   const finalCopy = {
-    MANFREDI: 'La pista Manfredi resta la più rumorosa del fascicolo: pressione professionale, irregolarità contabili e minacce compongono una linea coerente.<br><br>Ma l’Archivio non chiude un caso sulla linea più rumorosa.',
+    MANFREDI: 'La pista Manfredi resta la pi\u00f9 rumorosa del fascicolo: pressione professionale, irregolarit\u00e0 contabili e minacce compongono una linea coerente.<br><br>Ma l\u2019Archivio non chiude un caso sulla linea pi\u00f9 rumorosa.',
     STEFANO:  'Hai puntato sulla linea familiare. Fideiussione, esposizione debitoria e appuntamento non verificato compongono una pista solida.<br><br>Ma il fascicolo presenta ancora omissioni che attendono risposta.',
-    ELENA:    'Hai puntato sulla linea domestica. La tensione in casa Marini è reale, l’intervallo non verificato anche.<br><br>Ma le dichiarazioni di Elena rivelano solo una parte della storia.',
-    DAVIDE:   'Hai puntato sull’accesso fisico. Chiavi, primo ingresso e conoscenza dei fascicoli rendono Davide una presenza rilevante.<br><br>Ma l’Archivio distingue tra chi aveva accesso e chi aveva un motivo abbastanza forte.'
+    ELENA:    'Hai puntato sulla linea domestica. La tensione in casa Marini \u00e8 reale, l\u2019intervallo non verificato anche.<br><br>Ma le dichiarazioni di Elena rivelano solo una parte della storia.',
+    DAVIDE:   'Hai puntato sull\u2019accesso fisico. Chiavi, primo ingresso e conoscenza dei fascicoli rendono Davide una presenza rilevante.<br><br>Ma l\u2019Archivio distingue tra chi aveva accesso e chi aveva un motivo abbastanza forte.'
   };
   const sosp = state.t2bSospetto || 'MANFREDI';
   const fbEl = document.getElementById('final-body-text');
   if(fbEl) fbEl.innerHTML = finalCopy[sosp] || finalCopy['MANFREDI'];
 }
+
 
 function updateUI(){
   const score = computeScore();
@@ -1854,8 +1867,11 @@ function useHint(pid, lvl){
 }
 
 function toggleMobileDrawer(){
-  document.getElementById('mobile-inv-drawer').classList.toggle('open');
+  const d = document.getElementById('mobile-inv-drawer');
+  d.classList.toggle('open');
+  d.setAttribute('aria-hidden', String(!d.classList.contains('open')));
 }
+
 function closeMobileDrawerOutside(e){
   if(e.target === document.getElementById('mobile-inv-drawer')){
     document.getElementById('mobile-inv-drawer').classList.remove('open');
