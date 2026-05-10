@@ -627,7 +627,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           </div>
           <div class="score-breakdown">
             <div class="bd-row"><span>Punteggio base</span><span class="bd-val">100</span></div>
-            <div class="bd-row"><span>Supporti Archivista richiesti</span><span class="bd-val" id="esito-hint-count" style="color:var(--text-secondary)">0 livelli</span></div>
+            <div class="bd-row"><span>Aiuti consultati</span><span class="bd-val" id="esito-hint-count" style="color:var(--text-secondary)">0 richieste</span></div>
             <div class="bd-row"><span>Penalità supporto Archivista</span><span class="bd-val penalty" id="esito-hint-cost">−0</span></div>
             <div class="bd-row"><span>Penalità errori Terminale</span><span class="bd-val penalty" id="esito-err-cost">−0</span></div>
             <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>
@@ -638,7 +638,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           <div class="final-tag">ANALISI ECONOMICA CONCLUSA</div>
           <div class="final-headline">Il fascicolo non indica ancora un colpevole.</div>
           <div class="final-divider"></div>
-          <div class="final-body">La pista Manfredi resta la più rumorosa del fascicolo: pressione professionale, irregolarità contabili e minacce compongono una linea coerente.<br><br>Ma l'Archivio non chiude un caso sulla linea più rumorosa.</div>
+          <div class="final-body" id="final-body-text">La pista Manfredi resta la più rumorosa del fascicolo: pressione professionale, irregolarità contabili e minacce compongono una linea coerente.<br><br>Ma l'Archivio non chiude un caso sulla linea più rumorosa.</div>
           <div class="final-ipotesi-box">
             <div class="final-ipotesi-label">Elementi non allineati — ancora aperti</div>
             <div class="final-ipotesi-text">Un importo che ricorre fuori dalla pratica Manfredi.<br>Una garanzia familiare non valutata.<br>Un alibi domestico con un intervallo scoperto.<br>Un collaboratore con accesso diretto alla scena.<br>Una iniziale rimasta senza verifica.<br><br>Il fascicolo non indica ancora un colpevole. Indica troppe omissioni.</div>
@@ -702,7 +702,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
     </div>
     <div class="inv-section">
       <div class="inv-label">Dati sessione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="inv-hints-used">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="inv-hints-used">0 richieste</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="inv-errors">0</span></div>
     </div>
     <div class="inv-section">
@@ -739,7 +739,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 </div>
 
 <button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
-<div class="mobile-inv-drawer" id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
+<div class="mobile-inv-drawer" id="mobile-inv-drawer" role="dialog" aria-modal="true" aria-label="Stato fascicolo" onclick="closeMobileDrawerOutside(event)">
   <div class="mobile-inv-panel">
     <div class="mobile-inv-close">
       <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
@@ -763,13 +763,13 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
     </div>
     <div class="inv-section">
       <div class="inv-label">Dati sessione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="m-inv-hints-used">0 livelli</span></div>
+      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="m-inv-hints-used">0 richieste</span></div>
       <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="m-inv-errors">0</span></div>
     </div>
   </div>
 </div>
 
-<div class="viewer-overlay" id="viewer-overlay">
+<div class="viewer-overlay" id="viewer-overlay" role="dialog" aria-modal="true" aria-labelledby="v-title">
   <div class="viewer-card">
     <div class="viewer-back-bar">
       <div class="viewer-doc-meta">
@@ -809,7 +809,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
   </div>
 </div>
 
-<div class="confirm-overlay" id="confirm-overlay">
+<div class="confirm-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
     <h3>Azzera sessione?</h3>
     <p>Tutti i progressi dell'Atto 2 verranno cancellati. L'indice investigativo verrà azzerato.</p>
@@ -825,6 +825,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 <footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono inventati. Ogni somiglianza con persone o fatti reali è puramente casuale.</footer>
 
 <script>
+'use strict';
 // ============================================================
 //  ARCHIVIO 17 — ATTO 2 — GAME ENGINE
 // ============================================================
@@ -1165,7 +1166,6 @@ const SYNTH_KW = [
 // ===== STATE =====
 function defaultState(){
   return {
-    score:100,
     hintPenaltyTotal:0,
     hintLevelsUsed:0,
     errorsTerminal:0,
@@ -1201,7 +1201,7 @@ function loadState(){
         p2Opened: Array.isArray(parsed.p2Opened) ? parsed.p2Opened : []
       };
     }
-  }catch(e){ state = defaultState(); }
+  }catch(e){ state = defaultState(); setTimeout(()=>showToast('Sessione corrotta, ripartita da capo'),500); }
 }
 function saveState(){
   try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
@@ -1251,8 +1251,8 @@ function submitTerminal2A(){
     } else if(v2.length < 4){
       s2='ambiguous'; m2='Elemento parziale. Specificare il riferimento del fascicolo.';
     } else {
-      // Risposta lunga ma senza match — prova tolleranza: parole parziali comuni
-      const loose = (ELEM_P1[sosp] || []);
+      // Tolleranza: radice tronca (5 chars) per varianti morfologiche
+      const loose = (ELEM_P1[sosp] || []).map(k=>k.slice(0,5)).filter(k=>k.length>=4);
       const looseMatch = loose.some(k => v2.includes(k));
       if(looseMatch){
         s2='ok'; m2='Elemento registrato.';
@@ -1371,7 +1371,7 @@ function submitTerminal2B(){
       s2='ok'; m2='Elementi sufficienti registrati ('+matches.length+' rilevati).';
     } else if(matches.length === 1){
       // 1 match esatto — tolleranza con parole parziali
-      const loose = (ELEM_P2[sosp] || []);
+      const loose = (ELEM_P2[sosp] || []).map(k=>k.slice(0,5)).filter(k=>k.length>=4);
       const looseCount = loose.filter(k => v2.includes(k)).length;
       if(looseCount >= 1){
         s2='ok'; m2='Elementi sufficienti registrati.';
@@ -1607,9 +1607,7 @@ function renderEsito(){
 
   document.getElementById('esito-score').textContent = total;
   document.getElementById('esito-classname').textContent = cls;
-  document.getElementById('esito-hint-count').textContent = state.hintLevelsUsed + ' livell' + (state.hintLevelsUsed===1?'o':'i');
-  document.getElementById('esito-hint-cost').textContent = '−' + hc;
-  document.getElementById('esito-err-cost').textContent = '−' + ec;
+  document.getElementById('esito-hint-count').textContent = state.hintLevelsUsed + ' richieste';
   document.getElementById('esito-total').textContent = total;
 
   if(total>=75){
@@ -1619,9 +1617,19 @@ function renderEsito(){
     document.getElementById('esito-score').className = 'score-number';
     document.getElementById('esito-classname').className = 'score-classname';
   }
+
+  // Copy finale differenziato per sospetto scelto in T02B
+  const finalCopy = {
+    MANFREDI: 'La pista Manfredi resta la più rumorosa del fascicolo: pressione professionale, irregolarità contabili e minacce compongono una linea coerente.<br><br>Ma l’Archivio non chiude un caso sulla linea più rumorosa.',
+    STEFANO:  'Hai puntato sulla linea familiare. Fideiussione, esposizione debitoria e appuntamento non verificato compongono una pista solida.<br><br>Ma il fascicolo presenta ancora omissioni che attendono risposta.',
+    ELENA:    'Hai puntato sulla linea domestica. La tensione in casa Marini è reale, l’intervallo non verificato anche.<br><br>Ma le dichiarazioni di Elena rivelano solo una parte della storia.',
+    DAVIDE:   'Hai puntato sull’accesso fisico. Chiavi, primo ingresso e conoscenza dei fascicoli rendono Davide una presenza rilevante.<br><br>Ma l’Archivio distingue tra chi aveva accesso e chi aveva un motivo abbastanza forte.'
+  };
+  const sosp = state.t2bSospetto || 'MANFREDI';
+  const fbEl = document.getElementById('final-body-text');
+  if(fbEl) fbEl.innerHTML = finalCopy[sosp] || finalCopy['MANFREDI'];
 }
 
-// ===== UPDATE UI =====
 function updateUI(){
   const score = computeScore();
   let cls = 'Osservatore esterno';
@@ -1683,8 +1691,8 @@ function updateUI(){
   const mhuEl = document.getElementById('m-inv-hints-used');
   const erEl = document.getElementById('inv-errors');
   const merEl = document.getElementById('m-inv-errors');
-  if(huEl) huEl.textContent = state.hintLevelsUsed + ' livelli';
-  if(mhuEl) mhuEl.textContent = state.hintLevelsUsed + ' livelli';
+  if(huEl) huEl.textContent = state.hintLevelsUsed + ' richieste';
+  if(mhuEl) mhuEl.textContent = state.hintLevelsUsed + ' richieste';
   if(erEl) erEl.textContent = state.errorsTerminal;
   if(merEl) merEl.textContent = state.errorsTerminal;
 
@@ -1755,7 +1763,7 @@ function renderPuzzles(){
       '<div class="hints-p2-locked-banner">' +
         '<div class="hints-locked-icon">▬</div>' +
         '<div class="hints-locked-title">Gli aiuti relativi ai reperti ad alta sensibilità sono temporaneamente oscurati.</div>' +
-        '<div class="hints-locked-sub">Completa il Terminale 02A per autorizzare l'accesso.</div>' +
+        '<div class="hints-locked-sub">Completa il Terminale 02A per autorizzare l\'accesso.</div>' +
       '</div>' +
       '<div class="hints-p2-locked-cards">' + lockedCardsHtml + '</div>';
   } else {
@@ -1932,6 +1940,7 @@ document.addEventListener('keydown', function(e){
   if(e.key === 'Escape'){
     closeViewer();
     document.getElementById('mobile-inv-drawer').classList.remove('open');
+    const co = document.getElementById('confirm-overlay'); if(co) co.classList.remove('visible');
   }
 });
 
