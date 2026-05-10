@@ -1237,9 +1237,9 @@ const PUZZLES = [
     title:'Linee intrecciate',
     scope:'Identificare le sovrapposizioni tra i soggetti presenti nel fascicolo.',
     hints:[
-      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca il punto in cui più linee si intersecano.'},
-      {lvl:2,cost:5,txt:'Confronta chiamate, accessi e omissioni: ogni soggetto ha qualcosa che non si chiude da solo.'},
-      {lvl:3,cost:8,txt:'Quattro linee convergono sul 14 novembre. Una di queste ha un elemento in più che le altre non hanno ancora.'}
+      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca il punto in cui più linee si intersecano sul 14 novembre.'},
+      {lvl:2,cost:5,txt:'Ogni soggetto del fascicolo ha almeno un elemento che non torna: un accesso, una chiamata, un silenzio. Mettili in colonna e vedi quale riga è più lunga.'},
+      {lvl:3,cost:8,txt:'Una delle quattro linee ha qualcosa che le altre non hanno: non solo un movente o un’omissione, ma una combinazione. È quella combinazione che va cercata, non il nome.'}
     ]
   },
   {
@@ -1247,9 +1247,9 @@ const PUZZLES = [
     title:'Accesso secondario',
     scope:"Comprendere il ruolo dell'ingresso non sorvegliato nel fascicolo.",
     hints:[
-      {lvl:1,cost:2,txt:'Una telecamera copre solo ciò che vede. Cerca quello che non ha ripreso.'},
-      {lvl:2,cost:5,txt:"Confronta l'ingresso principale con la piantina dell'edificio. C'è un percorso alternativo documentato."},
-      {lvl:3,cost:8,txt:"Chi conosceva lo studio sapeva che esisteva un accesso non visibile dalla ripresa principale. Questo riduce il numero di persone che avrebbero potuto usarlo senza essere viste."}
+      {lvl:1,cost:2,txt:'La telecamera copre l’ingresso principale. Ma non è l’unico modo per entrare nell’edificio.'},
+      {lvl:2,cost:5,txt:'Guarda la piantina dell’edificio e confrontala con il campo visivo della telecamera. C’è un percorso che non compare nelle riprese.'},
+      {lvl:3,cost:8,txt:'Chiunque conoscesse lo studio sapeva di quell’accesso. Ma non tutti lo frequentavano abbastanza da usarlo senza esitazione. Questo restringe il campo.'}
     ]
   },
   {
@@ -1257,9 +1257,9 @@ const PUZZLES = [
     title:'Moventi a confronto',
     scope:'Valutare il peso reale di ciascuna linea investigativa.',
     hints:[
-      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno un movente dello stesso peso. Cerca chi ha più di un elemento che lo collega al 14 novembre.'},
-      {lvl:2,cost:5,txt:'Elena e Davide hanno omissioni. Manfredi ha pressione documentata. Stefano ha esposizione economica diretta. Quale di questi ha anche accesso?'},
-      {lvl:3,cost:8,txt:'Una sola linea unisce movente, accesso fisico e assenza di alibi verificato. Le altre ne hanno al massimo due su tre.'}
+      {lvl:1,cost:2,txt:'Un movente da solo non basta. Cerca chi ha anche accesso e un’assenza non verificata nella stessa serata.'},
+      {lvl:2,cost:5,txt:'Metti a confronto le quattro linee su tre criteri: movente documentato, accesso fisico possibile, alibi verificato. Non tutte le linee reggono su tutti e tre.'},
+      {lvl:3,cost:8,txt:'Una sola linea passa tutti e tre i filtri contemporaneamente. Le altre si fermano a uno o due. È quella la direzione da consolidare nel terminale.'}
     ]
   },
   {
@@ -1267,9 +1267,9 @@ const PUZZLES = [
     title:'Chiusura del caso',
     scope:'Costruire la risposta finale con convergenza di movente, accesso, arma e alibi.',
     hints:[
-      {lvl:1,cost:2,txt:'Cerca la convergenza, non il dettaglio più rumoroso. La risposta finale deve reggere su più elementi contemporaneamente.'},
-      {lvl:2,cost:5,txt:'Movente, accesso, arma e alibi devono appartenere alla stessa linea. Quale sospetto li ha tutti e quattro documentati nel fascicolo?'},
-      {lvl:3,cost:8,txt:"C’è una linea in cui il debito, le chiavi, l’arma e l’assenza di alibi convergono sulla stessa persona. Trovare quella convergenza chiude il caso."}
+      {lvl:1,cost:2,txt:'La risposta finale non è un nome — è una convergenza. Movente, accesso, arma e alibi devono puntare nella stessa direzione.'},
+      {lvl:2,cost:5,txt:'Ripercorri il fascicolo con questi quattro criteri in mente. Quale linea li copre tutti? Quale lascia ancora qualcosa aperto?'},
+      {lvl:3,cost:8,txt:'Nel fascicolo ci sono elementi che collegano la stessa persona a un debito, a un accesso documentato, a un’arma di famiglia e a una serata senza riscontro. Trova quella persona e hai chiuso il caso.'}
     ]
   }
 ];
