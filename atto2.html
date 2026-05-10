@@ -1200,9 +1200,16 @@ function loadState(){
         p1Opened: Array.isArray(parsed.p1Opened) ? parsed.p1Opened : [],
         p2Opened: Array.isArray(parsed.p2Opened) ? parsed.p2Opened : []
       };
+      // Normalizza hintsRevealed: converte eventuali vecchi valori numerici {pid:N} in {pid:{}} 
+      Object.keys(state.hintsRevealed).forEach(pid=>{
+        if(typeof state.hintsRevealed[pid] !== 'object' || state.hintsRevealed[pid] === null){
+          state.hintsRevealed[pid] = {};
+        }
+      });
     }
   }catch(e){ state = defaultState(); setTimeout(()=>showToast('Sessione corrotta, ripartita da capo'),500); }
 }
+
 function saveState(){
   try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
 }
@@ -1777,12 +1784,12 @@ function renderPuzzles(){
 
 
 function buildPuzzleEl(puzzle){
-  const revealed = state.hintsRevealed[puzzle.id] || 0;
+  const revealed = state.hintsRevealed[puzzle.id] || {};
   const isOpen = state.puzzleOpen[puzzle.id];
   const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
   let hintsHtml = '';
   puzzle.hints.forEach(h=>{
-    const isRev = h.lvl <= revealed;
+    const isRev = revealed[h.lvl] === true;
     const lvlName = h.lvl===1 ? 'Osservazione' : h.lvl===2 ? 'Connessione' : 'Quasi soluzione';
     hintsHtml +=
       '<div class="hint-level-row ' + (isRev?'used':'') + '">' +
@@ -1818,7 +1825,6 @@ function buildPuzzleEl(puzzle){
   return acc;
 }
 
-
 function togglePuzzle(pid){
   state.puzzleOpen[pid] = !state.puzzleOpen[pid];
   saveState();
@@ -1832,15 +1838,12 @@ function useHint(pid, lvl){
     showToast('Sblocca la Parte 2 prima di accedere a questi supporti');
     return;
   }
-  const revealed = state.hintsRevealed[pid] || 0;
-  // Già rivelato almeno questo livello
-  if(lvl <= revealed) return;
-  // Modello salto libero: paghi solo il costo del livello scelto
+  if(!state.hintsRevealed[pid]) state.hintsRevealed[pid] = {};
+  if(state.hintsRevealed[pid][lvl]) return;
   const hint = puzzle.hints.find(x => x.lvl === lvl);
   if(!hint) return;
   const cost = hint.cost;
-  // Segna come rivelato fino a lvl (per mostrare anche i precedenti se non visti)
-  state.hintsRevealed[pid] = Math.max(revealed, lvl);
+  state.hintsRevealed[pid][lvl] = true;
   state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
   state.hintPenaltyTotal += cost;
   state.hintLevelsUsed += 1;
