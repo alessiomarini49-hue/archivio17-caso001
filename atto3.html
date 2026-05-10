@@ -2008,16 +2008,16 @@ function useHint(pid, lvl){
   if(puzzle.part===2 && !state.t3aCompleted){ showToast('Completa il Terminale 03A prima di accedere a questi supporti'); return; }
   if(puzzle.part===3 && !state.t3bCompleted){ showToast('Completa il Terminale 03B prima di accedere a questi supporti'); return; }
   const cur = state.hintsRevealed[pid] || 0;
+  // Blocca se si tenta di saltare un livello intermedio
   if(lvl <= cur) return;
-  let cost = 0;
-  for(let l=cur+1;l<=lvl;l++){
-    const h = puzzle.hints.find(x=>x.lvl===l);
-    if(h) cost += h.cost;
-  }
+  if(lvl > cur + 1){ showToast('Sblocca prima il livello precedente'); return; }
+  // Addebita solo il costo del livello richiesto (non quelli intermedi)
+  const h = puzzle.hints.find(x=>x.lvl===lvl);
+  const cost = h ? h.cost : 0;
   state.hintsRevealed[pid] = lvl;
   state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
   state.hintPenaltyTotal += cost;
-  state.hintLevelsUsed += (lvl - cur);
+  state.hintLevelsUsed += 1;
 
   saveState();
   renderPuzzles();
