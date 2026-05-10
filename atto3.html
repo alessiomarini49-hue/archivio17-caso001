@@ -610,22 +610,6 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           </div>
         </div>
 
-        <div style="margin-top:2rem">
-          <div class="fascicolo-meta">
-            <div class="fascicolo-meta-item">Caso <span class="val">A17-001</span></div>
-            <div class="fascicolo-meta-sep"></div>
-            <div class="fascicolo-meta-item">Fase <span class="val">Verifiche incrociate</span></div>
-            <div class="fascicolo-meta-sep"></div>
-            <div class="fascicolo-meta-item">Reperti <span class="val"><span id="p2-count">0</span> / 5</span></div>
-          </div>
-          <div class="unlock-banner" id="p2-unlock-banner">
-            <div class="unlock-banner-dot"></div>
-            <span class="unlock-banner-text">Terminale 03B disponibile</span>
-          </div>
-          <div class="docs-section-label">Reperti — Verifiche incrociate</div>
-          <div class="docs-grid" id="docs-grid-p2"></div>
-        </div>
-
         <!-- CASELLA PRIVATA -->
         <div id="casella-privata-container">
           <div class="casella-panel" id="casella-panel">
@@ -663,6 +647,22 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
               <div class="promemoria-text"><p>La casella privata non è più disponibile in questa sessione. Il fascicolo resta risolvibile attraverso i reperti standard.</p></div>
             </div>
           </div>
+        </div>
+
+        <div style="margin-top:2rem">
+          <div class="fascicolo-meta">
+            <div class="fascicolo-meta-item">Caso <span class="val">A17-001</span></div>
+            <div class="fascicolo-meta-sep"></div>
+            <div class="fascicolo-meta-item">Fase <span class="val">Verifiche incrociate</span></div>
+            <div class="fascicolo-meta-sep"></div>
+            <div class="fascicolo-meta-item">Reperti <span class="val"><span id="p2-count">0</span> / 5</span></div>
+          </div>
+          <div class="unlock-banner" id="p2-unlock-banner">
+            <div class="unlock-banner-dot"></div>
+            <span class="unlock-banner-text">Terminale 03B disponibile</span>
+          </div>
+          <div class="docs-section-label">Reperti — Verifiche incrociate</div>
+          <div class="docs-grid" id="docs-grid-p2"></div>
         </div>
         <div style="margin-top:1.5rem">
           <button class="btn-primary" onclick="showSection('terminale3b')">Accedi al Terminale 03B →</button>
@@ -1441,6 +1441,7 @@ function submitTerminal3A(){
     const casellaEl = document.getElementById('inv-casella'); if(casellaEl){ casellaEl.textContent='disponibile'; casellaEl.className='inv-status-val active'; }
     const mCasellaEl = document.getElementById('minv-casella'); if(mCasellaEl){ mCasellaEl.textContent='disponibile'; mCasellaEl.className='inv-status-val active'; }
     saveState(); updateUI();
+    renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
     setTimeout(()=> showSection('parte2'), 2500);
   } else if(errors > 0){
     gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
