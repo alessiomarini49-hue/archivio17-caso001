@@ -1007,26 +1007,6 @@ function normalize(str){
 }
 function normNum(str){
   return String(str||'')
-    .replace(/280[\s._]?000/g,'280000')
-    .replace(/280\s*mila/gi,'280000')
-    .replace(/duecentoottantamila/gi,'280000')
-    .replace(/duecentottantamila/gi,'280000');
-}
-function prep(val){return normNum(normalize(val));}
-
-// ===== DIZIONARI =====
-// ===== NORMALIZZAZIONE =====
-function normalize(str){
-  return String(str||'')
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[€£$]/g,'')
-    .replace(/[.,;:!?'"()\[\]\/\\]/g,' ')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-function normNum(str){
-  return String(str||'')
     .replace(/\b280[\s._]?000\b/g,'280000')
     .replace(/\b280\s*mila\b/gi,'280000')
     .replace(/\bduecentoottantamila\b/gi,'280000')
@@ -1195,7 +1175,21 @@ function defaultState(){
 let state = defaultState();
 
 function loadState(){
-  try{ const r = localStorage.getItem(LS_KEY); if(r) state = Object.assign(defaultState(), JSON.parse(r)); }catch(e){}
+  try{
+    const r = localStorage.getItem(LS_KEY);
+    if(r){
+      const parsed = JSON.parse(r);
+      const def = defaultState();
+      state = {
+        ...def, ...parsed,
+        hintsRevealed: {...(def.hintsRevealed||{}), ...(parsed.hintsRevealed||{})},
+        puzzleOpen: {...(parsed.puzzleOpen||{})},
+        hintPuzzleCost: {...(parsed.hintPuzzleCost||{})},
+        p1Opened: Array.isArray(parsed.p1Opened) ? parsed.p1Opened : [],
+        p2Opened: Array.isArray(parsed.p2Opened) ? parsed.p2Opened : []
+      };
+    }
+  }catch(e){ state = defaultState(); }
 }
 function saveState(){
   try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
@@ -1246,10 +1240,7 @@ function submitTerminal2A(){
       s2='ambiguous'; m2='Elemento parziale. Specificare il riferimento del fascicolo.';
     } else {
       // Risposta lunga ma senza match — prova tolleranza: parole parziali comuni
-      const loose = ['frode','irregolar','contrat','minacci','telefon','pressione','consulen',
-                     'fideiussio','garanzi','280','polizz','copertur','debito','esposizi',
-                     'tensione','alibi','uscita','venti','moglie','omissio',
-                     'chiavi','accesso','primo','fascicol','scrivania','studio','collaborator'];
+      const loose = (ELEM_P1[sosp] || []);
       const looseMatch = loose.some(k => v2.includes(k));
       if(looseMatch){
         s2='ok'; m2='Elemento registrato.';
@@ -1324,7 +1315,7 @@ function submitTerminal2A(){
     // Almeno un error — penalità
     state.t2aErrors++;
     state.errorsTerminal++;
-    state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+    // score calcolato da computeScore()
     const gfb = document.getElementById('t2a-global-fb');
     gfb.innerHTML = 'Analisi incompleta. Rivedi i campi segnalati e collega le risposte ai reperti disponibili.';
     gfb.className = 'terminal-global-feedback show warn';
@@ -1368,10 +1359,7 @@ function submitTerminal2B(){
       s2='ok'; m2='Elementi sufficienti registrati ('+matches.length+' rilevati).';
     } else if(matches.length === 1){
       // 1 match esatto — tolleranza con parole parziali
-      const loose = ['frode','irregolar','contrat','minacci','telefon','pressione','consulen',
-                     'fideiussio','garanzi','280','polizz','copertur','debito','esposizi',
-                     'tensione','alibi','uscita','venti','moglie','omissio',
-                     'chiavi','accesso','primo','fascicol','studio','collaborator','audio','chiamat'];
+      const loose = (ELEM_P2[sosp] || []);
       const looseCount = loose.filter(k => v2.includes(k)).length;
       if(looseCount >= 1){
         s2='ok'; m2='Elementi sufficienti registrati.';
@@ -1384,10 +1372,7 @@ function submitTerminal2B(){
       s2='ambiguous'; m2='Elemento parziale. Specificare il riferimento del fascicolo.';
     } else {
       // Risposta lunga — tolleranza parziale
-      const loose = ['frode','irregolar','contrat','minacci','telefon','pressione','consulen',
-                     'fideiussio','garanzi','280','polizz','copertur','debito','esposizi',
-                     'tensione','alibi','uscita','venti','moglie','omissio',
-                     'chiavi','accesso','primo','fascicol','studio','collaborator','audio','chiamat'];
+      const loose = (ELEM_P2[sosp] || []);
       const looseMatches = loose.filter(k => v2.includes(k));
       if(looseMatches.length >= 2){
         s2='ok'; m2='Elementi registrati.';
@@ -1491,7 +1476,7 @@ function submitTerminal2B(){
     // Almeno un error — penalità
     state.t2bErrors++;
     state.errorsTerminal++;
-    state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+    // score calcolato da computeScore()
     const gfb = document.getElementById('t2b-global-fb');
     gfb.innerHTML = 'Analisi incompleta. Collega le risposte ai reperti della Parte 2.';
     gfb.className = 'terminal-global-feedback show warn';
@@ -1601,8 +1586,8 @@ function closeViewer(){
 // ===== ESITO =====
 function renderEsito(){
   const hc = state.hintPenaltyTotal;
-  const ec = state.errorsTerminal * 7;
-  const total = Math.max(0, 100 - hc - ec);
+  const ec = state.errorsTerminal * 10;
+  const total = computeScore();
   let cls = 'Osservatore esterno';
   if(total>=90) cls='Archivista in formazione';
   else if(total>=75) cls='Investigatore';
@@ -1626,8 +1611,7 @@ function renderEsito(){
 
 // ===== UPDATE UI =====
 function updateUI(){
-  const score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal*7));
-  state.score = score;
+  const score = computeScore();
   let cls = 'Osservatore esterno';
   if(score>=90) cls='Archivista in formazione';
   else if(score>=75) cls='Investigatore';
@@ -1837,7 +1821,7 @@ function useHint(pid, lvl){
   state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
   state.hintPenaltyTotal += cost;
   state.hintLevelsUsed += (lvl - cur);
-  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal*7));
+  // score calcolato da computeScore()
   saveState();
   renderPuzzles();
   updateUI();
@@ -1881,6 +1865,7 @@ function confirmReset(){
   renderPuzzles();
   updateUI();
   showSection('intro', true);
+  const dr = document.getElementById('mobile-inv-drawer'); if(dr) dr.classList.remove('open');
   showToast('Sessione azzerata');
 }
 
@@ -1936,7 +1921,14 @@ document.addEventListener('keydown', function(e){
   }
 });
 
-init();
+// ===== COMPUTE SCORE =====
+function computeScore(){
+  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+}
+
+
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
+
 </html>
