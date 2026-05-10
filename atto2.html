@@ -338,6 +338,18 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .terminal-feedback-line.ambiguous{color:#c8922a;background:rgba(200,146,42,.07);border-left:2px solid #c8922a;padding:.4rem .6rem;margin-top:.3rem;font-size:12px;border-radius:2px;display:block}
 .terminal-field-state.ambiguous{color:#c8922a;background:rgba(200,146,42,.12);border-color:rgba(200,146,42,.3)}
 .terminal-global-feedback.ambiguous{background:rgba(200,146,42,.06);border:1px solid rgba(200,146,42,.25);color:#c8922a;padding:1rem 1.25rem;margin-top:1rem;font-size:13px;line-height:1.6;border-radius:2px}
+
+  .hints-phase-desc {
+    font-family: var(--font-serif);
+    font-size: 0.82rem;
+    color: var(--text-meta);
+    font-style: italic;
+    margin: 0.3rem 0 0.9rem 0;
+    line-height: 1.5;
+  }
+  .locked-phase-desc {
+    color: var(--text-dim);
+  }
 </style>
 </head>
 <body>
@@ -918,9 +930,9 @@ const PUZZLES = [
     title:'La pista economica evidente',
     scope:'Individuare la linea professionale più rumorosa senza obbligarsi a una sola risposta.',
     hints:[
-      {lvl:1,cost:2,txt:'Non partire dalla morte. Parti da ciò che Andrea stava cercando di contenere nei giorni precedenti.'},
-      {lvl:2,cost:5,txt:'Confronta i documenti professionali con i tabulati. Una pressione economica lascia quasi sempre tracce ripetute.'},
-      {lvl:3,cost:8,txt:"La pratica Manfredi, il contratto anomalo e le chiamate recenti compongono la linea più rumorosa del fascicolo. Non è detto che sia l'unica."}
+      {lvl:1,cost:2,txt:'Le pressioni che Andrea stava gestendo non erano solo personali. Guarda dove si concentrano le comunicazioni nei giorni precedenti al 14 novembre.'},
+      {lvl:2,cost:5,txt:'Un professionista sotto pressione lascia tracce nei documenti che cerca di tenere separati. Cerca il punto in cui una pratica professionale e i movimenti personali si toccano.'},
+      {lvl:3,cost:8,txt:"C'è una figura esterna che compare nei contratti, nei tabulati e nella pressione degli ultimi giorni. Non è l'unica pista, ma è la più documentata nel fascicolo."}
     ]
   },
   {
@@ -928,9 +940,9 @@ const PUZZLES = [
     title:"L'importo ricorrente",
     scope:'Notare la cifra che compare in più documenti, in contesti diversi.',
     hints:[
-      {lvl:1,cost:2,txt:'In un fascicolo economico, i numeri che ritornano raramente sono casuali.'},
-      {lvl:2,cost:5,txt:'Confronta i movimenti bancari personali con i documenti di garanzia. Cerca una cifra che compare in contesti diversi.'},
-      {lvl:3,cost:8,txt:'La cifra €280.000 compare sia nella copertura debitoria sia nella garanzia sottoscritta. Il dato non appartiene solo alla pista Manfredi.'}
+      {lvl:1,cost:2,txt:'In un fascicolo economico, un numero che ritorna in documenti diversi non è mai casuale. Cerca la cifra che compare più di una volta.'},
+      {lvl:2,cost:5,txt:'Metti a confronto i documenti bancari personali con quelli di garanzia. La stessa cifra ha più di un contesto.'},
+      {lvl:3,cost:8,txt:'Quella cifra collega due ambiti distinti dell’indagine. Capire a chi appartiene in ciascun contesto cambia il peso di ogni pista.'}
     ]
   },
   {
@@ -938,19 +950,19 @@ const PUZZLES = [
     title:'La timeline incompleta',
     scope:'Identificare gli elementi temporali del 14 novembre che non trovano ancora conferma.',
     hints:[
-      {lvl:1,cost:2,txt:'Non tutte le incongruenze sono nei soldi. Alcune sono negli orari.'},
-      {lvl:2,cost:5,txt:"Confronta agenda e tabulati. C'è almeno un elemento del 14 novembre che non trova ancora conferma."},
-      {lvl:3,cost:8,txt:"«Cena con S.», la chiamata non risposta e l'assenza di comunicazioni dopo le 19:04 indicano una porzione di timeline ancora scoperta."}
+      {lvl:1,cost:2,txt:'Non tutte le incongruenze sono economiche. Alcune riguardano gli orari. Guarda cosa succede il 14 novembre dopo le 19:00.'},
+      {lvl:2,cost:5,txt:'Confronta agenda e tabulati telefonici. C’è almeno un appuntamento e almeno una chiamata che non trovano conferma reciproca.'},
+      {lvl:3,cost:8,txt:'Una voce nell’agenda indica un incontro programmato. I tabulati mostrano un’interruzione netta nelle comunicazioni. Chi doveva essere lì, quella sera?'}
     ]
   },
   {
     id:'P08', part:1,
     title:"Le zone d'ombra iniziali",
-    scope:'Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.',
+    scope:"Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.",
     hints:[
-      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno lo stesso peso. Ma anche un dettaglio minore può impedire una conclusione definitiva.'},
-      {lvl:2,cost:5,txt:'Guarda chi aveva accesso, chi viveva la pressione domestica e chi conosceva le pratiche riservate dello studio.'},
-      {lvl:3,cost:8,txt:'Elena introduce una tensione domestica e una copertura non chiarita. Davide introduce accesso fisico, chiavi e conoscenza dei fascicoli. Sono linee laterali, non soluzioni.'}
+      {lvl:1,cost:2,txt:'Non concentrarti solo sulla pista principale. Anche i dettagli secondari servono: definiscono i confini di quello che sai.'},
+      {lvl:2,cost:5,txt:'Considera chi aveva accesso fisico alla scena e chi conosceva le pratiche dello studio. Anche senza un movente chiaro, questi elementi restano rilevanti.'},
+      {lvl:3,cost:8,txt:'Due figure laterali — una domestica, una professionale — hanno accesso e conoscenza che nessuna dichiarazione ha ancora spiegato del tutto. Non sono la pista principale, ma non sono nemmeno irrilevanti.'}
     ]
   },
   {
@@ -958,9 +970,9 @@ const PUZZLES = [
     title:'La minaccia più rumorosa',
     scope:"Valutare il peso reale della telefonata e dell'interrogatorio Manfredi.",
     hints:[
-      {lvl:1,cost:2,txt:'Una minaccia è una prova di pressione. Non sempre è una prova di omicidio.'},
-      {lvl:2,cost:5,txt:"Confronta la telefonata con l'interrogatorio di Manfredi. La pressione è reale, ma resta da capire quanto spieghi."},
-      {lvl:3,cost:8,txt:'Manfredi ha movente, minaccia e rapporto economico anomalo. La sua linea è forte, ma non chiude da sola accesso, scena e ricorrenze personali.'}
+      {lvl:1,cost:2,txt:'Una minaccia registrata è una prova di pressione. Chiedi però: pressione verso cosa, e abbastanza da spiegare tutto?'},
+      {lvl:2,cost:5,txt:'Leggi la telefonata e poi l’interrogatorio. La stessa persona parla due volte: vedi se il racconto regge.'},
+      {lvl:3,cost:8,txt:'C’è una contraddizione tra la forza della minaccia e quello che quella linea non riesce ancora a spiegare. Trovare quella contraddizione è la chiave per valutare questa pista.'}
     ]
   },
   {
@@ -968,9 +980,9 @@ const PUZZLES = [
     title:'La linea familiare',
     scope:'Collegare fideiussione, sollecito bancario e dichiarazione di Stefano senza trarre conclusioni affrettate.',
     hints:[
-      {lvl:1,cost:2,txt:'La pressione economica non riguarda solo il lavoro di Andrea.'},
-      {lvl:2,cost:5,txt:'Confronta fideiussione, sollecito bancario e dichiarazione di Stefano. La stessa cifra attraversa documenti diversi.'},
-      {lvl:3,cost:8,txt:'Stefano è collegato a garanzia, esposizione debitoria e appuntamento non verificato. È una linea avanzata, ma non ancora una prova finale.'}
+      {lvl:1,cost:2,txt:'La pressione economica intorno ad Andrea non riguardava solo il suo lavoro. Cerca chi altro era coinvolto in quella stessa esposizione.'},
+      {lvl:2,cost:5,txt:'Una garanzia firmata, un sollecito bancario e una dichiarazione parziale. Mettili in sequenza e vedi se raccontano la stessa storia.'},
+      {lvl:3,cost:8,txt:'C’è qualcuno nella cerchia familiare con un legame diretto all’esposizione economica di Andrea e un appuntamento che non ha ancora trovato conferma. Questo non è ancora una prova — ma è una direzione.'}
     ]
   },
   {
@@ -978,9 +990,9 @@ const PUZZLES = [
     title:'Omissioni laterali',
     scope:"Leggere Elena e Davide come zone d'ombra rilevanti, non come false piste.",
     hints:[
-      {lvl:1,cost:2,txt:"Una zona d'ombra non equivale a una colpa. Serve a misurare quanto una dichiarazione è completa."},
-      {lvl:2,cost:5,txt:"Confronta Elena e Davide: una linea riguarda la casa, l'altra l'accesso alla scena."},
-      {lvl:3,cost:8,txt:'Elena ha un intervallo non verificato e conosceva parzialmente la copertura. Davide aveva chiavi, primo accesso e conoscenza dei fascicoli. Entrambi restano laterali.'}
+      {lvl:1,cost:2,txt:'Una dichiarazione incompleta non è necessariamente una bugia. Ma vale la pena chiedersi cosa non viene detto — e perché.'},
+      {lvl:2,cost:5,txt:'Guarda separatamente le due figure laterali: una ha un intervallo temporale non verificato, l’altra ha accesso fisico documentato. Cosa dice ciascuna di quell’accesso?'},
+      {lvl:3,cost:8,txt:'Entrambe le figure hanno qualcosa che non hanno spiegato del tutto. Non basta per chiudere una pista su di loro — ma basta per non escluderle.'}
     ]
   },
   {
@@ -988,9 +1000,9 @@ const PUZZLES = [
     title:'Ipotesi non conclusiva',
     scope:'Costruire una lettura solida per il Terminale 02B: pista principale, limite e linea alternativa.',
     hints:[
-      {lvl:1,cost:2,txt:"Un'ipotesi solida non è quella che spiega tutto. È quella che dichiara anche cosa non riesce a spiegare."},
-      {lvl:2,cost:5,txt:'Scegli una pista principale, poi individua almeno un elemento che quella pista non riesce a chiudere.'},
-      {lvl:3,cost:8,txt:'Manfredi spiega pressione e minaccia. Stefano spiega la linea economica familiare. Elena e Davide aggiungono omissioni laterali. Nessuna linea, da sola, chiude ancora il caso.'}
+      {lvl:1,cost:2,txt:'Prima di scrivere la sintesi, chiediti: cosa spiega bene la mia pista principale, e cosa lascia aperto?'},
+      {lvl:2,cost:5,txt:'Una lettura investigativa solida dichiara anche i propri limiti. Individua almeno un elemento che la tua pista principale non riesce ancora a chiudere.'},
+      {lvl:3,cost:8,txt:'Ogni pista spiega qualcosa e lascia qualcosa aperto. La sintesi più solida è quella che riconosce entrambe le cose — e indica dove l’indagine deve ancora andare.'}
     ]
   }
 ];
@@ -1714,7 +1726,9 @@ function renderPuzzles(){
 
   const g1 = document.createElement('div');
   g1.className = 'hints-group-wrapper';
-  g1.innerHTML = '<div class="hints-group-label"><span>PARTE 1 — LE PRIME CREPE</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>';
+  g1.innerHTML =
+    '<div class="hints-group-label"><span>FASE 1 — INDIVIDUAZIONE</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>' +
+    '<div class="hints-phase-desc">Supporti attivi per la prima fase dell’indagine. Ogni aiuto ha un costo che riduce il tuo Indice Investigativo.</div>';
   c.appendChild(g1);
   p1puzzles.forEach(p => c.appendChild(buildPuzzleEl(p)));
 
@@ -1736,24 +1750,23 @@ function renderPuzzles(){
         '</div>';
     });
     g2.innerHTML =
-      '<div class="hints-group-label"><span>PARTE 2 — SUPPORTO NON DISPONIBILE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-group-label"><span>FASE 2 — APPROFONDIMENTO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi, in linea con i progressi del fascicolo. Completa il Terminale 02A per sbloccare questa sezione.</div>' +
       '<div class="hints-p2-locked-banner">' +
         '<div class="hints-locked-icon">▬</div>' +
         '<div class="hints-locked-title">Gli aiuti relativi ai reperti ad alta sensibilità sono temporaneamente oscurati.</div>' +
-        '<div class="hints-locked-sub">Completa il Terminale 02A per autorizzare l\'accesso.</div>' +
+        '<div class="hints-locked-sub">Completa il Terminale 02A per autorizzare l'accesso.</div>' +
       '</div>' +
       '<div class="hints-p2-locked-cards">' + lockedCardsHtml + '</div>';
   } else {
     g2.innerHTML =
-      '<div class="hints-group-label"><span>PARTE 2 — REPERTI AD ALTA SENSIBILITÀ</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
-      '<div class="hints-p2-unlocked-banner">' +
-        '<div class="hints-locked-title" style="color:var(--success-text)">I nuovi supporti sono disponibili.</div>' +
-        '<div class="hints-locked-sub">Ogni richiesta riduce il tuo Indice Investigativo.</div>' +
-      '</div>';
+      '<div class="hints-group-label"><span>FASE 2 — APPROFONDIMENTO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
+      '<div class="hints-phase-desc">Supporti avanzati per la valutazione delle piste emerse nella seconda fase. Puoi scegliere il livello di aiuto che preferisci, pagando solo il costo del livello scelto.</div>';
     p2puzzles.forEach(p => g2.appendChild(buildPuzzleEl(p)));
   }
   c.appendChild(g2);
 }
+
 
 function buildPuzzleEl(puzzle){
   const revealed = state.hintsRevealed[puzzle.id] || 0;
@@ -1761,7 +1774,7 @@ function buildPuzzleEl(puzzle){
   const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
   let hintsHtml = '';
   puzzle.hints.forEach(h=>{
-    const isRev = revealed >= h.lvl;
+    const isRev = h.lvl <= revealed;
     const lvlName = h.lvl===1 ? 'Osservazione' : h.lvl===2 ? 'Connessione' : 'Quasi soluzione';
     hintsHtml +=
       '<div class="hint-level-row ' + (isRev?'used':'') + '">' +
@@ -1797,6 +1810,7 @@ function buildPuzzleEl(puzzle){
   return acc;
 }
 
+
 function togglePuzzle(pid){
   state.puzzleOpen[pid] = !state.puzzleOpen[pid];
   saveState();
@@ -1810,24 +1824,24 @@ function useHint(pid, lvl){
     showToast('Sblocca la Parte 2 prima di accedere a questi supporti');
     return;
   }
-  const cur = state.hintsRevealed[pid] || 0;
-  if(lvl <= cur) return;
-  let cost = 0;
-  for(let l = cur+1; l <= lvl; l++){
-    const h = puzzle.hints.find(x => x.lvl===l);
-    if(h) cost += h.cost;
-  }
-  state.hintsRevealed[pid] = lvl;
+  const revealed = state.hintsRevealed[pid] || 0;
+  // Già rivelato almeno questo livello
+  if(lvl <= revealed) return;
+  // Modello salto libero: paghi solo il costo del livello scelto
+  const hint = puzzle.hints.find(x => x.lvl === lvl);
+  if(!hint) return;
+  const cost = hint.cost;
+  // Segna come rivelato fino a lvl (per mostrare anche i precedenti se non visti)
+  state.hintsRevealed[pid] = Math.max(revealed, lvl);
   state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
   state.hintPenaltyTotal += cost;
-  state.hintLevelsUsed += (lvl - cur);
-  // score calcolato da computeScore()
+  state.hintLevelsUsed += 1;
   saveState();
   renderPuzzles();
   updateUI();
+  showToast('−' + cost + ' pt — Supporto consultato');
 }
 
-// ===== MOBILE DRAWER =====
 function toggleMobileDrawer(){
   document.getElementById('mobile-inv-drawer').classList.toggle('open');
 }
