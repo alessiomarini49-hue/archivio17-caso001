@@ -459,7 +459,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
           <div class="section-eyebrow">Serratura narrativa — Atto 2</div>
           <h2 class="section-title">Terminale 02A</h2>
           <div class="section-subtitle">Apertura linea investigativa</div>
-          <p class="section-desc">Registra la tua ipotesi iniziale. Il sistema non valuta la correttezza della pista — valuta la coerenza tra la pista scelta e gli elementi che la sorreggono. Risposte errate riducono l'indice di 5 punti.</p>
+          <p class="section-desc">Registra la tua ipotesi iniziale. Il sistema non valuta la correttezza della pista — valuta la coerenza tra la pista scelta e gli elementi che la sorreggono. Risposte errate riducono l'indice di 10 punti.</p>
         </div>
         <div class="terminal-frame">
           <div class="terminal-topbar">
@@ -739,7 +739,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 </div>
 
 <button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
-<div class="mobile-inv-drawer" id="mobile-inv-drawer" role="dialog" aria-modal="true" aria-label="Stato fascicolo" onclick="closeMobileDrawerOutside(event)">
+<div class="mobile-inv-drawer" id="mobile-inv-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Stato fascicolo" onclick="closeMobileDrawerOutside(event)">
   <div class="mobile-inv-panel">
     <div class="mobile-inv-close">
       <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
@@ -1177,6 +1177,8 @@ function defaultState(){
     t2bCompleted:false,
     t2bErrors:0,
     t2bSospetto:null,
+    t2aFeedback:'',
+    t2bFeedback:'',
     finalUnlocked:false,
     hintsRevealed:{},
     hintPuzzleCost:{},
@@ -1314,6 +1316,7 @@ function submitTerminal2A(){
     const gfb = document.getElementById('t2a-global-fb');
     gfb.innerHTML = "Linea investigativa registrata.<br><br>L'Archivio non conferma ancora una responsabilità. La pista selezionata presenta elementi sufficienti per accedere ai reperti ad alta sensibilità.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso intermedio autorizzato.</em>";
     gfb.className = 'terminal-global-feedback show ok';
+    state.t2aFeedback = gfb.innerHTML;
     const cmsg2a = document.getElementById('t2a-confirmed-msg'); if(cmsg2a) cmsg2a.textContent = feedbackMap[sosp] || 'Accesso ai reperti ad alta sensibilità autorizzato.';
 
     ['nav-parte2','mnav-parte2','nav-terminale2b','mnav-terminale2b'].forEach(id=>{
@@ -1477,6 +1480,7 @@ function submitTerminal2B(){
     const gfb = document.getElementById('t2b-global-fb');
     gfb.innerHTML = "Ipotesi investigativa acquisita dall'Archivio.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso all'esito autorizzato.</em>";
     gfb.className = 'terminal-global-feedback show ok';
+    state.t2bFeedback = gfb.innerHTML;
     const cmsg2b = document.getElementById('t2b-confirmed-msg'); if(cmsg2b) cmsg2b.textContent = feedbackMap[sosp] || "Accesso all'esito autorizzato.";
 
     ['nav-esito','mnav-esito'].forEach(id=>{
@@ -1605,7 +1609,11 @@ function openDoc(id, part){
     document.getElementById('v-note-panel').style.display = 'none';
   }
 
-  document.getElementById('viewer-overlay').classList.add('open');
+  const ovDoc2 = document.getElementById('viewer-overlay');
+  ovDoc2.classList.add('open');
+  ovDoc2.scrollTop = 0;
+  const vbDoc2 = ovDoc2.querySelector('.viewer-body');
+  if(vbDoc2) vbDoc2.scrollTop = 0;
 }
 
 function closeViewer(){
@@ -1893,7 +1901,7 @@ function confirmReset(){
       const fb = document.getElementById(t+'-fb-'+n); if(fb){ fb.textContent=''; fb.className='terminal-feedback-line'; }
       const st = document.getElementById(t+'-state-'+n); if(st){ st.textContent='In attesa'; st.className='terminal-field-state pending'; }
     });
-    const sub = document.getElementById(t+'-submit'); if(sub) sub.disabled = false;
+    const sub = document.getElementById(t+'-submit'); if(sub){ sub.disabled = false; sub.style.display = ''; }
     const conf = document.getElementById(t+'-confirmed'); if(conf) conf.classList.remove('visible');
     const gfb = document.getElementById(t+'-global-fb'); if(gfb){ gfb.textContent=''; gfb.className='terminal-global-feedback'; }
   });
@@ -1936,14 +1944,24 @@ function init(){
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
     document.getElementById('t2a-submit').disabled = true;
+    document.getElementById('t2a-submit').style.display = 'none';
     document.getElementById('t2a-confirmed').classList.add('visible');
+    if(state.t2aFeedback){
+      const gfb2a = document.getElementById('t2a-global-fb');
+      if(gfb2a){ gfb2a.innerHTML = state.t2aFeedback; gfb2a.className = 'terminal-global-feedback show ok'; }
+    }
   }
   if(state.t2bCompleted){
     ['nav-esito','mnav-esito'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
     document.getElementById('t2b-submit').disabled = true;
+    document.getElementById('t2b-submit').style.display = 'none';
     document.getElementById('t2b-confirmed').classList.add('visible');
+    if(state.t2bFeedback){
+      const gfb2b = document.getElementById('t2b-global-fb');
+      if(gfb2b){ gfb2b.innerHTML = state.t2bFeedback; gfb2b.className = 'terminal-global-feedback show ok'; }
+    }
   }
 
   showSection(state.currentSection || 'intro', true);
