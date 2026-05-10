@@ -41,6 +41,7 @@
   --shadow-deep: 0 8px 48px rgba(0,0,0,0.85), 0 2px 12px rgba(0,0,0,0.6);
   --shadow-panel: 0 4px 24px rgba(0,0,0,0.6);
   --transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+  --border-dim: #2A2520;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -365,6 +366,9 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 
 
 .casella-msg{font-family:var(--font-mono);font-size:11px;line-height:1.6;padding:.5rem 0;min-height:1.4em;}
+.casella-msg.success{color:var(--success-text, #4CAF82);}
+.casella-msg.error{color:var(--error, #C42028);}
+.casella-msg.blocked{color:var(--text-dim);font-style:italic;}
 
 .casella-hint{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.05em;margin-top:.5rem;font-style:italic;}
 
@@ -1015,7 +1019,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
     </div>
   </aside>
 <button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
-<div id="mobile-inv-drawer" class="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
+<div id="mobile-inv-drawer" class="mobile-inv-drawer" role="dialog" aria-modal="true" aria-label="Stato fascicolo" aria-hidden="true" onclick="closeMobileDrawerOutside(event)">
   <div class="mobile-inv-panel">
     <div class="mobile-inv-close">
       <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
@@ -1301,6 +1305,9 @@ function defaultState(){
     t3cCompleted:false,
     t3cErrors:0,
     finalUnlocked:false,
+    t3aFb:null,
+    t3bFb:null,
+    t3cFb:null,
     hintsRevealed:{},
     hintPuzzleCost:{},
     puzzleOpen:{},
@@ -1435,8 +1442,6 @@ function submitTerminal3A(){
   state.t3aErrors += errors;
   state.errorsTerminal += errors;
 
-  saveState(); updateUI();
-
   const gfb = document.getElementById('t3a-global-fb');
 
   if(allOk){
@@ -1446,6 +1451,7 @@ function submitTerminal3A(){
     const cm = document.getElementById('t3a-confirmed-msg'); if(cm) cm.textContent = 'Linee intrecciate registrate. Il fascicolo autorizza la prosecuzione dell\'analisi.';
     gfb.textContent = 'Linee intrecciate registrate.\n\nIl fascicolo non presenta ancora una soluzione.\nPresenta accessi, omissioni e intervalli non verificati.\n\nL\'Archivio autorizza la prosecuzione dell\'analisi.';
     gfb.className = 'terminal-global-feedback show ok';
+    state.t3aFb = {text: gfb.innerHTML, cls: 'show ok'};
     ['nav-parte2','mnav-parte2','nav-terminale3b','mnav-terminale3b'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
@@ -1577,6 +1583,9 @@ function submitTerminal3B(){
     'senza telecamere','senza riprese','ingresso sul retro','porta sul retro','porta laterale'];
   if(hasAny(texts[0], kw_acc)){
     setFieldState('t3b',1,'ok','Accesso non sorvegliato identificato.');
+  } else if(texts[0].includes('principale')){
+    setFieldState('t3b',1,'error','Risposta non coerente. Il fascicolo esclude l\'ingresso principale (coperto dalla telecamera).');
+    errors++; allOk = false;
   } else if(isAmbiguousGeneric(vals[0]) || texts[0].includes('ingresso') || texts[0].includes('accesso')){
     setFieldState('t3b',1,'ambiguous','Direzione plausibile. Specifichi quale tipo di accesso.');
     allOk = false;
@@ -1668,6 +1677,7 @@ function submitTerminal3B(){
     document.getElementById('t3b-confirmed').classList.add('visible');
     gfb.textContent = 'Analisi movente/accesso/alibi registrata.\n\nIl fascicolo può procedere alla verifica conclusiva.';
     gfb.className = 'terminal-global-feedback show ok';
+    state.t3bFb = {text: gfb.innerHTML, cls: 'show ok'};
     ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
@@ -1762,6 +1772,7 @@ function submitTerminal3C(){
     const cm = document.getElementById('t3c-confirmed-msg'); if(cm) cm.textContent = 'Analisi conclusiva acquisita. Accesso all\'esito finale autorizzato.';
     gfb.textContent = 'Il fascicolo A17-001 viene archiviato come risolto.';
     gfb.className = 'terminal-global-feedback show ok';
+    state.t3cFb = {text: gfb.innerHTML, cls: 'show ok'};
     ['nav-esito','mnav-esito'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
@@ -1871,7 +1882,7 @@ function openDoc(id, part){
 
   const imgC = document.getElementById('v-img-container');
   if(doc.imageUrl){
-    imgC.innerHTML = '<div class="evidence-frame"><img src="'+doc.imageUrl+'" alt="" loading="lazy"><div class="evidence-frame-label"><span>'+doc.id+' — '+doc.cat+'</span><span>RISERVATO</span></div></div>';
+    imgC.innerHTML = '<div class="evidence-frame"><img src="'+doc.imageUrl+'" alt="" loading="lazy"><div class="evidence-frame-label"><span>'+doc.id+' — '+doc.cat+'</span><span>PRIVATO</span></div></div>';
   } else {
     imgC.innerHTML = '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+doc.id+' · Immagine non ancora acquisita ·</small></div>';
   }
@@ -2193,7 +2204,11 @@ function confirmReset(){
 }
 
 // ===== MOBILE =====
-function toggleMobileDrawer(){ document.getElementById('mobile-inv-drawer').classList.toggle('open'); }
+function toggleMobileDrawer(){
+  const d = document.getElementById('mobile-inv-drawer');
+  d.classList.toggle('open');
+  d.setAttribute('aria-hidden', String(!d.classList.contains('open')));
+}
 function closeMobileDrawerOutside(e){ if(e.target===document.getElementById('mobile-inv-drawer')) document.getElementById('mobile-inv-drawer').classList.remove('open'); }
 
 // ===== TOAST =====
@@ -2232,6 +2247,13 @@ function init(){
   });
 
   updateUI();
+  // Ripristino feedback globali terminali al reload
+  ['t3a','t3b','t3c'].forEach(t=>{
+    const fbKey = t+'Fb';
+    const fbData = state[fbKey];
+    const gfb = document.getElementById(t+'-global-fb');
+    if(fbData && gfb){ gfb.innerHTML = fbData.text; gfb.className = 'terminal-global-feedback ' + fbData.cls; }
+  });
   showSection(state.currentSection || 'intro', true);
 }
 
