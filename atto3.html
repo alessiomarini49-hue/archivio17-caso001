@@ -262,7 +262,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .terminal-feedback-line{font-family:var(--font-mono);font-size:10.5px;margin-top:.38rem;letter-spacing:.05em;display:none}
 .terminal-feedback-line.ok{color:var(--success-text);display:block}
 .terminal-feedback-line.error{color:var(--error);display:block}
-.terminal-global-feedback{margin-top:1rem;padding:1.1rem 1.25rem;border-left:2px solid;font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.04em;display:none}
+.terminal-global-feedback{margin-top:1rem;padding:1.1rem 1.25rem;border-left:2px solid;font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.04em;display:nonewhite-space:pre-line;}
 .terminal-global-feedback.show{display:block}
 .terminal-global-feedback.ok{color:var(--success-text);border-color:var(--success-border);background:rgba(18,58,50,.12)}
 .terminal-global-feedback.warn{color:var(--carta);border-color:var(--amber);background:rgba(183,131,59,.06)}
@@ -389,6 +389,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 /* VIEWER */
 
 .unlock-banner{display:none;background:rgba(42,92,64,0.12);border:1px solid var(--success-border);padding:.7rem 1rem;margin:1rem 0;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:10px;color:var(--success-text);letter-spacing:.12em;}
+.unlock-banner.show{display:flex}
 
 .unlock-banner-dot{width:6px;height:6px;border-radius:50%;background:var(--success-text);box-shadow:0 0 8px var(--success-text);animation:pulse-dot 1.8s infinite;}
 
@@ -427,7 +428,14 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .terminal-desc{font-size:13px;color:var(--text-secondary);line-height:1.65;margin-bottom:1.5rem;}
 
 .terminal-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--carta);text-transform:uppercase;margin-bottom:.6rem;}
-</style>
+
+.casella-input{flex:1;min-width:160px;background:rgba(0,0,0,.55);border:1px solid var(--border-red);color:var(--text-main);padding:.7rem 1rem;font-family:var(--font-mono);font-size:14px;letter-spacing:.2em;outline:none;text-align:center;transition:var(--transition);}
+.casella-input:focus{border-color:var(--red-logicus);box-shadow:0 0 14px var(--red-glow);}
+.casella-input:disabled{opacity:.5}
+.hints-phase-desc{font-size:11px;color:var(--text-meta);font-family:var(--font-mono);letter-spacing:.08em;margin-bottom:.8rem;padding:.5rem .75rem;border-left:2px solid var(--border-white);line-height:1.6;}
+.locked-phase-desc{color:var(--text-dim);border-left-color:var(--border-dim, #2A2520);}
+.email-card.consulted{border-color:var(--amber);opacity:.85;}
+.email-card-consulted{font-family:var(--font-mono);font-size:9px;color:var(--amber);letter-spacing:.12em;margin-top:.4rem;text-transform:uppercase;}</style>
 </head>
 <body>
 
@@ -1109,7 +1117,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 'use strict';
 // ===== DATI =====
 const LS_KEY = 'a17_atto3_v1';
-const STATE_VERSION = 2;
+const STATE_VERSION = 1;
 
 const DOCS_P1 = [
   {
@@ -1506,17 +1514,19 @@ function renderEmailGrid(){
   if(!grid) return;
   grid.innerHTML = '';
   EMAILS.forEach(e=>{
+    const consulted = state.emailsOpened.includes(e.id);
     const card = document.createElement('div');
-    card.className = 'email-card';
+    card.className = 'email-card' + (consulted ? ' consulted' : '');
     card.innerHTML = '<div class="email-card-id">'+e.id+'</div>'+
                      '<div class="email-card-obj">'+e.obj+'</div>'+
-                     '<div class="email-card-cat">'+e.cat+'</div>';
+                     '<div class="email-card-cat">'+e.cat+'</div>'+
+                     (consulted ? '<div class="email-card-consulted">Consultato</div>' : '');
     card.onclick = ()=> openEmail(e.id);
     grid.appendChild(card);
   });
 }
 
-// FIX: openEmail riferisce solo elementi che esistono davvero (v-img-container, v-note-panel)
+
 function openEmail(eid){
   const e = EMAILS.find(x=>x.id===eid);
   if(!e) return;
@@ -1525,20 +1535,29 @@ function openEmail(eid){
 
   document.getElementById('v-code').textContent = e.id;
   document.getElementById('v-cat').textContent = e.cat;
-  document.getElementById('v-consulted').textContent = '';
+  document.getElementById('v-consulted').textContent = 'Consultato';
   document.getElementById('v-title').textContent = e.obj;
-  document.getElementById('v-img-container').innerHTML = ''; // niente immagine per le email
-  document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
 
-  // Le email non hanno note del fascicolo: nascondo il pannello note
+  const imgCont = document.getElementById('v-img-container');
+  if(e.imageUrl){
+    imgCont.innerHTML = '<img src="'+e.imageUrl+'" alt="'+e.obj+'" style="width:100%;border-radius:2px;">';
+    const img = imgCont.querySelector('img');
+    img.addEventListener('error', function(){
+      imgCont.innerHTML = '<div class="doc-img-placeholder">— Immagine non disponibile —</div>';
+    });
+  } else {
+    imgCont.innerHTML = '';
+  }
+
+  document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
   document.getElementById('v-note-panel').style.display = 'none';
 
   const ov = document.getElementById('viewer-overlay');
   ov.classList.add('open');
   ov.scrollTop = 0;
+  renderEmailGrid();
 }
 
-// ===== TERMINALE 03B =====
 function submitTerminal3B(){
   if(state.t3bCompleted) return;
 
@@ -1866,6 +1885,8 @@ function openDoc(id, part){
 
 function closeViewer(){
   document.getElementById('viewer-overlay').classList.remove('open');
+  const np = document.getElementById('v-note-panel');
+  if(np) np.style.display = '';
 }
 
 
@@ -2097,7 +2118,7 @@ function renderPuzzles(){
     g2.innerHTML =
       '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
       '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi, in linea con i progressi del fascicolo. Completa il Terminale 03A per sbloccare questa sezione.</div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Fase 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l'accesso.</div></div>';
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Fase 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l\'accesso.</div></div>';
   } else {
     g2.innerHTML =
       '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
@@ -2114,7 +2135,7 @@ function renderPuzzles(){
     g3.innerHTML =
       '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
       '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi. Completa il Terminale 03B per sbloccare il supporto finale.</div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l'accesso.</div></div>';
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l\'accesso.</div></div>';
   } else {
     g3.innerHTML =
       '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
