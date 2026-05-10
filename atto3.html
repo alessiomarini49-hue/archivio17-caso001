@@ -1233,43 +1233,43 @@ const EMAILS = [
 
 const PUZZLES = [
   {
-    id:'H03A1', part:1,
+    id:'P13', part:1,
     title:'Linee intrecciate',
     scope:'Identificare le sovrapposizioni tra i soggetti presenti nel fascicolo.',
     hints:[
-      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca sovrapposizioni.'},
-      {lvl:2,cost:5,txt:'Confronta chiamate, accessi e omissioni.'},
-      {lvl:3,cost:8,txt:'Elena, Davide, Manfredi e Stefano compaiono in linee diverse. Nessuna è ancora conclusiva.'}
+      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca il punto in cui più linee si intersecano.'},
+      {lvl:2,cost:5,txt:'Confronta chiamate, accessi e omissioni: ogni soggetto ha qualcosa che non si chiude da solo.'},
+      {lvl:3,cost:8,txt:'Quattro linee convergono sul 14 novembre. Una di queste ha un elemento in più che le altre non hanno ancora.'}
     ]
   },
   {
-    id:'H03A2', part:1,
+    id:'P14', part:1,
     title:'Accesso secondario',
-    scope:'Comprendere il ruolo dell\'ingresso non sorvegliato nel fascicolo.',
+    scope:"Comprendere il ruolo dell'ingresso non sorvegliato nel fascicolo.",
     hints:[
-      {lvl:1,cost:2,txt:'Una telecamera copre solo ciò che vede.'},
-      {lvl:2,cost:5,txt:"Confronta l'ingresso principale con la piantina dell'edificio."},
-      {lvl:3,cost:8,txt:"L'accesso secondario permetteva di arrivare allo studio senza passare dalla ripresa principale."}
+      {lvl:1,cost:2,txt:'Una telecamera copre solo ciò che vede. Cerca quello che non ha ripreso.'},
+      {lvl:2,cost:5,txt:"Confronta l'ingresso principale con la piantina dell'edificio. C'è un percorso alternativo documentato."},
+      {lvl:3,cost:8,txt:"Chi conosceva lo studio sapeva che esisteva un accesso non visibile dalla ripresa principale. Questo riduce il numero di persone che avrebbero potuto usarlo senza essere viste."}
     ]
   },
   {
-    id:'H03B1', part:2,
+    id:'P15', part:2,
     title:'Moventi a confronto',
     scope:'Valutare il peso reale di ciascuna linea investigativa.',
     hints:[
-      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno un movente dello stesso peso.'},
-      {lvl:2,cost:5,txt:'Elena e Davide hanno omissioni. Manfredi ha pressione. Stefano ha esposizione economica.'},
-      {lvl:3,cost:8,txt:'Solo una linea unisce movente economico, accesso potenziale e assenza di alibi verificato.'}
+      {lvl:1,cost:2,txt:'Non tutti i sospetti hanno un movente dello stesso peso. Cerca chi ha più di un elemento che lo collega al 14 novembre.'},
+      {lvl:2,cost:5,txt:'Elena e Davide hanno omissioni. Manfredi ha pressione documentata. Stefano ha esposizione economica diretta. Quale di questi ha anche accesso?'},
+      {lvl:3,cost:8,txt:'Una sola linea unisce movente, accesso fisico e assenza di alibi verificato. Le altre ne hanno al massimo due su tre.'}
     ]
   },
   {
-    id:'H03C1', part:3,
+    id:'P16', part:3,
     title:'Chiusura del caso',
     scope:'Costruire la risposta finale con convergenza di movente, accesso, arma e alibi.',
     hints:[
-      {lvl:1,cost:2,txt:'Cerca la convergenza, non il dettaglio più rumoroso.'},
-      {lvl:2,cost:5,txt:'Movente, accesso, arma e alibi devono appartenere alla stessa linea.'},
-      {lvl:3,cost:8,txt:'La linea familiare collega debito, chiavi, arma di famiglia e assenza di alibi.'}
+      {lvl:1,cost:2,txt:'Cerca la convergenza, non il dettaglio più rumoroso. La risposta finale deve reggere su più elementi contemporaneamente.'},
+      {lvl:2,cost:5,txt:'Movente, accesso, arma e alibi devono appartenere alla stessa linea. Quale sospetto li ha tutti e quattro documentati nel fascicolo?'},
+      {lvl:3,cost:8,txt:"C’è una linea in cui il debito, le chiavi, l’arma e l’assenza di alibi convergono sulla stessa persona. Trovare quella convergenza chiude il caso."}
     ]
   }
 ];
@@ -2080,38 +2080,51 @@ function renderPuzzles(){
   const p2puzzles = PUZZLES.filter(p=>p.part===2);
   const p3puzzles = PUZZLES.filter(p=>p.part===3);
 
+  // FASE 1
   const g1 = document.createElement('div');
   g1.className = 'hints-group-wrapper';
-  g1.innerHTML = '<div class="hints-group-label"><span>PARTE 1 — OMISSIONI E ACCESSI</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>';
+  g1.innerHTML =
+    '<div class="hints-group-label"><span>FASE 1 — OMISSIONI E ACCESSI</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>' +
+    '<div class="hints-phase-desc">Supporti per la prima fase dell’indagine. Puoi scegliere il livello di aiuto che preferisci, pagando solo il costo del livello scelto.</div>';
   c.appendChild(g1);
   p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p)));
 
+  // FASE 2
   const g2 = document.createElement('div');
   g2.className = 'hints-group-wrapper';
   g2.style.marginTop = '1.75rem';
   if(!state.t3aCompleted){
-    g2.innerHTML = '<div class="hints-group-label"><span>PARTE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Parte 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l\'accesso.</div></div>';
+    g2.innerHTML =
+      '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi, in linea con i progressi del fascicolo. Completa il Terminale 03A per sbloccare questa sezione.</div>' +
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Fase 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l'accesso.</div></div>';
   } else {
-    g2.innerHTML = '<div class="hints-group-label"><span>PARTE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>';
+    g2.innerHTML =
+      '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
+      '<div class="hints-phase-desc">Supporti avanzati per la valutazione incrociata delle piste. Ogni livello ha un costo individuale.</div>';
     p2puzzles.forEach(p=>g2.appendChild(buildPuzzleEl(p)));
   }
   c.appendChild(g2);
 
+  // FASE 3
   const g3 = document.createElement('div');
   g3.className = 'hints-group-wrapper';
   g3.style.marginTop = '1.75rem';
   if(!state.t3bCompleted){
-    g3.innerHTML = '<div class="hints-group-label"><span>TERMINALE 03C — CHIUSURA CASO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l\'accesso.</div></div>';
+    g3.innerHTML =
+      '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
+      '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi. Completa il Terminale 03B per sbloccare il supporto finale.</div>' +
+      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l'accesso.</div></div>';
   } else {
-    g3.innerHTML = '<div class="hints-group-label"><span>TERMINALE 03C — CHIUSURA CASO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>';
+    g3.innerHTML =
+      '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
+      '<div class="hints-phase-desc">Supporto finale per costruire la risposta conclusiva del Terminale 03C.</div>';
     p3puzzles.forEach(p=>g3.appendChild(buildPuzzleEl(p)));
   }
   c.appendChild(g3);
 }
 
-// ===== RESET =====
+
 function showResetConfirm(){ document.getElementById('confirm-overlay').classList.add('visible'); }
 function confirmReset(){
   localStorage.removeItem(LS_KEY);
