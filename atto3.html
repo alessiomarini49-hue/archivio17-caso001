@@ -362,7 +362,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 
 .casella-input-row{display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;}
 
-.casella-input-row{display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;}
+
 
 .casella-msg{font-family:var(--font-mono);font-size:11px;line-height:1.6;padding:.5rem 0;min-height:1.4em;}
 
@@ -1007,7 +1007,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
     </div>
   </aside>
 <button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
-<div id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
+<div id="mobile-inv-drawer" class="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)">
   <div class="mobile-inv-panel">
     <div class="mobile-inv-close">
       <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
@@ -1106,8 +1106,10 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 <footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono interamente inventati. — Archivio 17 · Caso 001 · Atto 3</footer>
 
 <script>
+'use strict';
 // ===== DATI =====
 const LS_KEY = 'a17_atto3_v1';
+const STATE_VERSION = 2;
 
 const DOCS_P1 = [
   {
@@ -1133,8 +1135,8 @@ const DOCS_P1 = [
     id:'C04', cat:'Planimetria', title:'Piantina edificio / accessi',
     desc:'Schema dell\'edificio e degli accessi allo studio.',
     transcript:"Piantina sintetica edificio — Studio Marini\n\nAccesso principale:\n— ingresso da portone principale\n— copertura telecamera condominiale\n— passaggio registrato\n\nAccesso secondario:\n— scala di servizio interna\n— ingresso laterale non coperto da telecamere\n— collegamento con area retrostante\n— serratura meccanica non integrata nel sistema di videosorveglianza",
-    note:'La prima indagine ha valorizzato l\',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/595245cab_ChatGPTImage10mag202601_27_16.png'accesso principale, ma non ha sviluppato l\'ipotesi dell\'accesso secondario.'
+    note:'La prima indagine ha valorizzato l\'accesso principale, ma non ha sviluppato l\'ipotesi dell\'accesso secondario.',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/595245cab_ChatGPTImage10mag202601_27_16.png'
   },
   {
     id:'C05', cat:'Tabulati', title:'Tabulati serali parziali',
@@ -1296,13 +1298,26 @@ function defaultState(){
 
 let state = defaultState();
 
-function saveState(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-function loadState(){
-  const s = localStorage.getItem(LS_KEY);
-  if(s){ try{ state = Object.assign(defaultState(), JSON.parse(s)); }catch(e){} }
+function saveState(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ console.warn('saveState failed:',e); }
 }
-
-// ===== NORMALIZE =====
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    const def = defaultState();
+    Object.keys(def).forEach(k=>{
+      if(saved[k] !== undefined){
+        if(typeof def[k]==='object' && def[k]!==null && !Array.isArray(def[k])){
+          state[k] = Object.assign({}, def[k], saved[k]);
+        } else {
+          state[k] = saved[k];
+        }
+      }
+    });
+  }catch(e){ console.warn('loadState failed:',e); }
+}
 function computeScore(){
   return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
 }
@@ -1403,7 +1418,7 @@ function submitTerminal3A(){
 
   state.t3aErrors += errors;
   state.errorsTerminal += errors;
-  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+
   saveState(); updateUI();
 
   const gfb = document.getElementById('t3a-global-fb');
@@ -1704,7 +1719,7 @@ function submitTerminal3C(){
 
   state.t3cErrors += errors;
   state.errorsTerminal += errors;
-  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+
   saveState(); updateUI();
 
   const gfb = document.getElementById('t3c-global-fb');
@@ -1997,7 +2012,7 @@ function useHint(pid, lvl){
   state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
   state.hintPenaltyTotal += cost;
   state.hintLevelsUsed += (lvl - cur);
-  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal*10));
+
   saveState();
   renderPuzzles();
   updateUI();
@@ -2173,7 +2188,15 @@ function init(){
   showSection(state.currentSection || 'intro', true);
 }
 
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeViewer(); });
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Escape') return;
+  const ov = document.getElementById('viewer-overlay');
+  if(ov && ov.classList.contains('active')){ closeViewer(); return; }
+  const co = document.getElementById('confirm-overlay');
+  if(co && co.style.display!=='none' && co.style.display!==''){ co.style.display='none'; return; }
+  const dr = document.getElementById('mobile-inv-drawer');
+  if(dr && dr.classList.contains('open')){ dr.classList.remove('open'); return; }
+});
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
