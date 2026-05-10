@@ -338,6 +338,95 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .terminal-feedback-line.ambiguous{color:#c8922a;background:rgba(200,146,42,.07);border-left:2px solid #c8922a;padding:.4rem .6rem;margin-top:.3rem;font-size:12px;border-radius:2px;display:block}
 .terminal-field-state.ambiguous{color:#c8922a;background:rgba(200,146,42,.12);border-color:rgba(200,146,42,.3)}
 .terminal-global-feedback.ambiguous{background:rgba(200,146,42,.06);border:1px solid rgba(200,146,42,.25);color:#c8922a;padding:1rem 1.25rem;margin-top:1rem;font-size:13px;line-height:1.6;border-radius:2px}
+
+.email-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.7rem;margin-top:.5rem;}
+@media(max-width:600px){.email-grid{grid-template-columns:1fr}}
+
+.email-card{background:var(--panel-1);border:1px solid var(--border-gold);padding:1rem 1.1rem;cursor:pointer;transition:var(--transition);position:relative;}
+
+.email-card-id{font-family:var(--font-mono);font-size:9.5px;color:var(--amber);letter-spacing:.2em;margin-bottom:.45rem;}
+
+.email-card-obj{font-family:var(--font-serif);font-size:1.05rem;color:var(--text-main);margin-bottom:.4rem;line-height:1.3;}
+
+.email-card-cat{font-family:var(--font-mono);font-size:8.5px;color:var(--text-dim);letter-spacing:.22em;text-transform:uppercase;}
+
+/* VERIFICA NOTES (was missing) */
+
+.casella-panel{background:var(--panel-2);border:1px solid var(--border-gold);border-top:2px solid var(--red-dark);padding:1.5rem;margin:1.5rem 0;position:relative;}
+
+.casella-title{font-family:var(--font-serif);font-size:1.4rem;color:var(--text-main);margin-bottom:.5rem;font-weight:400;}
+
+.casella-desc{font-size:13.5px;color:var(--text-secondary);line-height:1.65;margin-bottom:1rem;}
+
+.casella-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--red-highlight);text-transform:uppercase;margin-bottom:.6rem;}
+
+.casella-input-row{display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;}
+
+.casella-input-row{display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;}
+
+.casella-msg{font-family:var(--font-mono);font-size:11px;line-height:1.6;padding:.5rem 0;min-height:1.4em;}
+
+.casella-hint{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.05em;margin-top:.5rem;font-style:italic;}
+
+.casella-note{font-family:var(--font-mono);font-size:9.5px;color:var(--text-dim);font-style:italic;margin-top:.8rem;padding-top:.6rem;border-top:1px solid var(--border-white-soft);}
+
+/* EMAIL GRID (was missing) */
+
+.casella-format-info{font-family:var(--font-mono);font-size:10.5px;color:var(--text-meta);line-height:1.7;background:rgba(0,0,0,.25);border-left:2px solid var(--amber);padding:.7rem 1rem;margin-bottom:1rem;}
+
+.verifica-notes{display:flex;flex-direction:column;gap:1rem;}
+
+.verifica-note-card{background:var(--panel-1);border:1px solid var(--border-gold);border-left:2px solid var(--amber);padding:1.25rem 1.5rem;position:relative;}
+
+.verifica-note-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--amber);text-transform:uppercase;margin-bottom:.45rem;}
+
+.verifica-note-title{font-family:var(--font-serif);font-size:1.15rem;color:var(--text-main);margin-bottom:.65rem;font-weight:400;}
+
+.verifica-note-text{font-family:var(--font-mono);font-size:11.5px;color:var(--text-secondary);line-height:1.75;white-space:pre-wrap;background:rgba(0,0,0,.18);border-left:1px solid var(--border-white-soft);padding:.8rem 1rem;margin-bottom:.75rem;}
+
+.verifica-note-nota{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-meta);line-height:1.65;border-top:1px solid var(--border-white-soft);padding-top:.6rem;}
+
+/* VIEWER */
+
+.unlock-banner{display:none;background:rgba(42,92,64,0.12);border:1px solid var(--success-border);padding:.7rem 1rem;margin:1rem 0;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:10px;color:var(--success-text);letter-spacing:.12em;}
+
+.unlock-banner-dot{width:6px;height:6px;border-radius:50%;background:var(--success-text);box-shadow:0 0 8px var(--success-text);animation:pulse-dot 1.8s infinite;}
+
+.unlock-banner-text{text-transform:uppercase}
+
+.final-epilogo{margin:1.5rem auto;max-width:520px;text-align:left;background:rgba(5,7,11,.6);border:1px solid rgba(167,25,32,.18);padding:1.5rem 1.75rem;position:relative;}
+
+.final-epilogo-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red-highlight);text-transform:uppercase;margin-bottom:.85rem;text-align:center;}
+
+.final-epilogo-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--text-secondary);line-height:1.75;}
+
+.final-epilogo-firm{font-family:var(--font-mono);font-size:9.5px;color:var(--text-meta);letter-spacing:.18em;text-align:right;margin-top:1.25rem;padding-top:.85rem;border-top:1px solid var(--border-white-soft);text-transform:uppercase;}
+
+.final-caso-chiuso{margin:1.5rem auto;max-width:560px;text-align:left;}
+
+.final-caso-chiuso-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--success-text);text-transform:uppercase;margin-bottom:.75rem;text-align:center;}
+
+.final-caso-chiuso-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--text-secondary);line-height:1.8;}
+
+.final-actions{margin-top:1.5rem;display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;}
+
+/* MISC */
+
+.hint-scope{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-meta);line-height:1.6;padding:.75rem 0;border-bottom:1px solid var(--border-white-soft);margin-bottom:.5rem;}
+
+.hint-cost-total{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em}
+
+.docs-section-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.3em;color:var(--carta);text-transform:uppercase;margin:1.25rem 0 .9rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-white);}
+
+/* DOCS GRID */
+
+.terminal-panel{background:var(--panel-1);border:1px solid var(--border-gold);border-left:2px solid var(--red-dark);padding:1.5rem;box-shadow:var(--shadow-panel);position:relative;max-width:760px;}
+
+.terminal-fields{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1rem;}
+
+.terminal-desc{font-size:13px;color:var(--text-secondary);line-height:1.65;margin-bottom:1.5rem;}
+
+.terminal-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--carta);text-transform:uppercase;margin-bottom:.6rem;}
 </style>
 </head>
 <body>
@@ -1214,6 +1303,12 @@ function loadState(){
 }
 
 // ===== NORMALIZE =====
+function computeScore(){
+  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+}
+
+// ===== NORMALIZE =====
+
 function normalize(str){
   return str.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
@@ -1342,8 +1437,8 @@ function submitCasella(){
   const input = document.getElementById('casella-input');
   const raw = (input.value || '').replace(/[\s\/\-]/g,'');
   const msg = document.getElementById('casella-msg');
-
   const correct = '12041945';
+
   if(raw === correct){
     state.casellaUnlocked = true;
     state.casellaAttempts = 0;
@@ -1356,8 +1451,7 @@ function submitCasella(){
       document.getElementById('casella-panel').style.display='none';
       document.getElementById('casella-email-section').style.display='block';
       renderEmailGrid();
-      const ci = document.getElementById('inv-casella'); if(ci){ ci.textContent='sincronizzata'; ci.className='inv-status-val ok'; }
-      const mci = document.getElementById('minv-casella'); if(mci){ mci.textContent='sincronizzata'; mci.className='inv-status-val ok'; }
+      updateUI();
     }, 1500);
     updateUI();
   } else {
@@ -1374,8 +1468,7 @@ function submitCasella(){
       setTimeout(()=>{
         document.getElementById('casella-panel').style.display='none';
         document.getElementById('casella-bloccata-section').style.display='block';
-        const ci = document.getElementById('inv-casella'); if(ci){ ci.textContent='bloccata'; ci.className='inv-status-val blocked'; }
-        const mci = document.getElementById('minv-casella'); if(mci){ mci.textContent='bloccata'; mci.className='inv-status-val blocked'; }
+        updateUI();
       }, 1500);
     } else {
       saveState();
@@ -1394,30 +1487,31 @@ function renderEmailGrid(){
   EMAILS.forEach(e=>{
     const card = document.createElement('div');
     card.className = 'email-card';
-    card.innerHTML = '<div class="email-card-id">'+e.id+'</div><div class="email-card-obj">'+e.obj+'</div><div class="email-card-cat">'+e.cat+'</div>';
+    card.innerHTML = '<div class="email-card-id">'+e.id+'</div>'+
+                     '<div class="email-card-obj">'+e.obj+'</div>'+
+                     '<div class="email-card-cat">'+e.cat+'</div>';
     card.onclick = ()=> openEmail(e.id);
     grid.appendChild(card);
   });
 }
 
+// FIX: openEmail riferisce solo elementi che esistono davvero (v-img-container, v-note-panel)
 function openEmail(eid){
   const e = EMAILS.find(x=>x.id===eid);
   if(!e) return;
   if(!state.emailsOpened.includes(eid)) state.emailsOpened.push(eid);
   saveState();
+
   document.getElementById('v-code').textContent = e.id;
   document.getElementById('v-cat').textContent = e.cat;
-  document.getElementById('v-consulted').textContent = '✓ CONSULTATO';
+  document.getElementById('v-consulted').textContent = '';
   document.getElementById('v-title').textContent = e.obj;
-  const vcl=document.getElementById('v-cat-label'); if(vcl) vcl.textContent = e.cat;
+  document.getElementById('v-img-container').innerHTML = ''; // niente immagine per le email
   document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
-  const notePanel = document.getElementById('v-note-panel'); if(notePanel) notePanel.style.display='none';
-  const imgC = document.getElementById('v-img-container');
-  if(imgC){
-    imgC.innerHTML = e.imageUrl
-      ? '<div class="evidence-frame"><img src="'+e.imageUrl+'" alt="" style="width:100%;display:block;border-radius:2px"><div class="evidence-frame-label"><span>'+e.id+' — '+e.cat+'</span><span>RISERVATO</span></div></div>'
-      : '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+e.id+' · Immagine non acquisita ·</small></div>';
-  }
+
+  // Le email non hanno note del fascicolo: nascondo il pannello note
+  document.getElementById('v-note-panel').style.display = 'none';
+
   const ov = document.getElementById('viewer-overlay');
   ov.classList.add('open');
   ov.scrollTop = 0;
@@ -1431,11 +1525,11 @@ function submitTerminal3B(){
   if(vals.some(v=>!v)){ showToast('Completa tutti i campi prima di inviare'); return; }
 
   const texts = vals.map(v => prep(v));
-  let errors = 0;
-  let allOk = true;
+  let errors = 0, allOk = true;
 
   // Campo 1 — accesso secondario
-  const kw_acc = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto','senza telecamere','senza riprese','ingresso sul retro','porta sul retro','porta laterale'];
+  const kw_acc = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto',
+    'senza telecamere','senza riprese','ingresso sul retro','porta sul retro','porta laterale'];
   if(hasAny(texts[0], kw_acc)){
     setFieldState('t3b',1,'ok','Accesso non sorvegliato identificato.');
   } else if(isAmbiguousGeneric(vals[0]) || texts[0].includes('ingresso') || texts[0].includes('accesso')){
@@ -1446,11 +1540,14 @@ function submitTerminal3B(){
     errors++; allOk = false;
   }
 
-  // Campo 2 — movente Elena (accetta anche "manca movente" / "debole")
-  const kw_elena = ['tensione','coniugale','problemi','gelosia','sfiducia','polizza','assicurazione','omissioni','alibi parziale',
-    'manca movente','nessun movente','movente debole','non conclusivo','debole','copertura','domestica'];
-  if(hasAny(texts[1], kw_elena)){
-    setFieldState('t3b',2,'ok','Linea Elena valutata.');
+  // Campo 2 — Elena (specific vs weak)
+  const kw_elena_spec = ['tensione coniugale','tensione','coniugale','gelosia','sfiducia','polizza',
+    'assicurazione','copertura','psicologa','marta valenti','linea domestica'];
+  const kw_elena_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole','manca'];
+  if(hasAny(texts[1], kw_elena_spec)){
+    setFieldState('t3b',2,'ok','Linea Elena valutata correttamente.');
+  } else if(hasAny(texts[1], kw_elena_weak)){
+    setFieldState('t3b',2,'ok','Riconosciuta correttamente la debolezza della linea.');
   } else if(isAmbiguousGeneric(vals[1])){
     setFieldState('t3b',2,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
     allOk = false;
@@ -1459,11 +1556,14 @@ function submitTerminal3B(){
     errors++; allOk = false;
   }
 
-  // Campo 3 — movente Davide
-  const kw_davide = ['pratica manfredi','fascicolo manfredi','conosceva','accesso','chiavi','paura','timore','coinvolgimento',
-    'lavorativo','professionale','manca movente','nessun movente','movente debole','non conclusivo','debole'];
-  if(hasAny(texts[2], kw_davide)){
-    setFieldState('t3b',3,'ok','Linea Davide valutata.');
+  // Campo 3 — Davide
+  const kw_davide_spec = ['pratica manfredi','fascicolo manfredi','conosceva','timore','coinvolgimento',
+    'professionale','sara loi','moglie','chiamata moglie','accesso allo studio','copia chiavi'];
+  const kw_davide_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole'];
+  if(hasAny(texts[2], kw_davide_spec)){
+    setFieldState('t3b',3,'ok','Linea Davide valutata correttamente.');
+  } else if(hasAny(texts[2], kw_davide_weak)){
+    setFieldState('t3b',3,'ok','Riconosciuta correttamente la debolezza della linea.');
   } else if(isAmbiguousGeneric(vals[2])){
     setFieldState('t3b',3,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
     allOk = false;
@@ -1472,24 +1572,27 @@ function submitTerminal3B(){
     errors++; allOk = false;
   }
 
-  // Campo 4 — movente Stefano (richiede keyword economiche)
-  const kw_stefano = ['debito','fideiussione','garanzia','bancaria','familiare','esposizione','280000','copertura',
-    'polizza','sollecito','rischio economico','crollo','salvare','evitare'];
+  // Campo 4 — Stefano (richiede sempre keyword economiche specifiche)
+  const kw_stefano = ['debito','fideiussione','garanzia','bancaria','familiare','esposizione','280000',
+    'copertura','polizza','sollecito','rischio economico','crollo','salvare','evitare','estinguere'];
   if(hasAny(texts[3], kw_stefano)){
     setFieldState('t3b',4,'ok','Linea Stefano identificata correttamente.');
   } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('soldi') || texts[3].includes('denaro')){
-    setFieldState('t3b',4,'ambiguous','Direzione economica corretta. Specifichi il tipo di esposizione.');
+    setFieldState('t3b',4,'ambiguous','Direzione economica corretta. Specifichi il tipo di esposizione (fideiussione, garanzia, debito).');
     allOk = false;
   } else {
-    setFieldState('t3b',4,'error','Risposta non coerente con il fascicolo.');
+    setFieldState('t3b',4,'error','Risposta non coerente con il fascicolo. La linea Stefano è economica.');
     errors++; allOk = false;
   }
 
-  // Campo 5 — movente Manfredi
-  const kw_manfredi = ['frode','irregolarita','minaccia','pressione','pratica','riciclaggio','rischio legale','rischio economico',
-    'denunciarlo','tirarsi indietro','contratti anomali','compensi','fuori scala','professionali'];
-  if(hasAny(texts[4], kw_manfredi)){
-    setFieldState('t3b',5,'ok','Linea Manfredi valutata.');
+  // Campo 5 — Manfredi
+  const kw_manfredi_spec = ['frode','irregolarita','minaccia','pressione','pratica','riciclaggio',
+    'rischio legale','denunciarlo','tirarsi indietro','contratti anomali','compensi','fuori scala'];
+  const kw_manfredi_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole','alibi verificato'];
+  if(hasAny(texts[4], kw_manfredi_spec)){
+    setFieldState('t3b',5,'ok','Linea Manfredi valutata correttamente.');
+  } else if(hasAny(texts[4], kw_manfredi_weak)){
+    setFieldState('t3b',5,'ok','Riconosciuta correttamente la debolezza della linea (alibi verificato).');
   } else if(isAmbiguousGeneric(vals[4]) || texts[4].includes('minaccioso') || texts[4].includes('pericoloso')){
     setFieldState('t3b',5,'ambiguous','Direzione corretta. Specifichi il tipo di rischio o pressione.');
     allOk = false;
@@ -1498,9 +1601,8 @@ function submitTerminal3B(){
     errors++; allOk = false;
   }
 
-  // Campo 6 — convergenza su Stefano
-  const kw_conv = ['stefano','fratello'];
-  if(hasAny(texts[5], kw_conv)){
+  // Campo 6 — convergenza Stefano
+  if(hasAny(texts[5], ['stefano','fratello'])){
     setFieldState('t3b',6,'ok','Convergenza identificata correttamente.');
   } else if(isAmbiguousGeneric(vals[5])){
     setFieldState('t3b',6,'ambiguous','Risposta troppo generica. Identifichi il soggetto specifico.');
@@ -1512,16 +1614,13 @@ function submitTerminal3B(){
 
   state.t3bErrors += errors;
   state.errorsTerminal += errors;
-  state.score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
   saveState(); updateUI();
 
   const gfb = document.getElementById('t3b-global-fb');
-
   if(allOk){
     state.t3bCompleted = true;
     document.getElementById('t3b-submit').disabled = true;
     document.getElementById('t3b-confirmed').classList.add('visible');
-    const cm = document.getElementById('t3b-confirmed-msg'); if(cm) cm.textContent = 'La linea Stefano collega movente economico, accesso potenziale e assenza di alibi verificato. Accesso alle verifiche pre-finali autorizzato.';
     gfb.textContent = 'Analisi movente/accesso/alibi registrata.\n\nIl fascicolo può procedere alla verifica conclusiva.';
     gfb.className = 'terminal-global-feedback show ok';
     ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{
@@ -1635,26 +1734,29 @@ function submitTerminal3C(){
 
 // ===== RENDER ESITO =====
 function renderEsito(){
+  const total = computeScore();
   const hc = state.hintPenaltyTotal;
   const ec = state.errorsTerminal * 10;
-  const total = Math.max(0, 100 - hc - ec);
   let cls = 'Osservatore esterno';
   if(total>=90) cls='Archivista in formazione';
   else if(total>=75) cls='Investigatore';
   else if(total>=60) cls='Collaboratore';
 
-  const scoreEl = document.getElementById('esito-score'); if(scoreEl) scoreEl.textContent = total;
-  const classEl = document.getElementById('esito-classname'); if(classEl) classEl.textContent = cls;
-  const hcEl = document.getElementById('esito-hint-count'); if(hcEl) hcEl.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
-  const hcostEl = document.getElementById('esito-hint-cost'); if(hcostEl) hcostEl.textContent = '−'+hc;
-  const ecostEl = document.getElementById('esito-err-cost'); if(ecostEl) ecostEl.textContent = '−'+ec;
-  const totEl = document.getElementById('esito-total'); if(totEl) totEl.textContent = total;
+  const setText = (id,val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setText('esito-score', total);
+  setText('esito-classname', cls);
+  setText('esito-hint-count', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
+  setText('esito-hint-cost', '−'+hc);
+  setText('esito-err-cost', '−'+ec);
+  setText('esito-total', total);
 
+  const scoreEl = document.getElementById('esito-score');
+  const classEl = document.getElementById('esito-classname');
   if(scoreEl) scoreEl.className = total>=75?'score-number good':'score-number';
   if(classEl) classEl.className = total>=75?'score-classname good':'score-classname';
 }
 
-// ===== DOCS =====
+// ===== DOCS GRID =====
 function renderDocsGrid(part, docs, containerId){
   const grid = document.getElementById(containerId);
   if(!grid) return;
@@ -1668,11 +1770,14 @@ function renderDocsGrid(part, docs, containerId){
     div.className = 'doc-card' + (isOpen?' consulted':'') + (isLocked?' locked-card':'');
     if(!isLocked) div.onclick = ()=> openDoc(doc.id, part);
 
-    const imgHtml = doc.imageUrl
-      ? '<div class="doc-thumb"><img src="'+doc.imageUrl+'" alt="" onerror="this.parentElement.innerHTML=\'<div class=&quot;doc-thumb-placeholder&quot;><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>\'"></div>'
-      : (isLocked
-          ? '<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>'
-          : '<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>');
+    let imgHtml;
+    if(isLocked){
+      imgHtml = '<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>';
+    } else if(doc.imageUrl){
+      imgHtml = '<div class="doc-thumb"><img src="'+doc.imageUrl+'" alt="" loading="lazy" data-doc="'+doc.id+'"></div>';
+    } else {
+      imgHtml = '<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>';
+    }
 
     div.innerHTML = imgHtml +
       '<div class="doc-card-body">' +
@@ -1688,12 +1793,18 @@ function renderDocsGrid(part, docs, containerId){
     grid.appendChild(div);
   });
 
+  // FIX: error handler immagini con event listener (più pulito di onerror inline con escape)
+  grid.querySelectorAll('img[data-doc]').forEach(img=>{
+    img.addEventListener('error', ()=>{
+      const wrap = img.parentElement;
+      if(wrap) wrap.innerHTML = '<div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>';
+    }, {once:true});
+  });
+
   updateCounters();
 }
 
 // ===== OPEN DOC =====
-
-
 function openDoc(id, part){
   const allDocs = [...DOCS_P1, ...DOCS_P2];
   const doc = allDocs.find(d => d.id===id);
@@ -1714,15 +1825,19 @@ function openDoc(id, part){
   document.getElementById('v-consulted').textContent = arr.includes(id) ? '✓ CONSULTATO' : '';
 
   const imgC = document.getElementById('v-img-container');
-  imgC.innerHTML = doc.imageUrl
-    ? '<div class="evidence-frame"><img src="'+doc.imageUrl+'" alt=""><div class="evidence-frame-label"><span>'+doc.id+' — '+doc.cat+'</span><span>RISERVATO</span></div></div>'
-    : '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+doc.id+' · Immagine non ancora acquisita ·</small></div>';
+  if(doc.imageUrl){
+    imgC.innerHTML = '<div class="evidence-frame"><img src="'+doc.imageUrl+'" alt="" loading="lazy"><div class="evidence-frame-label"><span>'+doc.id+' — '+doc.cat+'</span><span>RISERVATO</span></div></div>';
+  } else {
+    imgC.innerHTML = '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+doc.id+' · Immagine non ancora acquisita ·</small></div>';
+  }
 
+  // FIX: ripristino visibilità del pannello note (potrebbe essere stato nascosto da openEmail)
+  const notePanel = document.getElementById('v-note-panel');
   if(doc.note){
     document.getElementById('v-note').textContent = doc.note;
-    document.getElementById('v-note-panel').style.display = '';
+    notePanel.style.display = '';
   } else {
-    document.getElementById('v-note-panel').style.display = 'none';
+    notePanel.style.display = 'none';
   }
 
   document.getElementById('viewer-overlay').classList.add('open');
@@ -1776,67 +1891,81 @@ function updateCounters(){
 
 // ===== UPDATE UI =====
 function updateUI(){
-  const score = Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  const score = computeScore();
 
-  // header
-  const liv = document.getElementById('live-indice'); if(liv) liv.textContent = score;
+  const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
 
-  // right panel
-  const sb = document.getElementById('inv-score-big'); if(sb) sb.textContent = score;
+  setText('live-indice', score);
+  setText('inv-score-big', score);
+  setText('minv-score-big', score);
+
   const bar = document.getElementById('inv-score-bar');
   if(bar){ bar.style.width = score+'%'; bar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
+  const mbar = document.getElementById('minv-score-bar');
+  if(mbar){ mbar.style.width = score+'%'; mbar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
 
   let cls = '—';
   if(score>=90) cls='Archivista in formazione';
   else if(score>=75) cls='Investigatore';
   else if(score>=60) cls='Collaboratore';
   else if(score>0) cls='Osservatore esterno';
-  const cl = document.getElementById('inv-class-label'); if(cl) cl.textContent = cls;
+  setText('inv-class-label', cls);
 
-  // contatori
-  const p1c = document.getElementById('inv-p1'); if(p1c) p1c.textContent = state.p1Opened.length+' / 7';
-  const p2c = document.getElementById('inv-p2');
-  if(p2c){ p2c.textContent = state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati'; p2c.className = state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
-  const t3aEl = document.getElementById('inv-t3a'); if(t3aEl){ t3aEl.textContent = state.t3aCompleted?'validato':'non validato'; t3aEl.className = state.t3aCompleted?'inv-status-val ok':'inv-status-val'; }
-  const t3bEl = document.getElementById('inv-t3b'); if(t3bEl){ t3bEl.textContent = state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato'; t3bEl.className = state.t3bCompleted?'inv-status-val ok':state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
-  const t3cEl = document.getElementById('inv-t3c'); if(t3cEl){ t3cEl.textContent = state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato'; t3cEl.className = state.t3cCompleted?'inv-status-val ok':state.t3bCompleted?'inv-status-val':'inv-status-val blocked'; }
+  setText('inv-p1', state.p1Opened.length+' / 7');
+  setText('minv-p1', state.p1Opened.length+' / 7');
 
-  const hintsEl = document.getElementById('inv-hints-used'); if(hintsEl) hintsEl.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
-  const errEl = document.getElementById('inv-errors'); if(errEl) errEl.textContent = state.errorsTerminal;
+  const setStatus = (id, text, cls) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = text;
+    el.className = 'inv-status-val '+(cls||'');
+  };
 
-  // fase
+  // Casella
+  let casellaText, casellaCls;
+  if(state.casellaUnlocked){ casellaText='sincronizzata'; casellaCls='ok'; }
+  else if(state.casellaBlocked){ casellaText='bloccata'; casellaCls='blocked'; }
+  else if(state.t3aCompleted){ casellaText='disponibile'; casellaCls='active'; }
+  else { casellaText='non disponibile'; casellaCls='blocked'; }
+  setStatus('inv-casella', casellaText, casellaCls);
+  setStatus('minv-casella', casellaText, casellaCls);
+
+  // P2
+  setStatus('inv-p2', state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati', state.t3aCompleted?'':'blocked');
+  setStatus('minv-p2', state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati', state.t3aCompleted?'':'blocked');
+
+  // Terminali
+  setStatus('inv-t3a', state.t3aCompleted?'validato':'non validato', state.t3aCompleted?'ok':'');
+  setStatus('minv-t3a', state.t3aCompleted?'validato':'non validato', state.t3aCompleted?'ok':'');
+  setStatus('inv-t3b', state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato', state.t3bCompleted?'ok':state.t3aCompleted?'':'blocked');
+  setStatus('minv-t3b', state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato', state.t3bCompleted?'ok':state.t3aCompleted?'':'blocked');
+  setStatus('inv-t3c', state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato', state.t3cCompleted?'ok':state.t3bCompleted?'':'blocked');
+  setStatus('minv-t3c', state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato', state.t3cCompleted?'ok':state.t3bCompleted?'':'blocked');
+
+  setText('inv-hints-used', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
+  setText('minv-hints', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
+  setText('inv-errors', state.errorsTerminal);
+  setText('minv-errors', state.errorsTerminal);
+
   let fase = 'Omissioni e accessi';
   if(state.finalUnlocked) fase = 'Caso archiviato';
   else if(state.t3bCompleted) fase = 'Chiusura del caso';
   else if(state.t3aCompleted) fase = 'Verifiche incrociate';
-  const faseEl = document.getElementById('inv-fase'); if(faseEl){ faseEl.textContent = fase; }
+  setText('inv-fase', fase);
+  setText('minv-fase', fase);
 
-  // caso status
-  const caseStatusEl = document.querySelector('.inv-case-status');
+  const caseStatusEl = document.querySelector('.investigation-panel .inv-case-status');
   if(caseStatusEl && state.finalUnlocked) caseStatusEl.textContent = 'Caso archiviato';
 
-  // mobile mirror
-  const msb = document.getElementById('minv-score-big'); if(msb) msb.textContent = score;
-  const mbar = document.getElementById('minv-score-bar');
-  if(mbar){ mbar.style.width = score+'%'; mbar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
-  const mp1 = document.getElementById('minv-p1'); if(mp1) mp1.textContent = state.p1Opened.length+' / 7';
-  const mp2 = document.getElementById('minv-p2'); if(mp2){ mp2.textContent = state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati'; mp2.className = state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
-  const mt3a = document.getElementById('minv-t3a'); if(mt3a){ mt3a.textContent = state.t3aCompleted?'validato':'non validato'; mt3a.className = state.t3aCompleted?'inv-status-val ok':'inv-status-val'; }
-  const mt3b = document.getElementById('minv-t3b'); if(mt3b){ mt3b.textContent = state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato'; mt3b.className = state.t3bCompleted?'inv-status-val ok':state.t3aCompleted?'inv-status-val':'inv-status-val blocked'; }
-  const mt3c = document.getElementById('minv-t3c'); if(mt3c){ mt3c.textContent = state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato'; mt3c.className = state.t3cCompleted?'inv-status-val ok':state.t3bCompleted?'inv-status-val':'inv-status-val blocked'; }
-  const mh = document.getElementById('minv-hints'); if(mh) mh.textContent = state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i');
-  const me = document.getElementById('minv-errors'); if(me) me.textContent = state.errorsTerminal;
-  const mf = document.getElementById('minv-fase'); if(mf) mf.textContent = fase;
+  setText('p1-count', state.p1Opened.length);
+  setText('p2-count', state.p2Opened.length);
 
-  // p1 counter
-  const p1count = document.getElementById('p1-count'); if(p1count) p1count.textContent = state.p1Opened.length;
-  const p2count = document.getElementById('p2-count'); if(p2count) p2count.textContent = state.p2Opened.length;
+  const ub1 = document.getElementById('p1-unlock-banner');
+  if(ub1) ub1.className = 'unlock-banner'+(state.p1Opened.length>=4?' show':'');
+  const ub2 = document.getElementById('p2-unlock-banner');
+  if(ub2) ub2.className = 'unlock-banner'+(state.p2Opened.length>=3?' show':'');
 
-  // unlock banners
-  const ub1 = document.getElementById('p1-unlock-banner'); if(ub1) ub1.className = 'unlock-banner'+(state.p1Opened.length>=4?' show':'');
-  const ub2 = document.getElementById('p2-unlock-banner'); if(ub2) ub2.className = 'unlock-banner'+(state.p2Opened.length>=3?' show':'');
-
-  // nav lock/unlock
+  // unlock nav items based on progression
   if(state.p1Opened.length>=4){
     ['nav-terminale3a','mnav-terminale3a'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
   }
