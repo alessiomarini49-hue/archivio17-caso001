@@ -262,7 +262,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .terminal-feedback-line{font-family:var(--font-mono);font-size:10.5px;margin-top:.38rem;letter-spacing:.05em;display:none}
 .terminal-feedback-line.ok{color:var(--success-text);display:block}
 .terminal-feedback-line.error{color:var(--error);display:block}
-.terminal-global-feedback{margin-top:1rem;padding:1.1rem 1.25rem;border-left:2px solid;font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.04em;display:nonewhite-space:pre-line;}
+.terminal-global-feedback{margin-top:1rem;padding:1.1rem 1.25rem;border-left:2px solid;font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.04em;display:none;white-space:pre-line;}
 .terminal-global-feedback.show{display:block}
 .terminal-global-feedback.ok{color:var(--success-text);border-color:var(--success-border);background:rgba(18,58,50,.12)}
 .terminal-global-feedback.warn{color:var(--carta);border-color:var(--amber);background:rgba(183,131,59,.06)}
@@ -940,7 +940,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
           <div class="section-subtitle">Consulta con prudenza</div>
         </div>
         <div class="support-intro-panel">
-          <p>Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 pt · L2 → −5 pt · L3 → −8 pt</strong> (cumulativi per puzzle — massimo −15 per puzzle).</p>
+          <p>Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 · L2 → −5 · L3 → −8</strong>. I livelli sono indipendenti: paghi solo quello che richiedi. Massimo cumulabile per puzzle: −15.</p>
           <p style="margin-top:.6rem;font-style:italic;color:var(--text-dim)">Nessun supporto disponibile per l'accesso alla casella privata.</p>
         </div>
         <div id="puzzles-container"></div>
@@ -1058,7 +1058,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 </div>
 
 <!-- VIEWER -->
-<div class="viewer-overlay" id="viewer-overlay">
+<div class="viewer-overlay" id="viewer-overlay" role="dialog" aria-modal="true" aria-labelledby="v-title">
   <div class="viewer-card">
     <div class="viewer-back-bar">
       <div class="viewer-doc-meta">
@@ -1100,9 +1100,9 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 
 <div id="toast"></div>
 
-<div id="confirm-overlay">
+<div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
-    <h3>Azzera sessione?</h3>
+    <h3 id="confirm-title">Azzera sessione?</h3>
     <p>Tutti i progressi dell'Atto 3 verranno cancellati. L'indice investigativo verrà azzerato.</p>
     <div class="confirm-actions">
       <button class="btn-primary" onclick="confirmReset()">Conferma</button>
@@ -1285,7 +1285,6 @@ const PUZZLES = [
 // ===== STATE =====
 function defaultState(){
   return {
-    score:100,
     hintPenaltyTotal:0,
     hintLevelsUsed:0,
     errorsTerminal:0,
@@ -1388,9 +1387,13 @@ function submitTerminal3A(){
   let allOk = true;
 
   // Campo 1 — almeno 2 nomi/linee
-  const nomi1 = ['elena','davide','manfredi','stefano','moglie','collega','fratello','cliente',
-    'linea domestica','linea economica','linea professionale','accesso','chiavi','chiamate','serra','ricci'];
-  const matchCount1 = nomi1.filter(n => t1.includes(prep(n))).length;
+  const subjects1 = [
+    ['elena','ricci','moglie','linea domestica'],
+    ['davide','serra','collega','linea professionale','accesso','chiavi'],
+    ['stefano','fratello','linea familiare','linea economica','chiamate'],
+    ['manfredi','cliente','linea economica esterna']
+  ];
+  const matchCount1 = subjects1.filter(s => s.some(k => t1.includes(prep(k)))).length;
   if(matchCount1 >= 2){
     setFieldState('t3a',1,'ok','Sovrapposizioni identificate correttamente.');
   } else if(matchCount1 === 1 || isAmbiguousGeneric(v1)){
@@ -1555,6 +1558,8 @@ function openEmail(eid){
   const ov = document.getElementById('viewer-overlay');
   ov.classList.add('open');
   ov.scrollTop = 0;
+  const vbE = ov.querySelector('.viewer-body');
+  if(vbE) vbE.scrollTop = 0;
   renderEmailGrid();
 }
 
@@ -1880,7 +1885,11 @@ function openDoc(id, part){
     notePanel.style.display = 'none';
   }
 
-  document.getElementById('viewer-overlay').classList.add('open');
+  const ovDoc = document.getElementById('viewer-overlay');
+  ovDoc.classList.add('open');
+  ovDoc.scrollTop = 0;
+  const vbDoc = ovDoc.querySelector('.viewer-body');
+  if(vbDoc) vbDoc.scrollTop = 0;
 }
 
 function closeViewer(){
@@ -2231,7 +2240,9 @@ document.addEventListener('keydown', e=>{
   const ov = document.getElementById('viewer-overlay');
   if(ov && ov.classList.contains('open')){ closeViewer(); return; }
   const co = document.getElementById('confirm-overlay');
-  if(co && co.style.display!=='none' && co.style.display!==''){ co.style.display='none'; return; }
+  if(co && co.classList.contains('visible')){
+    co.classList.remove('visible'); return;
+  }
   const dr = document.getElementById('mobile-inv-drawer');
   if(dr && dr.classList.contains('open')){ dr.classList.remove('open'); return; }
 });
