@@ -701,6 +701,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -727,7 +728,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 <!-- MOBILE INV BUTTON & DRAWER -->
 <button class="mobile-inv-btn" onclick="toggleMobileDrawer()" id="mobile-inv-btn" aria-label="Apri stato fascicolo" style="display:none">Stato fascicolo ↑</button>
 
-<div class="mobile-inv-drawer" id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)" role="dialog" aria-modal="true" aria-label="Stato fascicolo (mobile)">
+<div class="mobile-inv-drawer" id="mobile-inv-drawer" onclick="closeMobileDrawerOutside(event)" role="dialog" aria-modal="true" aria-label="Stato fascicolo (mobile)" aria-hidden="true">
   <div class="mobile-inv-panel">
     <div class="mobile-inv-close"><button class="btn-ghost" onclick="toggleMobileDrawer()">Chiudi ✕</button></div>
     <div class="inv-section">
@@ -743,6 +744,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="minv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
     </div>
     <div class="inv-section">
       <div class="inv-label">Progressione</div>
@@ -805,7 +807,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 <div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
     <h3 id="confirm-title">Azzera sessione?</h3>
-    <p>Tutti i progressi dell'Atto I verranno cancellati. L'indice investigativo verrà azzerato a 100. L'operazione è irreversibile.</p>
+    <p>Tutti i progressi dell'Atto I verranno cancellati. Le penalità dell'Atto I verranno azzerate. L'operazione è irreversibile.</p>
     <div class="confirm-actions">
       <button class="btn-primary" onclick="confirmReset()">Conferma reset</button>
       <button class="btn-ghost" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
@@ -821,10 +823,30 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 // ═══════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════
-const APP_ID         = '69fdda0ce13e22a1cc6cd63c';
+const APP_ID         = '6a01e1b1d3635a758b84a530';
 const LS_KEY         = 'a17_atto1_v3';
+
+// ═══════════════════════════════════════════════
+// INDICE INVESTIGATIVO GLOBALE — Caso 001
+// ═══════════════════════════════════════════════
+const GLOBAL_KEY = 'a17_global_v1';
+function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
+let _global = defaultGlobal();
+function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
+function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
+function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
+function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
+function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
+function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
+
 const STATE_VERSION  = 3;
 const LOCAL_CODES    = ['A17-ATTO1', 'A17-DEMO'];
+const API_BASE       = 'https://api.base44.app/api/apps/6a01e1b1d3635a758b84a530/functions';
+
+// Sessione cloud
+let _sessionToken = localStorage.getItem('a17_atto1_session_token') || null;
+let _codeId       = localStorage.getItem('a17_atto1_code_id') || null;
+let _accessCode   = localStorage.getItem('a17_atto1_access_code') || null;
 const REQUIRED_DOCS  = 4;   // documenti necessari per sbloccare il terminale
 const TOTAL_DOCS     = 5;
 
@@ -837,35 +859,35 @@ const DOCUMENTS = [
     desc:'Dati anagrafici, abitudini documentate e informazioni preliminari sulla vittima.',
     transcript:"Andrea Marini, 42 anni, consulente finanziario.\n\nConiuge: Elena Marini.\nFratello: Stefano Marini.\nMadre: Carla Bianchi.\n\nUltimo accesso registrato allo studio: 18:42.\n\nAbitudini e note personali:\n— compilava documenti e firmava prevalentemente con la mano sinistra;\n— non risultano consumi abituali di alcol;\n— nessuna diagnosi psichiatrica nota;\n— terapia farmacologica leggera in corso.",
     note:"Nessun precedente clinico di rilievo. I rapporti familiari non sono approfonditi nel fascicolo preliminare. Ultima attività registrata nello studio: ore 18:42 del 14/11/2024.",
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f54f592df_ChatGPTImage8mag202617_41_40.png'
+    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/e3721ed14_ChatGPTImage11mag202614_38_59.png'
   },
   {
     id:'A02', cat:'Verbale', title:'Verbale di rinvenimento',
-    desc:'Prima ricostruzione ufficiale dell\'accesso allo studio e degli elementi rinvenuti.',
-    transcript:"Il corpo di Andrea Marini viene rinvenuto nel suo studio privato.\n\nLa porta era chiusa a chiave, senza segni di effrazione.\n\nDavide Serra apre la porta usando la propria copia.\n\nLe chiavi personali di Andrea vengono rinvenute nella tasca interna sinistra della giacca indossata dalla vittima.\n\nArma rinvenuta nella mano destra della vittima.\n\nBicchiere di whisky sulla scrivania.\n\nNessun segno evidente di colluttazione.",
-    note:'La porta era chiusa dall\'interno o dall\'esterno? Il verbale non specifica. Davide Serra risulta in possesso di una copia delle chiavi. Le chiavi personali di Andrea erano ancora nella tasca della giacca. Nessun elemento di disordine segnalato nella stanza.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/09ae8c1c8_ChatGPTImage8mag202615_55_27.png'
+    desc:'Prima ricostruzione ufficiale dell\'accesso allo studio e degli elementi rinvenuti sulla scena.',
+    transcript:"In data 15/11/2024, alle ore 08:15, presso lo studio privato di Andrea Marini (Via del Corso 12, Roma), è stato rinvenuto il corpo privo di vita del suddetto.\n\nL'accesso ai locali è stato effettuato da Davide Serra, collaboratore dello studio, mediante propria copia delle chiavi. La porta risultava chiusa a chiave e non presentava segni evidenti di effrazione.\n\nLe chiavi personali di Andrea Marini sono state rinvenute nella tasca interna sinistra della giacca. L'arma è stata repertata nella mano destra del defunto. Sulla scrivania era presente un bicchiere contenente residui di whisky. L'ambiente appariva ordinato e non sono stati rilevati segni evidenti di colluttazione.\n\nSulla base dei primi rilievi, il decesso risulta verosimilmente collocabile nella serata del 14/11/2024, in un intervallo orario compreso tra le ore 19:30 e le ore 22:30.\n\nAl momento del primo sopralluogo non risultano testimoni oculari presenti sul posto.\n\nVerbalizzante: Isp. M. Longo — Supervisione: Dott. G. Ricci",
+    note:'La porta era chiusa a chiave, senza segni di effrazione. Davide Serra ha aperto con la propria copia delle chiavi. Le chiavi di Andrea erano nella tasca sinistra della giacca. L\'arma era nella mano destra della vittima. Decesso stimato tra le 19:30 e le 22:30 del 14/11/2024 — non compatibile con l\'orario del rinvenimento. Nessun testimone oculare al primo sopralluogo.',
+    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/f3237378c_ChatGPTImage11mag202615_17_28.png'
   },
   {
     id:'A03', cat:'Medico-legale', title:'Relazione medico-legale preliminare',
-    desc:'Osservazioni sulla ferita, sulla postura del corpo e sulla possibile dinamica.',
-    transcript:"Ferita compatibile con colpo d'arma da fuoco alla tempia destra.\n\nResidui da sparo presenti, ma distribuzione non pienamente conclusiva.\n\nLa postura del corpo e la posizione dell'arma non permettono di escludere l'intervento di terzi.\n\nPresenza di alcol nel bicchiere, non confermata come abitudine documentata della vittima.",
-    note:'La ferita è alla tempia destra. Distribuzione residui da sparo: non conclusiva. L\'ipotesi di intervento di terzi non è esclusa dalla relazione preliminare. Il dato sull\'alcol è annotato come non verificato nelle abitudini della vittima.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/de929f0ac_ChatGPTImage8mag202616_39_40.png'
+    desc:'Osservazioni preliminari sulla ferita, sulla postura del corpo e sulla possibile dinamica.',
+    transcript:"Data: 15/11/2024 — Medico legale: Dott.ssa L. Ferri — Supervisione: Dott. G. Ricci\n\nAll'esame esterno preliminare, la vittima Andrea Marini presenta una ferita compatibile con colpo d'arma da fuoco alla tempia destra. I residui di sparo risultano presenti, ma la loro distribuzione non appare pienamente conclusiva ai fini della ricostruzione della dinamica.\n\nLa postura del corpo al momento del rinvenimento e la posizione dell'arma non consentono, allo stato attuale, di escludere l'intervento di terzi. Non si rilevano segni evidenti di colluttazione estesa, pur permanendo la necessità di ulteriori verifiche tecniche e comparative.\n\nSulla scrivania è stato rilevato un bicchiere contenente residui riconducibili a bevanda alcolica. Allo stato, tale elemento non risulta coerente con abitudini documentate in modo certo riferibili alla vittima.\n\nLa presente relazione ha carattere preliminare e dovrà essere integrata con gli esiti degli accertamenti balistici, tossicologici e medico-legali completi.",
+    note:'Ferita alla tempia destra — residui da sparo presenti ma distribuzione non conclusiva. L\'intervento di terzi non è escludibile. Nessuna colluttazione estesa rilevata, ma necessità di ulteriori verifiche. Il bicchiere con residui alcolici non è coerente con le abitudini documentate della vittima. Relazione preliminare — accertamenti balistici e tossicologici da completare.',
+    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/7fc4ee76d_ChatGPTImage11mag202615_24_11.png'
   },
   {
     id:'A04', cat:'Rilievo fotografico', title:'Rilievo fotografico dello studio',
     desc:'Documentazione visiva della scena nello studio privato del 14/11/2024.',
     transcript:"Scena documentata nello studio privato di Andrea Marini, 14/11/2024.\n\nIl corpo è a terra in prossimità della scrivania. Sulla scrivania è visibile il bicchiere di whisky segnalato nel verbale.\n\nLa stanza appare in ordine. Non emergono segni di disordine o colluttazione nell'inquadratura documentata.",
     note:'La stanza appare ordinata. Posizione del corpo: a terra, vicino alla scrivania. Il bicchiere di whisky è visibile sulla scrivania. Confrontare posizione dell\'arma con quanto indicato nel verbale e nella relazione medico-legale.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55059c6bc_ChatGPTImage8mag202616_37_16.png'
+    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/18bbafdfd_ChatGPTImage11mag202615_20_15.png'
   },
   {
     id:'A05', cat:'Agenda', title:'Agenda personale — 14 novembre',
     desc:'Ultimi appuntamenti annotati nell\'agenda personale e nota manoscritta.',
     transcript:"Agenda personale del 14 novembre 2024.\n\n09:30 — Banca.\n12:00 — Chiamare D.\n17:45 — Rivedere pratica M.\n19:30 — Cena con S.\n\nNota manoscritta: \"Non posso più coprire questa cosa.\"",
     note:'Quattro appuntamenti registrati nel giorno. La cena delle 19:30 con "S." non risulta avvenuta. La nota finale è scritta a mano e non è datata con orario preciso. Le iniziali D., M., S. non vengono spiegate nel fascicolo preliminare.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/706b9ac19_ChatGPTImage8mag202616_39_16.png'
+    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/706b9ac19_ChatGPTImage8mag202616_39_16.png'
   }
 ];
 
@@ -880,7 +902,7 @@ const PUZZLES = [
     hints:[
       {lvl:1, cost:2, txt:'Non cercare qualcosa di visibile nella foto. Cerca qualcosa che il verbale registra come dato oggettivo, senza trarne conseguenze.'},
       {lvl:2, cost:5, txt:'Il verbale descrive dove è stata trovata l\'arma e con quale mano. Il profilo della vittima descrive come Andrea scriveva. Metti insieme questi due punti.'},
-      {lvl:3, cost:8, txt:'Andrea era mancino. L\'arma è stata trovata nella mano destra. In un suicidio autentico, questa combinazione è statisticamente rara e dovrebbe emergere nella tua registrazione come prima anomalia fisica.'}
+      {lvl:3, cost:8, txt:'Confronta la mano abituale indicata nel profilo personale con la mano in cui viene repertata l\'arma. Se i due dati non coincidono, l\'anomalia fisica principale non è nella ferita, ma nella compatibilità del gesto.'}
     ]
   },
   {
@@ -889,8 +911,8 @@ const PUZZLES = [
     scope:'Individuare la discrepanza temporale tra i dati del fascicolo.',
     hints:[
       {lvl:1, cost:2, txt:'L\'agenda di Andrea registra un impegno serale. Il verbale registra l\'orario dell\'ultimo accesso allo studio. Metti a confronto i due dati.'},
-      {lvl:2, cost:5, txt:'La cena delle 19:30 con "S." non risulta avvenuta. L\'ultimo accesso allo studio è alle 18:42. L\'orario del decesso non è specificato. C\'è una finestra temporale che nessuno spiega.'},
-      {lvl:3, cost:8, txt:'Tra le 18:42 (ultimo accesso allo studio) e la cena mai avvenuta delle 19:30 c\'è meno di un\'ora. In questa finestra si concentra tutto. L\'elemento temporale da registrare è proprio questa discrepanza: un appuntamento che non ha avuto luogo, in un momento in cui qualcosa è già accaduto.'}
+      {lvl:2, cost:5, txt:'Metti in sequenza gli orari certi e quelli solo annotati. Un appuntamento segnato in agenda non ha lo stesso peso di un accesso registrato.'},
+      {lvl:3, cost:8, txt:'La frattura temporale nasce dal confronto tra ultimo accesso documentato, appuntamento serale e mancata conferma dell\'incontro. Registra la finestra che resta scoperta, non una conclusione definitiva.'}
     ]
   },
   {
@@ -899,7 +921,7 @@ const PUZZLES = [
     scope:'Interpretare la nota manoscritta nel contesto degli altri documenti.',
     hints:[
       {lvl:1, cost:2, txt:'La nota manoscritta non è datata con un orario. Ma è sull\'agenda del 14 novembre. Questo significa che è stata scritta — o è rilevante — in quel giorno. Chiediti cosa stava "coprendo" Andrea.'},
-      {lvl:2, cost:5, txt:'La nota dice "Non posso più coprire questa cosa." Non dice di chi o di cosa. Ma l\'agenda ha quattro appuntamenti, tra cui "Rivedere pratica M." L\'iniziale M. ritorna.'},
+      {lvl:2, cost:5, txt:'La nota non spiega cosa Andrea stesse coprendo. Confrontala con le iniziali e gli appuntamenti dell\'agenda: non serve identificare tutto ora, serve capire che esisteva una pressione precedente alla morte.'},
       {lvl:3, cost:8, txt:'La nota è un\'ammissione indiretta. "Coprire" implica una complicità attiva — qualcosa che Andrea sapeva e teneva nascosto. Il tuo compito in questa fase non è identificare di cosa si tratta, ma registrare che la nota indica un contesto di pressione preesistente al decesso.'}
     ]
   },
@@ -927,6 +949,7 @@ function defaultState(){
     docsOpened: [],
     t1Completed: false,
     t1Errors: 0,
+    t1Fb: null,
     finalUnlocked: false,
     hintsRevealed: {},     // {pid: maxLvl}
     hintPuzzleCost: {},    // {pid: totalCost}
@@ -950,8 +973,28 @@ function saveState(){
       _storageWarned = true;
     }
   }
+  // Sync cloud (fire-and-forget)
+  if(_sessionToken && _codeId){
+    fetch(API_BASE + '/updateSession', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        code_id: _codeId,
+        session_token: _sessionToken,
+        updates: {
+          t1_completed:     state.t1Completed,
+          final_unlocked:   state.finalUnlocked,
+          docs_opened_act1: state.docsOpened,
+          hints_revealed:   state.hintsRevealed,
+          current_section:  state.currentSection,
+          current_act:      1
+        }
+      })
+    }).catch(()=>{});
+  }
 }
 function loadState(){
+  loadGlobal();
   let raw;
   try{ raw = localStorage.getItem(LS_KEY); }
   catch(e){ console.warn('[Archivio17] localStorage non disponibile:', e); return; }
@@ -982,7 +1025,8 @@ function loadState(){
 // SCORING
 // ═══════════════════════════════════════════════
 function computeScore(){
-  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  updateGlobalFromActState(1, state.hintPenaltyTotal, state.errorsTerminal * 10);
+  return globalScore();
 }
 function fmtPenalty(v){ return v === 0 ? '0' : '−' + v; }
 
@@ -1028,6 +1072,7 @@ function doAccess(){
 
   if(!inp){ showAccessError('Inserisci il codice di accesso.'); return; }
 
+  // Codici locali di demo/test
   if(LOCAL_CODES.includes(inp)){
     errEl.classList.remove('visible');
     bootApp();
@@ -1037,16 +1082,28 @@ function doAccess(){
   // Validazione backend
   btn.disabled = true;
   btn.textContent = 'Verifica...';
-  fetch(`https://base44.app/api/apps/${APP_ID}/functions/validateCode`, {
+
+  const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0, 32);
+
+  fetch(API_BASE + '/validateCode', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ code: inp, act: 1 })
+    body: JSON.stringify({ code: inp, fingerprint: fp })
   })
   .then(r => r.json())
   .then(data => {
     btn.disabled = false;
     btn.textContent = 'Accedi al Fascicolo';
-    if(data && data.ok){
+    if(data && data.ok && data.session_token){
+      // Salva credenziali sessione
+      _sessionToken = data.session_token;
+      _codeId       = data.game_session ? data.game_session.code_id : null;
+      _accessCode   = inp;
+      localStorage.setItem('a17_atto1_session_token', _sessionToken);
+      if(_codeId) localStorage.setItem('a17_atto1_code_id', _codeId);
+      localStorage.setItem('a17_atto1_access_code', inp);
+      // Ripristina stato server se presente
+      if(data.game_session) mergeServerState(data.game_session);
       errEl.classList.remove('visible');
       bootApp();
     } else {
@@ -1056,8 +1113,21 @@ function doAccess(){
   .catch(() => {
     btn.disabled = false;
     btn.textContent = 'Accedi al Fascicolo';
-    showAccessError('Errore di rete. Riprova.');
+    showAccessError('Errore di connessione. Riprova.');
   });
+}
+
+function mergeServerState(gs){
+  if(!gs) return;
+  if(gs.t1_completed)   state.t1Completed   = true;
+  if(gs.final_unlocked) state.finalUnlocked  = true;
+  if(gs.docs_opened_act1 && gs.docs_opened_act1.length)
+    state.docsOpened = gs.docs_opened_act1;
+  if(gs.hints_revealed && Object.keys(gs.hints_revealed).length)
+    Object.assign(state.hintsRevealed, gs.hints_revealed);
+  if(typeof gs.penalty_act1_hints  === 'number') state.hintPenaltyTotal = gs.penalty_act1_hints;
+  if(typeof gs.penalty_act1_errors === 'number') state.errorsTerminal   = Math.round(gs.penalty_act1_errors / 10);
+  saveState();
 }
 function showAccessError(msg){
   const e = document.getElementById('access-error');
@@ -1221,6 +1291,11 @@ function openDoc(id){
   _lastFocusedBeforeViewer = document.activeElement;
   document.getElementById('viewer-overlay').classList.add('open');
   document.body.classList.add('no-scroll');
+  // reset scroll viewer
+  const vb = document.getElementById('viewer-body');
+  if(vb) vb.scrollTop = 0;
+  const vo = document.getElementById('viewer-overlay');
+  if(vo) vo.scrollTop = 0;
   // sposta focus alla close per a11y
   setTimeout(() => {
     const cb = document.querySelector('.viewer-close-btn');
@@ -1322,7 +1397,7 @@ function submitTerminal1(){
   }
 
   // applica errori
-  state.errorsTerminal += errors;
+  state.errorsTerminal += Math.min(errors, 3);
   state.t1Errors += errors;
   saveState();
   updateUI();
@@ -1345,15 +1420,30 @@ function submitTerminal1(){
 
     gfb.textContent = 'Prima lettura registrata.\n\nHai identificato le fratture iniziali nella scena. L\'anomalia fisica, il tempo che manca e la coerenza troppo costruita della stanza sono i tre punti da cui parte ogni indagine reale.\n\nL\'esito dell\'Atto I è disponibile.';
     gfb.className = 'terminal-global-feedback show ok';
+    state.t1Fb = { text: gfb.textContent, cls: gfb.className };
 
     ['nav-esito','mnav-esito'].forEach(id => {
       const el = document.getElementById(id);
       if(el) el.classList.remove('locked');
     });
 
+    markActDone(1);
     saveState();
     updateUI();
     renderEsito();
+    // Salva punteggio Atto 1 sul backend (fire-and-forget)
+    if(_accessCode){
+      fetch(API_BASE + '/saveActScore', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          access_code:   _accessCode,
+          act:           1,
+          hint_penalty:  state.hintPenaltyTotal || 0,
+          error_penalty: (state.errorsTerminal || 0) * 10
+        })
+      }).catch(()=>{});
+    }
 
     setTimeout(() => {
       showToast('Esito Atto I sbloccato', 'success');
@@ -1572,6 +1662,19 @@ function updateUI(){
   setText('inv-errors', state.errorsTerminal);
   setText('minv-errors', state.errorsTerminal);
 
+  // Breakdown globale sidebar
+  const gs = globalScore();
+  const p1h = _global.penalty_act1.hints||0;
+  const p1e = _global.penalty_act1.errors||0;
+  const p1t = p1h + p1e;
+  const bdHtml = '<span style="color:var(--text-secondary)">Atto I:</span> ' +
+    (p1t > 0 ? '<span style="color:var(--red-highlight)">−'+p1t+'</span>' : '<span style="color:var(--success-text,#4CAF80)">0</span>') +
+    '<span style="color:var(--text-dim);font-size:.62rem"> (hint −'+p1h+' · err −'+p1e+')</span>';
+  const bdEl = document.getElementById('inv-breakdown');
+  const mbdEl = document.getElementById('minv-breakdown');
+  if(bdEl) bdEl.innerHTML = bdHtml;
+  if(mbdEl) mbdEl.innerHTML = bdHtml;
+
   // Fase
   let fase = 'Lettura preliminare';
   if(state.finalUnlocked) fase = 'Atto I chiuso';
@@ -1611,6 +1714,17 @@ function showResetConfirm(){
 }
 function confirmReset(){
   try{ localStorage.removeItem(LS_KEY); } catch(_){}
+  // Reset global atto 1 (mantieni atti 2 e 3)
+  _global.penalty_act1 = {hints:0, errors:0};
+  _global.act1_done = false;
+  _global.locked = false;
+  _global.global_score = globalScore();
+  saveGlobal();
+  // Pulisci anche token cloud
+  _sessionToken = null; _codeId = null; _accessCode = null;
+  localStorage.removeItem('a17_atto1_session_token');
+  localStorage.removeItem('a17_atto1_code_id');
+  localStorage.removeItem('a17_atto1_access_code');
   state = defaultState();
   saveState();
   document.getElementById('confirm-overlay').classList.remove('visible');
@@ -1657,6 +1771,7 @@ function confirmReset(){
 function toggleMobileDrawer(){
   const d = document.getElementById('mobile-inv-drawer');
   const open = d.classList.toggle('open');
+  d.setAttribute('aria-hidden', String(!open));
   document.body.classList.toggle('no-scroll', open);
 }
 function closeMobileDrawerOutside(e){
@@ -1693,6 +1808,11 @@ function init(){
       const el = document.getElementById(id);
       if(el) el.readOnly = true;
     });
+    // ripristina feedback globale narrativo
+    if(state.t1Fb){
+      const gfb = document.getElementById('t1-global-fb');
+      if(gfb){ gfb.textContent = state.t1Fb.text; gfb.className = state.t1Fb.cls; }
+    }
   }
 
   updateUI();
