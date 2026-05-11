@@ -858,7 +858,7 @@ function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(
 function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
 function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
 
-const API_BASE = 'https://api.base44.app/api/apps/6a01e1b1d3635a758b84a530/functions';
+const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
 // Sessione cloud
 let _sessionToken = localStorage.getItem('a17_atto2_session_token') || null;
@@ -870,41 +870,41 @@ const DOCS_P1 = [
   {
     id:'B02', cat:'Documento contabile', title:'Cartella Manfredi · Irregolarità contabili',
     desc:'Estratto da una cartella professionale relativa al cliente Roberto Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/f506b56aa_ChatGPTImage9mag202601_07_06.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f506b56aa_ChatGPTImage9mag202601_07_06.png',
     transcript:"Cartella cliente: Roberto Manfredi / Gruppo Manfredi S.r.l.\nOggetto: verifica interna movimenti contabili anomali.\nPeriodo esaminato: settembre–novembre 2024.\n\nNote studio:\n— movimenti ricorrenti non giustificati;\n— fatture con causali generiche;\n— flussi di cassa incompatibili con i contratti dichiarati;\n— richiesta di revisione urgente da parte di Andrea Marini;\n— possibile esposizione penale in caso di trasmissione atti a consulente esterno.",
     note:'« Se questa pratica esce dallo studio, Manfredi non la prenderà bene. »'
   },
   {
     id:'B03', cat:'Contratto', title:'Contratto Studio – Manfredi',
     desc:'Accordo professionale tra Studio Marini e società riconducibile a Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/dc816050f_ChatGPTImage10mag202618_16_06.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/dc816050f_ChatGPTImage10mag202618_16_06.png',
     transcript:"Contratto di consulenza continuativa tra Studio Marini & Associati e Gruppo Manfredi S.r.l.\n\nImporto mensile: € 12.500\n\nClausole accessorie:\n— consulenza fiscale straordinaria;\n— revisione contabile;\n— ottimizzazione flussi operativi;\n— gestione documentazione integrativa.",
     note:'« Compensi fuori scala rispetto alle prestazioni dichiarate. »'
   },
   {
     id:'B05', cat:'Tabulati', title:'Tabulati telefonici Andrea',
     desc:'Estratto chiamate degli ultimi giorni prima della morte.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/a99b2d51a_ChatGPTImage9mag202601_07_20.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/a99b2d51a_ChatGPTImage9mag202601_07_20.png',
     transcript:"10/11 — 18:12 — Roberto Manfredi — 07:42\n11/11 — 09:33 — Studio Legale Rinaldi — 02:16\n12/11 — 20:41 — Roberto Manfredi — 04:58\n13/11 — 11:05 — Stefano Marini — 01:12\n14/11 — 18:06 — Davide Serra — 00:43\n14/11 — 18:51 — Numero non salvato — 00:21\n14/11 — 19:04 — Stefano Marini — chiamata non risposta",
     note:'Nessuna chiamata registrata dopo le 19:04.'
   },
   {
     id:'B06', cat:'Documento bancario', title:'Estratto conto Andrea',
     desc:'Movimenti selezionati del conto personale di Andrea Marini.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/1b7df3816_ChatGPTImage9mag202601_07_25.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/1b7df3816_ChatGPTImage9mag202601_07_25.png',
     transcript:"Estratto conto sintetico · ottobre–novembre 2024\n\nMovimenti rilevanti:\n03/10 — Premio assicurativo · Copertura debiti — € 412,00\n03/11 — Premio assicurativo · Copertura debiti — € 412,00\n06/11 — Bonifico Studio Marini — € 8.750,00\n08/11 — Pagamento consulenza esterna · Studio Legale Rinaldi — € 650,00\n13/11 — Prelievo contanti — € 1.200,00",
     note:'Polizza collegata a copertura debitoria. Capitale assicurato: € 280.000.'
   },
   {
     id:'B07', cat:'Documento bancario', title:'Atto di fideiussione',
     desc:'Documento personale archiviato tra pratiche bancarie.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/4f758dc9c_ChatGPTImage10mag202618_13_44.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/4f758dc9c_ChatGPTImage10mag202618_13_44.png',
     transcript:"Atto di fideiussione bancaria solidale.\nData sottoscrizione: 18/05/2024.\n\nSoggetti garanti:\n— Andrea Marini\n— Stefano Marini\n\nImporto massimo garantito: € 280.000\n\nFinalità: copertura esposizione debitoria relativa a società riconducibile a Stefano Marini.\n\nClausola: in caso di insolvenza del debitore principale, l'istituto potrà rivalersi integralmente sui garanti."
   },
   {
     id:'B13', cat:'Nota personale', title:'Nota personale · tensione con Elena',
     desc:'Bozza privata non inviata, recuperata tra file personali.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/c579a662f_ChatGPTImage9mag202601_21_40.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/c579a662f_ChatGPTImage9mag202601_21_40.png',
     transcript:"Elena continua a chiedermi cosa stia succedendo.\nLe ho detto che è solo lavoro, ma non mi crede più.\n\nSe dovesse venire fuori tutto, non so cosa resterebbe di noi.\n\nNon posso dirle della copertura.\nNon ancora.",
     note:"Documento recuperato tra bozze personali non inviate."
   }
@@ -915,42 +915,42 @@ const DOCS_P2 = [
   {
     id:'B04', cat:'Audio · Trascrizione', title:'Telefonata Andrea – Manfredi',
     desc:'Trascrizione parziale di una telefonata registrata due giorni prima del decesso.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/0a8860720_ChatGPTImage10mag202618_26_04.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0a8860720_ChatGPTImage10mag202618_26_04.png',
     transcript:"Data: 12/11/2024\nPartecipanti: Andrea Marini / Roberto Manfredi\n\nANDREA:\n« Non posso più coprire questa cosa. Mi hai chiesto di chiudere gli occhi, ma ora stanno controllando. »\n\nMANFREDI:\n« Tu hai firmato carte, Andrea. Non fare finta di essere fuori. »\n\nANDREA:\n« Io sto parlando con un legale. »\n\nMANFREDI:\n« Parla con chi vuoi. Ma sai cosa succede se questa storia esce. »\n\nANDREA:\n« È una minaccia? »\n\nMANFREDI:\n« È un promemoria. »",
     note:"L'audio completo risulta degradato. La trascrizione è stata prodotta da analisi interna dell'Archivio."
   },
   {
     id:'B08', cat:'Comunicazione bancaria', title:'Sollecito bancario · Stefano',
     desc:'Comunicazione collegata a una posizione debitoria familiare.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/8d2ac80cd_ChatGPTImage10mag202617_11_15.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/8d2ac80cd_ChatGPTImage10mag202617_11_15.png',
     transcript:"Oggetto: richiesta di rientro posizione debitoria.\nDestinatario: Stefano Marini.\nImporto esposizione: € 280.000.\nTermine di regolarizzazione: 30 giorni.\n\nIn assenza di rientro o piano di copertura accettato, l'istituto procederà all'attivazione delle garanzie sottoscritte.",
     note:'Documento acquisito da cartella personale non classificata.'
   },
   {
     id:'B10', cat:'Verbale interrogatorio', title:'Interrogatorio · Roberto Manfredi',
     desc:'Seconda dichiarazione del cliente Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/55012b651_ChatGPTImage9mag202601_07_41.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55012b651_ChatGPTImage9mag202601_07_41.png',
     transcript:"Roberto Manfredi conferma di aver avuto discussioni accese con Andrea Marini nei giorni precedenti alla morte.\n\nDichiara:\n« Andrea voleva tirarsi indietro da una situazione che aveva accettato per anni. »\n\nAlla domanda sulle minacce:\n« Ho detto che ci sarebbero state conseguenze. Economiche. Legali. Non altro. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero impegnato fuori sede per un incontro aziendale. Possono confermarlo. »",
     note:'Alibi non ancora verificato in questa fase.'
   },
   {
     id:'B11', cat:'Verbale interrogatorio', title:'Interrogatorio · Stefano Marini',
     desc:'Seconda dichiarazione del fratello della vittima.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/0b46950a8_ChatGPTImage9mag202601_07_45.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0b46950a8_ChatGPTImage9mag202601_07_45.png',
     transcript:"Stefano Marini dichiara di non aver incontrato Andrea la sera del 14 novembre.\n\nDichiara:\n« L'ho sentito nei giorni precedenti, ma non quella sera. Eravamo entrambi sotto pressione. »\n\nAlla domanda sui rapporti economici:\n« C'erano alcune questioni, ma niente che riguardasse la sua morte. »\n\nAlla domanda sulla fideiussione:\n« Era una garanzia temporanea. Andrea voleva aiutarmi, tutto qui. »\n\nAlla domanda sull'appuntamento \"Cena con S.\":\n« Non so a chi si riferisse. »",
     note:'Dichiarazione registrata. Coerenza interna da verificare.'
   },
   {
     id:'B15', cat:'Verbale integrativo', title:'Dichiarazione integrativa · Davide Serra',
     desc:'Dichiarazione aggiuntiva del collaboratore dello studio.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/0c5442f84_ChatGPTImage9mag202601_08_58.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0c5442f84_ChatGPTImage9mag202601_08_58.png',
     transcript:"Davide Serra conferma di essere stato il primo a entrare nello studio la mattina del rinvenimento.\n\nDichiara:\n« La porta era chiusa. Ho usato la mia copia. Non ho toccato nulla, ho chiamato subito. »\n\nAlla domanda sulle pratiche Manfredi:\n« Sapevo che c'erano tensioni, ma Andrea non mi spiegava tutto. »\n\nAlla domanda sull'archivio interno:\n« Il fascicolo Manfredi era già sulla scrivania quando sono entrato. »",
     note:'Davide aveva accesso allo studio e conosceva la posizione dei fascicoli. Nessun elemento risolutivo.'
   },
   {
     id:'B14', cat:'Verbale integrativo', title:'Dichiarazione integrativa · Elena Ricci',
     desc:'Dichiarazione aggiuntiva della moglie di Andrea.',
-    imageUrl:'https://media.base44.com/images/public/6a01e1b1d3635a758b84a530/35f116afa_ChatGPTImage9mag202601_08_37.png',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/35f116afa_ChatGPTImage9mag202601_08_37.png',
     transcript:"Elena Ricci conferma tensioni con Andrea nelle ultime settimane.\n\nDichiara:\n« Non era più lui. Nascondeva telefonate, usciva dallo studio tardi, non voleva che guardassi i documenti. »\n\nAlla domanda sulla copertura assicurativa:\n« Sapevo che esisteva una copertura, ma Andrea diceva che era una formalità bancaria. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero da mia sorella. Ho uno scontrino della cena, ma sono uscita per circa venti minuti per una telefonata. »",
     note:'Alibi parziale. Intervallo non verificato.'
   }
