@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ARCHIVIO 17 — Caso 001: Il Caso Marini · Atto I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ================================================
+   ARCHIVIO 17 — DESIGN SYSTEM v2 — ATTO 1
+   ================================================ */
+:root {
+  --bg-main:#050506; --bg-secondary:#0A0807;
+  --panel-1:#111318; --panel-2:#17130F; --panel-3:#1C1712; --panel-4:#14100D;
+  --text-main:#EDE6D8; --text-secondary:#AFA79A; --text-meta:#7A7268; --text-dim:#4A4440;
+  --red-logicus:#A71920; --red-highlight:#C42028; --red-dark:#641014;
+  --red-glow:rgba(167,25,32,0.18);
+  --amber:#B7833B; --amber-dim:rgba(183,131,59,0.12); --carta:#B9A174;
+  --success-bg:#0D1A14; --success-border:#2A5C40; --success-text:#5A9A74;
+  --error:#A71920; --warning:#B7833B; --warning-dim:rgba(183,131,59,0.12);
+  --border-gold:rgba(185,161,116,0.18); --border-white:rgba(185,161,116,0.12);
+  --border-white-soft:rgba(185,161,116,0.07); --border-red:rgba(167,25,32,0.28);
+  --border-dim:rgba(185,161,116,0.06);
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-sans:'Inter',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --glow-red:0 0 24px rgba(167,25,32,0.2),0 0 48px rgba(167,25,32,0.08);
+  --shadow-deep:0 8px 48px rgba(0,0,0,0.85),0 2px 12px rgba(0,0,0,0.6);
+  --shadow-panel:0 4px 24px rgba(0,0,0,0.6);
+  --transition:all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-sans);background:var(--bg-main);color:var(--text-main);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;z-index:1;mix-blend-mode:overlay;}
+body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 90% at 50% 50%,transparent 40%,rgba(0,0,0,0.55) 100%);pointer-events:none;z-index:1;}
+h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg-main)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.07);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+
+/* ── SEZIONI ── */
+.section{display:none}
+.section.active{display:block}
+
+/* ── BUTTONS ── */
+.btn-primary{background:var(--red-logicus);color:var(--text-main);border:none;padding:.9rem 1.75rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:var(--transition);display:inline-block;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
+.btn-primary:hover{background:var(--red-highlight);box-shadow:var(--glow-red)}
+.btn-primary:active{transform:scale(.99)}
+.btn-primary.full{width:100%;display:block;text-align:center}
+.btn-secondary{background:transparent;color:var(--text-secondary);border:1px solid var(--border-white);padding:.6rem 1.2rem;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.18);color:var(--text-main)}
+.btn-ghost{background:transparent;color:var(--text-meta);border:1px solid rgba(255,255,255,.06);padding:.5rem .95rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:var(--transition);}
+.btn-ghost:hover{color:var(--text-secondary);border-color:var(--border-white)}
+
+/* ── ACCESS SCREEN ── */
+#section-access{display:flex;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:2rem;position:relative;}
+#section-access::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(179,18,23,0.07) 0%,transparent 70%);pointer-events:none;}
+#section-access::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent);}
+.access-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.45em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.75rem;text-align:center;}
+.access-title{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:300;letter-spacing:.02em;color:var(--text-main);line-height:1.05;margin-bottom:.4rem;text-align:center;}
+.access-subtitle{font-family:var(--font-serif);font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--text-secondary);font-weight:300;text-align:center;margin-bottom:.3rem;}
+.access-act{font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;text-align:center;margin-bottom:3rem;}
+.access-box{background:var(--panel-1);border:1px solid var(--border-white);border-top:1px solid var(--border-red);max-width:420px;width:100%;padding:2.5rem;position:relative;box-shadow:var(--shadow-deep);}
+.access-box::before{content:'';position:absolute;top:-1px;left:25%;right:25%;height:1px;background:linear-gradient(90deg,transparent,var(--red-logicus),transparent);}
+.access-classification{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.32em;color:var(--red-logicus);border:1px solid var(--red-dark);padding:3px 10px;display:inline-block;margin-bottom:1.25rem;text-transform:uppercase;background:rgba(179,18,23,0.06);}
+.access-box p{color:var(--text-secondary);font-size:13.5px;margin-bottom:1.75rem;line-height:1.7;}
+.field-group{margin-bottom:1rem}
+.field-group label{display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:.28em;color:var(--text-meta);text-transform:uppercase;margin-bottom:.5rem;}
+.field-group input{width:100%;background:var(--bg-secondary);border:1px solid rgba(255,255,255,.09);color:var(--text-main);padding:.8rem 1rem;font-family:var(--font-mono);font-size:16px;letter-spacing:.18em;outline:none;transition:var(--transition);-webkit-appearance:none;border-radius:0;}
+.field-group input:focus{border-color:var(--red-dark);box-shadow:0 0 0 2px rgba(179,18,23,0.1),var(--glow-red);}
+.error-msg{font-family:var(--font-mono);font-size:11px;color:var(--red-highlight);margin-top:.5rem;display:none;letter-spacing:.05em;}
+.error-msg.visible{display:block}
+.access-footer{margin-top:2.5rem;text-align:center;font-size:11px;color:var(--text-dim);max-width:420px;width:100%;font-style:italic;line-height:1.6;}
+
+/* ── APP SHELL ── */
+#section-app{display:flex;flex-direction:column;min-height:100vh;}
+.app-header{background:var(--bg-secondary);border-bottom:1px solid var(--border-gold);padding:0 1.5rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;flex-shrink:0;box-shadow:0 2px 20px rgba(0,0,0,0.6);}
+.header-left{display:flex;align-items:center;gap:1.25rem}
+.header-brand{font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;color:var(--red-logicus);text-transform:uppercase;}
+.header-sep{width:1px;height:18px;background:var(--border-white)}
+.header-case-info{font-family:var(--font-sans);font-size:12.5px;color:var(--text-meta);display:none;}
+@media(min-width:600px){.header-case-info{display:block}}
+.header-status-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--red-logicus);margin-right:.4rem;animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
+.header-right{display:flex;align-items:center;gap:.75rem}
+.indice-badge{font-family:var(--font-mono);font-size:10.5px;color:var(--text-main);background:var(--panel-2);border:1px solid var(--border-white);padding:4px 10px;letter-spacing:.08em;display:flex;align-items:center;gap:.4rem;}
+.indice-label{color:var(--text-meta);font-size:9px;letter-spacing:.2em}
+.indice-value{color:var(--red-highlight);font-size:13px}
+
+/* ── LAYOUT PRINCIPALE ── */
+.app-body{display:grid;grid-template-columns:1fr;flex:1;}
+@media(min-width:900px){.app-body{grid-template-columns:260px 1fr}}
+.sidebar{background:var(--panel-1);border-right:1px solid var(--border-gold);padding:1.75rem 1.25rem;display:none;flex-direction:column;gap:1.25rem;overflow-y:auto;position:sticky;top:54px;height:calc(100vh - 54px);}
+@media(min-width:900px){.sidebar{display:flex}}
+.sidebar-block{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.1rem 1rem;}
+.sidebar-title{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-white-soft);}
+.suspect-item{display:flex;align-items:baseline;gap:.6rem;padding:.35rem 0;border-bottom:1px solid var(--border-white-soft);}
+.suspect-item:last-child{border-bottom:none}
+.suspect-name{font-family:var(--font-mono);font-size:11px;color:var(--text-main);}
+.suspect-role{font-family:var(--font-sans);font-size:11px;color:var(--text-meta);}
+.suspect-role.hidden-role{color:var(--text-dim);letter-spacing:.05em;}
+.score-breakdown-line{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10.5px;padding:.25rem 0;border-bottom:1px solid var(--border-dim);}
+.score-breakdown-line:last-child{border-bottom:none}
+.score-breakdown-line .k{color:var(--text-meta);}
+.score-breakdown-line .v{color:var(--text-main);}
+.score-breakdown-line .v.red{color:var(--red-highlight);}
+
+/* Mobile fab drawer */
+.mobile-fab{position:fixed;bottom:1.25rem;right:1.25rem;z-index:150;width:48px;height:48px;background:var(--red-logicus);border:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-deep);}
+@media(min-width:900px){.mobile-fab{display:none}}
+.mobile-inv-drawer{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);display:none;flex-direction:column;}
+.mobile-inv-drawer.open{display:flex}
+.mobile-inv-inner{background:var(--panel-1);border-top:1px solid var(--border-gold);margin-top:auto;padding:1.5rem;max-height:75vh;overflow-y:auto;}
+.mobile-inv-close{text-align:right;margin-bottom:1rem;}
+.main-content{padding:0;overflow-y:auto;}
+
+/* ── NAV SEZIONI ── */
+.section-nav{background:var(--bg-secondary);border-bottom:1px solid var(--border-white-soft);padding:0 2rem;display:flex;gap:0;overflow-x:auto;scrollbar-width:none;}
+.section-nav::-webkit-scrollbar{display:none}
+.section-nav-btn{font-family:var(--font-mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-dim);padding:.85rem 1.1rem;background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:var(--transition);white-space:nowrap;flex-shrink:0;}
+.section-nav-btn:hover{color:var(--text-secondary);}
+.section-nav-btn.active{color:var(--text-main);border-bottom-color:var(--red-logicus);}
+.section-nav-btn.locked{color:var(--text-dim);cursor:not-allowed;opacity:.4;}
+
+/* ── CONTENT WRAPPER ── */
+.content-pad{padding:2rem 1.5rem;max-width:820px;}
+@media(min-width:1100px){.content-pad{padding:2.5rem 2rem}}
+
+/* ── SEZIONE INTRO ── */
+.case-eyebrow{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.38em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.75rem;}
+.case-title{font-size:clamp(2rem,5vw,3.2rem);font-weight:300;letter-spacing:.02em;line-height:1.1;margin-bottom:.5rem;}
+.case-subtitle{font-family:var(--font-serif);font-style:italic;font-size:1.15rem;color:var(--text-secondary);margin-bottom:2rem;}
+.briefing-block{background:var(--panel-2);border:1px solid var(--border-white-soft);border-left:3px solid var(--red-logicus);padding:1.5rem 1.75rem;margin-bottom:2rem;}
+.briefing-block p{color:var(--text-secondary);font-size:14px;line-height:1.8;margin-bottom:.75rem;}
+.briefing-block p:last-child{margin-bottom:0}
+.separator-line{height:1px;background:linear-gradient(90deg,var(--red-dark),transparent);margin:2rem 0;opacity:.5;}
+.fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border-white-soft);border:1px solid var(--border-white-soft);margin-bottom:2rem;}
+.fact-cell{background:var(--panel-1);padding:1rem 1.25rem;}
+.fact-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.4rem;}
+.fact-value{font-size:13.5px;color:var(--text-secondary);}
+.intro-cta{margin-top:2.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+
+/* ── FASCICOLO ── */
+.section-header-block{margin-bottom:1.75rem;}
+.section-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.32em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.5rem;}
+.section-title-lg{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:300;margin-bottom:.5rem;}
+.section-desc{font-size:13.5px;color:var(--text-secondary);line-height:1.75;max-width:540px;}
+.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:2rem;}
+.doc-card{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.25rem;cursor:pointer;transition:var(--transition);position:relative;}
+.doc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red-dark);opacity:0;transition:var(--transition);}
+.doc-card:hover{border-color:var(--border-gold);background:var(--panel-3);}
+.doc-card:hover::before{opacity:1}
+.doc-card.opened{border-color:rgba(90,154,116,0.25);}
+.doc-card.opened::before{background:var(--success-border);opacity:0.6;}
+.doc-id{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;color:var(--text-dim);margin-bottom:.5rem;text-transform:uppercase;}
+.doc-title{font-family:var(--font-serif);font-size:1.05rem;color:var(--text-main);margin-bottom:.4rem;line-height:1.3;}
+.doc-cat{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-meta);text-transform:uppercase;}
+.doc-status{position:absolute;top:.75rem;right:.75rem;font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;color:var(--success-text);text-transform:uppercase;}
+
+/* ── VIEWER ── */
+.viewer-overlay{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,0.88);display:none;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;}
+.viewer-overlay.open{display:flex}
+.viewer-modal{background:var(--panel-1);border:1px solid var(--border-gold);width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-deep);position:relative;}
+.viewer-modal::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--red-logicus),transparent);}
+.viewer-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-white-soft);display:flex;justify-content:space-between;align-items:flex-start;flex-shrink:0;}
+.viewer-header-left{flex:1}
+.viewer-doc-id{font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--red-logicus);text-transform:uppercase;margin-bottom:.3rem;}
+.viewer-doc-title{font-family:var(--font-serif);font-size:1.35rem;}
+.viewer-doc-cat{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-meta);text-transform:uppercase;margin-top:.3rem;}
+.viewer-close{background:none;border:1px solid var(--border-white-soft);color:var(--text-meta);width:32px;height:32px;cursor:pointer;transition:var(--transition);font-size:16px;flex-shrink:0;margin-left:1rem;}
+.viewer-close:hover{border-color:var(--border-white);color:var(--text-main);}
+.viewer-body{flex:1;overflow-y:auto;padding:1.5rem;}
+.viewer-image{width:100%;max-height:340px;object-fit:cover;border:1px solid var(--border-white-soft);margin-bottom:1.5rem;display:block;}
+.viewer-image.error-hidden{display:none}
+.viewer-transcript{font-size:13.5px;color:var(--text-secondary);line-height:1.85;white-space:pre-line;margin-bottom:1.5rem;font-style:italic;border-left:2px solid var(--red-dark);padding-left:1rem;}
+.viewer-notes{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1rem 1.25rem;}
+.viewer-notes-title{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.75rem;}
+.viewer-notes ul{list-style:none;padding:0;}
+.viewer-notes li{font-size:12.5px;color:var(--text-meta);padding:.3rem 0;border-bottom:1px solid var(--border-dim);display:flex;gap:.5rem;}
+.viewer-notes li::before{content:'—';color:var(--text-dim);flex-shrink:0;}
+.viewer-notes li:last-child{border-bottom:none}
+
+/* ── TERMINALE ── */
+.terminal-frame{background:var(--panel-1);border:1px solid var(--border-white-soft);border-top:2px solid var(--red-dark);}
+.terminal-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border-white-soft);display:flex;align-items:center;gap:.75rem;}
+.terminal-led{width:7px;height:7px;border-radius:50%;background:var(--red-logicus);animation:pulse-dot 1.8s infinite;}
+.terminal-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;}
+.terminal-id{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;color:var(--red-highlight);}
+.terminal-body{padding:1.5rem;}
+.terminal-desc{font-size:13.5px;color:var(--text-secondary);line-height:1.75;margin-bottom:1.75rem;}
+.terminal-field{margin-bottom:1.5rem;}
+.terminal-field-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;}
+.terminal-field-state{font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;padding:1px 7px;border:1px solid transparent;}
+.terminal-field-state.ok{color:var(--success-text);border-color:rgba(90,154,116,0.3);}
+.terminal-field-state.ambiguous{color:var(--amber);border-color:rgba(183,131,59,0.3);}
+.terminal-field-state.error{color:var(--red-highlight);border-color:rgba(167,25,32,0.3);}
+.terminal-input{width:100%;background:var(--bg-secondary);border:1px solid rgba(255,255,255,.07);color:var(--text-main);padding:.75rem 1rem;font-family:var(--font-mono);font-size:13px;letter-spacing:.04em;outline:none;transition:var(--transition);resize:none;-webkit-appearance:none;border-radius:0;line-height:1.5;}
+.terminal-input:focus{border-color:var(--red-dark);background:var(--panel-4);}
+.terminal-feedback-line{font-family:var(--font-mono);font-size:11.5px;margin-top:.45rem;min-height:1.1em;letter-spacing:.02em;}
+.terminal-feedback-line.ok{color:var(--success-text);}
+.terminal-feedback-line.ambiguous{color:var(--amber);}
+.terminal-feedback-line.error{color:var(--red-highlight);}
+.terminal-actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.75rem;}
+.terminal-error-count{font-family:var(--font-mono);font-size:10px;color:var(--text-meta);letter-spacing:.1em;}
+.terminal-error-count span{color:var(--red-highlight);}
+.terminal-global-feedback{display:none;background:var(--success-bg);border:1px solid var(--success-border);padding:1rem 1.25rem;margin-top:1.25rem;font-size:13.5px;color:var(--success-text);line-height:1.75;white-space:pre-line;}
+.terminal-global-feedback.visible{display:block}
+.t-confirmed-msg{display:none;background:var(--success-bg);border:1px solid var(--success-border);padding:1rem 1.25rem;margin-top:1.25rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--success-text);}
+.t-confirmed-msg.visible{display:block}
+
+/* ── SUPPORTO ARCHIVISTA ── */
+.hints-section{margin-top:2rem;}
+.hints-intro{background:var(--panel-2);border:1px solid var(--border-white-soft);border-left:3px solid var(--amber);padding:1.25rem 1.5rem;margin-bottom:1.75rem;}
+.hints-intro p{font-size:13.5px;color:var(--text-secondary);line-height:1.75;}
+.hints-phase-desc{font-family:var(--font-mono);font-size:10px;color:var(--text-meta);letter-spacing:.06em;margin-top:.65rem;line-height:1.6;}
+.puzzle-card{background:var(--panel-2);border:1px solid var(--border-white-soft);margin-bottom:.85rem;overflow:hidden;}
+.puzzle-card-header{padding:.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:.75rem;transition:var(--transition);}
+.puzzle-card-header:hover{background:rgba(255,255,255,0.02);}
+.puzzle-card-left{display:flex;align-items:center;gap:.75rem;flex:1;min-width:0;}
+.puzzle-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase;flex-shrink:0;}
+.puzzle-title{font-family:var(--font-serif);font-size:1rem;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.puzzle-cost-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--amber);background:var(--amber-dim);border:1px solid rgba(183,131,59,0.18);padding:2px 7px;flex-shrink:0;}
+.puzzle-chevron{font-size:10px;color:var(--text-dim);flex-shrink:0;transition:transform .2s;}
+.puzzle-card.open .puzzle-chevron{transform:rotate(180deg)}
+.puzzle-card-body{display:none;padding:1rem 1.1rem 1.25rem;border-top:1px solid var(--border-white-soft);}
+.puzzle-card.open .puzzle-card-body{display:block}
+.puzzle-scope{font-size:12.5px;color:var(--text-meta);line-height:1.7;margin-bottom:1rem;font-style:italic;}
+.hint-level-row{background:var(--panel-3);border:1px solid var(--border-dim);padding:.75rem 1rem;margin-bottom:.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;}
+.hint-level-row.used{border-color:rgba(90,154,116,0.2);background:var(--success-bg);}
+.hint-level-meta{flex:1}
+.hint-level-name{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.35rem;}
+.hint-level-text{font-size:13px;color:var(--text-secondary);line-height:1.7;}
+.hint-level-text.hidden-hint{color:var(--text-dim);font-style:italic;}
+.hint-level-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;}
+.hint-cost-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--amber);}
+.hint-cost-tag.free{color:var(--text-dim);}
+.hint-unlock-btn{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;background:transparent;border:1px solid rgba(183,131,59,0.3);color:var(--amber);padding:3px 10px;cursor:pointer;transition:var(--transition);}
+.hint-unlock-btn:hover{background:var(--amber-dim);border-color:var(--amber);}
+.hint-used-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--success-text);text-transform:uppercase;}
+
+/* ── ESITO ── */
+.esito-header{background:var(--panel-2);border:1px solid var(--border-white-soft);border-top:2px solid var(--red-dark);padding:2rem;margin-bottom:2rem;text-align:center;}
+.esito-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.38em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;}
+.esito-score{font-family:var(--font-serif);font-size:5rem;line-height:1;color:var(--text-main);margin-bottom:.5rem;}
+.esito-score-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.3em;color:var(--text-meta);text-transform:uppercase;margin-bottom:1.5rem;}
+.esito-classification{font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;color:var(--red-highlight);text-transform:uppercase;border:1px solid var(--border-red);padding:.4rem 1.2rem;display:inline-block;}
+.esito-body{margin-bottom:2rem;}
+.esito-body p{font-size:14px;color:var(--text-secondary);line-height:1.8;margin-bottom:1rem;}
+.esito-breakdown{background:var(--panel-2);border:1px solid var(--border-white-soft);padding:1.25rem 1.5rem;margin-bottom:2rem;}
+.esito-breakdown-title{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;}
+.breakdown-row{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11.5px;padding:.3rem 0;border-bottom:1px solid var(--border-dim);}
+.breakdown-row:last-child{border-bottom:none;padding-top:.5rem;font-size:13px;}
+.breakdown-key{color:var(--text-meta);}
+.breakdown-val{color:var(--text-main);}
+.breakdown-val.red{color:var(--red-highlight);}
+.breakdown-val.green{color:var(--success-text);}
+.act2-tease{background:var(--panel-2);border:1px solid var(--border-white-soft);border-left:3px solid var(--red-logicus);padding:1.5rem;margin-top:2rem;}
+.act2-tease-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.75rem;}
+.act2-tease p{font-size:14px;color:var(--text-secondary);line-height:1.8;}
+.act2-tease-link{display:inline-block;margin-top:1.25rem;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--red-logicus);text-decoration:none;border:1px solid var(--border-red);padding:.5rem 1.2rem;transition:var(--transition);}
+.act2-tease-link:hover{background:rgba(167,25,32,0.08);border-color:var(--red-logicus);}
+
+/* ── CONFIRM OVERLAY ── */
+.confirm-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.88);display:none;align-items:center;justify-content:center;padding:1rem;}
+.confirm-overlay.visible{display:flex}
+.confirm-box{background:var(--panel-1);border:1px solid var(--border-red);padding:2rem;max-width:400px;width:100%;box-shadow:var(--shadow-deep);}
+.confirm-box h3{font-family:var(--font-serif);font-size:1.3rem;margin-bottom:.75rem;}
+.confirm-box p{font-size:13.5px;color:var(--text-secondary);line-height:1.7;margin-bottom:1.5rem;}
+.confirm-actions{display:flex;gap:.75rem;flex-wrap:wrap;}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:999;background:var(--panel-1);border:1px solid var(--border-gold);padding:.75rem 1.5rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;color:var(--text-secondary);pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;max-width:90vw;}
+#toast.show{opacity:1}
+#toast.toast-success{border-color:rgba(90,154,116,0.4);color:var(--success-text);}
+#toast.toast-error{border-color:var(--border-red);color:var(--red-highlight);}
+
+/* ── COUNTER BAR ── */
+.counter-bar{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.counter-item{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;}
+.counter-item span{color:var(--text-secondary);margin-left:.3rem;}
+
+/* ── LOCK NOTICE ── */
+.lock-notice{background:var(--panel-2);border:1px solid var(--border-red);border-left:3px solid var(--red-dark);padding:1rem 1.25rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--text-meta);margin-bottom:1.5rem;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SEZIONE: ACCESSO
+═══════════════════════════════════════════════ -->
+<section id="section-access" class="section active">
+  <div class="access-eyebrow">Archivio 17</div>
+  <h1 class="access-title">Il Caso Marini</h1>
+  <p class="access-subtitle">Caso 001</p>
+  <p class="access-act">Atto I — Prima lettura della scena</p>
+
+  <div class="access-box">
+    <div class="access-classification">Accesso riservato</div>
+    <p>Inserisci il codice di accesso ricevuto. Ogni codice è personale e valido per un singolo dispositivo.</p>
+    <div class="field-group">
+      <label for="code-input">Codice di accesso</label>
+      <input type="text" id="code-input" placeholder="A17I-XXXXXX" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="access-error" class="error-msg"></p>
+    <button class="btn-primary full" id="access-btn" onclick="doAccess()">Accedi al Fascicolo</button>
+  </div>
+
+  <p class="access-footer">
+    Archivio 17 è un'esperienza investigativa narrativa.<br>
+    Le prove contenute nel fascicolo sono il punto di partenza.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════ -->
+<section id="section-app" class="section">
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="header-brand">Archivio 17</div>
+      <div class="header-sep"></div>
+      <div class="header-case-info">
+        <span class="header-status-dot"></span>Il Caso Marini — Atto I
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="indice-badge">
+        <span class="indice-label">Indice</span>
+        <span class="indice-value" id="score-display">100</span>
+      </div>
+      <button class="btn-ghost" onclick="showResetConfirm()">Reset</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <!-- Sidebar desktop -->
+    <aside class="sidebar">
+      <div class="sidebar-block">
+        <div class="sidebar-title">Persone coinvolte</div>
+        <div class="suspect-item">
+          <span class="suspect-name">Andrea Marini</span>
+          <span class="suspect-role">Vittima</span>
+        </div>
+        <div class="suspect-item">
+          <span class="suspect-name">Elena M.</span>
+          <span class="suspect-role hidden-role" id="role-elena">███████</span>
+        </div>
+        <div class="suspect-item">
+          <span class="suspect-name">Stefano M.</span>
+          <span class="suspect-role hidden-role" id="role-stefano">███████</span>
+        </div>
+        <div class="suspect-item">
+          <span class="suspect-name">Davide S.</span>
+          <span class="suspect-role hidden-role" id="role-davide">███████</span>
+        </div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-title">Punteggio</div>
+        <div class="score-breakdown-line"><span class="k">Base</span><span class="v">100</span></div>
+        <div class="score-breakdown-line"><span class="k">Penalità hint</span><span class="v red" id="sb-hints">0</span></div>
+        <div class="score-breakdown-line"><span class="k">Errori terminale</span><span class="v red" id="sb-errors">0</span></div>
+        <div class="score-breakdown-line"><span class="k">Indice attuale</span><span class="v" id="sb-total">100</span></div>
+      </div>
+      <button class="btn-ghost full" style="margin-top:auto" onclick="showResetConfirm()">Azzera sessione</button>
+    </aside>
+
+    <!-- Contenuto principale -->
+    <main class="main-content">
+      <nav class="section-nav">
+        <button class="section-nav-btn active" id="nav-intro" onclick="showSection('intro')">Briefing</button>
+        <button class="section-nav-btn" id="nav-fascicolo" onclick="showSection('fascicolo')">Fascicolo</button>
+        <button class="section-nav-btn locked" id="nav-terminale" onclick="showSection('terminale')">Terminale 01</button>
+        <button class="section-nav-btn locked" id="nav-esito" onclick="showSection('esito')">Esito</button>
+        <button class="section-nav-btn" id="nav-supporto" onclick="showSection('supporto')">Supporto</button>
+      </nav>
+
+      <!-- INTRO -->
+      <div id="app-intro" class="app-section active content-pad">
+        <div class="case-eyebrow">Atto I — Prima lettura della scena</div>
+        <h2 class="case-title">Il Caso Marini</h2>
+        <p class="case-subtitle">La scena parla. Sei tu a doverla ascoltare.</p>
+
+        <div class="briefing-block">
+          <p>Andrea Marini, 42 anni, consulente finanziario, viene trovato morto nel suo studio privato la sera del 14 novembre 2024. La porta era chiusa. L'arma è sulla scena. Tutto suggerisce un suicidio.</p>
+          <p>Ma alcune cose non tornano. La ferita, la posizione dell'arma, un dettaglio fisico che il verbale registra senza commentare. Il tuo compito in questa prima fase è semplice: leggi i documenti, identifica le anomalie, e registra la tua prima lettura investigativa.</p>
+          <p>Non si tratta di risolvere il caso. Si tratta di capire cosa si vede — e cosa manca.</p>
+        </div>
+
+        <div class="fact-grid">
+          <div class="fact-cell">
+            <div class="fact-label">Vittima</div>
+            <div class="fact-value">Andrea Marini, 42 anni</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-label">Data</div>
+            <div class="fact-value">14 novembre 2024</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-label">Luogo</div>
+            <div class="fact-value">Studio privato</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-label">Fascicolo</div>
+            <div class="fact-value">5 documenti</div>
+          </div>
+        </div>
+
+        <div class="separator-line"></div>
+        <p style="font-size:13.5px;color:var(--text-meta);margin-bottom:1.5rem;">Per accedere al Terminale 01 è necessario aver consultato almeno 4 documenti del fascicolo.</p>
+
+        <div class="intro-cta">
+          <button class="btn-primary" onclick="showSection('fascicolo')">Apri il Fascicolo</button>
+          <button class="btn-secondary" onclick="showSection('supporto')">Supporto Archivista</button>
+        </div>
+      </div>
+
+      <!-- FASCICOLO -->
+      <div id="app-fascicolo" class="app-section content-pad">
+        <div class="section-header-block">
+          <div class="section-label">Atto I · Fascicolo</div>
+          <h2 class="section-title-lg">Documenti preliminari</h2>
+          <p class="section-desc">Esamina ogni documento con attenzione. Le anomalie raramente si annunciano.</p>
+        </div>
+        <div class="counter-bar">
+          <div class="counter-item">Aperti: <span id="docs-opened-count">0</span>/5</div>
+          <div class="counter-item">Richiesti per il terminale: <span>4</span></div>
+        </div>
+        <div id="lock-notice-terminal" class="lock-notice" style="display:none">
+          Consulta almeno 4 documenti per sbloccare il Terminale 01.
+        </div>
+        <div class="docs-grid" id="docs-grid"></div>
+      </div>
+
+      <!-- TERMINALE -->
+      <div id="app-terminale" class="app-section content-pad">
+        <div class="section-header-block">
+          <div class="section-label">Atto I · Terminale 01</div>
+          <h2 class="section-title-lg">Prima lettura investigativa</h2>
+          <p class="section-desc">Registra la tua analisi della scena. Le risposte errate riducono l'indice di <strong>10 punti</strong> ciascuna. Limite: 3 errori per invio.</p>
+        </div>
+
+        <div id="t1-lock-notice" class="lock-notice">
+          <strong>Accesso non autorizzato.</strong><br>
+          Consulta almeno 4 documenti del fascicolo per sbloccare questo terminale.
+        </div>
+
+        <div id="t1-form" style="display:none">
+          <div class="terminal-frame">
+            <div class="terminal-header">
+              <div class="terminal-led"></div>
+              <span class="terminal-label">Terminale</span>
+              <span class="terminal-id">01 — Analisi preliminare</span>
+            </div>
+            <div class="terminal-body">
+              <p class="terminal-desc">Prima registrazione investigativa. Analizza i dati disponibili e inserisci le tue osservazioni nei tre campi.</p>
+
+              <!-- Campo 1 -->
+              <div class="terminal-field">
+                <div class="terminal-field-label">
+                  <span>01 — Anomalia fisica</span>
+                  <span class="terminal-field-state" id="t1-state-1"></span>
+                </div>
+                <textarea class="terminal-input" id="t1-input-1" rows="2" placeholder="Indica l'anomalia fisica rilevante nella scena..."></textarea>
+                <div class="terminal-feedback-line" id="t1-fb-1"></div>
+              </div>
+
+              <!-- Campo 2 -->
+              <div class="terminal-field">
+                <div class="terminal-field-label">
+                  <span>02 — Elemento temporale</span>
+                  <span class="terminal-field-state" id="t1-state-2"></span>
+                </div>
+                <textarea class="terminal-input" id="t1-input-2" rows="2" placeholder="Indica l'elemento temporale che non quadra..."></textarea>
+                <div class="terminal-feedback-line" id="t1-fb-2"></div>
+              </div>
+
+              <!-- Campo 3 -->
+              <div class="terminal-field">
+                <div class="terminal-field-label">
+                  <span>03 — Sintesi investigativa</span>
+                  <span class="terminal-field-state" id="t1-state-3"></span>
+                </div>
+                <textarea class="terminal-input" id="t1-input-3" rows="3" placeholder="Sintetizza in una frase la tua lettura della scena..."></textarea>
+                <div class="terminal-feedback-line" id="t1-fb-3"></div>
+              </div>
+
+              <div class="terminal-actions">
+                <button class="btn-primary" id="t1-submit" onclick="submitTerminal1()">Invia registrazione</button>
+                <div class="terminal-error-count">Errori: <span id="t1-error-count">0</span>/3</div>
+              </div>
+
+              <div class="terminal-global-feedback" id="t1-global-fb"></div>
+              <div class="t-confirmed-msg" id="t1-confirmed">
+                ✓ Registrazione completata — Terminale 01 chiuso.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESITO -->
+      <div id="app-esito" class="app-section content-pad">
+        <div id="esito-placeholder" style="padding:2rem 0;color:var(--text-meta);font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;">
+          Completa il Terminale 01 per sbloccare l'esito.
+        </div>
+        <div id="esito-content" style="display:none">
+          <div class="esito-header">
+            <div class="esito-eyebrow">Atto I — Valutazione finale</div>
+            <div class="esito-score" id="esito-score-val">—</div>
+            <div class="esito-score-label">Indice investigativo</div>
+            <div class="esito-classification" id="esito-class">—</div>
+          </div>
+          <div class="esito-body" id="esito-body-text"></div>
+          <div class="esito-breakdown">
+            <div class="esito-breakdown-title">Dettaglio punteggio</div>
+            <div class="breakdown-row"><span class="breakdown-key">Punteggio base</span><span class="breakdown-val green">100</span></div>
+            <div class="breakdown-row"><span class="breakdown-key">Penalità hint</span><span class="breakdown-val red" id="bd-hints">— 0</span></div>
+            <div class="breakdown-row"><span class="breakdown-key">Penalità errori terminale</span><span class="breakdown-val red" id="bd-errors">— 0</span></div>
+            <div class="breakdown-row"><span class="breakdown-key">Indice finale</span><span class="breakdown-val" id="bd-total">100</span></div>
+          </div>
+          <div class="act2-tease">
+            <div class="act2-tease-label">Accesso — Atto II</div>
+            <p>La scena è stata analizzata. Ma la scena non racconta tutto. Quello che Andrea stava attraversando nei giorni precedenti alla sua morte è custodito altrove — nei numeri, nelle telefonate, nelle tracce che gli sopravvivono.</p>
+            <p style="margin-top:.75rem;color:var(--text-meta);font-size:13px;">Quando sei pronto, accedi all'Atto II: <em>Il Denaro</em>.</p>
+            <a href="atto2.html" class="act2-tease-link">Continua → Atto II</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUPPORTO -->
+      <div id="app-supporto" class="app-section content-pad">
+        <div class="section-header-block">
+          <div class="section-label">Supporto Archivista</div>
+          <h2 class="section-title-lg">Guida investigativa</h2>
+          <p class="section-desc">Ogni livello di supporto è indipendente e acquistabile singolarmente. Il costo viene detratto dall'indice investigativo.</p>
+        </div>
+        <div class="hints-intro">
+          <p>Il fascicolo contiene tutte le informazioni necessarie. Il supporto non fornisce la risposta — ti indica dove guardare e cosa connettere.</p>
+          <p class="hints-phase-desc">Ogni livello si acquista separatamente. Costi fissi: Osservazione −2 pt · Connessione −5 pt · Quasi soluzione −8 pt.</p>
+        </div>
+        <div id="puzzles-container"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Mobile FAB -->
+  <button class="mobile-fab" onclick="toggleMobileDrawer()" aria-label="Stato fascicolo">☰</button>
+  <div class="mobile-inv-drawer" id="mobile-inv-drawer" role="dialog" aria-modal="true" aria-label="Stato fascicolo" aria-hidden="true" onclick="closeMobileDrawerOutside(event)">
+    <div class="mobile-inv-inner">
+      <div class="mobile-inv-close"><button class="btn-ghost" onclick="toggleMobileDrawer()">Chiudi ×</button></div>
+      <div class="sidebar-block" style="margin-bottom:1rem">
+        <div class="sidebar-title">Persone coinvolte</div>
+        <div class="suspect-item"><span class="suspect-name">Andrea Marini</span><span class="suspect-role">Vittima</span></div>
+        <div class="suspect-item"><span class="suspect-name">Elena M.</span><span class="suspect-role hidden-role">███████</span></div>
+        <div class="suspect-item"><span class="suspect-name">Stefano M.</span><span class="suspect-role hidden-role">███████</span></div>
+        <div class="suspect-item"><span class="suspect-name">Davide S.</span><span class="suspect-role hidden-role">███████</span></div>
+      </div>
+      <div class="sidebar-block">
+        <div class="sidebar-title">Punteggio</div>
+        <div class="score-breakdown-line"><span class="k">Base</span><span class="v">100</span></div>
+        <div class="score-breakdown-line"><span class="k">Penalità hint</span><span class="v red" id="m-sb-hints">0</span></div>
+        <div class="score-breakdown-line"><span class="k">Errori</span><span class="v red" id="m-sb-errors">0</span></div>
+        <div class="score-breakdown-line"><span class="k">Indice</span><span class="v" id="m-sb-total">100</span></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     VIEWER DOCUMENTI
+═══════════════════════════════════════════════ -->
+<div class="viewer-overlay" id="viewer-overlay" role="dialog" aria-modal="true" aria-labelledby="viewer-doc-title-el">
+  <div class="viewer-modal">
+    <div class="viewer-header">
+      <div class="viewer-header-left">
+        <div class="viewer-doc-id" id="viewer-doc-id"></div>
+        <div class="viewer-doc-title" id="viewer-doc-title-el"></div>
+        <div class="viewer-doc-cat" id="viewer-doc-cat"></div>
+      </div>
+      <button class="viewer-close" onclick="closeViewer()" aria-label="Chiudi documento">×</button>
+    </div>
+    <div class="viewer-body" id="viewer-body">
+      <img id="viewer-img" class="viewer-image" src="" alt="">
+      <div class="viewer-transcript" id="viewer-transcript"></div>
+      <div class="viewer-notes">
+        <div class="viewer-notes-title">Note investigative</div>
+        <ul id="viewer-notes-list"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm reset -->
+<div class="confirm-overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="confirm-box">
+    <h3 id="confirm-title">Azzera la sessione?</h3>
+    <p>Tutti i progressi, i documenti aperti e il punteggio verranno azzerati. L'operazione è irreversibile.</p>
+    <div class="confirm-actions">
+      <button class="btn-primary" onclick="confirmReset()">Conferma reset</button>
+      <button class="btn-secondary" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SCRIPT
+═══════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+const APP_ID     = '69fdda0ce13e22a1cc6cd63c';
+const LS_KEY     = 'a17_atto1_v1';
+const VALID_CODE = 'A17-ATTO1';  // placeholder — verrà validato via backend
+
+// ===== DOCUMENTI =====
+const DOCUMENTS = [
+  {
+    id:'A01', title:'Profilo Andrea Marini', category:'Profilo personale',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f54f592df_ChatGPTImage8mag202617_41_40.png',
+    summary:'Dati biografici, nucleo familiare, abitudini note e informazioni preliminari.',
+    transcript:`Andrea Marini, 42 anni, consulente finanziario.
+
+Coniuge: Elena Marini.
+Fratello: Stefano Marini.
+Madre: Carla Bianchi.
+
+Ultimo accesso registrato allo studio: 18:42.
+
+Abitudini e note personali:
+— compilava documenti e firmava prevalentemente con la mano sinistra;
+— non risultano consumi abituali di alcol;
+— nessuna diagnosi psichiatrica nota;
+— terapia farmacologica leggera in corso.`,
+    notes:[
+      'Nessun precedente clinico di rilievo.',
+      'Rapporti familiari non approfonditi nel fascicolo preliminare.',
+      'Ultima attività registrata nello studio: ore 18:42 del 14/11/2024.'
+    ]
+  },
+  {
+    id:'A02', title:'Verbale di rinvenimento', category:'Verbale',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/09ae8c1c8_ChatGPTImage8mag202615_55_27.png',
+    summary:'Prima ricostruzione ufficiale dell\'accesso allo studio e degli elementi rinvenuti sulla scena.',
+    transcript:`Il corpo di Andrea Marini viene rinvenuto nel suo studio privato.
+
+La porta era chiusa a chiave, senza segni di effrazione.
+
+Davide Serra apre la porta usando la propria copia.
+
+Le chiavi personali di Andrea vengono rinvenute nella tasca interna sinistra della giacca indossata dalla vittima.
+
+Arma rinvenuta nella mano destra della vittima.
+
+Bicchiere di whisky sulla scrivania.
+
+Nessun segno evidente di colluttazione.`,
+    notes:[
+      'La porta era chiusa dall\'interno o dall\'esterno? Il verbale non specifica.',
+      'Davide Serra risulta in possesso di una copia delle chiavi.',
+      'Le chiavi personali di Andrea erano ancora nella tasca della giacca.',
+      'Nessun elemento di disordine segnalato nella stanza.'
+    ]
+  },
+  {
+    id:'A03', title:'Relazione medico-legale preliminare', category:'Medico-legale',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/de929f0ac_ChatGPTImage8mag202616_39_40.png',
+    summary:'Osservazioni preliminari sulla ferita, sulla postura del corpo e sulla possibile dinamica.',
+    transcript:`Ferita compatibile con colpo d'arma da fuoco alla tempia destra.
+
+Residui da sparo presenti, ma distribuzione non pienamente conclusiva.
+
+La postura del corpo e la posizione dell'arma non permettono di escludere l'intervento di terzi.
+
+Presenza di alcol nel bicchiere, non confermata come abitudine documentata della vittima.`,
+    notes:[
+      'La ferita è alla tempia destra.',
+      'Distribuzione residui da sparo: non conclusiva.',
+      'L\'ipotesi di intervento di terzi non è esclusa dalla relazione preliminare.',
+      'Il dato sull\'alcol è annotato come non verificato nelle abitudini della vittima.'
+    ]
+  },
+  {
+    id:'A04', title:'Rilievo fotografico dello studio', category:'Rilievo fotografico',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55059c6bc_ChatGPTImage8mag202616_37_16.png',
+    summary:'Documentazione visiva della scena nello studio privato. Rilievo effettuato la sera del 14/11/2024.',
+    transcript:`Scena documentata nello studio privato di Andrea Marini, 14/11/2024.
+
+Il corpo è a terra in prossimità della scrivania. Sulla scrivania è visibile il bicchiere di whisky segnalato nel verbale.
+
+La stanza appare in ordine. Non emergono segni di disordine o colluttazione nell'inquadratura documentata.`,
+    notes:[
+      'La stanza appare ordinata.',
+      'Posizione del corpo: a terra, vicino alla scrivania.',
+      'Il bicchiere di whisky è visibile sulla scrivania.',
+      'Confrontare posizione dell\'arma con quanto indicato nel verbale e nella relazione medico-legale.'
+    ]
+  },
+  {
+    id:'A05', title:'Agenda personale — 14 novembre', category:'Agenda',
+    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/706b9ac19_ChatGPTImage8mag202616_39_16.png',
+    summary:'Ultimi appuntamenti annotati nell\'agenda personale e nota manoscritta.',
+    transcript:`Agenda personale del 14 novembre 2024.
+
+09:30 — Banca.
+12:00 — Chiamare D.
+17:45 — Rivedere pratica M.
+19:30 — Cena con S.
+
+Nota manoscritta: "Non posso più coprire questa cosa."`,
+    notes:[
+      'Quattro appuntamenti registrati nel giorno.',
+      'La cena delle 19:30 con "S." non risulta avvenuta.',
+      'La nota finale è scritta a mano e non è datata con orario preciso.',
+      'Le iniziali D., M., S. non vengono spiegate nel fascicolo preliminare.'
+    ]
+  }
+];
+
+// ===== PUZZLES =====
+const PUZZLES = [
+  {
+    id:'P01', title:'L\'anomalia che nessuno commenta',
+    scope:'Identificare il dettaglio fisico più rilevante senza che il verbale lo interpreti.',
+    hints:[
+      {lvl:1,cost:2,txt:'Non cercare qualcosa di visibile nella foto. Cerca qualcosa che il verbale registra come dato oggettivo, senza trarne conseguenze.'},
+      {lvl:2,cost:5,txt:'Il verbale descrive dove è stata trovata l\'arma e con quale mano. Il profilo della vittima descrive come Andrea scriveva. Metti insieme questi due punti.'},
+      {lvl:3,cost:8,txt:'Andrea era mancino. L\'arma è stata trovata nella mano destra. In un suicidio autentico, questa combinazione è statisticamente rara e dovrebbe emergere nella tua registrazione come prima anomalia fisica.'}
+    ]
+  },
+  {
+    id:'P02', title:'Il tempo che non torna',
+    scope:'Individuare la discrepanza temporale tra i dati del fascicolo.',
+    hints:[
+      {lvl:1,cost:2,txt:'L\'agenda di Andrea registra un impegno serale. Il verbale registra l\'orario dell\'ultimo accesso allo studio. Metti a confronto i due dati.'},
+      {lvl:2,cost:5,txt:'La cena delle 19:30 con "S." non risulta avvenuta. L\'ultimo accesso allo studio è alle 18:42. L\'orario del decesso non è specificato. C\'è una finestra temporale che nessuno spiega.'},
+      {lvl:3,cost:8,txt:'Tra le 18:42 (ultimo accesso allo studio) e la cena mai avvenuta delle 19:30 c\'è meno di un\'ora. In questa finestra si concentra tutto. L\'elemento temporale da registrare è proprio questa discrepanza: un appuntamento che non ha avuto luogo, in un momento in cui qualcosa è già accaduto.'}
+    ]
+  },
+  {
+    id:'P03', title:'Quello che la nota non dice',
+    scope:'Interpretare la nota manoscritta nel contesto degli altri documenti.',
+    hints:[
+      {lvl:1,cost:2,txt:'La nota manoscritta non è datata con un orario. Ma è sull\'agenda del 14 novembre. Questo significa che è stata scritta — o è rilevante — in quel giorno. Chiediti cosa stava "coprendo" Andrea.'},
+      {lvl:2,cost:5,txt:'La nota dice "Non posso più coprire questa cosa." Non dice di chi o di cosa. Ma l\'agenda ha quattro appuntamenti, tra cui "Rivedere pratica M." L\'iniziale M. ritorna.'},
+      {lvl:3,cost:8,txt:'La nota è un\'ammissione indiretta. "Coprire" implica una complicità attiva — qualcosa che Andrea sapeva e teneva nascosto. Il tuo compito in questa fase non è identificare di cosa si tratta, ma registrare che la nota indica un contesto di pressione preesistente al decesso.'}
+    ]
+  },
+  {
+    id:'P04', title:'La scena che non si è disordinata',
+    scope:'Valutare la coerenza tra la scena e le ipotesi possibili.',
+    hints:[
+      {lvl:1,cost:2,txt:'Il verbale dice: nessun segno di colluttazione. La stanza è ordinata. Questo può significare due cose opposte: che non c\'è stata lotta, oppure che qualcuno ha rimesso in ordine.'},
+      {lvl:2,cost:5,txt:'La porta era chiusa a chiave. Davide Serra ha una copia. Le chiavi di Andrea erano in tasca. Una stanza ordinata con una porta chiusa può essere coerente con un suicidio — ma anche con una scena gestita con cura da chi aveva accesso.'},
+      {lvl:3,cost:8,txt:'La sintesi investigativa corretta non è "sembra un suicidio" né "è stato un omicidio". È: la scena è troppo coerente per essere conclusiva. Ogni elemento — la porta, l\'assenza di disordine, il bicchiere — può essere letto in entrambe le direzioni. Questo è esattamente il punto di partenza dell\'indagine.'}
+    ]
+  }
+];
+
+// ===== STATO =====
+function defaultState(){
+  return {
+    hintPenaltyTotal:0,
+    hintLevelsUsed:0,
+    errorsTerminal:0,
+    t1Errors:0,
+    docsOpened:[],
+    t1Completed:false,
+    t1Feedback:'',
+    finalUnlocked:false,
+    hintsRevealed:{},
+    hintPuzzleCost:{},
+    puzzleOpen:{},
+    currentSection:'intro'
+  };
+}
+let state = defaultState();
+
+// ===== SCORE =====
+function computeScore(){
+  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+}
+
+// ===== PERSIST =====
+function saveState(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+}
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const saved = JSON.parse(raw);
+    const def   = defaultState();
+    // flat merge
+    Object.keys(def).forEach(k => {
+      if(saved[k] !== undefined) state[k] = saved[k];
+    });
+    // deep merge oggetti
+    ['hintsRevealed','hintPuzzleCost','puzzleOpen'].forEach(k => {
+      state[k] = Object.assign({}, def[k], saved[k]||{});
+    });
+    if(!Array.isArray(state.docsOpened)) state.docsOpened = [];
+  }catch(e){ state = defaultState(); }
+}
+
+// ===== UTILS =====
+function normalize(str){
+  return String(str||'').toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[.,;:!?'"()\[\]\/\\]/g,' ')
+    .replace(/\s+/g,' ').trim();
+}
+function prep(val){ return normalize(val); }
+
+let toastTimer;
+function showToast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' toast-'+type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className=''; }, 3200);
+}
+
+// ===== ACCESSO =====
+function doAccess(){
+  const input = document.getElementById('code-input').value.trim().toUpperCase();
+  const errEl = document.getElementById('access-error');
+  const btn   = document.getElementById('access-btn');
+
+  if(!input){ showAccessError('Inserisci il codice di accesso.'); return; }
+
+  // Validazione locale: accetta A17-ATTO1 come demo, altrimenti chiama il backend
+  const LOCAL_CODES = ['A17-ATTO1','A17-DEMO'];
+  if(LOCAL_CODES.includes(input)){
+    errEl.classList.remove('visible');
+    bootApp();
+    return;
+  }
+
+  // Validazione backend via validateCode
+  btn.disabled = true;
+  btn.textContent = 'Verifica...';
+  const FUNCTIONS_BASE = `https://base44.app/api/apps/${APP_ID}/functions`;
+  fetch(`${FUNCTIONS_BASE}/validateCode`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ code: input, act: 1 })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.textContent = 'Accedi al Fascicolo';
+    if(data.ok){
+      errEl.classList.remove('visible');
+      bootApp();
+    } else {
+      showAccessError(data.error || 'Codice non valido.');
+    }
+  })
+  .catch(() => {
+    btn.disabled = false;
+    btn.textContent = 'Accedi al Fascicolo';
+    showAccessError('Errore di rete. Riprova.');
+  });
+}
+function showAccessError(msg){
+  const e = document.getElementById('access-error');
+  e.textContent = msg;
+  e.classList.add('visible');
+}
+function bootApp(){
+  loadState();
+  document.getElementById('section-access').classList.remove('active');
+  document.getElementById('section-app').classList.add('active');
+  updateUI();
+  renderDocsGrid();
+  renderPuzzles();
+  showSection(state.currentSection || 'intro');
+}
+
+// ===== NAVIGAZIONE =====
+const SECTIONS = ['intro','fascicolo','terminale','esito','supporto'];
+function showSection(name){
+  if(name === 'terminale' && state.docsOpened.length < 4){
+    document.getElementById('lock-notice-terminal').style.display = 'block';
+    document.getElementById('t1-lock-notice').style.display = 'block';
+    document.getElementById('t1-form').style.display = 'none';
+  } else if(name === 'terminale'){
+    document.getElementById('lock-notice-terminal').style.display = 'none';
+    document.getElementById('t1-lock-notice').style.display = 'none';
+    document.getElementById('t1-form').style.display = 'block';
+    restoreTerminalUI();
+  }
+  if(name === 'esito' && !state.finalUnlocked) return;
+
+  SECTIONS.forEach(s => {
+    document.getElementById('app-'+s)?.classList.toggle('active', s === name);
+    const nb = document.getElementById('nav-'+s);
+    if(nb) nb.classList.toggle('active', s === name);
+  });
+  state.currentSection = name;
+  saveState();
+}
+
+// ===== UPDATE UI =====
+function updateUI(){
+  const score = computeScore();
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('sb-hints').textContent  = '-' + state.hintPenaltyTotal;
+  document.getElementById('sb-errors').textContent = '-' + (state.errorsTerminal * 10);
+  document.getElementById('sb-total').textContent  = score;
+  const m1 = document.getElementById('m-sb-hints');
+  const m2 = document.getElementById('m-sb-errors');
+  const m3 = document.getElementById('m-sb-total');
+  if(m1) m1.textContent = '-' + state.hintPenaltyTotal;
+  if(m2) m2.textContent = '-' + (state.errorsTerminal * 10);
+  if(m3) m3.textContent = score;
+
+  // nav lock
+  const navT = document.getElementById('nav-terminale');
+  const navE = document.getElementById('nav-esito');
+  if(navT){ navT.classList.toggle('locked', state.docsOpened.length < 4); }
+  if(navE){ navE.classList.toggle('locked', !state.finalUnlocked); }
+
+  // docs count
+  const dc = document.getElementById('docs-opened-count');
+  if(dc) dc.textContent = state.docsOpened.length;
+}
+
+// ===== DOCS GRID =====
+function renderDocsGrid(){
+  const grid = document.getElementById('docs-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  DOCUMENTS.forEach(doc => {
+    const opened = state.docsOpened.includes(doc.id);
+    const card = document.createElement('div');
+    card.className = 'doc-card' + (opened ? ' opened' : '');
+    card.innerHTML =
+      '<div class="doc-id">' + doc.id + '</div>' +
+      '<div class="doc-title">' + doc.title + '</div>' +
+      '<div class="doc-cat">' + doc.category + '</div>' +
+      (opened ? '<div class="doc-status">✓ Consultato</div>' : '');
+    card.addEventListener('click', () => openDoc(doc.id));
+    grid.appendChild(card);
+  });
+}
+
+function openDoc(id){
+  const doc = DOCUMENTS.find(d => d.id === id);
+  if(!doc) return;
+
+  if(!state.docsOpened.includes(id)){
+    state.docsOpened.push(id);
+    saveState();
+    updateUI();
+    renderDocsGrid();
+    // sblocca terminale se raggiunti 4
+    if(state.docsOpened.length >= 4){
+      const navT = document.getElementById('nav-terminale');
+      if(navT) navT.classList.remove('locked');
+      showToast('Terminale 01 sbloccato', 'success');
+    }
+    // rivela ruoli nella sidebar al primo doc
+    if(state.docsOpened.length >= 1){
+      document.getElementById('role-elena').textContent   = 'Moglie';
+      document.getElementById('role-elena').classList.remove('hidden-role');
+      document.getElementById('role-stefano').textContent = 'Fratello';
+      document.getElementById('role-stefano').classList.remove('hidden-role');
+      document.getElementById('role-davide').textContent  = 'Collega / socio';
+      document.getElementById('role-davide').classList.remove('hidden-role');
+    }
+  }
+
+  // Popola viewer
+  document.getElementById('viewer-doc-id').textContent    = doc.id;
+  document.getElementById('viewer-doc-title-el').textContent = doc.title;
+  document.getElementById('viewer-doc-cat').textContent   = doc.category;
+  document.getElementById('viewer-transcript').textContent = doc.transcript;
+  const notesList = document.getElementById('viewer-notes-list');
+  notesList.innerHTML = doc.notes.map(n => '<li>' + n + '</li>').join('');
+
+  const img = document.getElementById('viewer-img');
+  img.src = '';
+  img.classList.remove('error-hidden');
+  if(doc.imageUrl){
+    img.src = doc.imageUrl;
+    img.addEventListener('error', () => img.classList.add('error-hidden'), {once:true});
+  } else {
+    img.classList.add('error-hidden');
+  }
+
+  // reset scroll
+  const vb = document.getElementById('viewer-body');
+  if(vb) vb.scrollTop = 0;
+  document.getElementById('viewer-overlay').classList.add('open');
+  document.getElementById('viewer-overlay').setAttribute('aria-hidden','false');
+}
+
+function closeViewer(){
+  document.getElementById('viewer-overlay').classList.remove('open');
+  document.getElementById('viewer-overlay').setAttribute('aria-hidden','true');
+}
+
+// ===== VALIDAZIONE T1 =====
+// Dizionari campo 1 — Anomalia fisica (mancino / mano destra)
+const C1_OK = [
+  'mancin','sinistr','mano sinistr','scriveva con la sinistr','firmava con la sinistr',
+  'mano destra','arma nella destra','impugnatura destra','destra','colpo alla destra',
+  'mano wrong','contraddizione mano','incoerenza mano','mano sbagliata'
+];
+const C1_AMBIG = [
+  'anomalia','qualcosa non torna','strano','incoerenza','contraddizione','dettaglio'
+];
+
+// Dizionari campo 2 — Elemento temporale
+const C2_OK = [
+  'cena','19:30','19.30','ore 19','sera','s\\.','stefano','appuntamento mancato',
+  'cena non avvenuta','cena saltata','cena con s','18:42','18.42','ora del decesso',
+  'finestra temporale','orario','tempo','discrepanza temporale','dopo le 18','prima delle 19',
+  'appuntamento','impegno serale','non si è presentato','irreperibile','nota agenda'
+];
+const C2_AMBIG = [
+  'agenda','14 novembre','giorno','orario non quadra','non torna'
+];
+
+// Dizionari campo 3 — Sintesi (libera, accetta molte forme)
+const C3_OK_KW = [
+  'mancin','sinistr','destra','anomalia','cena','agenda','appuntamento',
+  'nota','coprire','suicidio','omicidio','scena','porta','chiave','davide',
+  'chiusa','alcol','relazione','residui','tempia','arma','incoerenza',
+  'intervento di terzi','terzi','non conclusiv','escludere','non esclude'
+];
+const C3_MIN_KW = 2; // min 2 keyword per la sintesi
+
+function setFieldState(n, st, msg){
+  const fb = document.getElementById('t1-fb-'+n);
+  const badge = document.getElementById('t1-state-'+n);
+  const labelMap = {ok:'Validato', ambiguous:'Chiarire', error:'Errore'};
+  if(fb){ fb.textContent = msg; fb.className = 'terminal-feedback-line ' + st; }
+  if(badge){ badge.textContent = labelMap[st] || ''; badge.className = 'terminal-field-state ' + st; }
+}
+
+function submitTerminal1(){
+  if(state.t1Completed) return;
+  if(state.docsOpened.length < 4){
+    showToast('Consulta almeno 4 documenti prima di procedere.');
+    return;
+  }
+
+  const v1 = prep(document.getElementById('t1-input-1').value || '');
+  const v2 = prep(document.getElementById('t1-input-2').value || '');
+  const v3 = prep(document.getElementById('t1-input-3').value || '');
+
+  let errorsThisSubmit = 0;
+  const maxErrorsThisSubmit = 3;
+
+  // ── Campo 1: anomalia fisica ──
+  let s1, m1;
+  if(C1_OK.some(k => v1.includes(k))){
+    s1='ok'; m1='Anomalia fisica identificata correttamente.';
+  } else if(C1_AMBIG.some(k => v1 === k || v1.startsWith(k+' ') || v1.includes(' '+k+' ') || v1.endsWith(' '+k))){
+    s1='ambiguous'; m1='Osservazione generica — specifica l\'anomalia fisica concreta rilevata.';
+  } else if(v1.length < 3){
+    s1='ambiguous'; m1='Campo incompleto.';
+  } else {
+    s1='error'; m1='Anomalia non riconosciuta. Rileggi attentamente il profilo e il verbale.';
+    if(errorsThisSubmit < maxErrorsThisSubmit){ errorsThisSubmit++; }
+  }
+  setFieldState(1, s1, m1);
+
+  // ── Campo 2: elemento temporale ──
+  let s2, m2;
+  if(C2_OK.some(k => v2.includes(k))){
+    s2='ok'; m2='Elemento temporale registrato.';
+  } else if(C2_AMBIG.some(k => v2 === k || v2.includes(k))){
+    s2='ambiguous'; m2='Risposta generica — indica l\'elemento temporale specifico che non quadra.';
+  } else if(v2.length < 3){
+    s2='ambiguous'; m2='Campo incompleto.';
+  } else {
+    s2='error'; m2='Elemento non pertinente. Confronta l\'agenda con gli orari del verbale.';
+    if(errorsThisSubmit < maxErrorsThisSubmit){ errorsThisSubmit++; }
+  }
+  setFieldState(2, s2, m2);
+
+  // ── Campo 3: sintesi ──
+  let s3, m3;
+  const kwCount = C3_OK_KW.filter(k => v3.includes(k)).length;
+  if(kwCount >= C3_MIN_KW){
+    s3='ok'; m3='Sintesi investigativa registrata.';
+  } else if(kwCount === 1 || v3.length > 15){
+    s3='ambiguous'; m3='Sintesi troppo generica — includi almeno due elementi concreti del fascicolo.';
+  } else if(v3.length < 5){
+    s3='ambiguous'; m3='Campo incompleto.';
+  } else {
+    s3='error'; m3='Sintesi non pertinente al fascicolo. Basa la risposta sui documenti consultati.';
+    if(errorsThisSubmit < maxErrorsThisSubmit){ errorsThisSubmit++; }
+  }
+  setFieldState(3, s3, m3);
+
+  // applica errori
+  state.errorsTerminal += errorsThisSubmit;
+  state.t1Errors = (state.t1Errors || 0) + errorsThisSubmit;
+  document.getElementById('t1-error-count').textContent = state.t1Errors;
+
+  if(errorsThisSubmit > 0){
+    showToast('−' + (errorsThisSubmit * 10) + ' pt — errori rilevati', 'error');
+  }
+
+  updateUI();
+
+  // completo se tutti ok o almeno ambiguous (no error)
+  const allValid = [s1,s2,s3].every(s => s === 'ok' || s === 'ambiguous');
+  const noErrors = [s1,s2,s3].every(s => s !== 'error');
+
+  if(noErrors && allValid){
+    state.t1Completed = true;
+    state.finalUnlocked = true;
+
+    // feedback narrativo
+    const feedback = 'Prima registrazione accettata.\n\nHai identificato le fratture iniziali nella scena. L\'anomalia fisica, il tempo che manca e la coerenza troppo costruita della stanza sono i tre punti da cui parte ogni indagine reale.\n\nL\'Atto II ti aspetta.';
+    state.t1Feedback = feedback;
+
+    const gfb = document.getElementById('t1-global-fb');
+    gfb.textContent = feedback;
+    gfb.classList.add('visible');
+
+    const sub = document.getElementById('t1-submit');
+    sub.disabled = true;
+    sub.style.display = 'none';
+
+    const conf = document.getElementById('t1-confirmed');
+    conf.classList.add('visible');
+
+    saveState();
+    updateUI();
+    renderEsito();
+
+    setTimeout(() => {
+      const navE = document.getElementById('nav-esito');
+      if(navE) navE.classList.remove('locked');
+      showToast('Terminale 01 completato — Esito sbloccato', 'success');
+    }, 800);
+  } else {
+    saveState();
+  }
+}
+
+function restoreTerminalUI(){
+  // Ripristina contatore
+  document.getElementById('t1-error-count').textContent = state.t1Errors || 0;
+
+  if(state.t1Completed){
+    const sub = document.getElementById('t1-submit');
+    sub.disabled = true;
+    sub.style.display = 'none';
+
+    const conf = document.getElementById('t1-confirmed');
+    conf.classList.add('visible');
+
+    if(state.t1Feedback){
+      const gfb = document.getElementById('t1-global-fb');
+      gfb.textContent = state.t1Feedback;
+      gfb.classList.add('visible');
+    }
+  } else {
+    const sub = document.getElementById('t1-submit');
+    sub.disabled = false;
+    sub.style.display = '';
+  }
+}
+
+// ===== ESITO =====
+function renderEsito(){
+  const score = computeScore();
+  document.getElementById('esito-score-val').textContent = score;
+  document.getElementById('bd-hints').textContent  = '− ' + state.hintPenaltyTotal;
+  document.getElementById('bd-errors').textContent = '− ' + (state.errorsTerminal * 10);
+  document.getElementById('bd-total').textContent  = score;
+
+  let cls, bodyText;
+  if(score >= 90){
+    cls = 'Archivista in formazione';
+    bodyText = '<p>Lettura della scena precisa e metodica. Hai isolato l\'anomalia fisica, riconosciuto la frattura temporale e costruito una sintesi coerente. È esattamente il tipo di approccio che l\'indagine richiederà nei prossimi atti.</p><p>L\'Atto II ti metterà davanti alla pista più rumorosa. Il tuo compito sarà non farti distrarre da essa.</p>';
+  } else if(score >= 75){
+    cls = 'Investigatore';
+    bodyText = '<p>Prima lettura solida. Hai colto i punti essenziali della scena anche se con qualche approssimazione. Le anomalie che hai identificato sono quelle giuste — il percorso è impostato correttamente.</p><p>Nell\'Atto II le tracce si moltiplicano. Mantieni lo stesso metodo.</p>';
+  } else if(score >= 60){
+    cls = 'Collaboratore';
+    bodyText = '<p>Lettura incompleta ma orientata nella direzione corretta. Alcuni elementi chiave sono stati individuati, altri sono stati sfiorati senza essere definiti con precisione. Il fascicolo conteneva tutto il necessario.</p><p>Porta questa consapevolezza nell\'Atto II.</p>';
+  } else {
+    cls = 'Osservatore';
+    bodyText = '<p>Prima lettura ancora in fase di calibrazione. Le anomalie erano presenti nel fascicolo, ma non sono state tradotte in osservazioni investigative precise. Non è un fallimento — è il punto di partenza di ogni indagine reale.</p><p>L\'Atto II aggiunge complessità. Rilassa il metodo e osserva prima di interpretare.</p>';
+  }
+
+  document.getElementById('esito-class').textContent = cls;
+  document.getElementById('esito-body-text').innerHTML = bodyText;
+  document.getElementById('esito-placeholder').style.display = 'none';
+  document.getElementById('esito-content').style.display = 'block';
+}
+
+// ===== PUZZLES / HINT =====
+function useHint(pid, lvl){
+  if(!state.hintsRevealed[pid]) state.hintsRevealed[pid] = {};
+  if(state.hintsRevealed[pid][lvl]) return;
+  const puzzle = PUZZLES.find(p => p.id === pid);
+  if(!puzzle) return;
+  const hint = puzzle.hints.find(h => h.lvl === lvl);
+  if(!hint) return;
+  state.hintsRevealed[pid][lvl] = true;
+  state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + hint.cost;
+  state.hintPenaltyTotal += hint.cost;
+  state.hintLevelsUsed = (state.hintLevelsUsed||0) + 1;
+  saveState();
+  updateUI();
+  renderPuzzles();
+  showToast('−' + hint.cost + ' pt — Supporto sbloccato', 'error');
+}
+
+function togglePuzzle(pid){
+  state.puzzleOpen[pid] = !state.puzzleOpen[pid];
+  saveState();
+  renderPuzzles();
+}
+
+function buildPuzzleEl(puzzle){
+  const revealed = state.hintsRevealed[puzzle.id] || {};
+  const isOpen   = state.puzzleOpen[puzzle.id];
+  const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
+
+  let hintsHtml = '';
+  puzzle.hints.forEach(h => {
+    const isRev = revealed[h.lvl] === true;
+    const lvlName = h.lvl===1 ? 'Osservazione' : h.lvl===2 ? 'Connessione' : 'Quasi soluzione';
+    hintsHtml +=
+      '<div class="hint-level-row ' + (isRev ? 'used' : '') + '">' +
+        '<div class="hint-level-meta">' +
+          '<div class="hint-level-name">' + lvlName + ' · Lv.' + h.lvl + '</div>' +
+          '<div class="hint-level-text ' + (isRev ? '' : 'hidden-hint') + '">' +
+            (isRev ? h.txt : 'Livello non ancora sbloccato.') +
+          '</div>' +
+        '</div>' +
+        '<div class="hint-level-right">' +
+          (isRev
+            ? '<span class="hint-used-tag">Sbloccato</span>'
+            : '<span class="hint-cost-tag">−' + h.cost + ' pt</span>' +
+              '<button class="hint-unlock-btn" data-pid="' + puzzle.id + '" data-lvl="' + h.lvl + '">Sblocca</button>'
+          ) +
+        '</div>' +
+      '</div>';
+  });
+
+  const div = document.createElement('div');
+  div.className = 'puzzle-card' + (isOpen ? ' open' : '');
+  div.innerHTML =
+    '<div class="puzzle-card-header">' +
+      '<div class="puzzle-card-left">' +
+        '<span class="puzzle-id">' + puzzle.id + '</span>' +
+        '<span class="puzzle-title">' + puzzle.title + '</span>' +
+      '</div>' +
+      (totalSpent > 0 ? '<span class="puzzle-cost-badge">−' + totalSpent + ' pt</span>' : '') +
+      '<span class="puzzle-chevron">▾</span>' +
+    '</div>' +
+    '<div class="puzzle-card-body">' +
+      '<p class="puzzle-scope">' + puzzle.scope + '</p>' +
+      hintsHtml +
+    '</div>';
+
+  div.querySelector('.puzzle-card-header').addEventListener('click', () => togglePuzzle(puzzle.id));
+  div.querySelectorAll('.hint-unlock-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      useHint(btn.dataset.pid, parseInt(btn.dataset.lvl));
+    });
+  });
+  return div;
+}
+
+function renderPuzzles(){
+  const c = document.getElementById('puzzles-container');
+  if(!c) return;
+  c.innerHTML = '';
+  PUZZLES.forEach(p => c.appendChild(buildPuzzleEl(p)));
+}
+
+// ===== RESET =====
+function showResetConfirm(){
+  document.getElementById('confirm-overlay').classList.add('visible');
+}
+function confirmReset(){
+  state = defaultState();
+  saveState();
+  document.getElementById('confirm-overlay').classList.remove('visible');
+
+  // reset UI terminale
+  ['t1-input-1','t1-input-2','t1-input-3'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  [1,2,3].forEach(n => setFieldState(n,'',''));
+  document.getElementById('t1-error-count').textContent = '0';
+  const sub = document.getElementById('t1-submit');
+  if(sub){ sub.disabled = false; sub.style.display = ''; }
+  const conf = document.getElementById('t1-confirmed');
+  if(conf) conf.classList.remove('visible');
+  const gfb = document.getElementById('t1-global-fb');
+  if(gfb){ gfb.textContent=''; gfb.classList.remove('visible'); }
+  // reset esito
+  document.getElementById('esito-placeholder').style.display = 'block';
+  document.getElementById('esito-content').style.display = 'none';
+  // reset ruoli sidebar
+  ['role-elena','role-stefano','role-davide'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.textContent='███████'; el.classList.add('hidden-role'); }
+  });
+
+  updateUI();
+  renderDocsGrid();
+  renderPuzzles();
+  showSection('intro');
+  showToast('Sessione azzerata');
+}
+
+// ===== MOBILE DRAWER =====
+function toggleMobileDrawer(){
+  const d = document.getElementById('mobile-inv-drawer');
+  d.classList.toggle('open');
+  d.setAttribute('aria-hidden', String(!d.classList.contains('open')));
+}
+function closeMobileDrawerOutside(e){
+  if(e.target === e.currentTarget) toggleMobileDrawer();
+}
+
+// ===== ESC KEY =====
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    const viewer = document.getElementById('viewer-overlay');
+    if(viewer.classList.contains('open')){ closeViewer(); return; }
+    const confirm = document.getElementById('confirm-overlay');
+    if(confirm.classList.contains('visible')){ confirm.classList.remove('visible'); return; }
+    const drawer = document.getElementById('mobile-inv-drawer');
+    if(drawer.classList.contains('open')){ toggleMobileDrawer(); }
+  }
+});
+
+// ===== ENTER su input accesso =====
+document.getElementById('code-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter') doAccess();
+});
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  // Se sessione già avviata, salta l'accesso
+  loadState();
+  if(state.docsOpened.length > 0 || state.t1Completed || state.hintPenaltyTotal > 0){
+    document.getElementById('section-access').classList.remove('active');
+    document.getElementById('section-app').classList.add('active');
+    updateUI();
+    renderDocsGrid();
+    renderPuzzles();
+    showSection(state.currentSection || 'intro');
+    if(state.finalUnlocked) renderEsito();
+  }
+});
+
+</script>
+</body>
+</html>
