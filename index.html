@@ -1787,6 +1787,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;heigh
 
 const BETA_CODE = 'A17-BETA';
 const LS_KEY = 'a17_v2_state';
+const API_BASE = 'https://vault-seventeen-keep.base44.app/functions';
 
 const HINT_COSTS = { 1: 2, 2: 5, 3: 8 };
 
@@ -1938,6 +1939,9 @@ let state = {
 // --- STORAGE: variabile globale come fonte primaria + sync localStorage/sessionStorage ---
 let _memStorage = {};
 let _accessed = false; // flag accesso in-memory, sopravvive ai reload nella stessa tab
+let _sessionToken = null;
+let _codeId = null;
+let _accessCode = null;
 
 function lsGet(k) {
   if (_memStorage[k] !== undefined) return _memStorage[k];
@@ -1975,6 +1979,11 @@ function init() {
     });
   }
 
+  // Ripristina token sessione
+  _sessionToken = lsGet('a17_v2_session_token') || null;
+  _codeId = lsGet('a17_v2_code_id') || null;
+  _accessCode = lsGet('a17_v2_access_code') || null;
+
   if (_accessed || lsGet('a17_v2_accessed')) {
     _accessed = true;
     showApp();
@@ -1982,7 +1991,30 @@ function init() {
   }
 }
 
-function saveState() { lsSet(LS_KEY, JSON.stringify(state)); }
+function saveState() {
+  lsSet(LS_KEY, JSON.stringify(state));
+  // Sync cloud (fire-and-forget)
+  const tok = _sessionToken || lsGet('a17_v2_session_token');
+  const cid = _codeId || lsGet('a17_v2_code_id');
+  if (tok && cid) {
+    fetch(API_BASE + '/updateSession', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code_id: cid,
+        session_token: tok,
+        updates: {
+          t1_completed: state.terminalCompleted,
+          final_unlocked: state.finalUnlocked,
+          docs_opened_act1: state.documentsOpened,
+          hints_revealed: state.hintsRevealed,
+          current_section: state.currentSection,
+          current_act: 1
+        }
+      })
+    }).catch(() => {});
+  }
+}
 
 function restoreState() {
   updateIndiceDisplay();
@@ -2001,14 +2033,69 @@ function submitAccess() {
   if (!inputEl) return;
   const v = inputEl.value.trim().toUpperCase().replace(/\s/g, '');
   const errorEl = document.getElementById('access-error');
-  if (v === BETA_CODE) {
-    _accessed = true;
-    lsSet('a17_v2_accessed', '1');
-    if (errorEl) errorEl.classList.remove('visible');
-    showApp();
-  } else {
-    if (errorEl) errorEl.classList.add('visible');
-  }
+  const btn = document.querySelector('#screen-access .btn-primary');
+
+  if (!v) { if (errorEl) { errorEl.textContent = 'Inserisci il codice di accesso.'; errorEl.classList.add('visible'); } return; }
+
+  // Disable btn durante la chiamata
+  if (btn) { btn.disabled = true; btn.textContent = 'Verifica in corso...'; }
+  if (errorEl) errorEl.classList.remove('visible');
+
+  // Genera fingerprint semplice
+  const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0, 32);
+
+  fetch(API_BASE + '/validateCode', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code: v, fingerprint: fp })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (btn) { btn.disabled = false; btn.textContent = 'Accedi al fascicolo'; }
+    if (data.ok && data.session_token) {
+      _sessionToken = data.session_token;
+      _codeId = data.device_id ? data.game_session.code_id : (data.access_code ? data.access_code.id : null);
+      _accessCode = v;
+      lsSet('a17_v2_session_token', data.session_token);
+      lsSet('a17_v2_code_id', data.game_session.code_id);
+      lsSet('a17_v2_access_code', v);
+      _accessed = true;
+      lsSet('a17_v2_accessed', '1');
+      if (errorEl) errorEl.classList.remove('visible');
+      // Ripristina stato dal server se disponibile
+      if (data.game_session) mergeServerState(data.game_session);
+      showApp();
+    } else {
+      if (errorEl) {
+        errorEl.textContent = data.error || 'Codice non valido o accesso negato.';
+        errorEl.classList.add('visible');
+      }
+    }
+  })
+  .catch(() => {
+    // Fallback locale (beta code) se il backend non risponde
+    if (btn) { btn.disabled = false; btn.textContent = 'Accedi al fascicolo'; }
+    if (v === BETA_CODE) {
+      _accessed = true;
+      lsSet('a17_v2_accessed', '1');
+      if (errorEl) errorEl.classList.remove('visible');
+      showApp();
+    } else {
+      if (errorEl) { errorEl.textContent = 'Errore di connessione. Riprova.'; errorEl.classList.add('visible'); }
+    }
+  });
+}
+
+function mergeServerState(gs) {
+  if (!gs) return;
+  if (gs.t1_completed) state.terminalCompleted = true;
+  if (gs.final_unlocked) state.finalUnlocked = true;
+  if (gs.docs_opened_act1 && gs.docs_opened_act1.length) state.documentsOpened = gs.docs_opened_act1;
+  if (gs.hints_revealed && Object.keys(gs.hints_revealed).length) Object.assign(state.hintsRevealed, gs.hints_revealed);
+  if (typeof gs.penalty_act1_hints === 'number') state.hintPenaltyTotal = gs.penalty_act1_hints;
+  if (typeof gs.penalty_act1_errors === 'number') state.errorsTerminal = Math.round(gs.penalty_act1_errors / 10);
+  state.score = computeScore ? computeScore() : Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  saveState();
 }
 
 function showApp() {
@@ -2371,6 +2458,20 @@ function completeTerminal() {
   updateIndiceDisplay();
   renderInvPanel();
   saveState();
+  // Salva punteggio Atto 1 sul backend (fire-and-forget)
+  const ac = _accessCode || lsGet('a17_v2_access_code');
+  if (ac) {
+    fetch(API_BASE + '/saveActScore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        access_code: ac,
+        act: 1,
+        hint_penalty: state.hintPenaltyTotal || 0,
+        error_penalty: (state.errorsTerminal || 0) * 10
+      })
+    }).catch(() => {});
+  }
   setTimeout(() => { showSection('esito'); updateEsitoPanel(); }, 1800);
 }
 
@@ -2547,8 +2648,12 @@ function showResetConfirm() { document.getElementById('confirm-reset').classList
 function hideResetConfirm() { document.getElementById('confirm-reset').classList.remove('visible'); }
 function confirmReset() {
   _accessed = false;
+  _sessionToken = null; _codeId = null; _accessCode = null;
   lsRemove(LS_KEY);
   lsRemove('a17_v2_accessed');
+  lsRemove('a17_v2_session_token');
+  lsRemove('a17_v2_code_id');
+  lsRemove('a17_v2_access_code');
   location.reload();
 }
 
