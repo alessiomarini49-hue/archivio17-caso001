@@ -902,11 +902,23 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
             <div class="score-classname" id="esito-classname">—</div>
           </div>
           <div class="score-breakdown">
-            <div class="bd-row"><span>Punteggio base</span><span class="bd-val">100</span></div>
-            <div class="bd-row"><span>Supporti Archivista richiesti</span><span class="bd-val" id="esito-hint-count" style="color:var(--text-secondary)">0 livelli</span></div>
-            <div class="bd-row"><span>Penalità supporto Archivista</span><span class="bd-val penalty" id="esito-hint-cost">−0</span></div>
-            <div class="bd-row"><span>Penalità errori Terminale</span><span class="bd-val penalty" id="esito-err-cost">−0</span></div>
-            <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>
+            <div class="bd-row"><span>Punteggio base Caso 001</span><span class="bd-val">100</span></div>
+            <div class="bd-row" style="border-top:1px solid rgba(255,255,255,.06);margin-top:.3rem;padding-top:.6rem">
+              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO I</span>
+              <span class="bd-val penalty" id="esito-bd-act1">−0</span>
+            </div>
+            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act1-detail">hint −0 · errori −0</div>
+            <div class="bd-row" style="padding-top:.2rem">
+              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO II</span>
+              <span class="bd-val penalty" id="esito-bd-act2">−0</span>
+            </div>
+            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act2-detail">hint −0 · errori −0</div>
+            <div class="bd-row" style="padding-top:.2rem">
+              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO III</span>
+              <span class="bd-val penalty" id="esito-bd-act3">−0</span>
+            </div>
+            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act3-detail">hint −0 · errori −0</div>
+            <div class="bd-row total"><span>Indice Investigativo Globale</span><span class="bd-val" id="esito-total">100</span></div>
           </div>
         </div>
 
@@ -971,6 +983,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -1121,6 +1134,20 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 'use strict';
 // ===== DATI =====
 const LS_KEY = 'a17_atto3_v1';
+
+// ═══════════════════════════════════════════════
+// INDICE INVESTIGATIVO GLOBALE — Caso 001
+// ═══════════════════════════════════════════════
+const GLOBAL_KEY = 'a17_global_v1';
+function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
+let _global = defaultGlobal();
+function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
+function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
+function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
+function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
+function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
+function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
+
 const STATE_VERSION = 1;
 const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
@@ -1348,6 +1375,7 @@ function saveState(){
   }
 }
 function loadState(){
+  loadGlobal();
   try{
     const raw = localStorage.getItem(LS_KEY);
     if(!raw) return;
@@ -1365,7 +1393,8 @@ function loadState(){
   }catch(e){ console.warn('loadState failed:',e); }
 }
 function computeScore(){
-  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  updateGlobalFromActState(3, state.hintPenaltyTotal, state.errorsTerminal * 10);
+  return globalScore();
 }
 
 // ===== NORMALIZE =====
@@ -1794,6 +1823,7 @@ function submitTerminal3C(){
   if(allOk){
     state.t3cCompleted = true;
     state.finalUnlocked = true;
+    markActDone(3);
     document.getElementById('t3c-submit').disabled = true;
     document.getElementById('t3c-confirmed').classList.add('visible');
     const cm = document.getElementById('t3c-confirmed-msg'); if(cm) cm.textContent = 'Analisi conclusiva acquisita. Accesso all\'esito finale autorizzato.';
@@ -2080,6 +2110,18 @@ function updateUI(){
   if(state.finalUnlocked){
     ['nav-esito','mnav-esito'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
   }
+
+  // Breakdown globale sidebar (tutti e 3 gli atti)
+  const _p1h=_global.penalty_act1.hints||0, _p1e=_global.penalty_act1.errors||0, _p1t=_p1h+_p1e;
+  const _p2h=_global.penalty_act2.hints||0, _p2e=_global.penalty_act2.errors||0, _p2t=_p2h+_p2e;
+  const _p3h=_global.penalty_act3.hints||0, _p3e=_global.penalty_act3.errors||0, _p3t=_p3h+_p3e;
+  const _fmtBd3=(label,ph,pe,pt,done)=>
+    '<div><span style="color:var(--text-secondary)">'+label+'</span> '+
+    (pt>0?'<span style="color:var(--red-highlight)">−'+pt+'</span>':'<span style="color:#4CAF80">0</span>')+
+    '<span style="color:var(--text-dim);font-size:.62rem"> (hint −'+ph+' · err −'+pe+')</span>'+
+    (done?' <span style="color:var(--text-dim)">✓</span>':'')+'</div>';
+  const bdHtml3=_fmtBd3('Atto I:',_p1h,_p1e,_p1t,_global.act1_done)+_fmtBd3('Atto II:',_p2h,_p2e,_p2t,_global.act2_done)+_fmtBd3('Atto III:',_p3h,_p3e,_p3t,state.finalUnlocked);
+  ['inv-breakdown','m-inv-breakdown'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=bdHtml3; });
 }
 
 // ===== HINT SYSTEM =====
@@ -2209,6 +2251,12 @@ function renderPuzzles(){
 function showResetConfirm(){ document.getElementById('confirm-overlay').classList.add('visible'); }
 function confirmReset(){
   localStorage.removeItem(LS_KEY);
+  // Reset global atto 3 (mantieni gli altri atti)
+  _global['penalty_act3'] = {hints:0, errors:0};
+  _global['act3_done'] = false;
+  _global.locked = false;
+  _global.global_score = globalScore();
+  saveGlobal();
   // Pulisci token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
   localStorage.removeItem('a17_atto3_session_token');
