@@ -701,6 +701,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -743,6 +744,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="minv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
     </div>
     <div class="inv-section">
       <div class="inv-label">Progressione</div>
@@ -805,7 +807,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 <div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
     <h3 id="confirm-title">Azzera sessione?</h3>
-    <p>Tutti i progressi dell'Atto I verranno cancellati. L'indice investigativo verrà azzerato a 100. L'operazione è irreversibile.</p>
+    <p>Tutti i progressi dell'Atto I verranno cancellati. Le penalità dell'Atto I verranno azzerate. L'operazione è irreversibile.</p>
     <div class="confirm-actions">
       <button class="btn-primary" onclick="confirmReset()">Conferma reset</button>
       <button class="btn-ghost" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
@@ -823,6 +825,20 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 // ═══════════════════════════════════════════════
 const APP_ID         = '6a01e1b1d3635a758b84a530';
 const LS_KEY         = 'a17_atto1_v3';
+
+// ═══════════════════════════════════════════════
+// INDICE INVESTIGATIVO GLOBALE — Caso 001
+// ═══════════════════════════════════════════════
+const GLOBAL_KEY = 'a17_global_v1';
+function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
+let _global = defaultGlobal();
+function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
+function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
+function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
+function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
+function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
+function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
+
 const STATE_VERSION  = 3;
 const LOCAL_CODES    = ['A17-ATTO1', 'A17-DEMO'];
 const API_BASE       = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
@@ -978,6 +994,7 @@ function saveState(){
   }
 }
 function loadState(){
+  loadGlobal();
   let raw;
   try{ raw = localStorage.getItem(LS_KEY); }
   catch(e){ console.warn('[Archivio17] localStorage non disponibile:', e); return; }
@@ -1008,7 +1025,8 @@ function loadState(){
 // SCORING
 // ═══════════════════════════════════════════════
 function computeScore(){
-  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  updateGlobalFromActState(1, state.hintPenaltyTotal, state.errorsTerminal * 10);
+  return globalScore();
 }
 function fmtPenalty(v){ return v === 0 ? '0' : '−' + v; }
 
@@ -1409,6 +1427,7 @@ function submitTerminal1(){
       if(el) el.classList.remove('locked');
     });
 
+    markActDone(1);
     saveState();
     updateUI();
     renderEsito();
@@ -1643,6 +1662,19 @@ function updateUI(){
   setText('inv-errors', state.errorsTerminal);
   setText('minv-errors', state.errorsTerminal);
 
+  // Breakdown globale sidebar
+  const gs = globalScore();
+  const p1h = _global.penalty_act1.hints||0;
+  const p1e = _global.penalty_act1.errors||0;
+  const p1t = p1h + p1e;
+  const bdHtml = '<span style="color:var(--text-secondary)">Atto I:</span> ' +
+    (p1t > 0 ? '<span style="color:var(--red-highlight)">−'+p1t+'</span>' : '<span style="color:var(--success-text,#4CAF80)">0</span>') +
+    '<span style="color:var(--text-dim);font-size:.62rem"> (hint −'+p1h+' · err −'+p1e+')</span>';
+  const bdEl = document.getElementById('inv-breakdown');
+  const mbdEl = document.getElementById('minv-breakdown');
+  if(bdEl) bdEl.innerHTML = bdHtml;
+  if(mbdEl) mbdEl.innerHTML = bdHtml;
+
   // Fase
   let fase = 'Lettura preliminare';
   if(state.finalUnlocked) fase = 'Atto I chiuso';
@@ -1682,6 +1714,12 @@ function showResetConfirm(){
 }
 function confirmReset(){
   try{ localStorage.removeItem(LS_KEY); } catch(_){}
+  // Reset global atto 1 (mantieni atti 2 e 3)
+  _global.penalty_act1 = {hints:0, errors:0};
+  _global.act1_done = false;
+  _global.locked = false;
+  _global.global_score = globalScore();
+  saveGlobal();
   // Pulisci anche token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
   localStorage.removeItem('a17_atto1_session_token');
