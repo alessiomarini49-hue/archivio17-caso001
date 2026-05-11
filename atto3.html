@@ -1881,6 +1881,23 @@ function renderEsito(){
   const classEl = document.getElementById('esito-classname');
   if(scoreEl) scoreEl.className = total>=75?'score-number good':'score-number';
   if(classEl) classEl.className = total>=75?'score-classname good':'score-classname';
+
+  // Breakdown per atto dal global
+  const _p1h = _global.penalty_act1.hints||0,  _p1e = _global.penalty_act1.errors||0;
+  const _p2h = _global.penalty_act2.hints||0,  _p2e = _global.penalty_act2.errors||0;
+  const _p3h = _global.penalty_act3.hints||0,  _p3e = _global.penalty_act3.errors||0;
+  const _fmtPen = (h,e) => { const t=h+e; return t>0 ? '−'+t : '0'; };
+
+  setText('esito-bd-act1',       _fmtPen(_p1h, _p1e));
+  setText('esito-bd-act1-detail','hint −'+_p1h+' · errori −'+_p1e);
+  setText('esito-bd-act2',       _fmtPen(_p2h, _p2e));
+  setText('esito-bd-act2-detail','hint −'+_p2h+' · errori −'+_p2e);
+  setText('esito-bd-act3',       _fmtPen(_p3h, _p3e));
+  setText('esito-bd-act3-detail','hint −'+_p3h+' · errori −'+_p3e);
+
+  // Nascondi il pulsante reset una volta che il caso è chiuso
+  const resetBtn = document.getElementById('btn-reset-final');
+  if(resetBtn) resetBtn.style.display = 'none';
 }
 
 // ===== DOCS GRID =====
@@ -2090,6 +2107,11 @@ function updateUI(){
   const caseStatusEl = document.querySelector('.investigation-panel .inv-case-status');
   if(caseStatusEl && state.finalUnlocked) caseStatusEl.textContent = 'Caso archiviato';
 
+  // Nasconde i pulsanti reset quando il caso è chiuso
+  document.querySelectorAll('[onclick="showResetConfirm()"]').forEach(btn => {
+    btn.style.display = state.finalUnlocked ? 'none' : '';
+  });
+
   setText('p1-count', state.p1Opened.length);
   setText('p2-count', state.p2Opened.length);
 
@@ -2249,7 +2271,13 @@ function renderPuzzles(){
 }
 
 
-function showResetConfirm(){ document.getElementById('confirm-overlay').classList.add('visible'); }
+function showResetConfirm(){
+  if(state.finalUnlocked){
+    showToast('Il caso è chiuso. La sessione non può essere azzerata.');
+    return;
+  }
+  document.getElementById('confirm-overlay').classList.add('visible');
+}
 function confirmReset(){
   localStorage.removeItem(LS_KEY);
   // Reset global atto 3 (mantieni gli altri atti)
