@@ -452,23 +452,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 const APP_ID = '6a01e1b1d3635a758b84a530';
 const FUNCTIONS_BASE = `https://api.base44.app/api/apps/${APP_ID}/functions`;
-
-
-function escHtml(s) {
-  if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function escAttr(s) { return escHtml(s); }
-
-function escapeHtml(s) {
-  if (s == null) return '';
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+const ENDPOINT = `${FUNCTIONS_BASE}/adminActions`;
 
 const SESSION_KEY = 'a17_admin_session';
 const IDLE_TIMEOUT_MS = 30 * 60 * 1000;  // 30 minuti di inattività
@@ -485,9 +469,21 @@ let idleTimer = null;
 let idleWarningTimer = null;
 let idleCountdownTimer = null;
 
+// ── ESCAPE HELPERS ───────────────────────────────────────────────────────────
+// Dichiarate UNA volta sola, in cima al file.
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/`/g, '&#96;');
+}
+function escAttr(s) { return escHtml(s); }
+
 // ── LOGIN ────────────────────────────────────────────────────────────────────
-// FIX #1: usa `verify_admin` come è giusto. È la action progettata
-// nel backend per questo scopo — risponde sempre {ok: true} se la chiave è OK.
 async function doLogin() {
   const key = document.getElementById('admin-key-input').value.trim();
   const remember = document.getElementById('remember-session').checked;
@@ -500,7 +496,7 @@ async function doLogin() {
   showLoginError('');
 
   try {
-    const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
+    const res = await fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
       body: JSON.stringify({ action: 'verify_admin' })
@@ -623,7 +619,7 @@ function pulseRefreshDot() {
 
 // ── API ──────────────────────────────────────────────────────────────────────
 async function adminAction(action, params = {}) {
-  const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
+  const res = await fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
     body: JSON.stringify({ action, ...params })
@@ -637,12 +633,7 @@ async function adminAction(action, params = {}) {
 }
 
 // ── LOAD ALL ─────────────────────────────────────────────────────────────────
-// FIX #2: usa le action `list_*` invece delle entities API.
-// Le entities API di base44 non accettano `x-admin-key`, accettano solo l'auth
-// del utente loggato. Le actions del backend sono fatte apposta per il panel.
 async function loadAll(silent) {
-  // Promise.allSettled non rilancia se uno fallisce — possiamo render con i
-  // dati che ci sono e mostrare toast specifici per quelli mancanti.
   const results = await Promise.allSettled([loadCodes(silent), loadDevices(silent), loadSessions(silent)]);
   const failed = results.filter(r => r.status === 'rejected');
   if (failed.length === results.length && !silent) {
@@ -694,19 +685,16 @@ async function loadSessions(silent) {
 }
 
 // ── SCORE HELPERS ────────────────────────────────────────────────────────────
-// Breakdown penalità per singolo atto (hint + errori)
+// Breakdown penalità per singolo atto (hint + errori) — mostrato nella tabella
 function actBreakdown(s, act) {
   const h = s['penalty_act'+act+'_hints'] || 0;
   const e = s['penalty_act'+act+'_errors'] || 0;
   const tot = h + e;
-  if (!s['t'+(act===1?'1':act===2?'2b':'3c')+'_completed'] && act > 1) {
-    // atto non raggiunto
-  }
   const col = tot > 0 ? 'var(--red2)' : 'var(--text3)';
-  return `<span style="color:${col}">${tot>0?'−'+tot:'0'}</span><br><span style="font-size:.65rem;color:var(--text3)">h−${h} e−${e}</span>`;
+  return `<span style="color:${col}">${tot > 0 ? '−' + tot : '0'}</span><br><span style="font-size:.65rem;color:var(--text3)">h−${h} e−${e}</span>`;
 }
 
-// FIX #3: clamp a 0, niente score negativi visualizzati.
+// Clamp a 0, niente score negativi visualizzati.
 function computeScore(s) {
   if (s.score_final != null) return Math.max(0, s.score_final);
   const raw = 100 - (s.hint_penalty_total || 0) - ((s.errors_terminal || 0) * 10);
@@ -765,7 +753,7 @@ function renderDashboard() {
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:.75rem">
               <span class="code-badge">${escHtml(s.access_code || '—')}</span>
-              <span style="font-size:.75rem;color:var(--text3)">Atto ${escHtml(s.current_act || 1)}</span>
+              <span style="font-size:.75rem;color:var(--text3)">Atto ${escHtml(String(s.current_act || 1))}</span>
             </div>
             <div class="progress-bar" style="margin-top:.5rem">
               <div class="progress-fill" style="width:${progress}%"></div>
@@ -778,7 +766,6 @@ function renderDashboard() {
     }).join('');
   }
 
-  // Delegation per click sulle righe del dashboard
   rcEl.querySelectorAll('[data-action="open-detail"]').forEach(el => {
     el.addEventListener('click', () => openDetail(el.dataset.codeId));
   });
@@ -843,7 +830,6 @@ function renderCodesTable(codes) {
       </tbody>
     </table>
   `;
-  // Event delegation: niente più onclick="..." inline
   wrap.querySelectorAll('[data-action]').forEach(el => {
     el.addEventListener('click', e => {
       const action = el.dataset.action;
@@ -937,10 +923,10 @@ function renderSessionsTable(sessions) {
           return `
           <tr>
             <td><span class="code-badge">${escHtml(s.access_code || '—')}</span></td>
-            <td style="font-family:var(--mono)">Atto ${escHtml(s.current_act || 1)}</td>
+            <td style="font-family:var(--mono)">Atto ${escHtml(String(s.current_act || 1))}</td>
             <td style="min-width:110px">
               <div style="display:flex;gap:3px;flex-wrap:wrap">
-                ${['t1','t2a','t2b','t3a','t3b','t3c'].map(t=>
+                ${['t1','t2a','t2b','t3a','t3b','t3c'].map(t =>
                   `<span style="font-family:var(--mono);font-size:.65rem;padding:.1rem .3rem;background:${s[t+'_completed']?'rgba(90,180,100,.15)':'var(--bg2)'};border:1px solid ${s[t+'_completed']?'rgba(90,180,100,.4)':'var(--border)'};color:${s[t+'_completed']?'var(--green2)':'var(--text3)'}">${t.toUpperCase()}</span>`
                 ).join('')}
               </div>
@@ -1059,7 +1045,6 @@ function openDetail(codeId) {
     }
   `;
 
-  // Event delegation per le azioni nel modal
   const modal = document.getElementById('modal-detail');
   modal.querySelectorAll('[data-action]').forEach(el => {
     el.addEventListener('click', e => {
@@ -1083,7 +1068,8 @@ function openSessionDetail(sessionId) {
   const s = allSessions.find(x => x.id === sessionId);
   if (!s) return;
   const progress = sessionProgress(s);
-  // Hints revealed può essere oggetto {pid: {1:true,3:true}} (indipendente)
+
+  // hints_revealed può essere oggetto {pid: {1:true,3:true}} (indipendente)
   // o number (vecchio formato cumulativo). Gestiamo entrambi.
   let hintsCount = 0;
   const hr = s.hints_revealed || {};
@@ -1092,7 +1078,7 @@ function openSessionDetail(sessionId) {
       if (typeof v === 'object' && v !== null) {
         hintsCount += Object.values(v).filter(Boolean).length;
       } else if (typeof v === 'number') {
-        hintsCount += v;  // formato cumulativo
+        hintsCount += v;
       }
     });
   }
@@ -1149,7 +1135,7 @@ function openSessionDetail(sessionId) {
           const score = s['score_act'+act];
           return `<div style="background:var(--bg2);border:1px solid var(--border);padding:.6rem .8rem;border-radius:2px">
             <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem">Atto ${act}</div>
-            <div style="font-family:var(--mono);font-size:1.1rem;font-weight:600;color:${tot>0?'var(--red2)':'#4CAF80'}">${tot>0?'−'+tot:'0'}</div>
+            <div style="font-family:var(--mono);font-size:1.1rem;font-weight:600;color:${tot>0?'var(--red2)':'var(--green2)'}">${tot>0?'−'+tot:'0'}</div>
             <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">hint −${h} · err −${e}</div>
             ${score!=null ? '<div style="font-size:.7rem;color:var(--amber);margin-top:.2rem">score chiuso: '+score+'</div>' : ''}
           </div>`;
@@ -1325,7 +1311,6 @@ function exportCsv(type) {
     rows.map(r => csvLine(headers.map(h => r[h])))
   ).join('\r\n');
 
-  // UTF-8 BOM per Excel
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1389,25 +1374,11 @@ function fmtDate(d) {
   return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-// FIX: progressione basata sui 6 terminali (più rappresentativi)
+// Progressione basata sui 6 terminali
 function sessionProgress(s) {
   const steps = ['t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed'];
   const done = steps.filter(k => s[k]).length;
   return Math.round((done / steps.length) * 100);
-}
-
-// Escape completo (include apostrofo e backtick)
-function escHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/`/g, '&#96;');
-}
-function escAttr(s) {
-  return escHtml(s);
 }
 
 // ── INIT: ripristino sessione da sessionStorage ──────────────────────────────
@@ -1417,8 +1388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (saved) {
       ADMIN_KEY = saved;
       document.getElementById('remember-session').checked = true;
-      // Verifica che la chiave salvata sia ancora valida
-      fetch(`${FUNCTIONS_BASE}/adminActions`, {
+      fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-key': saved },
         body: JSON.stringify({ action: 'verify_admin' })
