@@ -691,6 +691,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -752,6 +753,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
         <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="m-inv-score-bar" style="width:100%"></div></div>
+      <div class="inv-breakdown" id="m-inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="m-inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -831,6 +833,20 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 // ============================================================
 
 const LS_KEY  = 'a17_atto2_v2';
+
+// ═══════════════════════════════════════════════
+// INDICE INVESTIGATIVO GLOBALE — Caso 001
+// ═══════════════════════════════════════════════
+const GLOBAL_KEY = 'a17_global_v1';
+function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
+let _global = defaultGlobal();
+function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
+function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
+function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
+function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
+function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
+function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
+
 const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
 // Sessione cloud
@@ -1194,6 +1210,7 @@ function defaultState(){
 let state = defaultState();
 
 function loadState(){
+  loadGlobal();
   try{
     const r = localStorage.getItem(LS_KEY);
     if(r){
@@ -1491,6 +1508,7 @@ function submitTerminal2B(){
     state.t2bCompleted = true;
     state.t2bSospetto  = sosp;
     state.finalUnlocked= true;
+    markActDone(2);
     document.getElementById('t2b-submit').disabled = true;
     document.getElementById('t2b-submit').style.display = 'none';
     document.getElementById('t2b-confirmed').classList.add('visible');
@@ -1930,6 +1948,12 @@ function showResetConfirm(){
 }
 function confirmReset(){
   localStorage.removeItem(LS_KEY);
+  // Reset global atto 2 (mantieni gli altri atti)
+  _global['penalty_act2'] = {hints:0, errors:0};
+  _global['act2_done'] = false;
+  if(!_global.act3_done) { _global.locked = false; }
+  _global.global_score = globalScore();
+  saveGlobal();
   // Pulisci token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
   localStorage.removeItem('a17_atto2_session_token');
@@ -2035,7 +2059,8 @@ document.addEventListener('keydown', function(e){
 
 // ===== COMPUTE SCORE =====
 function computeScore(){
-  return Math.max(0, 100 - state.hintPenaltyTotal - (state.errorsTerminal * 10));
+  updateGlobalFromActState(2, state.hintPenaltyTotal, state.errorsTerminal * 10);
+  return globalScore();
 }
 
 
