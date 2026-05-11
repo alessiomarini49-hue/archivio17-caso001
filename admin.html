@@ -444,7 +444,7 @@ async function doLogin() {
   showLoginError('');
 
   try {
-    const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
+    const res = await fetch(`${FUNCTIONS_BASE}/adminApi`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
       body: JSON.stringify({ action: 'block_code', code_id: '__verify_ping__' })
@@ -492,7 +492,7 @@ function doLogout() {
 
 // ── API ──────────────────────────────────────────────────────────────────────
 async function adminAction(action, params = {}) {
-  const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
+  const res = await fetch(`${FUNCTIONS_BASE}/adminApi`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
     body: JSON.stringify({ action, ...params })
