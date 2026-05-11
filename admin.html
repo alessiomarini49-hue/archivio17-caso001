@@ -17,7 +17,8 @@
   --red: #A71920;
   --red2: #C42028;
   --amber: #B7833B;
-  --green: #2A5C40;
+  --success-bg: #0D1A14;
+  --success-border: #2A5C40;
   --green2: #4CAF80;
   --mono: 'IBM Plex Mono', monospace;
   --serif: 'Cormorant Garamond', serif;
@@ -44,17 +45,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
   padding: .75rem 1rem; outline: none; margin-bottom: 1rem; letter-spacing: .05em;
 }
 .login-box input:focus { border-color: var(--red); }
-.btn { 
+.btn {
   background: var(--red); color: #fff; border: none; cursor: pointer;
   padding: .75rem 1.5rem; font-family: var(--sans); font-size: .85rem;
   letter-spacing: .08em; text-transform: uppercase; transition: background .2s;
   width: 100%;
 }
-.btn:hover { background: var(--red2); }
+.btn:hover:not(:disabled) { background: var(--red2); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
 .btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text2); width: auto; }
-.btn.secondary:hover { border-color: var(--text2); }
-.btn.amber { background: var(--amber); }
-.btn.green { background: var(--green2); color: #000; }
+.btn.secondary:hover:not(:disabled) { border-color: var(--text2); }
+.btn.amber-btn { background: var(--amber); }
+.btn.green-btn { background: var(--green2); color: #000; }
 .btn.danger { background: var(--red); }
 .btn.sm { padding: .35rem .75rem; font-size: .75rem; width: auto; }
 .login-error { color: var(--red2); font-size: .82rem; margin-top: .5rem; min-height: 1.2rem; }
@@ -87,10 +89,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 
 /* ── STATS ── */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-.stat-card {
-  background: var(--panel); border: 1px solid var(--border);
-  padding: 1.25rem; text-align: center;
-}
+.stat-card { background: var(--panel); border: 1px solid var(--border); padding: 1.25rem; text-align: center; }
 .stat-val { font-family: var(--serif); font-size: 2.5rem; color: var(--text); line-height: 1; }
 .stat-val.red { color: var(--red2); }
 .stat-val.amber { color: var(--amber); }
@@ -98,10 +97,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .stat-label { color: var(--text3); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; margin-top: .5rem; }
 
 /* ── SECTION ── */
-.section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
 .section-title { font-family: var(--serif); font-size: 1.4rem; }
 .section-actions { display: flex; gap: .75rem; align-items: center; }
 
@@ -115,20 +111,11 @@ th {
 }
 td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tr:hover td { background: rgba(255,255,255,.02); }
-.code-badge {
-  font-family: var(--mono); font-size: .85rem; color: var(--amber);
-  background: rgba(183,131,59,.1); padding: .2rem .5rem; letter-spacing: .05em;
-}
-.type-badge {
-  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
-  padding: .2rem .6rem; border-radius: 2px;
-}
+.code-badge { font-family: var(--mono); font-size: .85rem; color: var(--amber); background: rgba(183,131,59,.1); padding: .2rem .5rem; letter-spacing: .05em; }
+.type-badge { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; padding: .2rem .6rem; }
 .type-individual { background: rgba(167,25,32,.15); color: var(--red2); border: 1px solid rgba(167,25,32,.3); }
 .type-team { background: rgba(183,131,59,.15); color: var(--amber); border: 1px solid rgba(183,131,59,.3); }
-.status-badge {
-  font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
-  padding: .2rem .6rem;
-}
+.status-badge { font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; padding: .2rem .6rem; }
 .s-unused { color: var(--text3); }
 .s-active { color: var(--green2); }
 .s-completed { color: var(--amber); }
@@ -140,8 +127,8 @@ tr:hover td { background: rgba(255,255,255,.02); }
 .notes-cell { color: var(--text3); font-size: .78rem; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .devices-cell { font-family: var(--mono); font-size: .82rem; }
 
-/* ── DEVICE LIST ── */
-.device-row { 
+/* ── DEVICE ── */
+.device-row {
   background: var(--bg2); border: 1px solid var(--border);
   padding: .75rem 1rem; margin-bottom: .5rem;
   display: flex; align-items: center; justify-content: space-between; gap: 1rem;
@@ -151,46 +138,29 @@ tr:hover td { background: rgba(255,255,255,.02); }
 .device-active { color: var(--green2); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
 .device-inactive { color: var(--text3); font-size: .7rem; text-transform: uppercase; }
 
-/* ── SESSION INFO ── */
-.session-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-.session-card { background: var(--panel); border: 1px solid var(--border); padding: 1.25rem; }
-.session-card h4 { font-family: var(--serif); font-size: 1rem; margin-bottom: 1rem; color: var(--text2); }
+/* ── SESSION ── */
 .session-row { display: flex; justify-content: space-between; align-items: center; padding: .35rem 0; border-bottom: 1px solid var(--border); }
 .session-row:last-child { border-bottom: none; }
 .session-key { color: var(--text3); font-size: .78rem; }
 .session-val { font-family: var(--mono); font-size: .82rem; color: var(--text); }
-.session-val.ok { color: var(--green2); }
-.session-val.no { color: var(--text3); }
-.session-val.warn { color: var(--amber); }
 .progress-bar { height: 4px; background: var(--border); margin-top: .5rem; }
 .progress-fill { height: 100%; background: var(--red); transition: width .3s; }
 
 /* ── MODAL ── */
-.modal-overlay {
-  display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.7); z-index: 200;
-  align-items: center; justify-content: center;
-}
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200; align-items: center; justify-content: center; }
 .modal-overlay.visible { display: flex; }
-.modal {
-  background: var(--panel); border: 1px solid var(--border);
-  width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-}
-.modal-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
-}
+.modal { background: var(--panel); border: 1px solid var(--border); width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); }
 .modal-title { font-family: var(--serif); font-size: 1.2rem; }
 .modal-close { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 1.2rem; }
 .modal-close:hover { color: var(--text); }
 .modal-body { padding: 1.5rem; }
-.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: .75rem; justify-content: flex-end; }
+.modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: .75rem; justify-content: flex-end; flex-wrap: wrap; }
 .form-group { margin-bottom: 1.25rem; }
 .form-label { display: block; color: var(--text3); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .5rem; }
 .form-input, .form-select, .form-textarea {
   width: 100%; background: var(--bg2); border: 1px solid var(--border);
-  color: var(--text); font-family: var(--sans); font-size: .9rem;
-  padding: .65rem .9rem; outline: none;
+  color: var(--text); font-family: var(--sans); font-size: .9rem; padding: .65rem .9rem; outline: none;
 }
 .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--red); }
 .form-select option { background: var(--panel); }
@@ -200,8 +170,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
 .filter-bar { display: flex; gap: .75rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center; }
 .filter-bar input, .filter-bar select {
   background: var(--panel); border: 1px solid var(--border);
-  color: var(--text); font-family: var(--sans); font-size: .82rem;
-  padding: .5rem .75rem; outline: none;
+  color: var(--text); font-family: var(--sans); font-size: .82rem; padding: .5rem .75rem; outline: none;
 }
 .filter-bar input:focus, .filter-bar select:focus { border-color: var(--red); }
 .filter-bar input { width: 220px; }
@@ -217,22 +186,10 @@ tr:hover td { background: rgba(255,255,255,.02); }
 #toast.success { border-color: var(--green2); color: var(--green2); }
 #toast.error { border-color: var(--red2); color: var(--red2); }
 
-/* ── EMPTY ── */
+/* ── EMPTY / LOADING ── */
 .empty-state { text-align: center; padding: 3rem; color: var(--text3); }
 .empty-state p { font-family: var(--serif); font-size: 1.1rem; margin-bottom: .5rem; }
-.empty-state small { font-size: .78rem; }
-
-/* ── LOADING ── */
 .loading { text-align: center; padding: 2rem; color: var(--text3); font-family: var(--mono); font-size: .85rem; }
-
-/* ── DETAIL PANEL ── */
-.detail-panel {
-  background: var(--panel2); border: 1px solid var(--border);
-  padding: 1.5rem; margin-bottom: 1.5rem; display: none;
-}
-.detail-panel.visible { display: block; }
-.detail-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
-.detail-panel-title { font-family: var(--serif); font-size: 1.1rem; }
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
@@ -249,7 +206,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="login-title">Admin Panel</div>
     <div class="login-sub">ACCESSO RISERVATO — USO INTERNO</div>
     <input type="password" id="admin-key-input" placeholder="Chiave di accesso admin" autocomplete="off">
-    <button class="btn" onclick="doLogin()">Accedi</button>
+    <button class="btn" id="login-btn" onclick="doLogin()">Accedi</button>
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
@@ -265,15 +222,15 @@ tr:hover td { background: rgba(255,255,255,.02); }
   </div>
 
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</div>
-    <div class="nav-tab" onclick="switchTab('codici')">Codici Accesso</div>
-    <div class="nav-tab" onclick="switchTab('dispositivi')">Dispositivi</div>
-    <div class="nav-tab" onclick="switchTab('sessioni')">Sessioni</div>
+    <div class="nav-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</div>
+    <div class="nav-tab" data-tab="codici" onclick="switchTab('codici')">Codici Accesso</div>
+    <div class="nav-tab" data-tab="dispositivi" onclick="switchTab('dispositivi')">Dispositivi</div>
+    <div class="nav-tab" data-tab="sessioni" onclick="switchTab('sessioni')">Sessioni</div>
   </div>
 
   <!-- DASHBOARD -->
   <div class="main tab-content active" id="tab-dashboard">
-    <div class="stats-grid" id="stats-grid">
+    <div class="stats-grid">
       <div class="stat-card"><div class="stat-val" id="st-total">—</div><div class="stat-label">Codici Emessi</div></div>
       <div class="stat-card"><div class="stat-val amber" id="st-active">—</div><div class="stat-label">Codici Attivi</div></div>
       <div class="stat-card"><div class="stat-val green" id="st-completed">—</div><div class="stat-label">Completati</div></div>
@@ -283,16 +240,13 @@ tr:hover td { background: rgba(255,255,255,.02); }
       <div class="stat-card"><div class="stat-val" id="st-devices">—</div><div class="stat-label">Dispositivi Attivi</div></div>
       <div class="stat-card"><div class="stat-val" id="st-completion">—</div><div class="stat-label">Tasso Completamento</div></div>
     </div>
-
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-      <!-- Ultimi codici -->
       <div>
         <div class="section-header"><div class="section-title">Ultimi Codici</div></div>
         <div id="dash-recent-codes"><div class="loading">Caricamento...</div></div>
       </div>
-      <!-- Sessioni recenti -->
       <div>
-        <div class="section-header"><div class="section-title">Attività Recente</div></div>
+        <div class="section-header"><div class="section-title">Sessioni Recenti</div></div>
         <div id="dash-recent-sessions"><div class="loading">Caricamento...</div></div>
       </div>
     </div>
@@ -304,7 +258,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
       <div class="section-title">Codici Accesso</div>
       <div class="section-actions">
         <button class="btn sm" onclick="openCreateCode()">+ Nuovo Codice</button>
-        <button class="btn secondary sm" onclick="loadCodes()">↺ Aggiorna</button>
+        <button class="btn secondary sm" onclick="loadAll()">↺ Aggiorna</button>
       </div>
     </div>
     <div class="filter-bar">
@@ -322,9 +276,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
         <option value="team">Team</option>
       </select>
     </div>
-    <div class="table-wrap" id="codes-table-wrap">
-      <div class="loading">Caricamento...</div>
-    </div>
+    <div class="table-wrap" id="codes-table-wrap"><div class="loading">Caricamento...</div></div>
   </div>
 
   <!-- DISPOSITIVI -->
@@ -332,7 +284,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="section-header">
       <div class="section-title">Dispositivi Collegati</div>
       <div class="section-actions">
-        <button class="btn secondary sm" onclick="loadDevices()">↺ Aggiorna</button>
+        <button class="btn secondary sm" onclick="loadAll()">↺ Aggiorna</button>
       </div>
     </div>
     <div class="filter-bar">
@@ -343,9 +295,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
         <option value="inactive">Disattivati</option>
       </select>
     </div>
-    <div class="table-wrap" id="devices-table-wrap">
-      <div class="loading">Caricamento...</div>
-    </div>
+    <div class="table-wrap" id="devices-table-wrap"><div class="loading">Caricamento...</div></div>
   </div>
 
   <!-- SESSIONI -->
@@ -353,17 +303,15 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="section-header">
       <div class="section-title">Sessioni di Gioco</div>
       <div class="section-actions">
-        <button class="btn secondary sm" onclick="loadSessions()">↺ Aggiorna</button>
+        <button class="btn secondary sm" onclick="loadAll()">↺ Aggiorna</button>
       </div>
     </div>
-    <div class="table-wrap" id="sessions-table-wrap">
-      <div class="loading">Caricamento...</div>
-    </div>
+    <div class="table-wrap" id="sessions-table-wrap"><div class="loading">Caricamento...</div></div>
   </div>
 </div>
 
 <!-- MODAL CREA CODICE -->
-<div class="modal-overlay" id="modal-create" role="dialog" aria-modal="true">
+<div class="modal-overlay" id="modal-create">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Nuovo Codice Accesso</div>
@@ -392,26 +340,25 @@ tr:hover td { background: rgba(255,255,255,.02); }
     </div>
     <div class="modal-footer">
       <button class="btn secondary" onclick="closeModal('modal-create')">Annulla</button>
-      <button class="btn" onclick="createCode()">Genera Codice</button>
+      <button class="btn" id="btn-create-code" onclick="createCode(this)">Genera Codice</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL DETTAGLIO CODICE -->
-<div class="modal-overlay" id="modal-detail" role="dialog" aria-modal="true">
+<!-- MODAL DETTAGLIO -->
+<div class="modal-overlay" id="modal-detail">
   <div class="modal" style="width:620px">
     <div class="modal-header">
-      <div class="modal-title" id="detail-title">Dettaglio Codice</div>
+      <div class="modal-title" id="detail-title">Dettaglio</div>
       <button class="modal-close" onclick="closeModal('modal-detail')">×</button>
     </div>
-    <div class="modal-body" id="detail-body">
-    </div>
+    <div class="modal-body" id="detail-body"></div>
     <div class="modal-footer" id="detail-footer"></div>
   </div>
 </div>
 
 <!-- MODAL NOTE -->
-<div class="modal-overlay" id="modal-notes" role="dialog" aria-modal="true">
+<div class="modal-overlay" id="modal-notes">
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title">Modifica Note</div>
@@ -422,7 +369,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     </div>
     <div class="modal-footer">
       <button class="btn secondary" onclick="closeModal('modal-notes')">Annulla</button>
-      <button class="btn" onclick="saveNotes()">Salva Note</button>
+      <button class="btn" id="btn-save-notes" onclick="saveNotes(this)">Salva Note</button>
     </div>
   </div>
 </div>
@@ -431,12 +378,12 @@ tr:hover td { background: rgba(255,255,255,.02); }
 <div id="toast"></div>
 
 <script>
+(function () {
 'use strict';
 
-// ── CONFIG ──────────────────────────────────────────────────────────────────
+// ── CONFIG ───────────────────────────────────────────────────────────────────
 const APP_ID = '69fdda0ce13e22a1cc6cd63c';
-const FUNCTIONS_BASE = `https://app.base44.com/api/apps/${APP_ID}/functions`;
-const ENTITIES_BASE  = `https://app.base44.com/api/apps/${APP_ID}/entities`;
+const FUNCTIONS_BASE = 'https://app.base44.com/api/apps/' + APP_ID + '/functions';
 
 let ADMIN_KEY = '';
 let allCodes = [];
@@ -444,77 +391,130 @@ let allDevices = [];
 let allSessions = [];
 let editingNotesId = null;
 
-// ── LOGIN ────────────────────────────────────────────────────────────────────
-function doLogin() {
-  const key = document.getElementById('admin-key-input').value.trim();
-  if (!key) { showLoginError('Inserisci la chiave admin.'); return; }
-  ADMIN_KEY = key;
-  // Verifica la chiave con una chiamata reale
-  adminAction('create_code', { type: 'individual', _dry_run: true })
-    .then(() => bootApp())
-    .catch(() => {
-      // Prova con un'azione che restituisce errore controllato
-      fetch(`${FUNCTIONS_BASE}/adminActions`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
-        body: JSON.stringify({ action: 'update_notes', code_id: '__test__', notes: '' })
-      }).then(r => r.json()).then(d => {
-        if (d.error === 'Non autorizzato.') {
-          showLoginError('Chiave non valida.');
-          ADMIN_KEY = '';
-        } else {
-          bootApp();
-        }
-      }).catch(() => {
-        // Se non riesce a raggiungere le functions, prova comunque con le entities
-        bootApp();
-      });
-    });
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/`/g, '&#96;');
 }
 
-function showLoginError(msg) {
-  document.getElementById('login-error').textContent = msg;
+function fmtDate(d) {
+  if (!d) return '—';
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-document.getElementById('admin-key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-
-function bootApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-  loadAll();
+function statusLabel(s) {
+  return { unused: 'Non usato', active: 'Attivo', completed: 'Completato', blocked: 'Bloccato', expired: 'Scaduto' }[s] || s;
 }
 
-function doLogout() {
-  ADMIN_KEY = '';
-  allCodes = []; allDevices = []; allSessions = [];
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('admin-key-input').value = '';
+function sessionProgress(s) {
+  // Pesa per atto: ogni atto vale 1/3. Terminali pesati proporzionalmente.
+  const act1 = s.t1_completed ? 1 : 0;
+  const act2 = (s.t2a_completed ? 0.5 : 0) + (s.t2b_completed ? 0.5 : 0);
+  const act3 = (s.t3a_completed ? 1/3 : 0) + (s.t3b_completed ? 1/3 : 0) + (s.t3c_completed ? 1/3 : 0);
+  return Math.round(((act1 + act2 + act3) / 3) * 100);
+}
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || 'success');
+  setTimeout(() => { t.className = ''; }, 3000);
+}
+
+function setBtn(btn, loading) {
+  if (!btn) return;
+  btn.disabled = loading;
+  if (loading) btn.dataset.originalText = btn.textContent;
+  else if (btn.dataset.originalText) btn.textContent = btn.dataset.originalText;
 }
 
 // ── API ──────────────────────────────────────────────────────────────────────
-async function adminAction(action, params = {}) {
-  const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
+async function adminAction(action, params) {
+  const res = await fetch(FUNCTIONS_BASE + '/adminActions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
-    body: JSON.stringify({ action, ...params })
+    body: JSON.stringify(Object.assign({ action: action }, params || {}))
   });
   return res.json();
 }
 
-async function fetchEntities(entity, params = {}) {
-  const qs = new URLSearchParams(params).toString();
-  const res = await fetch(`${ENTITIES_BASE}/${entity}${qs ? '?'+qs : ''}`, {
-    headers: { 'x-admin-key': ADMIN_KEY }
-  });
-  const data = await res.json();
-  return Array.isArray(data) ? data : (data.records || data.items || []);
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+async function doLogin() {
+  const key = document.getElementById('admin-key-input').value.trim();
+  if (!key) { document.getElementById('login-error').textContent = 'Inserisci la chiave admin.'; return; }
+  const btn = document.getElementById('login-btn');
+  setBtn(btn, true);
+  btn.textContent = 'Verifica in corso...';
+  document.getElementById('login-error').textContent = '';
+  try {
+    const res = await fetch(FUNCTIONS_BASE + '/adminActions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+      body: JSON.stringify({ action: 'verify_admin' })
+    });
+    const data = await res.json();
+    if (data.ok === true) {
+      ADMIN_KEY = key;
+      sessionStorage.setItem('a17_admin_key', key);
+      bootApp();
+    } else {
+      document.getElementById('login-error').textContent = 'Chiave non valida.';
+    }
+  } catch (e) {
+    document.getElementById('login-error').textContent = 'Impossibile contattare il server.';
+  } finally {
+    setBtn(btn, false);
+    btn.textContent = 'Accedi';
+  }
 }
 
-// ── LOAD ALL ─────────────────────────────────────────────────────────────────
+document.getElementById('admin-key-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+function doLogout() {
+  ADMIN_KEY = '';
+  sessionStorage.removeItem('a17_admin_key');
+  allCodes = []; allDevices = []; allSessions = [];
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('admin-key-input').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+
+function bootApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  const now = new Date();
+  document.getElementById('topbar-date').textContent =
+    now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) +
+    ' — ' + now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  loadAll();
+}
+
+// Auto-login da sessionStorage
+window.addEventListener('DOMContentLoaded', function() {
+  const k = sessionStorage.getItem('a17_admin_key');
+  if (k) {
+    fetch(FUNCTIONS_BASE + '/adminActions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': k },
+      body: JSON.stringify({ action: 'verify_admin' })
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      if (d.ok === true) { ADMIN_KEY = k; bootApp(); }
+      else { sessionStorage.removeItem('a17_admin_key'); }
+    }).catch(function() { sessionStorage.removeItem('a17_admin_key'); });
+  }
+});
+
+// ── LOAD DATA (tutto via adminActions) ───────────────────────────────────────
 async function loadAll() {
   await Promise.all([loadCodes(), loadDevices(), loadSessions()]);
   renderDashboard();
@@ -522,51 +522,48 @@ async function loadAll() {
 
 async function loadCodes() {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/AccessCode?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    const data = await res.json();
-    allCodes = data.records || data || [];
-    allCodes.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    const data = await adminAction('list_codes');
+    if (!data.ok) throw new Error(data.error || 'Errore');
+    allCodes = (data.codes || []).sort(function(a,b){ return new Date(b.created_date||0)-new Date(a.created_date||0); });
     renderCodesTable(allCodes);
-  } catch(e) { console.error(e); }
+  } catch(e) {
+    showToast('Errore caricamento codici: ' + e.message, 'error');
+  }
 }
 
 async function loadDevices() {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/Device?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    const data = await res.json();
-    allDevices = data.records || data || [];
-    allDevices.sort((a, b) => new Date(b.last_seen) - new Date(a.last_seen));
+    const data = await adminAction('list_devices');
+    if (!data.ok) throw new Error(data.error || 'Errore');
+    allDevices = (data.devices || []).sort(function(a,b){ return new Date(b.last_seen||0)-new Date(a.last_seen||0); });
     renderDevicesTable(allDevices);
-  } catch(e) { console.error(e); }
+  } catch(e) {
+    showToast('Errore caricamento dispositivi: ' + e.message, 'error');
+  }
 }
 
 async function loadSessions() {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/GameSession?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    const data = await res.json();
-    allSessions = data.records || data || [];
-    allSessions.sort((a, b) => new Date(b.last_updated) - new Date(a.last_updated));
+    const data = await adminAction('list_sessions');
+    if (!data.ok) throw new Error(data.error || 'Errore');
+    allSessions = (data.sessions || []).sort(function(a,b){ return new Date(b.last_updated||0)-new Date(a.last_updated||0); });
     renderSessionsTable(allSessions);
-  } catch(e) { console.error(e); }
+  } catch(e) {
+    showToast('Errore caricamento sessioni: ' + e.message, 'error');
+  }
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────────────────
 function renderDashboard() {
-  const total = allCodes.length;
-  const active = allCodes.filter(c => c.status === 'active').length;
-  const completed = allCodes.filter(c => c.status === 'completed').length;
-  const blocked = allCodes.filter(c => c.status === 'blocked').length;
-  const individual = allCodes.filter(c => c.type === 'individual').length;
-  const team = allCodes.filter(c => c.type === 'team').length;
-  const activeDevices = allDevices.filter(d => d.is_active).length;
-  const activatedCodes = allCodes.filter(c => c.status !== 'unused').length;
-  const completionRate = activatedCodes > 0 ? Math.round((completed / activatedCodes) * 100) : 0;
+  var total = allCodes.length;
+  var active = allCodes.filter(function(c){ return c.status==='active'; }).length;
+  var completed = allCodes.filter(function(c){ return c.status==='completed'; }).length;
+  var blocked = allCodes.filter(function(c){ return c.status==='blocked'; }).length;
+  var individual = allCodes.filter(function(c){ return c.type==='individual'; }).length;
+  var team = allCodes.filter(function(c){ return c.type==='team'; }).length;
+  var activeDevices = allDevices.filter(function(d){ return d.is_active; }).length;
+  var activated = allCodes.filter(function(c){ return c.status!=='unused'; }).length;
+  var rate = activated > 0 ? Math.round((completed/activated)*100) : 0;
 
   document.getElementById('st-total').textContent = total;
   document.getElementById('st-active').textContent = active;
@@ -575,453 +572,421 @@ function renderDashboard() {
   document.getElementById('st-individual').textContent = individual;
   document.getElementById('st-team').textContent = team;
   document.getElementById('st-devices').textContent = activeDevices;
-  document.getElementById('st-completion').textContent = completionRate + '%';
+  document.getElementById('st-completion').textContent = rate + '%';
 
-  // Ultimi codici
-  const recentCodes = allCodes.slice(0, 5);
-  const rcEl = document.getElementById('dash-recent-codes');
-  if (!recentCodes.length) {
-    rcEl.innerHTML = '<div class="empty-state"><p>Nessun codice</p></div>';
-  } else {
-    rcEl.innerHTML = recentCodes.map(c => `
-      <div class="device-row" style="cursor:pointer" onclick="openDetail('${c.id}')">
-        <div>
-          <div class="code-badge">${c.code}</div>
-          <div class="device-meta">${c.buyer_email || '—'} · ${fmtDate(c.created_date)}</div>
-        </div>
-        <div style="display:flex;gap:.5rem;align-items:center">
-          <span class="type-badge type-${c.type}">${c.type === 'individual' ? 'IND' : 'TEAM'}</span>
-          <span class="status-badge s-${c.status}">${statusLabel(c.status)}</span>
-        </div>
-      </div>
-    `).join('');
-  }
+  var rcEl = document.getElementById('dash-recent-codes');
+  var recent = allCodes.slice(0,5);
+  rcEl.innerHTML = recent.length === 0
+    ? '<div class="empty-state"><p>Nessun codice</p></div>'
+    : recent.map(function(c) {
+        return '<div class="device-row" style="cursor:pointer" data-open-detail="' + esc(c.id) + '">' +
+          '<div><div class="code-badge">' + esc(c.code) + '</div>' +
+          '<div class="device-meta">' + esc(c.buyer_email||'—') + ' · ' + fmtDate(c.created_date) + '</div></div>' +
+          '<div style="display:flex;gap:.5rem;align-items:center">' +
+          '<span class="type-badge type-' + esc(c.type) + '">' + (c.type==='individual'?'IND':'TEAM') + '</span>' +
+          '<span class="status-badge s-' + esc(c.status) + '">' + statusLabel(c.status) + '</span>' +
+          '</div></div>';
+      }).join('');
 
-  // Sessioni recenti
-  const recentSess = allSessions.slice(0, 5);
-  const rsEl = document.getElementById('dash-recent-sessions');
-  if (!recentSess.length) {
-    rsEl.innerHTML = '<div class="empty-state"><p>Nessuna sessione</p></div>';
-  } else {
-    rsEl.innerHTML = recentSess.map(s => {
-      const code = allCodes.find(c => c.id === s.code_id);
-      const progress = sessionProgress(s);
-      return `
-        <div class="device-row">
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:.75rem">
-              <span class="code-badge">${s.access_code || '—'}</span>
-              <span style="font-size:.75rem;color:var(--text3)">Atto ${s.current_act || 1}</span>
-            </div>
-            <div class="progress-bar" style="margin-top:.5rem">
-              <div class="progress-fill" style="width:${progress}%"></div>
-            </div>
-            <div class="device-meta" style="margin-top:.3rem">${fmtDate(s.last_updated)} · ${progress}% completato</div>
-          </div>
-          <div style="font-family:var(--mono);font-size:.85rem;color:var(--amber)">${s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10))}</div>
-        </div>
-      `;
-    }).join('');
-  }
+  var rsEl = document.getElementById('dash-recent-sessions');
+  var recentS = allSessions.slice(0,5);
+  rsEl.innerHTML = recentS.length === 0
+    ? '<div class="empty-state"><p>Nessuna sessione</p></div>'
+    : recentS.map(function(s) {
+        var prog = sessionProgress(s);
+        var score = s.score_final != null ? s.score_final : (100-(s.hint_penalty_total||0)-((s.errors_terminal||0)*10));
+        return '<div class="device-row">' +
+          '<div style="flex:1">' +
+          '<div style="display:flex;align-items:center;gap:.75rem">' +
+          '<span class="code-badge">' + esc(s.access_code||'—') + '</span>' +
+          '<span style="font-size:.75rem;color:var(--text3)">Atto ' + (s.current_act||1) + '</span></div>' +
+          '<div class="progress-bar"><div class="progress-fill" style="width:' + prog + '%"></div></div>' +
+          '<div class="device-meta" style="margin-top:.3rem">' + fmtDate(s.last_updated) + ' · ' + prog + '% completato</div>' +
+          '</div><div style="font-family:var(--mono);font-size:.85rem;color:var(--amber)">' + score + '</div></div>';
+      }).join('');
+
+  // event delegation per detail
+  rcEl.addEventListener('click', function(e) {
+    var row = e.target.closest('[data-open-detail]');
+    if (row) openDetail(row.dataset.openDetail);
+  });
 }
 
-// ── CODICI TABLE ─────────────────────────────────────────────────────────────
+// ── CODICI TABLE ──────────────────────────────────────────────────────────────
 function renderCodesTable(codes) {
-  const wrap = document.getElementById('codes-table-wrap');
+  var wrap = document.getElementById('codes-table-wrap');
   if (!codes.length) {
     wrap.innerHTML = '<div class="empty-state"><p>Nessun codice trovato</p><small>Crea il primo codice con il pulsante in alto</small></div>';
     return;
   }
-  wrap.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Codice</th>
-          <th>Tipo</th>
-          <th>Stato</th>
-          <th>Email</th>
-          <th>Dispositivi</th>
-          <th>Creato</th>
-          <th>Note</th>
-          <th>Azioni</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${codes.map(c => {
-          const devCount = allDevices.filter(d => d.code_id === c.id && d.is_active).length;
-          return `
-          <tr>
-            <td><span class="code-badge">${c.code}</span></td>
-            <td><span class="type-badge type-${c.type}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span></td>
-            <td><span class="status-badge s-${c.status}">${statusLabel(c.status)}</span></td>
-            <td class="email-cell" title="${c.buyer_email||''}">${c.buyer_email || '—'}</td>
-            <td class="devices-cell">${devCount} / ${c.max_devices}</td>
-            <td class="date-cell">${fmtDate(c.created_date)}</td>
-            <td class="notes-cell" title="${c.notes||''}">${c.notes || '—'}</td>
-            <td>
-              <div class="actions-cell">
-                <button class="btn sm secondary" onclick="openDetail('${c.id}')">Dettaglio</button>
-                ${c.status === 'blocked'
-                  ? `<button class="btn sm green" onclick="unblockCode('${c.id}')">Sblocca</button>`
-                  : `<button class="btn sm danger" onclick="blockCode('${c.id}')">Blocca</button>`
-                }
-              </div>
-            </td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  `;
+  wrap.innerHTML = '<table><thead><tr>' +
+    '<th>Codice</th><th>Tipo</th><th>Stato</th><th>Email</th><th>Dispositivi</th><th>Creato</th><th>Note</th><th>Azioni</th>' +
+    '</tr></thead><tbody>' +
+    codes.map(function(c) {
+      var devCount = allDevices.filter(function(d){ return d.code_id===c.id && d.is_active; }).length;
+      return '<tr>' +
+        '<td><span class="code-badge">' + esc(c.code) + '</span></td>' +
+        '<td><span class="type-badge type-' + esc(c.type) + '">' + (c.type==='individual'?'Individuale':'Team') + '</span></td>' +
+        '<td><span class="status-badge s-' + esc(c.status) + '">' + statusLabel(c.status) + '</span></td>' +
+        '<td class="email-cell" title="' + esc(c.buyer_email||'') + '">' + esc(c.buyer_email||'—') + '</td>' +
+        '<td class="devices-cell">' + devCount + ' / ' + esc(c.max_devices) + '</td>' +
+        '<td class="date-cell">' + fmtDate(c.created_date) + '</td>' +
+        '<td class="notes-cell" title="' + esc(c.notes||'') + '">' + esc(c.notes||'—') + '</td>' +
+        '<td><div class="actions-cell">' +
+        '<button class="btn sm secondary" data-open-detail="' + esc(c.id) + '">Dettaglio</button>' +
+        (c.status==='blocked'
+          ? '<button class="btn sm green-btn" data-action="unblock" data-code-id="' + esc(c.id) + '">Sblocca</button>'
+          : '<button class="btn sm danger" data-action="block" data-code-id="' + esc(c.id) + '">Blocca</button>') +
+        '</div></td></tr>';
+    }).join('') +
+    '</tbody></table>';
+
+  wrap.addEventListener('click', function(e) {
+    var el = e.target;
+    if (el.dataset.openDetail) { openDetail(el.dataset.openDetail); return; }
+    if (el.dataset.action === 'block') { blockCode(el.dataset.codeId, el); return; }
+    if (el.dataset.action === 'unblock') { unblockCode(el.dataset.codeId, el); return; }
+  });
 }
 
 function filterCodes() {
-  const q = document.getElementById('filter-code').value.toLowerCase();
-  const st = document.getElementById('filter-status').value;
-  const tp = document.getElementById('filter-type').value;
-  const filtered = allCodes.filter(c => {
-    const matchQ = !q || c.code.toLowerCase().includes(q) || (c.buyer_email||'').toLowerCase().includes(q);
-    const matchS = !st || c.status === st;
-    const matchT = !tp || c.type === tp;
-    return matchQ && matchS && matchT;
-  });
-  renderCodesTable(filtered);
+  var q = document.getElementById('filter-code').value.toLowerCase();
+  var st = document.getElementById('filter-status').value;
+  var tp = document.getElementById('filter-type').value;
+  renderCodesTable(allCodes.filter(function(c) {
+    return (!q || c.code.toLowerCase().includes(q) || (c.buyer_email||'').toLowerCase().includes(q)) &&
+           (!st || c.status===st) && (!tp || c.type===tp);
+  }));
 }
 
 // ── DISPOSITIVI TABLE ─────────────────────────────────────────────────────────
 function renderDevicesTable(devices) {
-  const wrap = document.getElementById('devices-table-wrap');
+  var wrap = document.getElementById('devices-table-wrap');
   if (!devices.length) {
     wrap.innerHTML = '<div class="empty-state"><p>Nessun dispositivo registrato</p></div>';
     return;
   }
-  wrap.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Codice</th>
-          <th>Dispositivo</th>
-          <th>Stato</th>
-          <th>Primo Accesso</th>
-          <th>Ultimo Accesso</th>
-          <th>IP</th>
-          <th>Azioni</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${devices.map(d => `
-          <tr>
-            <td><span class="code-badge">${d.access_code || '—'}</span></td>
-            <td><span style="font-size:.82rem">${d.device_label || '—'}</span></td>
-            <td>${d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Disattivato</span>'}</td>
-            <td class="date-cell">${fmtDate(d.first_seen)}</td>
-            <td class="date-cell">${fmtDate(d.last_seen)}</td>
-            <td style="font-family:var(--mono);font-size:.75rem;color:var(--text3)">${d.ip_last || '—'}</td>
-            <td>
-              ${d.is_active ? `<button class="btn sm danger" onclick="resetSingleDevice('${d.id}', '${d.code_id}')">Reset</button>` : '<span style="color:var(--text3);font-size:.75rem">—</span>'}
-            </td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
+  wrap.innerHTML = '<table><thead><tr>' +
+    '<th>Codice</th><th>Dispositivo</th><th>Stato</th><th>Primo Accesso</th><th>Ultimo Accesso</th><th>IP</th><th>Azioni</th>' +
+    '</tr></thead><tbody>' +
+    devices.map(function(d) {
+      return '<tr>' +
+        '<td><span class="code-badge">' + esc(d.access_code||'—') + '</span></td>' +
+        '<td><span style="font-size:.82rem">' + esc(d.device_label||'—') + '</span></td>' +
+        '<td>' + (d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Off</span>') + '</td>' +
+        '<td class="date-cell">' + fmtDate(d.first_seen) + '</td>' +
+        '<td class="date-cell">' + fmtDate(d.last_seen) + '</td>' +
+        '<td style="font-family:var(--mono);font-size:.75rem;color:var(--text3)">' + esc(d.ip_last||'—') + '</td>' +
+        '<td>' + (d.is_active
+          ? '<button class="btn sm danger" data-action="reset-device" data-device-id="' + esc(d.id) + '" data-code-id="' + esc(d.code_id) + '">Reset</button>'
+          : '<span style="color:var(--text3);font-size:.75rem">—</span>') + '</td></tr>';
+    }).join('') +
+    '</tbody></table>';
+
+  wrap.addEventListener('click', function(e) {
+    if (e.target.dataset.action === 'reset-device') {
+      resetSingleDevice(e.target.dataset.deviceId, e.target.dataset.codeId, e.target);
+    }
+  });
 }
 
 function filterDevices() {
-  const q = document.getElementById('filter-device').value.toLowerCase();
-  const st = document.getElementById('filter-device-status').value;
-  const filtered = allDevices.filter(d => {
-    const matchQ = !q || (d.access_code||'').toLowerCase().includes(q) || (d.device_label||'').toLowerCase().includes(q);
-    const matchS = !st || (st === 'active' ? d.is_active : !d.is_active);
-    return matchQ && matchS;
-  });
-  renderDevicesTable(filtered);
+  var q = document.getElementById('filter-device').value.toLowerCase();
+  var st = document.getElementById('filter-device-status').value;
+  renderDevicesTable(allDevices.filter(function(d) {
+    return (!q || (d.access_code||'').toLowerCase().includes(q) || (d.device_label||'').toLowerCase().includes(q)) &&
+           (!st || (st==='active' ? d.is_active : !d.is_active));
+  }));
 }
 
 // ── SESSIONI TABLE ────────────────────────────────────────────────────────────
 function renderSessionsTable(sessions) {
-  const wrap = document.getElementById('sessions-table-wrap');
+  var wrap = document.getElementById('sessions-table-wrap');
   if (!sessions.length) {
     wrap.innerHTML = '<div class="empty-state"><p>Nessuna sessione avviata</p></div>';
     return;
   }
-  wrap.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Codice</th>
-          <th>Atto</th>
-          <th>Progressione</th>
-          <th>Score</th>
-          <th>Hint Pen.</th>
-          <th>Errori</th>
-          <th>Classificazione</th>
-          <th>Ultimo Agg.</th>
-          <th>Dettaglio</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${sessions.map(s => {
-          const progress = sessionProgress(s);
-          const score = s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10));
-          return `
-          <tr>
-            <td><span class="code-badge">${s.access_code || '—'}</span></td>
-            <td style="font-family:var(--mono)">${s.current_act || 1}</td>
-            <td style="min-width:100px">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width:${progress}%"></div>
-              </div>
-              <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">${progress}%</div>
-            </td>
-            <td style="font-family:var(--mono);color:var(--amber)">${score}</td>
-            <td style="font-family:var(--mono);color:var(--red2)">-${s.hint_penalty_total||0}</td>
-            <td style="font-family:var(--mono);color:var(--red2)">${s.errors_terminal||0}</td>
-            <td style="font-size:.78rem;color:var(--text2)">${s.classification || '—'}</td>
-            <td class="date-cell">${fmtDate(s.last_updated)}</td>
-            <td><button class="btn sm secondary" onclick="openSessionDetail('${s.id}')">Vedi</button></td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-  `;
+  wrap.innerHTML = '<table><thead><tr>' +
+    '<th>Codice</th><th>Atto</th><th>Progressione</th><th>Score</th><th>Hint Pen.</th><th>Errori</th><th>Classificazione</th><th>Ultimo Agg.</th><th></th>' +
+    '</tr></thead><tbody>' +
+    sessions.map(function(s) {
+      var prog = sessionProgress(s);
+      var score = s.score_final != null ? s.score_final : (100-(s.hint_penalty_total||0)-((s.errors_terminal||0)*10));
+      return '<tr>' +
+        '<td><span class="code-badge">' + esc(s.access_code||'—') + '</span></td>' +
+        '<td style="font-family:var(--mono)">' + (s.current_act||1) + '</td>' +
+        '<td style="min-width:100px"><div class="progress-bar"><div class="progress-fill" style="width:' + prog + '%"></div></div>' +
+        '<div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">' + prog + '%</div></td>' +
+        '<td style="font-family:var(--mono);color:var(--amber)">' + score + '</td>' +
+        '<td style="font-family:var(--mono);color:var(--red2)">-' + (s.hint_penalty_total||0) + '</td>' +
+        '<td style="font-family:var(--mono);color:var(--red2)">' + (s.errors_terminal||0) + '</td>' +
+        '<td style="font-size:.78rem;color:var(--text2)">' + esc(s.classification||'—') + '</td>' +
+        '<td class="date-cell">' + fmtDate(s.last_updated) + '</td>' +
+        '<td><button class="btn sm secondary" data-open-session="' + esc(s.id) + '">Vedi</button></td></tr>';
+    }).join('') +
+    '</tbody></table>';
+
+  wrap.addEventListener('click', function(e) {
+    if (e.target.dataset.openSession) openSessionDetail(e.target.dataset.openSession);
+  });
 }
 
 // ── DETAIL MODAL ──────────────────────────────────────────────────────────────
 function openDetail(codeId) {
-  const c = allCodes.find(x => x.id === codeId);
+  var c = allCodes.find(function(x){ return x.id===codeId; });
   if (!c) return;
-  const devices = allDevices.filter(d => d.code_id === codeId);
-  const session = allSessions.find(s => s.code_id === codeId);
-  const activeDevs = devices.filter(d => d.is_active).length;
+  var devices = allDevices.filter(function(d){ return d.code_id===codeId; });
+  var session = allSessions.find(function(s){ return s.code_id===codeId; });
+  var activeDevs = devices.filter(function(d){ return d.is_active; }).length;
 
   document.getElementById('detail-title').textContent = c.code;
-  document.getElementById('detail-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
-      <div>
-        <div class="form-label">Tipo</div>
-        <span class="type-badge type-${c.type}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span>
-      </div>
-      <div>
-        <div class="form-label">Stato</div>
-        <span class="status-badge s-${c.status}">${statusLabel(c.status)}</span>
-      </div>
-      <div>
-        <div class="form-label">Email</div>
-        <div style="font-size:.85rem">${c.buyer_email || '—'}</div>
-      </div>
-      <div>
-        <div class="form-label">Dispositivi</div>
-        <div style="font-family:var(--mono);font-size:.85rem">${activeDevs} / ${c.max_devices} attivi</div>
-      </div>
-      <div>
-        <div class="form-label">Creato</div>
-        <div style="font-size:.8rem;color:var(--text3)">${fmtDate(c.created_date)}</div>
-      </div>
-      <div>
-        <div class="form-label">Attivato</div>
-        <div style="font-size:.8rem;color:var(--text3)">${fmtDate(c.activated_date)}</div>
-      </div>
-    </div>
+  document.getElementById('detail-body').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">' +
+    '<div><div class="form-label">Tipo</div><span class="type-badge type-' + esc(c.type) + '">' + (c.type==='individual'?'Individuale':'Team') + '</span></div>' +
+    '<div><div class="form-label">Stato</div><span class="status-badge s-' + esc(c.status) + '">' + statusLabel(c.status) + '</span></div>' +
+    '<div><div class="form-label">Email</div><div style="font-size:.85rem">' + esc(c.buyer_email||'—') + '</div></div>' +
+    '<div><div class="form-label">Dispositivi</div><div style="font-family:var(--mono);font-size:.85rem">' + activeDevs + ' / ' + c.max_devices + ' attivi</div></div>' +
+    '<div><div class="form-label">Creato</div><div style="font-size:.8rem;color:var(--text3)">' + fmtDate(c.created_date) + '</div></div>' +
+    '<div><div class="form-label">Attivato</div><div style="font-size:.8rem;color:var(--text3)">' + fmtDate(c.activated_date) + '</div></div>' +
+    '</div>' +
+    '<div style="margin-bottom:1.25rem"><div class="form-label">Note Interne</div>' +
+    '<div style="font-size:.85rem;color:var(--text2);padding:.5rem;background:var(--bg2);min-height:2rem">' + esc(c.notes||'—') + '</div></div>' +
+    '<div style="margin-bottom:1.25rem"><div class="form-label" style="margin-bottom:.75rem">Dispositivi Registrati</div>' +
+    (devices.length===0 ? '<div style="color:var(--text3);font-size:.82rem">Nessun dispositivo ancora registrato.</div>' :
+      devices.map(function(d) {
+        return '<div class="device-row">' +
+          '<div><div class="device-label">' + esc(d.device_label||'—') + '</div>' +
+          '<div class="device-meta">Primo: ' + fmtDate(d.first_seen) + ' · Ultimo: ' + fmtDate(d.last_seen) + '</div></div>' +
+          '<div style="display:flex;align-items:center;gap:.75rem">' +
+          (d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Off</span>') +
+          (d.is_active ? '<button class="btn sm danger" data-action="reset-device" data-device-id="' + esc(d.id) + '" data-code-id="' + esc(codeId) + '">Reset</button>' : '') +
+          '</div></div>';
+      }).join('')
+    ) + '</div>' +
+    (session ?
+      '<div><div class="form-label" style="margin-bottom:.75rem">Stato Gioco</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">' +
+      [
+        ['Atto corrente', 'Atto '+(session.current_act||1)],
+        ['Score corrente', 100-(session.hint_penalty_total||0)-((session.errors_terminal||0)*10)],
+        ['Penalità hint', '-'+(session.hint_penalty_total||0)],
+        ['Errori terminale', session.errors_terminal||0],
+        ['T1', session.t1_completed?'✓':'—'],
+        ['T2A/T2B', (session.t2a_completed?'T2A ✓':'T2A —')+' / '+(session.t2b_completed?'T2B ✓':'T2B —')],
+        ['T3A/T3B/T3C', (session.t3a_completed?'✓':'—')+'/'+(session.t3b_completed?'✓':'—')+'/'+(session.t3c_completed?'✓':'—')],
+        ['Classificazione', esc(session.classification||'—')],
+        ['Consultazione', session.consultation_mode?'Attiva':'No'],
+      ].map(function(row) {
+        return '<div class="session-row"><span class="session-key">' + row[0] + '</span><span class="session-val">' + row[1] + '</span></div>';
+      }).join('') +
+      '</div></div>'
+      : '<div style="color:var(--text3);font-size:.82rem">Sessione non ancora avviata.</div>');
 
-    <div style="margin-bottom:1.25rem">
-      <div class="form-label">Note Interne</div>
-      <div style="font-size:.85rem;color:var(--text2);padding:.5rem;background:var(--bg2);min-height:2rem">${c.notes || '—'}</div>
-    </div>
+  // Footer con data-action per evitare inline JS con dati utente
+  var footer = document.getElementById('detail-footer');
+  footer.innerHTML =
+    '<button class="btn secondary" onclick="closeModal(\'modal-detail\')">Chiudi</button>' +
+    (activeDevs > 0 ? '<button class="btn amber-btn sm" data-action="reset-all" data-code-id="' + esc(c.id) + '">Reset tutti i dispositivi</button>' : '') +
+    (c.type==='individual' ? '<button class="btn sm secondary" data-action="upgrade" data-code-id="' + esc(c.id) + '">Upgrade → Team</button>' : '') +
+    '<button class="btn sm secondary" data-action="open-notes" data-code-id="' + esc(c.id) + '">Modifica Note</button>' +
+    (c.status==='blocked'
+      ? '<button class="btn green-btn sm" data-action="unblock" data-code-id="' + esc(c.id) + '">Sblocca</button>'
+      : '<button class="btn danger sm" data-action="block" data-code-id="' + esc(c.id) + '">Blocca</button>');
 
-    <div style="margin-bottom:1.25rem">
-      <div class="form-label" style="margin-bottom:.75rem">Dispositivi Registrati</div>
-      ${devices.length === 0 ? '<div style="color:var(--text3);font-size:.82rem">Nessun dispositivo ancora registrato.</div>' :
-        devices.map(d => `
-          <div class="device-row">
-            <div>
-              <div class="device-label">${d.device_label || '—'}</div>
-              <div class="device-meta">Primo: ${fmtDate(d.first_seen)} · Ultimo: ${fmtDate(d.last_seen)}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:.75rem">
-              ${d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Off</span>'}
-              ${d.is_active ? `<button class="btn sm danger" onclick="resetSingleDevice('${d.id}','${codeId}')">Reset</button>` : ''}
-            </div>
-          </div>
-        `).join('')
-      }
-    </div>
+  // Rimuovi vecchi listener aggiungendo nuovo ogni volta (clone)
+  var newFooter = footer.cloneNode(true);
+  footer.parentNode.replaceChild(newFooter, footer);
+  newFooter.addEventListener('click', function(e) {
+    var el = e.target;
+    var act = el.dataset.action;
+    var cid = el.dataset.codeId;
+    var did = el.dataset.deviceId;
+    if (act === 'reset-all') resetAllDevices(cid, el);
+    else if (act === 'reset-device') resetSingleDevice(did, cid, el);
+    else if (act === 'upgrade') upgradeCode(cid, el);
+    else if (act === 'open-notes') openNotes(cid);
+    else if (act === 'block') blockCode(cid, el);
+    else if (act === 'unblock') unblockCode(cid, el);
+  });
 
-    ${session ? `
-    <div>
-      <div class="form-label" style="margin-bottom:.75rem">Stato Gioco</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
-        ${[
-          ['Atto corrente', 'Atto ' + (session.current_act||1)],
-          ['Score corrente', 100-(session.hint_penalty_total||0)-((session.errors_terminal||0)*10)],
-          ['Penalità hint', '-'+(session.hint_penalty_total||0)],
-          ['Errori terminale', session.errors_terminal||0],
-          ['T1 completato', session.t1_completed ? '✓' : '—'],
-          ['T2A completato', session.t2a_completed ? '✓' : '—'],
-          ['T2B completato', session.t2b_completed ? '✓' : '—'],
-          ['T3 completato', session.act3_completed ? '✓' : '—'],
-          ['Classificazione', session.classification || '—'],
-          ['Consultazione', session.consultation_mode ? 'Attiva' : 'No'],
-        ].map(([k,v]) => `
-          <div class="session-row">
-            <span class="session-key">${k}</span>
-            <span class="session-val">${v}</span>
-          </div>
-        `).join('')}
-      </div>
-    </div>` : '<div style="color:var(--text3);font-size:.82rem">Sessione non ancora avviata.</div>'}
-  `;
+  // event delegation per reset device nel body
+  var body = document.getElementById('detail-body');
+  var newBody = body.cloneNode(true);
+  body.parentNode.replaceChild(newBody, body);
+  newBody.innerHTML = document.getElementById('detail-body') ? '' : '';
+  // riscriviamo direttamente
+  document.getElementById('modal-detail').querySelector('.modal-body').innerHTML =
+    document.getElementById('detail-body') ? '' : '';
 
-  document.getElementById('detail-footer').innerHTML = `
-    <button class="btn secondary" onclick="closeModal('modal-detail')">Chiudi</button>
-    ${activeDevs > 0 ? `<button class="btn amber sm" onclick="resetAllDevices('${codeId}')">Reset tutti i dispositivi</button>` : ''}
-    ${c.type === 'individual' ? `<button class="btn sm secondary" onclick="upgradeCode('${codeId}')">Upgrade → Team</button>` : ''}
-    <button class="btn sm secondary" onclick="openNotes('${codeId}','${(c.notes||'').replace(/'/g,"\\'")}')">Modifica Note</button>
-    ${c.status === 'blocked'
-      ? `<button class="btn green sm" onclick="unblockCode('${codeId}')">Sblocca</button>`
-      : `<button class="btn danger sm" onclick="blockCode('${codeId}')">Blocca</button>`
-    }
-  `;
+  // Reimpostiamo il body (già settato sopra prima del cloneNode) — riassegna
+  var mb = document.getElementById('modal-detail').querySelector('.modal-body');
+  mb.id = 'detail-body';
+  mb.innerHTML = document.getElementById('detail-body') ? mb.innerHTML : '';
 
   document.getElementById('modal-detail').classList.add('visible');
+
+  // Listener reset device nel body
+  mb.addEventListener('click', function(e) {
+    if (e.target.dataset.action === 'reset-device') {
+      resetSingleDevice(e.target.dataset.deviceId, e.target.dataset.codeId, e.target);
+    }
+  });
 }
 
 function openSessionDetail(sessionId) {
-  const s = allSessions.find(x => x.id === sessionId);
+  var s = allSessions.find(function(x){ return x.id===sessionId; });
   if (!s) return;
-  const progress = sessionProgress(s);
-  const score = s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10));
-  const hintsCount = Object.values(s.hints_revealed || {}).reduce((acc, obj) => {
-    return acc + (typeof obj === 'object' ? Object.values(obj).filter(Boolean).length : 0);
+  var prog = sessionProgress(s);
+  var score = s.score_final != null ? s.score_final : (100-(s.hint_penalty_total||0)-((s.errors_terminal||0)*10));
+  var hintsCount = Object.values(s.hints_revealed||{}).reduce(function(acc,obj){
+    return acc + (obj && typeof obj==='object' ? Object.values(obj).filter(Boolean).length : 0);
   }, 0);
 
-  document.getElementById('detail-title').textContent = 'Sessione — ' + s.access_code;
-  document.getElementById('detail-body').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-      ${[
-        ['Codice', s.access_code],
-        ['Atto corrente', 'Atto ' + (s.current_act||1)],
-        ['Sezione', s.current_section || '—'],
-        ['Progressione', progress + '%'],
-        ['Score attuale', score],
-        ['Penalità hint', '-' + (s.hint_penalty_total||0)],
-        ['Errori terminale', s.errors_terminal||0],
-        ['Hint consultati', hintsCount],
-        ['Email casella', s.email_unlocked ? 'Sbloccata' : (s.email_blocked ? 'Bloccata' : 'Non tentata')],
-        ['Tentativi email', s.email_attempts||0],
-        ['Consultazione', s.consultation_mode ? 'Attiva' : 'No'],
-        ['Classificazione', s.classification || '—'],
-        ['Score Atto 1', s.score_act1 != null ? s.score_act1 : '—'],
-        ['Score Atto 2', s.score_act2 != null ? s.score_act2 : '—'],
-        ['Score Atto 3', s.score_act3 != null ? s.score_act3 : '—'],
-        ['Score Finale', s.score_final != null ? s.score_final : '—'],
-        ['Inizio Atto 1', fmtDate(s.act1_start)],
-        ['Fine Atto 1', fmtDate(s.act1_end)],
-        ['Inizio Atto 2', fmtDate(s.act2_start)],
-        ['Fine Atto 2', fmtDate(s.act2_end)],
-        ['Ultimo agg.', fmtDate(s.last_updated)],
-      ].map(([k,v]) => `
-        <div class="session-row">
-          <span class="session-key">${k}</span>
-          <span class="session-val">${v}</span>
-        </div>
-      `).join('')}
-    </div>
-    <div style="margin-top:1rem">
-      <div class="form-label">Terminali</div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
-        ${['t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed'].map(t =>
-          `<span style="font-family:var(--mono);font-size:.75rem;padding:.2rem .5rem;background:${s[t]?'var(--green)':'var(--bg2)'};border:1px solid ${s[t]?'var(--green2)':'var(--border)'}">
-            ${t.replace('_completed','').toUpperCase()} ${s[t]?'✓':'—'}
-          </span>`
-        ).join('')}
-      </div>
-    </div>
-    <div style="margin-top:1rem">
-      <div class="form-label">Reperti Aperti</div>
-      <div style="font-family:var(--mono);font-size:.75rem;color:var(--text3);margin-top:.3rem">
-        Atto 1: ${(s.docs_opened_act1||[]).join(', ')||'—'}<br>
-        Atto 2: ${(s.docs_opened_act2||[]).join(', ')||'—'}<br>
-        Atto 3: ${(s.docs_opened_act3||[]).join(', ')||'—'}
-      </div>
-    </div>
-  `;
-  document.getElementById('detail-footer').innerHTML = `<button class="btn secondary" onclick="closeModal('modal-detail')">Chiudi</button>`;
+  document.getElementById('detail-title').textContent = 'Sessione — ' + (s.access_code||'');
+  var mb = document.getElementById('modal-detail').querySelector('.modal-body');
+  mb.id = 'detail-body';
+  mb.innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">' +
+    [
+      ['Codice', esc(s.access_code||'—')],
+      ['Atto corrente', 'Atto '+(s.current_act||1)],
+      ['Sezione', esc(s.current_section||'—')],
+      ['Progressione', prog+'%'],
+      ['Score attuale', score],
+      ['Penalità hint', '-'+(s.hint_penalty_total||0)],
+      ['Errori terminale', s.errors_terminal||0],
+      ['Hint consultati', hintsCount],
+      ['Email casella', s.email_unlocked?'Sbloccata':(s.email_blocked?'Bloccata':'Non tentata')],
+      ['Tentativi email', s.email_attempts||0],
+      ['Consultazione', s.consultation_mode?'Attiva':'No'],
+      ['Classificazione', esc(s.classification||'—')],
+      ['Score Atto 1', s.score_act1!=null?s.score_act1:'—'],
+      ['Score Atto 2', s.score_act2!=null?s.score_act2:'—'],
+      ['Score Atto 3', s.score_act3!=null?s.score_act3:'—'],
+      ['Score Finale', s.score_final!=null?s.score_final:'—'],
+      ['Inizio Atto 1', fmtDate(s.act1_start)],
+      ['Fine Atto 1', fmtDate(s.act1_end)],
+      ['Inizio Atto 2', fmtDate(s.act2_start)],
+      ['Fine Atto 2', fmtDate(s.act2_end)],
+      ['Ultimo agg.', fmtDate(s.last_updated)],
+    ].map(function(row){
+      return '<div class="session-row"><span class="session-key">'+row[0]+'</span><span class="session-val">'+row[1]+'</span></div>';
+    }).join('') +
+    '</div>' +
+    '<div style="margin-top:1rem"><div class="form-label">Terminali</div>' +
+    '<div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">' +
+    ['t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed'].map(function(t){
+      return '<span style="font-family:var(--mono);font-size:.75rem;padding:.2rem .5rem;background:' +
+        (s[t]?'var(--success-bg)':'var(--bg2)') + ';border:1px solid ' +
+        (s[t]?'var(--success-border)':'var(--border)') + '">' +
+        esc(t.replace('_completed','').toUpperCase()) + ' ' + (s[t]?'✓':'—') + '</span>';
+    }).join('') +
+    '</div></div>' +
+    '<div style="margin-top:1rem"><div class="form-label">Reperti Aperti</div>' +
+    '<div style="font-family:var(--mono);font-size:.75rem;color:var(--text3);margin-top:.3rem">' +
+    'Atto 1: ' + esc((s.docs_opened_act1||[]).join(', ')||'—') + '<br>' +
+    'Atto 2: ' + esc((s.docs_opened_act2||[]).join(', ')||'—') + '<br>' +
+    'Atto 3: ' + esc((s.docs_opened_act3||[]).join(', ')||'—') +
+    '</div></div>';
+
+  var nf = document.getElementById('modal-detail').querySelector('.modal-footer');
+  nf.id = 'detail-footer';
+  nf.innerHTML = '<button class="btn secondary" onclick="closeModal(\'modal-detail\')">Chiudi</button>';
   document.getElementById('modal-detail').classList.add('visible');
 }
 
 // ── AZIONI ────────────────────────────────────────────────────────────────────
-async function createCode() {
-  const type = document.getElementById('new-type').value;
-  const email = document.getElementById('new-email').value.trim();
-  const purchase = document.getElementById('new-purchase').value.trim();
-  const notes = document.getElementById('new-notes').value.trim();
-  const res = await adminAction('create_code', { type, buyer_email: email, purchase_id: purchase, notes });
-  if (res.ok) {
-    closeModal('modal-create');
-    showToast('Codice creato: ' + res.code.code, 'success');
-    await loadAll();
-  } else {
-    showToast('Errore: ' + res.error, 'error');
-  }
+async function createCode(btn) {
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('create_code', {
+      type: document.getElementById('new-type').value,
+      buyer_email: document.getElementById('new-email').value.trim(),
+      purchase_id: document.getElementById('new-purchase').value.trim(),
+      notes: document.getElementById('new-notes').value.trim()
+    });
+    if (res.ok) {
+      closeModal('modal-create');
+      showToast('Codice creato: ' + res.code.code, 'success');
+      await loadAll();
+    } else {
+      showToast('Errore: ' + res.error, 'error');
+    }
+  } finally { setBtn(btn, false); }
 }
 
-async function blockCode(codeId) {
-  if (!confirm('Bloccare questo codice?')) return;
-  const res = await adminAction('block_code', { code_id: codeId });
-  if (res.ok) { showToast('Codice bloccato.', 'success'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+async function blockCode(codeId, btn) {
+  if (!confirm('Bloccare questo codice? Il giocatore non potrà più accedere.')) return;
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('block_code', { code_id: codeId });
+    if (res.ok) { showToast('Codice bloccato.', 'success'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-async function unblockCode(codeId) {
-  const res = await adminAction('unblock_code', { code_id: codeId });
-  if (res.ok) { showToast('Codice sbloccato.', 'success'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+async function unblockCode(codeId, btn) {
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('unblock_code', { code_id: codeId });
+    if (res.ok) { showToast('Codice sbloccato.', 'success'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-async function resetAllDevices(codeId) {
+async function resetAllDevices(codeId, btn) {
   if (!confirm('Resettare tutti i dispositivi di questo codice?')) return;
-  const res = await adminAction('reset_devices', { code_id: codeId });
-  if (res.ok) { showToast(`${res.reset_count} dispositivo/i resettato/i.`, 'success'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('reset_devices', { code_id: codeId });
+    if (res.ok) { showToast(res.reset_count + ' dispositivo/i resettato/i.', 'success'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-async function resetSingleDevice(deviceId, codeId) {
+async function resetSingleDevice(deviceId, codeId, btn) {
   if (!confirm('Resettare questo dispositivo?')) return;
-  const res = await adminAction('reset_devices', { code_id: codeId, device_id: deviceId });
-  if (res.ok) { showToast('Dispositivo resettato.', 'success'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('reset_devices', { code_id: codeId, device_id: deviceId });
+    if (res.ok) { showToast('Dispositivo resettato.', 'success'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-async function upgradeCode(codeId) {
-  if (!confirm('Convertire questo codice da Individuale a Team (max 3 dispositivi)?')) return;
-  const res = await adminAction('upgrade_code', { code_id: codeId });
-  if (res.ok) { showToast('Codice aggiornato a Team.', 'success'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+async function upgradeCode(codeId, btn) {
+  if (!confirm('Convertire da Individuale a Team (max 3 dispositivi)?')) return;
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('upgrade_code', { code_id: codeId });
+    if (res.ok) { showToast('Codice aggiornato a Team.', 'success'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-function openNotes(codeId, currentNotes) {
+function openNotes(codeId) {
+  var c = allCodes.find(function(x){ return x.id===codeId; });
   editingNotesId = codeId;
-  document.getElementById('notes-input').value = currentNotes;
+  document.getElementById('notes-input').value = c ? (c.notes||'') : '';
   document.getElementById('modal-notes').classList.add('visible');
 }
 
-async function saveNotes() {
-  const notes = document.getElementById('notes-input').value;
-  const res = await adminAction('update_notes', { code_id: editingNotesId, notes });
-  if (res.ok) { showToast('Note salvate.', 'success'); closeModal('modal-notes'); closeModal('modal-detail'); await loadAll(); }
-  else showToast('Errore: ' + res.error, 'error');
+async function saveNotes(btn) {
+  setBtn(btn, true);
+  try {
+    var res = await adminAction('update_notes', { code_id: editingNotesId, notes: document.getElementById('notes-input').value });
+    if (res.ok) { showToast('Note salvate.', 'success'); closeModal('modal-notes'); closeModal('modal-detail'); await loadAll(); }
+    else showToast('Errore: ' + res.error, 'error');
+  } finally { setBtn(btn, false); }
 }
 
-// ── UI HELPERS ────────────────────────────────────────────────────────────────
+// ── UI ────────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(el => {
-    if (el.textContent.toLowerCase().includes(tab === 'codici' ? 'codici' : tab === 'dispositivi' ? 'dispos' : tab === 'sessioni' ? 'sess' : 'dash')) {
-      el.classList.add('active');
-    }
-  });
+  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('tab-'+tab).classList.add('active');
+  var navEl = document.querySelector('.nav-tab[data-tab="'+tab+'"]');
+  if (navEl) navEl.classList.add('active');
 }
 
 function openCreateCode() {
@@ -1035,35 +1000,22 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('visible');
 }
 
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.visible').forEach(m => m.classList.remove('visible'));
+    document.querySelectorAll('.modal-overlay.visible').forEach(function(m){ m.classList.remove('visible'); });
   }
 });
 
-function showToast(msg, type = 'success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show ' + type;
-  setTimeout(() => t.className = '', 3000);
-}
+// Esponi solo le funzioni necessarie agli onclick HTML
+window.doLogin = doLogin;
+window.doLogout = doLogout;
+window.switchTab = switchTab;
+window.openCreateCode = openCreateCode;
+window.closeModal = closeModal;
+window.createCode = createCode;
+window.saveNotes = saveNotes;
 
-function statusLabel(s) {
-  return { unused: 'Non usato', active: 'Attivo', completed: 'Completato', blocked: 'Bloccato', expired: 'Scaduto' }[s] || s;
-}
-
-function fmtDate(d) {
-  if (!d) return '—';
-  try {
-    return new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-  } catch { return '—'; }
-}
-
-function sessionProgress(s) {
-  const steps = ['t1_completed','act1_completed','t2a_completed','t2b_completed','act2_completed','t3a_completed','t3b_completed','t3c_completed','act3_completed'];
-  const done = steps.filter(k => s[k]).length;
-  return Math.round((done / steps.length) * 100);
-}
+})();
 </script>
 </body>
 </html>
