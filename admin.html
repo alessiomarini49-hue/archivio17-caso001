@@ -59,6 +59,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .btn.danger { background: var(--red); }
 .btn.sm { padding: .35rem .75rem; font-size: .75rem; width: auto; }
 .login-error { color: var(--red2); font-size: .82rem; margin-top: .5rem; min-height: 1.2rem; }
+.login-options { display: flex; align-items: center; gap: .5rem; justify-content: center; margin-top: 1rem; font-size: .78rem; color: var(--text3); }
+.login-options input[type=checkbox] { accent-color: var(--red); }
 
 /* ── LAYOUT ── */
 #app { display: none; }
@@ -71,6 +73,10 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
 .topbar-brand span { color: var(--red); }
 .topbar-right { display: flex; align-items: center; gap: 1rem; }
 .topbar-user { color: var(--text3); font-size: .8rem; font-family: var(--mono); }
+.auto-refresh { display: flex; align-items: center; gap: .35rem; color: var(--text3); font-size: .72rem; font-family: var(--mono); }
+.auto-refresh input { accent-color: var(--amber); }
+.refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green2); display: inline-block; transition: opacity .2s; opacity: 0; }
+.refresh-dot.pulse { opacity: 1; }
 
 .nav-tabs {
   display: flex; gap: 0; border-bottom: 1px solid var(--border);
@@ -104,7 +110,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--sans); font
   margin-bottom: 1.25rem;
 }
 .section-title { font-family: var(--serif); font-size: 1.4rem; }
-.section-actions { display: flex; gap: .75rem; align-items: center; }
+.section-actions { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
 
 /* ── TABLE ── */
 .table-wrap { overflow-x: auto; }
@@ -119,7 +125,9 @@ tr:hover td { background: rgba(255,255,255,.02); }
 .code-badge {
   font-family: var(--mono); font-size: .85rem; color: var(--amber);
   background: rgba(183,131,59,.1); padding: .2rem .5rem; letter-spacing: .05em;
+  cursor: pointer;
 }
+.code-badge:hover { background: rgba(183,131,59,.2); }
 .type-badge {
   font-size: .7rem; letter-spacing: .08em; text-transform: uppercase;
   padding: .2rem .6rem; border-radius: 2px;
@@ -200,6 +208,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
 }
 .filter-bar input:focus, .filter-bar select:focus { border-color: var(--red); }
 .filter-bar input { width: 220px; }
+.filter-result-count { color: var(--text3); font-size: .78rem; font-family: var(--mono); margin-left: .5rem; }
 
 /* ── TOAST ── */
 #toast {
@@ -222,6 +231,15 @@ tr:hover td { background: rgba(255,255,255,.02); }
 
 .tab-content { display: none; }
 .tab-content.active { display: block; }
+
+/* ── IDLE WARNING ── */
+.idle-warning {
+  position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+  background: rgba(183,131,59,.15); border: 1px solid var(--amber);
+  padding: .5rem 1rem; font-size: .78rem; color: var(--amber);
+  z-index: 999; display: none;
+}
+.idle-warning.show { display: block; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -237,6 +255,9 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <input type="password" id="admin-key-input" placeholder="Chiave di accesso admin" autocomplete="off">
     <button class="btn" id="login-btn" onclick="doLogin()">Accedi</button>
     <div class="login-error" id="login-error"></div>
+    <div class="login-options">
+      <input type="checkbox" id="remember-session"> <label for="remember-session">Mantieni sessione (questo tab)</label>
+    </div>
   </div>
 </div>
 
@@ -245,12 +266,18 @@ tr:hover td { background: rgba(255,255,255,.02); }
   <div class="topbar">
     <div class="topbar-brand">ARCHIVIO 17 — <span>Admin</span></div>
     <div class="topbar-right">
+      <div class="auto-refresh">
+        <span class="refresh-dot" id="refresh-dot"></span>
+        <input type="checkbox" id="auto-refresh-toggle" onchange="toggleAutoRefresh()">
+        <label for="auto-refresh-toggle">Auto-refresh (60s)</label>
+      </div>
       <div class="topbar-user" id="topbar-date"></div>
       <button class="btn secondary sm" onclick="doLogout()">Esci</button>
     </div>
   </div>
 
-  <!-- FIX 6: data-tab per evidenziazione robusta del tab attivo -->
+  <div class="idle-warning" id="idle-warning">Sessione inattiva — verrai disconnesso tra <span id="idle-countdown">60</span>s</div>
+
   <div class="nav-tabs">
     <div class="nav-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">Dashboard</div>
     <div class="nav-tab" data-tab="codici" onclick="switchTab('codici')">Codici Accesso</div>
@@ -289,6 +316,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
       <div class="section-title">Codici Accesso</div>
       <div class="section-actions">
         <button class="btn sm" onclick="openCreateCode()">+ Nuovo Codice</button>
+        <button class="btn secondary sm" onclick="exportCsv('codes')">Esporta CSV</button>
         <button class="btn secondary sm" onclick="loadCodes()">↺ Aggiorna</button>
       </div>
     </div>
@@ -306,6 +334,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
         <option value="individual">Individuale</option>
         <option value="team">Team</option>
       </select>
+      <span class="filter-result-count" id="codes-result-count"></span>
     </div>
     <div class="table-wrap" id="codes-table-wrap">
       <div class="loading">Caricamento...</div>
@@ -317,6 +346,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="section-header">
       <div class="section-title">Dispositivi Collegati</div>
       <div class="section-actions">
+        <button class="btn secondary sm" onclick="exportCsv('devices')">Esporta CSV</button>
         <button class="btn secondary sm" onclick="loadDevices()">↺ Aggiorna</button>
       </div>
     </div>
@@ -327,6 +357,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
         <option value="active">Attivi</option>
         <option value="inactive">Disattivati</option>
       </select>
+      <span class="filter-result-count" id="devices-result-count"></span>
     </div>
     <div class="table-wrap" id="devices-table-wrap">
       <div class="loading">Caricamento...</div>
@@ -338,6 +369,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="section-header">
       <div class="section-title">Sessioni di Gioco</div>
       <div class="section-actions">
+        <button class="btn secondary sm" onclick="exportCsv('sessions')">Esporta CSV</button>
         <button class="btn secondary sm" onclick="loadSessions()">↺ Aggiorna</button>
       </div>
     </div>
@@ -377,7 +409,6 @@ tr:hover td { background: rgba(255,255,255,.02); }
     </div>
     <div class="modal-footer">
       <button class="btn secondary" onclick="closeModal('modal-create')">Annulla</button>
-      <!-- FIX 5: passa il bottone alla funzione per gestire disable -->
       <button class="btn" id="btn-create-code" onclick="createCode(this)">Genera Codice</button>
     </div>
   </div>
@@ -420,23 +451,48 @@ tr:hover td { background: rgba(255,255,255,.02); }
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 const APP_ID = '69fdda0ce13e22a1cc6cd63c';
-const FUNCTIONS_BASE = `https://base44.app/api/apps/${APP_ID}/functions`;
-const ENTITIES_BASE  = `https://base44.app/api/apps/${APP_ID}/entities`;
+const FUNCTIONS_BASE = `https://api.base44.app/api/apps/${APP_ID}/functions`;
+
+
+function escHtml(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function escAttr(s) { return escHtml(s); }
+
+function escapeHtml(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const SESSION_KEY = 'a17_admin_session';
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;  // 30 minuti di inattività
+const IDLE_WARNING_MS = 60 * 1000;       // 60 sec di warning prima del logout
+const AUTO_REFRESH_MS = 60 * 1000;       // 60 sec auto-refresh
 
 let ADMIN_KEY = '';
 let allCodes = [];
 let allDevices = [];
 let allSessions = [];
 let editingNotesId = null;
+let autoRefreshTimer = null;
+let idleTimer = null;
+let idleWarningTimer = null;
+let idleCountdownTimer = null;
 
 // ── LOGIN ────────────────────────────────────────────────────────────────────
-// FIX 1: niente più "create_code _dry_run". Usiamo block_code con un id finto.
-// Se la chiave è valida e l'id non esiste, il server torna un errore tipo
-// "Codice non trovato" — comunque autorizzato. Se la chiave è invalida, torna
-// "Non autorizzato.". Niente più rischio di creare codici fantasma al login.
+// FIX #1: usa `verify_admin` come è giusto. È la action progettata
+// nel backend per questo scopo — risponde sempre {ok: true} se la chiave è OK.
 async function doLogin() {
   const key = document.getElementById('admin-key-input').value.trim();
+  const remember = document.getElementById('remember-session').checked;
   if (!key) { showLoginError('Inserisci la chiave admin.'); return; }
+
   const btn = document.getElementById('login-btn');
   btn.disabled = true;
   const originalText = btn.textContent;
@@ -444,22 +500,35 @@ async function doLogin() {
   showLoginError('');
 
   try {
-    const res = await fetch(`${FUNCTIONS_BASE}/adminApi`, {
+    const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
-      body: JSON.stringify({ action: 'block_code', code_id: '__verify_ping__' })
+      body: JSON.stringify({ action: 'verify_admin' })
     });
-    const data = await res.json();
-    if (data && data.error === 'Non autorizzato.') {
+
+    if (res.status === 401) {
       showLoginError('Chiave non valida.');
       return;
     }
-    // qualsiasi altra risposta (codice non trovato, ok, ecc.) significa che la
-    // chiave è stata accettata dal backend
+    if (!res.ok) {
+      showLoginError('Errore server (' + res.status + '). Riprova.');
+      return;
+    }
+
+    const data = await res.json().catch(() => ({}));
+    if (!data.ok) {
+      showLoginError(data.error || 'Risposta inattesa dal server.');
+      return;
+    }
+
     ADMIN_KEY = key;
+    if (remember) {
+      try { sessionStorage.setItem(SESSION_KEY, key); } catch(_) {}
+    }
     bootApp();
   } catch (e) {
     showLoginError('Errore di rete. Riprova.');
+    console.error('login error:', e);
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
@@ -478,81 +547,158 @@ function bootApp() {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  setupIdleTracking();
   loadAll();
 }
 
-function doLogout() {
+function doLogout(reason) {
   ADMIN_KEY = '';
   allCodes = []; allDevices = []; allSessions = [];
+  try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
+  stopAutoRefresh();
+  stopIdleTracking();
+  document.getElementById('auto-refresh-toggle').checked = false;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('admin-key-input').value = '';
-  showLoginError('');
+  showLoginError(reason || '');
+}
+
+// ── IDLE TRACKING (auto-logout) ──────────────────────────────────────────────
+function setupIdleTracking() {
+  ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt =>
+    document.addEventListener(evt, resetIdleTimer, { passive: true })
+  );
+  resetIdleTimer();
+}
+function stopIdleTracking() {
+  clearTimeout(idleTimer);
+  clearTimeout(idleWarningTimer);
+  clearInterval(idleCountdownTimer);
+  document.getElementById('idle-warning').classList.remove('show');
+}
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  clearTimeout(idleWarningTimer);
+  clearInterval(idleCountdownTimer);
+  document.getElementById('idle-warning').classList.remove('show');
+  idleTimer = setTimeout(showIdleWarning, IDLE_TIMEOUT_MS - IDLE_WARNING_MS);
+}
+function showIdleWarning() {
+  const warning = document.getElementById('idle-warning');
+  const cd = document.getElementById('idle-countdown');
+  let secs = IDLE_WARNING_MS / 1000;
+  cd.textContent = secs;
+  warning.classList.add('show');
+  idleCountdownTimer = setInterval(() => {
+    secs--;
+    cd.textContent = secs;
+  }, 1000);
+  idleWarningTimer = setTimeout(() => doLogout('Sessione scaduta per inattività.'), IDLE_WARNING_MS);
+}
+
+// ── AUTO-REFRESH ─────────────────────────────────────────────────────────────
+function toggleAutoRefresh() {
+  if (document.getElementById('auto-refresh-toggle').checked) {
+    startAutoRefresh();
+  } else {
+    stopAutoRefresh();
+  }
+}
+function startAutoRefresh() {
+  stopAutoRefresh();
+  autoRefreshTimer = setInterval(async () => {
+    pulseRefreshDot();
+    await loadAll(true);
+  }, AUTO_REFRESH_MS);
+}
+function stopAutoRefresh() {
+  if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
+}
+function pulseRefreshDot() {
+  const dot = document.getElementById('refresh-dot');
+  dot.classList.add('pulse');
+  setTimeout(() => dot.classList.remove('pulse'), 1500);
 }
 
 // ── API ──────────────────────────────────────────────────────────────────────
 async function adminAction(action, params = {}) {
-  const res = await fetch(`${FUNCTIONS_BASE}/adminApi`, {
+  const res = await fetch(`${FUNCTIONS_BASE}/adminActions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
     body: JSON.stringify({ action, ...params })
   });
+  // 401 = sessione scaduta / chiave revocata: forza logout
+  if (res.status === 401) {
+    doLogout('Chiave non più valida. Effettua di nuovo il login.');
+    throw new Error('Non autorizzato');
+  }
   return res.json();
 }
 
 // ── LOAD ALL ─────────────────────────────────────────────────────────────────
-async function loadAll() {
-  await Promise.all([loadCodes(), loadDevices(), loadSessions()]);
+// FIX #2: usa le action `list_*` invece delle entities API.
+// Le entities API di base44 non accettano `x-admin-key`, accettano solo l'auth
+// del utente loggato. Le actions del backend sono fatte apposta per il panel.
+async function loadAll(silent) {
+  // Promise.allSettled non rilancia se uno fallisce — possiamo render con i
+  // dati che ci sono e mostrare toast specifici per quelli mancanti.
+  const results = await Promise.allSettled([loadCodes(silent), loadDevices(silent), loadSessions(silent)]);
+  const failed = results.filter(r => r.status === 'rejected');
+  if (failed.length === results.length && !silent) {
+    showToast('Tutti i caricamenti sono falliti. Verifica connessione e chiave admin.', 'error');
+  }
   renderDashboard();
 }
 
-// FIX 4: errori di rete o HTTP non più silenziati. Toast + console.
-async function loadCodes() {
+async function loadCodes(silent) {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/AccessCode?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    allCodes = data.records || data || [];
+    const res = await adminAction('list_codes', { limit: 500 });
+    if (!res.ok) throw new Error(res.error || 'Errore caricamento codici');
+    allCodes = res.codes || [];
     allCodes.sort((a, b) => new Date(b.created_date || 0) - new Date(a.created_date || 0));
-    renderCodesTable(allCodes);
+    renderCodesTable(filteredCodes());
   } catch(e) {
     console.error('loadCodes:', e);
-    showToast('Errore caricamento codici: ' + e.message, 'error');
+    if (!silent) showToast('Errore caricamento codici: ' + e.message, 'error');
+    throw e;
   }
 }
 
-async function loadDevices() {
+async function loadDevices(silent) {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/Device?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    allDevices = data.records || data || [];
+    const res = await adminAction('list_devices', { limit: 500 });
+    if (!res.ok) throw new Error(res.error || 'Errore caricamento dispositivi');
+    allDevices = res.devices || [];
     allDevices.sort((a, b) => new Date(b.last_seen || 0) - new Date(a.last_seen || 0));
-    renderDevicesTable(allDevices);
+    renderDevicesTable(filteredDevices());
   } catch(e) {
     console.error('loadDevices:', e);
-    showToast('Errore caricamento dispositivi: ' + e.message, 'error');
+    if (!silent) showToast('Errore caricamento dispositivi: ' + e.message, 'error');
+    throw e;
   }
 }
 
-async function loadSessions() {
+async function loadSessions(silent) {
   try {
-    const res = await fetch(`${ENTITIES_BASE}/GameSession?limit=500`, {
-      headers: { 'x-admin-key': ADMIN_KEY }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    allSessions = data.records || data || [];
+    const res = await adminAction('list_sessions', { limit: 500 });
+    if (!res.ok) throw new Error(res.error || 'Errore caricamento sessioni');
+    allSessions = res.sessions || [];
     allSessions.sort((a, b) => new Date(b.last_updated || 0) - new Date(a.last_updated || 0));
     renderSessionsTable(allSessions);
   } catch(e) {
     console.error('loadSessions:', e);
-    showToast('Errore caricamento sessioni: ' + e.message, 'error');
+    if (!silent) showToast('Errore caricamento sessioni: ' + e.message, 'error');
+    throw e;
   }
+}
+
+// ── SCORE HELPERS ────────────────────────────────────────────────────────────
+// FIX #3: clamp a 0, niente score negativi visualizzati.
+function computeScore(s) {
+  if (s.score_final != null) return Math.max(0, s.score_final);
+  const raw = 100 - (s.hint_penalty_total || 0) - ((s.errors_terminal || 0) * 10);
+  return Math.max(0, raw);
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────────────────
@@ -567,36 +713,34 @@ function renderDashboard() {
   const activatedCodes = allCodes.filter(c => c.status !== 'unused').length;
   const completionRate = activatedCodes > 0 ? Math.round((completed / activatedCodes) * 100) : 0;
 
-  document.getElementById('st-total').textContent = total;
-  document.getElementById('st-active').textContent = active;
-  document.getElementById('st-completed').textContent = completed;
-  document.getElementById('st-blocked').textContent = blocked;
-  document.getElementById('st-individual').textContent = individual;
-  document.getElementById('st-team').textContent = team;
-  document.getElementById('st-devices').textContent = activeDevices;
-  document.getElementById('st-completion').textContent = completionRate + '%';
+  setText('st-total', total);
+  setText('st-active', active);
+  setText('st-completed', completed);
+  setText('st-blocked', blocked);
+  setText('st-individual', individual);
+  setText('st-team', team);
+  setText('st-devices', activeDevices);
+  setText('st-completion', completionRate + '%');
 
-  // Ultimi codici
   const recentCodes = allCodes.slice(0, 5);
   const rcEl = document.getElementById('dash-recent-codes');
   if (!recentCodes.length) {
     rcEl.innerHTML = '<div class="empty-state"><p>Nessun codice</p></div>';
   } else {
     rcEl.innerHTML = recentCodes.map(c => `
-      <div class="device-row" style="cursor:pointer" onclick="openDetail('${c.id}')">
+      <div class="device-row" style="cursor:pointer" data-action="open-detail" data-code-id="${escAttr(c.id)}">
         <div>
-          <div class="code-badge">${c.code}</div>
-          <div class="device-meta">${c.buyer_email || '—'} · ${fmtDate(c.created_date)}</div>
+          <div class="code-badge">${escHtml(c.code)}</div>
+          <div class="device-meta">${escHtml(c.buyer_email || '—')} · ${fmtDate(c.created_date)}</div>
         </div>
         <div style="display:flex;gap:.5rem;align-items:center">
-          <span class="type-badge type-${c.type}">${c.type === 'individual' ? 'IND' : 'TEAM'}</span>
-          <span class="status-badge s-${c.status}">${statusLabel(c.status)}</span>
+          <span class="type-badge type-${escAttr(c.type)}">${c.type === 'individual' ? 'IND' : 'TEAM'}</span>
+          <span class="status-badge s-${escAttr(c.status)}">${statusLabel(c.status)}</span>
         </div>
       </div>
     `).join('');
   }
 
-  // Sessioni recenti
   const recentSess = allSessions.slice(0, 5);
   const rsEl = document.getElementById('dash-recent-sessions');
   if (!recentSess.length) {
@@ -605,27 +749,50 @@ function renderDashboard() {
     rsEl.innerHTML = recentSess.map(s => {
       const progress = sessionProgress(s);
       return `
-        <div class="device-row">
+        <div class="device-row" style="cursor:pointer" data-action="open-session" data-sess-id="${escAttr(s.id)}">
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:.75rem">
-              <span class="code-badge">${s.access_code || '—'}</span>
-              <span style="font-size:.75rem;color:var(--text3)">Atto ${s.current_act || 1}</span>
+              <span class="code-badge">${escHtml(s.access_code || '—')}</span>
+              <span style="font-size:.75rem;color:var(--text3)">Atto ${escHtml(s.current_act || 1)}</span>
             </div>
             <div class="progress-bar" style="margin-top:.5rem">
               <div class="progress-fill" style="width:${progress}%"></div>
             </div>
             <div class="device-meta" style="margin-top:.3rem">${fmtDate(s.last_updated)} · ${progress}% completato</div>
           </div>
-          <div style="font-family:var(--mono);font-size:.85rem;color:var(--amber)">${s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10))}</div>
+          <div style="font-family:var(--mono);font-size:.85rem;color:var(--amber)">${computeScore(s)}</div>
         </div>
       `;
     }).join('');
   }
+
+  // Delegation per click sulle righe del dashboard
+  rcEl.querySelectorAll('[data-action="open-detail"]').forEach(el => {
+    el.addEventListener('click', () => openDetail(el.dataset.codeId));
+  });
+  rsEl.querySelectorAll('[data-action="open-session"]').forEach(el => {
+    el.addEventListener('click', () => openSessionDetail(el.dataset.sessId));
+  });
 }
 
 // ── CODICI TABLE ─────────────────────────────────────────────────────────────
+function filteredCodes() {
+  const q = (document.getElementById('filter-code')?.value || '').toLowerCase();
+  const st = document.getElementById('filter-status')?.value || '';
+  const tp = document.getElementById('filter-type')?.value || '';
+  return allCodes.filter(c => {
+    const matchQ = !q || c.code.toLowerCase().includes(q) || (c.buyer_email||'').toLowerCase().includes(q);
+    const matchS = !st || c.status === st;
+    const matchT = !tp || c.type === tp;
+    return matchQ && matchS && matchT;
+  });
+}
+
 function renderCodesTable(codes) {
   const wrap = document.getElementById('codes-table-wrap');
+  const counter = document.getElementById('codes-result-count');
+  if (counter) counter.textContent = codes.length + ' / ' + allCodes.length;
+
   if (!codes.length) {
     wrap.innerHTML = '<div class="empty-state"><p>Nessun codice trovato</p><small>Crea il primo codice con il pulsante in alto</small></div>';
     return;
@@ -643,19 +810,19 @@ function renderCodesTable(codes) {
           const devCount = allDevices.filter(d => d.code_id === c.id && d.is_active).length;
           return `
           <tr>
-            <td><span class="code-badge">${c.code}</span></td>
-            <td><span class="type-badge type-${c.type}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span></td>
-            <td><span class="status-badge s-${c.status}">${statusLabel(c.status)}</span></td>
+            <td><span class="code-badge" data-action="open-detail" data-code-id="${escAttr(c.id)}">${escHtml(c.code)}</span></td>
+            <td><span class="type-badge type-${escAttr(c.type)}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span></td>
+            <td><span class="status-badge s-${escAttr(c.status)}">${statusLabel(c.status)}</span></td>
             <td class="email-cell" title="${escAttr(c.buyer_email||'')}">${escHtml(c.buyer_email || '—')}</td>
             <td class="devices-cell">${devCount} / ${c.max_devices}</td>
             <td class="date-cell">${fmtDate(c.created_date)}</td>
             <td class="notes-cell" title="${escAttr(c.notes||'')}">${escHtml(c.notes || '—')}</td>
             <td>
               <div class="actions-cell">
-                <button class="btn sm secondary" onclick="openDetail('${c.id}')">Dettaglio</button>
+                <button class="btn sm secondary" data-action="open-detail" data-code-id="${escAttr(c.id)}">Dettaglio</button>
                 ${c.status === 'blocked'
-                  ? `<button class="btn sm green" onclick="unblockCode('${c.id}', this)">Sblocca</button>`
-                  : `<button class="btn sm danger" onclick="blockCode('${c.id}', this)">Blocca</button>`
+                  ? `<button class="btn sm green" data-action="unblock" data-code-id="${escAttr(c.id)}">Sblocca</button>`
+                  : `<button class="btn sm danger" data-action="block" data-code-id="${escAttr(c.id)}">Blocca</button>`
                 }
               </div>
             </td>
@@ -664,24 +831,38 @@ function renderCodesTable(codes) {
       </tbody>
     </table>
   `;
+  // Event delegation: niente più onclick="..." inline
+  wrap.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', e => {
+      const action = el.dataset.action;
+      const codeId = el.dataset.codeId;
+      if (action === 'open-detail') openDetail(codeId);
+      else if (action === 'block') blockCode(codeId, el);
+      else if (action === 'unblock') unblockCode(codeId, el);
+    });
+  });
 }
 
 function filterCodes() {
-  const q = document.getElementById('filter-code').value.toLowerCase();
-  const st = document.getElementById('filter-status').value;
-  const tp = document.getElementById('filter-type').value;
-  const filtered = allCodes.filter(c => {
-    const matchQ = !q || c.code.toLowerCase().includes(q) || (c.buyer_email||'').toLowerCase().includes(q);
-    const matchS = !st || c.status === st;
-    const matchT = !tp || c.type === tp;
-    return matchQ && matchS && matchT;
-  });
-  renderCodesTable(filtered);
+  renderCodesTable(filteredCodes());
 }
 
 // ── DISPOSITIVI TABLE ─────────────────────────────────────────────────────────
+function filteredDevices() {
+  const q = (document.getElementById('filter-device')?.value || '').toLowerCase();
+  const st = document.getElementById('filter-device-status')?.value || '';
+  return allDevices.filter(d => {
+    const matchQ = !q || (d.access_code||'').toLowerCase().includes(q) || (d.device_label||'').toLowerCase().includes(q);
+    const matchS = !st || (st === 'active' ? d.is_active : !d.is_active);
+    return matchQ && matchS;
+  });
+}
+
 function renderDevicesTable(devices) {
   const wrap = document.getElementById('devices-table-wrap');
+  const counter = document.getElementById('devices-result-count');
+  if (counter) counter.textContent = devices.length + ' / ' + allDevices.length;
+
   if (!devices.length) {
     wrap.innerHTML = '<div class="empty-state"><p>Nessun dispositivo registrato</p></div>';
     return;
@@ -697,31 +878,29 @@ function renderDevicesTable(devices) {
       <tbody>
         ${devices.map(d => `
           <tr>
-            <td><span class="code-badge">${d.access_code || '—'}</span></td>
+            <td><span class="code-badge">${escHtml(d.access_code || '—')}</span></td>
             <td><span style="font-size:.82rem">${escHtml(d.device_label || '—')}</span></td>
             <td>${d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Disattivato</span>'}</td>
             <td class="date-cell">${fmtDate(d.first_seen)}</td>
             <td class="date-cell">${fmtDate(d.last_seen)}</td>
             <td style="font-family:var(--mono);font-size:.75rem;color:var(--text3)">${escHtml(d.ip_last || '—')}</td>
             <td>
-              ${d.is_active ? `<button class="btn sm danger" onclick="resetSingleDevice('${d.id}', '${d.code_id}', this)">Reset</button>` : '<span style="color:var(--text3);font-size:.75rem">—</span>'}
+              ${d.is_active
+                ? `<button class="btn sm danger" data-action="reset-device" data-device-id="${escAttr(d.id)}" data-code-id="${escAttr(d.code_id)}">Reset</button>`
+                : '<span style="color:var(--text3);font-size:.75rem">—</span>'}
             </td>
           </tr>
         `).join('')}
       </tbody>
     </table>
   `;
+  wrap.querySelectorAll('[data-action="reset-device"]').forEach(el => {
+    el.addEventListener('click', () => resetSingleDevice(el.dataset.deviceId, el.dataset.codeId, el));
+  });
 }
 
 function filterDevices() {
-  const q = document.getElementById('filter-device').value.toLowerCase();
-  const st = document.getElementById('filter-device-status').value;
-  const filtered = allDevices.filter(d => {
-    const matchQ = !q || (d.access_code||'').toLowerCase().includes(q) || (d.device_label||'').toLowerCase().includes(q);
-    const matchS = !st || (st === 'active' ? d.is_active : !d.is_active);
-    return matchQ && matchS;
-  });
-  renderDevicesTable(filtered);
+  renderDevicesTable(filteredDevices());
 }
 
 // ── SESSIONI TABLE ────────────────────────────────────────────────────────────
@@ -743,28 +922,30 @@ function renderSessionsTable(sessions) {
       <tbody>
         ${sessions.map(s => {
           const progress = sessionProgress(s);
-          const score = s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10));
           return `
           <tr>
-            <td><span class="code-badge">${s.access_code || '—'}</span></td>
-            <td style="font-family:var(--mono)">${s.current_act || 1}</td>
+            <td><span class="code-badge">${escHtml(s.access_code || '—')}</span></td>
+            <td style="font-family:var(--mono)">${escHtml(s.current_act || 1)}</td>
             <td style="min-width:100px">
               <div class="progress-bar">
                 <div class="progress-fill" style="width:${progress}%"></div>
               </div>
               <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">${progress}%</div>
             </td>
-            <td style="font-family:var(--mono);color:var(--amber)">${score}</td>
+            <td style="font-family:var(--mono);color:var(--amber)">${computeScore(s)}</td>
             <td style="font-family:var(--mono);color:var(--red2)">-${s.hint_penalty_total||0}</td>
             <td style="font-family:var(--mono);color:var(--red2)">${s.errors_terminal||0}</td>
             <td style="font-size:.78rem;color:var(--text2)">${escHtml(s.classification || '—')}</td>
             <td class="date-cell">${fmtDate(s.last_updated)}</td>
-            <td><button class="btn sm secondary" onclick="openSessionDetail('${s.id}')">Vedi</button></td>
+            <td><button class="btn sm secondary" data-action="open-session" data-sess-id="${escAttr(s.id)}">Vedi</button></td>
           </tr>`;
         }).join('')}
       </tbody>
     </table>
   `;
+  wrap.querySelectorAll('[data-action="open-session"]').forEach(el => {
+    el.addEventListener('click', () => openSessionDetail(el.dataset.sessId));
+  });
 }
 
 // ── DETAIL MODAL ──────────────────────────────────────────────────────────────
@@ -780,11 +961,11 @@ function openDetail(codeId) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">
       <div>
         <div class="form-label">Tipo</div>
-        <span class="type-badge type-${c.type}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span>
+        <span class="type-badge type-${escAttr(c.type)}">${c.type === 'individual' ? 'Individuale' : 'Team'}</span>
       </div>
       <div>
         <div class="form-label">Stato</div>
-        <span class="status-badge s-${c.status}">${statusLabel(c.status)}</span>
+        <span class="status-badge s-${escAttr(c.status)}">${statusLabel(c.status)}</span>
       </div>
       <div>
         <div class="form-label">Email</div>
@@ -820,7 +1001,7 @@ function openDetail(codeId) {
             </div>
             <div style="display:flex;align-items:center;gap:.75rem">
               ${d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Off</span>'}
-              ${d.is_active ? `<button class="btn sm danger" onclick="resetSingleDevice('${d.id}','${codeId}', this)">Reset</button>` : ''}
+              ${d.is_active ? `<button class="btn sm danger" data-action="reset-device" data-device-id="${escAttr(d.id)}" data-code-id="${escAttr(codeId)}">Reset</button>` : ''}
             </div>
           </div>
         `).join('')
@@ -833,7 +1014,7 @@ function openDetail(codeId) {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
         ${[
           ['Atto corrente', 'Atto ' + (session.current_act||1)],
-          ['Score corrente', 100-(session.hint_penalty_total||0)-((session.errors_terminal||0)*10)],
+          ['Score corrente', computeScore(session)],
           ['Penalità hint', '-'+(session.hint_penalty_total||0)],
           ['Errori terminale', session.errors_terminal||0],
           ['T1 completato', session.t1_completed ? '✓' : '—'],
@@ -852,30 +1033,54 @@ function openDetail(codeId) {
     </div>` : '<div style="color:var(--text3);font-size:.82rem">Sessione non ancora avviata.</div>'}
   `;
 
-  // FIX 2: Modifica Note non passa più i contenuti via stringa inline.
-  // Si recupera il valore aggiornato direttamente da allCodes al click.
   document.getElementById('detail-footer').innerHTML = `
     <button class="btn secondary" onclick="closeModal('modal-detail')">Chiudi</button>
-    ${activeDevs > 0 ? `<button class="btn amber sm" onclick="resetAllDevices('${codeId}', this)">Reset tutti i dispositivi</button>` : ''}
-    ${c.type === 'individual' ? `<button class="btn sm secondary" onclick="upgradeCode('${codeId}', this)">Upgrade → Team</button>` : ''}
-    <button class="btn sm secondary" onclick="openNotes('${codeId}')">Modifica Note</button>
+    ${activeDevs > 0 ? `<button class="btn amber sm" data-action="reset-all" data-code-id="${escAttr(codeId)}">Reset tutti i dispositivi</button>` : ''}
+    ${c.type === 'individual' ? `<button class="btn sm secondary" data-action="upgrade" data-code-id="${escAttr(codeId)}">Upgrade → Team</button>` : ''}
+    <button class="btn sm secondary" data-action="open-notes" data-code-id="${escAttr(codeId)}">Modifica Note</button>
     ${c.status === 'blocked'
-      ? `<button class="btn green sm" onclick="unblockCode('${codeId}', this)">Sblocca</button>`
-      : `<button class="btn danger sm" onclick="blockCode('${codeId}', this)">Blocca</button>`
+      ? `<button class="btn green sm" data-action="unblock" data-code-id="${escAttr(codeId)}">Sblocca</button>`
+      : `<button class="btn danger sm" data-action="block" data-code-id="${escAttr(codeId)}">Blocca</button>`
     }
   `;
 
-  document.getElementById('modal-detail').classList.add('visible');
+  // Event delegation per le azioni nel modal
+  const modal = document.getElementById('modal-detail');
+  modal.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      const action = el.dataset.action;
+      const cid = el.dataset.codeId;
+      const did = el.dataset.deviceId;
+      if (action === 'reset-device') resetSingleDevice(did, cid, el);
+      else if (action === 'reset-all') resetAllDevices(cid, el);
+      else if (action === 'upgrade') upgradeCode(cid, el);
+      else if (action === 'open-notes') openNotes(cid);
+      else if (action === 'block') blockCode(cid, el);
+      else if (action === 'unblock') unblockCode(cid, el);
+    });
+  });
+
+  modal.classList.add('visible');
 }
 
 function openSessionDetail(sessionId) {
   const s = allSessions.find(x => x.id === sessionId);
   if (!s) return;
   const progress = sessionProgress(s);
-  const score = s.score_final != null ? s.score_final : (100 - (s.hint_penalty_total||0) - ((s.errors_terminal||0)*10));
-  const hintsCount = Object.values(s.hints_revealed || {}).reduce((acc, obj) => {
-    return acc + (obj && typeof obj === 'object' ? Object.values(obj).filter(Boolean).length : 0);
-  }, 0);
+  // Hints revealed può essere oggetto {pid: {1:true,3:true}} (indipendente)
+  // o number (vecchio formato cumulativo). Gestiamo entrambi.
+  let hintsCount = 0;
+  const hr = s.hints_revealed || {};
+  if (typeof hr === 'object' && !Array.isArray(hr)) {
+    Object.values(hr).forEach(v => {
+      if (typeof v === 'object' && v !== null) {
+        hintsCount += Object.values(v).filter(Boolean).length;
+      } else if (typeof v === 'number') {
+        hintsCount += v;  // formato cumulativo
+      }
+    });
+  }
 
   document.getElementById('detail-title').textContent = 'Sessione — ' + (s.access_code || '');
   document.getElementById('detail-body').innerHTML = `
@@ -885,7 +1090,7 @@ function openSessionDetail(sessionId) {
         ['Atto corrente', 'Atto ' + (s.current_act||1)],
         ['Sezione', escHtml(s.current_section || '—')],
         ['Progressione', progress + '%'],
-        ['Score attuale', score],
+        ['Score attuale', computeScore(s)],
         ['Penalità hint', '-' + (s.hint_penalty_total||0)],
         ['Errori terminale', s.errors_terminal||0],
         ['Hint consultati', hintsCount],
@@ -933,8 +1138,6 @@ function openSessionDetail(sessionId) {
 }
 
 // ── AZIONI ────────────────────────────────────────────────────────────────────
-// FIX 5: tutte le azioni accettano (opzionalmente) il bottone che le ha
-// scatenate, lo disabilitano durante l'await ed evitano doppio click.
 function lockBtn(btn) { if (btn) btn.disabled = true; }
 function unlockBtn(btn) { if (btn) btn.disabled = false; }
 
@@ -1035,8 +1238,6 @@ async function upgradeCode(codeId, btn) {
   }
 }
 
-// FIX 2: openNotes ora prende il valore aggiornato direttamente da allCodes.
-// Niente più stringa inline con escape parziale.
 function openNotes(codeId) {
   const c = allCodes.find(x => x.id === codeId);
   editingNotesId = codeId;
@@ -1059,9 +1260,47 @@ async function saveNotes(btn) {
   }
 }
 
+// ── CSV EXPORT ───────────────────────────────────────────────────────────────
+function exportCsv(type) {
+  let rows, filename, headers;
+  if (type === 'codes') {
+    headers = ['code','type','status','buyer_email','purchase_id','max_devices','created_date','activated_date','notes'];
+    rows = allCodes;
+    filename = 'archivio17-codici.csv';
+  } else if (type === 'devices') {
+    headers = ['access_code','device_label','is_active','first_seen','last_seen','ip_last','fingerprint'];
+    rows = allDevices;
+    filename = 'archivio17-dispositivi.csv';
+  } else {
+    headers = ['access_code','current_act','t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed','score_act1','score_act2','score_act3','score_final','classification','hint_penalty_total','errors_terminal','consultation_mode','last_updated'];
+    rows = allSessions;
+    filename = 'archivio17-sessioni.csv';
+  }
+  if (!rows.length) { showToast('Nessun dato da esportare.', 'error'); return; }
+
+  const csvLine = vals => vals.map(v => {
+    if (v == null) return '';
+    const s = String(v);
+    if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }).join(',');
+
+  const csv = [csvLine(headers)].concat(
+    rows.map(r => csvLine(headers.map(h => r[h])))
+  ).join('\r\n');
+
+  // UTF-8 BOM per Excel
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Esportato: ' + filename, 'success');
+}
+
 // ── UI HELPERS ────────────────────────────────────────────────────────────────
-// FIX 6: switchTab usa data-tab invece di matching su textContent.
-// Più robusto, non rompe se rinomini i tab.
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -1089,18 +1328,24 @@ document.addEventListener('keydown', e => {
   }
 });
 
+let toastTimer;
 function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'show ' + type;
-  setTimeout(() => t.className = '', 3000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3000);
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
 }
 
 function statusLabel(s) {
   return { unused: 'Non usato', active: 'Attivo', completed: 'Completato', blocked: 'Bloccato', expired: 'Scaduto' }[s] || s;
 }
 
-// FIX 3: rileva Invalid Date e ritorna '—' invece della stringa "Invalid Date".
 function fmtDate(d) {
   if (!d) return '—';
   const date = new Date(d);
@@ -1108,27 +1353,56 @@ function fmtDate(d) {
   return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
+// FIX: progressione basata sui 6 terminali (più rappresentativi)
 function sessionProgress(s) {
-  const steps = ['t1_completed','act1_completed','t2a_completed','t2b_completed','act2_completed','t3a_completed','t3b_completed','t3c_completed','act3_completed'];
+  const steps = ['t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed'];
   const done = steps.filter(k => s[k]).length;
   return Math.round((done / steps.length) * 100);
 }
 
-// Escape per testi inseriti via innerHTML (utile sulle note quando contengono
-// virgolette, '<', '>' o '&').
+// Escape completo (include apostrofo e backtick)
 function escHtml(s) {
   return String(s == null ? '' : s)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/`/g, '&#96;');
 }
 function escAttr(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+  return escHtml(s);
 }
+
+// ── INIT: ripristino sessione da sessionStorage ──────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const saved = sessionStorage.getItem(SESSION_KEY);
+    if (saved) {
+      ADMIN_KEY = saved;
+      document.getElementById('remember-session').checked = true;
+      // Verifica che la chiave salvata sia ancora valida
+      fetch(`${FUNCTIONS_BASE}/adminActions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': saved },
+        body: JSON.stringify({ action: 'verify_admin' })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.ok) {
+            bootApp();
+          } else {
+            ADMIN_KEY = '';
+            try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
+          }
+        })
+        .catch(() => {
+          ADMIN_KEY = '';
+          try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
+        });
+    }
+  } catch(_) {}
+});
 </script>
 </body>
 </html>
