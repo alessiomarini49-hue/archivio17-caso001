@@ -496,6 +496,7 @@ function bootApp() {
   document.getElementById('topbar-date').textContent =
     now.toLocaleDateString('it-IT', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) +
     ' — ' + now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+  setupTableListeners();
   loadAll();
 }
 
@@ -604,12 +605,6 @@ function renderDashboard() {
           '<div class="device-meta" style="margin-top:.3rem">' + fmtDate(s.last_updated) + ' · ' + prog + '% completato</div>' +
           '</div><div style="font-family:var(--mono);font-size:.85rem;color:var(--amber)">' + score + '</div></div>';
       }).join('');
-
-  // event delegation per detail
-  rcEl.addEventListener('click', function(e) {
-    var row = e.target.closest('[data-open-detail]');
-    if (row) openDetail(row.dataset.openDetail);
-  });
 }
 
 // ── CODICI TABLE ──────────────────────────────────────────────────────────────
@@ -640,13 +635,6 @@ function renderCodesTable(codes) {
         '</div></td></tr>';
     }).join('') +
     '</tbody></table>';
-
-  wrap.addEventListener('click', function(e) {
-    var el = e.target;
-    if (el.dataset.openDetail) { openDetail(el.dataset.openDetail); return; }
-    if (el.dataset.action === 'block') { blockCode(el.dataset.codeId, el); return; }
-    if (el.dataset.action === 'unblock') { unblockCode(el.dataset.codeId, el); return; }
-  });
 }
 
 function filterCodes() {
@@ -682,12 +670,6 @@ function renderDevicesTable(devices) {
           : '<span style="color:var(--text3);font-size:.75rem">—</span>') + '</td></tr>';
     }).join('') +
     '</tbody></table>';
-
-  wrap.addEventListener('click', function(e) {
-    if (e.target.dataset.action === 'reset-device') {
-      resetSingleDevice(e.target.dataset.deviceId, e.target.dataset.codeId, e.target);
-    }
-  });
 }
 
 function filterDevices() {
@@ -725,112 +707,69 @@ function renderSessionsTable(sessions) {
         '<td><button class="btn sm secondary" data-open-session="' + esc(s.id) + '">Vedi</button></td></tr>';
     }).join('') +
     '</tbody></table>';
-
-  wrap.addEventListener('click', function(e) {
-    if (e.target.dataset.openSession) openSessionDetail(e.target.dataset.openSession);
-  });
 }
 
 // ── DETAIL MODAL ──────────────────────────────────────────────────────────────
 function openDetail(codeId) {
   var c = allCodes.find(function(x){ return x.id===codeId; });
   if (!c) return;
-  var devices = allDevices.filter(function(d){ return d.code_id===codeId; });
-  var session = allSessions.find(function(s){ return s.code_id===codeId; });
+  var devices    = allDevices.filter(function(d){ return d.code_id===codeId; });
+  var session    = allSessions.find(function(s){ return s.code_id===codeId; });
   var activeDevs = devices.filter(function(d){ return d.is_active; }).length;
 
   document.getElementById('detail-title').textContent = c.code;
+
   document.getElementById('detail-body').innerHTML =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem">' +
-    '<div><div class="form-label">Tipo</div><span class="type-badge type-' + esc(c.type) + '">' + (c.type==='individual'?'Individuale':'Team') + '</span></div>' +
-    '<div><div class="form-label">Stato</div><span class="status-badge s-' + esc(c.status) + '">' + statusLabel(c.status) + '</span></div>' +
-    '<div><div class="form-label">Email</div><div style="font-size:.85rem">' + esc(c.buyer_email||'—') + '</div></div>' +
-    '<div><div class="form-label">Dispositivi</div><div style="font-family:var(--mono);font-size:.85rem">' + activeDevs + ' / ' + c.max_devices + ' attivi</div></div>' +
-    '<div><div class="form-label">Creato</div><div style="font-size:.8rem;color:var(--text3)">' + fmtDate(c.created_date) + '</div></div>' +
-    '<div><div class="form-label">Attivato</div><div style="font-size:.8rem;color:var(--text3)">' + fmtDate(c.activated_date) + '</div></div>' +
+    '<div><div class="form-label">Tipo</div><span class="type-badge type-'+esc(c.type)+'">'+(c.type==='individual'?'Individuale':'Team')+'</span></div>' +
+    '<div><div class="form-label">Stato</div><span class="status-badge s-'+esc(c.status)+'">'+statusLabel(c.status)+'</span></div>' +
+    '<div><div class="form-label">Email</div><div style="font-size:.85rem">'+esc(c.buyer_email||'—')+'</div></div>' +
+    '<div><div class="form-label">Dispositivi</div><div style="font-family:var(--mono);font-size:.85rem">'+activeDevs+' / '+c.max_devices+' attivi</div></div>' +
+    '<div><div class="form-label">Creato</div><div style="font-size:.8rem;color:var(--text3)">'+fmtDate(c.created_date)+'</div></div>' +
+    '<div><div class="form-label">Attivato</div><div style="font-size:.8rem;color:var(--text3)">'+fmtDate(c.activated_date)+'</div></div>' +
     '</div>' +
     '<div style="margin-bottom:1.25rem"><div class="form-label">Note Interne</div>' +
-    '<div style="font-size:.85rem;color:var(--text2);padding:.5rem;background:var(--bg2);min-height:2rem">' + esc(c.notes||'—') + '</div></div>' +
+    '<div style="font-size:.85rem;color:var(--text2);padding:.5rem;background:var(--bg2);min-height:2rem">'+esc(c.notes||'—')+'</div></div>' +
     '<div style="margin-bottom:1.25rem"><div class="form-label" style="margin-bottom:.75rem">Dispositivi Registrati</div>' +
-    (devices.length===0 ? '<div style="color:var(--text3);font-size:.82rem">Nessun dispositivo ancora registrato.</div>' :
-      devices.map(function(d) {
-        return '<div class="device-row">' +
-          '<div><div class="device-label">' + esc(d.device_label||'—') + '</div>' +
-          '<div class="device-meta">Primo: ' + fmtDate(d.first_seen) + ' · Ultimo: ' + fmtDate(d.last_seen) + '</div></div>' +
-          '<div style="display:flex;align-items:center;gap:.75rem">' +
-          (d.is_active ? '<span class="device-active">● Attivo</span>' : '<span class="device-inactive">○ Off</span>') +
-          (d.is_active ? '<button class="btn sm danger" data-action="reset-device" data-device-id="' + esc(d.id) + '" data-code-id="' + esc(codeId) + '">Reset</button>' : '') +
-          '</div></div>';
-      }).join('')
+    (devices.length===0
+      ? '<div style="color:var(--text3);font-size:.82rem">Nessun dispositivo ancora registrato.</div>'
+      : devices.map(function(d){
+          return '<div class="device-row">' +
+            '<div><div class="device-label">'+esc(d.device_label||'—')+'</div>' +
+            '<div class="device-meta">Primo: '+fmtDate(d.first_seen)+' · Ultimo: '+fmtDate(d.last_seen)+'</div></div>' +
+            '<div style="display:flex;align-items:center;gap:.75rem">' +
+            (d.is_active?'<span class=\'device-active\'>● Attivo</span>':'<span class=\'device-inactive\'>○ Off</span>') +
+            (d.is_active?'<button class=\'btn sm danger\' data-action=\'reset-device\' data-device-id=\''+esc(d.id)+'\' data-code-id=\''+esc(codeId)+'\'>Reset</button>':'') +
+            '</div></div>';
+        }).join('')
     ) + '</div>' +
-    (session ?
-      '<div><div class="form-label" style="margin-bottom:.75rem">Stato Gioco</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">' +
-      [
-        ['Atto corrente', 'Atto '+(session.current_act||1)],
-        ['Score corrente', 100-(session.hint_penalty_total||0)-((session.errors_terminal||0)*10)],
-        ['Penalità hint', '-'+(session.hint_penalty_total||0)],
-        ['Errori terminale', session.errors_terminal||0],
-        ['T1', session.t1_completed?'✓':'—'],
-        ['T2A/T2B', (session.t2a_completed?'T2A ✓':'T2A —')+' / '+(session.t2b_completed?'T2B ✓':'T2B —')],
-        ['T3A/T3B/T3C', (session.t3a_completed?'✓':'—')+'/'+(session.t3b_completed?'✓':'—')+'/'+(session.t3c_completed?'✓':'—')],
-        ['Classificazione', esc(session.classification||'—')],
-        ['Consultazione', session.consultation_mode?'Attiva':'No'],
-      ].map(function(row) {
-        return '<div class="session-row"><span class="session-key">' + row[0] + '</span><span class="session-val">' + row[1] + '</span></div>';
-      }).join('') +
-      '</div></div>'
+    (session
+      ? '<div><div class="form-label" style="margin-bottom:.75rem">Stato Gioco</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">' +
+        [
+          ['Atto corrente',    'Atto '+(session.current_act||1)],
+          ['Score',            100-(session.hint_penalty_total||0)-((session.errors_terminal||0)*10)],
+          ['Penalità hint',    '-'+(session.hint_penalty_total||0)],
+          ['Errori terminale', session.errors_terminal||0],
+          ['T1',               session.t1_completed?'✓':'—'],
+          ['T2A / T2B',        (session.t2a_completed?'✓':'—')+' / '+(session.t2b_completed?'✓':'—')],
+          ['T3A/T3B/T3C',      (session.t3a_completed?'✓':'—')+'/'+(session.t3b_completed?'✓':'—')+'/'+(session.t3c_completed?'✓':'—')],
+          ['Classificazione',  esc(session.classification||'—')],
+          ['Consultazione',    session.consultation_mode?'Attiva':'No'],
+        ].map(function(r){ return '<div class=\'session-row\'><span class=\'session-key\'>'+r[0]+'</span><span class=\'session-val\'>'+r[1]+'</span></div>'; }).join('') +
+        '</div></div>'
       : '<div style="color:var(--text3);font-size:.82rem">Sessione non ancora avviata.</div>');
 
-  // Footer con data-action per evitare inline JS con dati utente
-  var footer = document.getElementById('detail-footer');
-  footer.innerHTML =
+  document.getElementById('detail-footer').innerHTML =
     '<button class="btn secondary" onclick="closeModal(\'modal-detail\')">Chiudi</button>' +
-    (activeDevs > 0 ? '<button class="btn amber-btn sm" data-action="reset-all" data-code-id="' + esc(c.id) + '">Reset tutti i dispositivi</button>' : '') +
-    (c.type==='individual' ? '<button class="btn sm secondary" data-action="upgrade" data-code-id="' + esc(c.id) + '">Upgrade → Team</button>' : '') +
-    '<button class="btn sm secondary" data-action="open-notes" data-code-id="' + esc(c.id) + '">Modifica Note</button>' +
+    (activeDevs>0 ? '<button class="btn sm amber-btn" data-action="reset-all" data-code-id="'+esc(c.id)+'">Reset dispositivi</button>' : '') +
+    (c.type==='individual' ? '<button class="btn sm secondary" data-action="upgrade" data-code-id="'+esc(c.id)+'">Upgrade → Team</button>' : '') +
+    '<button class="btn sm secondary" data-action="open-notes" data-code-id="'+esc(c.id)+'">Modifica Note</button>' +
     (c.status==='blocked'
-      ? '<button class="btn green-btn sm" data-action="unblock" data-code-id="' + esc(c.id) + '">Sblocca</button>'
-      : '<button class="btn danger sm" data-action="block" data-code-id="' + esc(c.id) + '">Blocca</button>');
-
-  // Rimuovi vecchi listener aggiungendo nuovo ogni volta (clone)
-  var newFooter = footer.cloneNode(true);
-  footer.parentNode.replaceChild(newFooter, footer);
-  newFooter.addEventListener('click', function(e) {
-    var el = e.target;
-    var act = el.dataset.action;
-    var cid = el.dataset.codeId;
-    var did = el.dataset.deviceId;
-    if (act === 'reset-all') resetAllDevices(cid, el);
-    else if (act === 'reset-device') resetSingleDevice(did, cid, el);
-    else if (act === 'upgrade') upgradeCode(cid, el);
-    else if (act === 'open-notes') openNotes(cid);
-    else if (act === 'block') blockCode(cid, el);
-    else if (act === 'unblock') unblockCode(cid, el);
-  });
-
-  // event delegation per reset device nel body
-  var body = document.getElementById('detail-body');
-  var newBody = body.cloneNode(true);
-  body.parentNode.replaceChild(newBody, body);
-  newBody.innerHTML = document.getElementById('detail-body') ? '' : '';
-  // riscriviamo direttamente
-  document.getElementById('modal-detail').querySelector('.modal-body').innerHTML =
-    document.getElementById('detail-body') ? '' : '';
-
-  // Reimpostiamo il body (già settato sopra prima del cloneNode) — riassegna
-  var mb = document.getElementById('modal-detail').querySelector('.modal-body');
-  mb.id = 'detail-body';
-  mb.innerHTML = document.getElementById('detail-body') ? mb.innerHTML : '';
+      ? '<button class="btn sm green-btn" data-action="unblock" data-code-id="'+esc(c.id)+'">Sblocca</button>'
+      : '<button class="btn sm danger" data-action="block" data-code-id="'+esc(c.id)+'">Blocca</button>');
 
   document.getElementById('modal-detail').classList.add('visible');
-
-  // Listener reset device nel body
-  mb.addEventListener('click', function(e) {
-    if (e.target.dataset.action === 'reset-device') {
-      resetSingleDevice(e.target.dataset.deviceId, e.target.dataset.codeId, e.target);
-    }
-  });
 }
 
 function openSessionDetail(sessionId) {
@@ -844,7 +783,6 @@ function openSessionDetail(sessionId) {
 
   document.getElementById('detail-title').textContent = 'Sessione — ' + (s.access_code||'');
   var mb = document.getElementById('modal-detail').querySelector('.modal-body');
-  mb.id = 'detail-body';
   mb.innerHTML =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">' +
     [
@@ -981,6 +919,41 @@ async function saveNotes(btn) {
 }
 
 // ── UI ────────────────────────────────────────────────────────────────────────
+// ── BIND-ONCE — listener sui container fissi ──────────────────────────────
+function setupTableListeners() {
+  document.getElementById('dash-recent-codes').addEventListener('click', function(e) {
+    var row = e.target.closest('[data-open-detail]');
+    if (row) openDetail(row.dataset.openDetail);
+  });
+  document.getElementById('codes-table-wrap').addEventListener('click', function(e) {
+    var el = e.target;
+    if (el.dataset.openDetail)        openDetail(el.dataset.openDetail);
+    else if (el.dataset.action === 'block')   blockCode(el.dataset.codeId, el);
+    else if (el.dataset.action === 'unblock') unblockCode(el.dataset.codeId, el);
+  });
+  document.getElementById('devices-table-wrap').addEventListener('click', function(e) {
+    var el = e.target;
+    if (el.dataset.action === 'reset-device') resetSingleDevice(el.dataset.deviceId, el.dataset.codeId, el);
+  });
+  document.getElementById('sessions-table-wrap').addEventListener('click', function(e) {
+    if (e.target.dataset.openSession) openSessionDetail(e.target.dataset.openSession);
+  });
+  document.getElementById('detail-body').addEventListener('click', function(e) {
+    var el = e.target;
+    if (el.dataset.action === 'reset-device') resetSingleDevice(el.dataset.deviceId, el.dataset.codeId, el);
+  });
+  document.getElementById('detail-footer').addEventListener('click', function(e) {
+    var el = e.target;
+    var act = el.dataset.action;
+    var cid = el.dataset.codeId;
+    if (act === 'reset-all')       resetAllDevices(cid, el);
+    else if (act === 'upgrade')    upgradeCode(cid, el);
+    else if (act === 'open-notes') openNotes(cid);
+    else if (act === 'block')      blockCode(cid, el);
+    else if (act === 'unblock')    unblockCode(cid, el);
+  });
+}
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
   document.querySelectorAll('.nav-tab').forEach(function(el){ el.classList.remove('active'); });
@@ -990,6 +963,7 @@ function switchTab(tab) {
 }
 
 function openCreateCode() {
+  document.getElementById('new-type').value = 'individual';
   document.getElementById('new-email').value = '';
   document.getElementById('new-purchase').value = '';
   document.getElementById('new-notes').value = '';
