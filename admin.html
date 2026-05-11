@@ -694,6 +694,18 @@ async function loadSessions(silent) {
 }
 
 // ── SCORE HELPERS ────────────────────────────────────────────────────────────
+// Breakdown penalità per singolo atto (hint + errori)
+function actBreakdown(s, act) {
+  const h = s['penalty_act'+act+'_hints'] || 0;
+  const e = s['penalty_act'+act+'_errors'] || 0;
+  const tot = h + e;
+  if (!s['t'+(act===1?'1':act===2?'2b':'3c')+'_completed'] && act > 1) {
+    // atto non raggiunto
+  }
+  const col = tot > 0 ? 'var(--red2)' : 'var(--text3)';
+  return `<span style="color:${col}">${tot>0?'−'+tot:'0'}</span><br><span style="font-size:.65rem;color:var(--text3)">h−${h} e−${e}</span>`;
+}
+
 // FIX #3: clamp a 0, niente score negativi visualizzati.
 function computeScore(s) {
   if (s.score_final != null) return Math.max(0, s.score_final);
@@ -914,9 +926,9 @@ function renderSessionsTable(sessions) {
     <table>
       <thead>
         <tr>
-          <th>Codice</th><th>Atto</th><th>Progressione</th><th>Score</th>
-          <th>Hint Pen.</th><th>Errori</th><th>Classificazione</th>
-          <th>Ultimo Agg.</th><th>Dettaglio</th>
+          <th>Codice</th><th>Atto</th><th>Terminali</th><th>Score</th>
+          <th>Atto I</th><th>Atto II</th><th>Atto III</th>
+          <th>Classificazione</th><th>Ultimo Agg.</th><th>Dettaglio</th>
         </tr>
       </thead>
       <tbody>
@@ -925,17 +937,20 @@ function renderSessionsTable(sessions) {
           return `
           <tr>
             <td><span class="code-badge">${escHtml(s.access_code || '—')}</span></td>
-            <td style="font-family:var(--mono)">${escHtml(s.current_act || 1)}</td>
-            <td style="min-width:100px">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width:${progress}%"></div>
+            <td style="font-family:var(--mono)">Atto ${escHtml(s.current_act || 1)}</td>
+            <td style="min-width:110px">
+              <div style="display:flex;gap:3px;flex-wrap:wrap">
+                ${['t1','t2a','t2b','t3a','t3b','t3c'].map(t=>
+                  `<span style="font-family:var(--mono);font-size:.65rem;padding:.1rem .3rem;background:${s[t+'_completed']?'rgba(90,180,100,.15)':'var(--bg2)'};border:1px solid ${s[t+'_completed']?'rgba(90,180,100,.4)':'var(--border)'};color:${s[t+'_completed']?'var(--green2)':'var(--text3)'}">${t.toUpperCase()}</span>`
+                ).join('')}
               </div>
-              <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">${progress}%</div>
+              <div style="font-size:.65rem;color:var(--text3);margin-top:.25rem">${progress}% completato</div>
             </td>
-            <td style="font-family:var(--mono);color:var(--amber)">${computeScore(s)}</td>
-            <td style="font-family:var(--mono);color:var(--red2)">-${s.hint_penalty_total||0}</td>
-            <td style="font-family:var(--mono);color:var(--red2)">${s.errors_terminal||0}</td>
-            <td style="font-size:.78rem;color:var(--text2)">${escHtml(s.classification || '—')}</td>
+            <td style="font-family:var(--mono);font-size:.95rem;color:var(--amber);font-weight:600">${computeScore(s)}</td>
+            <td style="font-family:var(--mono);font-size:.75rem">${actBreakdown(s,1)}</td>
+            <td style="font-family:var(--mono);font-size:.75rem">${actBreakdown(s,2)}</td>
+            <td style="font-family:var(--mono);font-size:.75rem">${actBreakdown(s,3)}</td>
+            <td style="font-size:.75rem;color:var(--text2)">${escHtml(s.classification || '—')}</td>
             <td class="date-cell">${fmtDate(s.last_updated)}</td>
             <td><button class="btn sm secondary" data-action="open-session" data-sess-id="${escAttr(s.id)}">Vedi</button></td>
           </tr>`;
@@ -1118,10 +1133,31 @@ function openSessionDetail(sessionId) {
       <div class="form-label">Terminali</div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem">
         ${['t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed'].map(t =>
-          `<span style="font-family:var(--mono);font-size:.75rem;padding:.2rem .5rem;background:${s[t]?'var(--green)':'var(--bg2)'};border:1px solid ${s[t]?'var(--green2)':'var(--border)'}">
+          `<span style="font-family:var(--mono);font-size:.75rem;padding:.2rem .5rem;background:${s[t]?'rgba(90,180,100,.12)':'var(--bg2)'};border:1px solid ${s[t]?'rgba(90,180,100,.35)':'var(--border)'};color:${s[t]?'var(--green2)':'var(--text3)'}">
             ${t.replace('_completed','').toUpperCase()} ${s[t]?'✓':'—'}
           </span>`
         ).join('')}
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="form-label" style="margin-bottom:.6rem">Breakdown Penalità per Atto</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem">
+        ${[1,2,3].map(act => {
+          const h = s['penalty_act'+act+'_hints']||0;
+          const e = s['penalty_act'+act+'_errors']||0;
+          const tot = h+e;
+          const score = s['score_act'+act];
+          return `<div style="background:var(--bg2);border:1px solid var(--border);padding:.6rem .8rem;border-radius:2px">
+            <div style="font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:.4rem">Atto ${act}</div>
+            <div style="font-family:var(--mono);font-size:1.1rem;font-weight:600;color:${tot>0?'var(--red2)':'#4CAF80'}">${tot>0?'−'+tot:'0'}</div>
+            <div style="font-size:.7rem;color:var(--text3);margin-top:.2rem">hint −${h} · err −${e}</div>
+            ${score!=null ? '<div style="font-size:.7rem;color:var(--amber);margin-top:.2rem">score chiuso: '+score+'</div>' : ''}
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="margin-top:.5rem;font-family:var(--mono);font-size:.78rem;color:var(--text2)">
+        Score globale: <span style="color:var(--amber);font-size:.9rem;font-weight:600">${computeScore(s)}</span>
+        ${s.global_classification ? ' · <span style="color:var(--text3)">'+escHtml(s.global_classification)+'</span>' : ''}
       </div>
     </div>
     <div style="margin-top:1rem">
