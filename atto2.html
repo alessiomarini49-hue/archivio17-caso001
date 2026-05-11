@@ -294,6 +294,12 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .final-headline{font-size:clamp(1.6rem,4vw,2.8rem);font-weight:300;color:var(--text-main);line-height:1.1;margin-bottom:.9rem}
 .final-body{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.75;max-width:520px;margin-left:auto;margin-right:auto}
 .final-divider{width:48px;height:1px;background:var(--border-white);margin:0 auto 1.5rem}
+.final-tease{margin:1.5rem auto;max-width:520px;text-align:left;background:rgba(5,7,11,.6);border:1px solid rgba(167,25,32,.18);padding:1.5rem 1.75rem;position:relative;}
+.final-tease::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(167,25,32,.4),transparent)}
+.final-tease-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red-highlight);text-transform:uppercase;margin-bottom:.85rem;text-align:center;}
+.final-tease-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--text-secondary);line-height:1.75;}
+.final-tease-firm{font-family:var(--font-mono);font-size:9.5px;color:var(--text-meta);letter-spacing:.18em;text-align:right;margin-top:1.25rem;padding-top:.85rem;border-top:1px solid var(--border-white-soft);text-transform:uppercase;}
+.final-actions{margin-top:1.5rem;display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;}
 .final-ipotesi-box{background:rgba(183,131,59,.05);border:1px solid var(--border-gold);padding:1.25rem 1.5rem;margin:0 auto 1.5rem;max-width:520px;text-align:left;}
 .final-ipotesi-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--amber);text-transform:uppercase;margin-bottom:.6rem}
 .final-ipotesi-text{font-size:13.5px;color:var(--text-secondary);line-height:1.7}
@@ -644,10 +650,15 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
             <div class="final-ipotesi-text">Un importo che ricorre fuori dalla pratica Manfredi.<br>Una garanzia familiare non valutata.<br>Un alibi domestico con un intervallo scoperto.<br>Un collaboratore con accesso diretto alla scena.<br>Una iniziale rimasta senza verifica.<br><br>Il fascicolo non indica ancora un colpevole. Indica troppe omissioni.</div>
           </div>
           <div class="final-divider"></div>
-          <div class="act3-tease">
-            <div class="act3-tease-unlock">Accesso autorizzato — In elaborazione</div>
-            <div class="act3-tease-title">Atto 3 — Il punto cieco</div>
-            <div class="act3-tease-hook">La domanda non è più solo chi aveva un motivo.<br><strong>La domanda è quale dettaglio è stato lasciato fuori dalla prima indagine.</strong></div>
+          <div class="final-tease">
+            <div class="final-tease-label">Accesso — Atto III</div>
+            <div class="final-tease-text">La pista economica è tracciata. Ma ogni linea lascia in ombra qualcosa.<br><br>L'Atto III ti mette davanti a quello che il fascicolo non ha detto apertamente: il dettaglio che è stato lasciato fuori dalla prima indagine.<br><br>Quando sarà pronto, acceda all'Atto III.</div>
+            <div class="final-tease-firm">— L'Archivista · il fascicolo resta aperto</div>
+          </div>
+
+          <div class="final-actions">
+            <a href="atto3.html" class="btn-primary">Continua → Atto III</a>
+            <button class="btn-secondary" onclick="showSection('intro')">Torna al briefing</button>
           </div>
         </div>
         <div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap">
