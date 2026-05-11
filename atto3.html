@@ -1497,6 +1497,7 @@ function submitTerminal3A(){
 
   state.t3aErrors += errors;
   state.errorsTerminal += errors;
+  saveState(); updateUI();
 
   const gfb = document.getElementById('t3a-global-fb');
 
