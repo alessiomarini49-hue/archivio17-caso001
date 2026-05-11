@@ -6,9 +6,7 @@
 <title>ARCHIVIO 17 — Caso 001: Il Caso Marini</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* ================================================
    ARCHIVIO 17 — DESIGN SYSTEM v2
@@ -1797,7 +1795,7 @@ const DOCUMENTS = [
     id: 'A01',
     title: 'Profilo Andrea Marini',
     category: 'Profilo personale',
-    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f54f592df_ChatGPTImage8mag202617_41_40.png',
+    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/b13fe63bf_ChatGPTImage11mag202614_47_09.png',
     summary: 'Dati biografici, nucleo familiare, abitudini note e informazioni preliminari.',
     transcript: `Andrea Marini, 42 anni, consulente finanziario.
 
@@ -1868,7 +1866,7 @@ Presenza di alcol nel bicchiere, non confermata come abitudine documentata della
     id: 'A04',
     title: 'Rilievo fotografico dello studio',
     category: 'Rilievo fotografico',
-    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55059c6bc_ChatGPTImage8mag202616_37_16.png',
+    imageUrl: 'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/66c83ac4b_ChatGPTImage11mag202614_38_59.png',
     summary: 'Documentazione visiva della scena nello studio privato. Rilievo effettuato la sera del 14/11/2024.',
     transcript: `Scena documentata nello studio privato di Andrea Marini, 14/11/2024.
 
@@ -2100,7 +2098,7 @@ function renderDocGrid() {
 
     const thumbHtml = doc.imageUrl
       ? `<div class="doc-thumb">
-          <img src="${doc.imageUrl}" alt="${doc.title}" loading="lazy" decoding="async">
+          <img src="${doc.imageUrl}" alt="${doc.title}" loading="lazy">
           <div class="doc-thumb-overlay">ARCHIVIO 17 — ${doc.id}</div>
          </div>`
       : `<div class="doc-thumb">
@@ -2162,7 +2160,7 @@ function renderDocViewer(doc) {
 
   const imageSection = doc.imageUrl
     ? `<div class="evidence-frame" onclick="openLightbox('${doc.imageUrl}')">
-        <img src="${doc.imageUrl}" alt="${doc.title}" loading="lazy" decoding="async" fetchpriority="low">
+        <img src="${doc.imageUrl}" alt="${doc.title}" loading="lazy">
         <div class="evidence-frame-label">
           <span>ARCHIVIO 17 — CASO 001 — ${doc.id} — RISERVATO</span>
           <span>⊕ zoom</span>
@@ -2572,40 +2570,6 @@ init();
       document.getElementById('fb-cifra-row').style.display = (val === 'si' || val === 'forse') ? 'block' : 'none';
     }
 
-    // ===== FEEDBACK ROBUSTO PER BETA TESTER =====
-    // Strategia a 3 livelli per garantire che NESSUN feedback vada perso:
-    //  1) salvataggio immediato in localStorage (backup persistente)
-    //  2) POST al backend con timeout 8s
-    //  3) se fallisce -> mostra link mailto pre-compilato come fallback
-    // Admin: Ctrl+Shift+F apre console export di tutti i feedback raccolti.
-    var FB_BACKUP_KEY = 'a17_feedback_queue_v1';
-    // Endpoint primario (Apps Script di base44)
-    var FB_ENDPOINT = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions/feedback';
-    // Endpoint di backup: FormSubmit.co — invia direttamente alla tua email, NESSUNA registrazione
-    // Funziona via POST CORS-safe. Alla prima ricezione ti arriva una mail di conferma da approvare.
-    var FB_FORMSUBMIT_URL = 'https://formsubmit.co/ajax/logicusescaperoom@gmail.com';
-    var FB_WEB3FORMS_URL = 'https://api.web3forms.com/submit';
-    var FB_WEB3FORMS_KEY = '5f24cad0-f050-4708-9a8b-a8985853af32';
-    var FB_FALLBACK_EMAIL = 'logicusescaperoom@gmail.com';
-
-    function _fbReadQueue(){
-      try { return JSON.parse(localStorage.getItem(FB_BACKUP_KEY) || '[]'); }
-      catch(e){ return []; }
-    }
-    function _fbPushQueue(p){
-      try {
-        var q = _fbReadQueue(); q.push(p);
-        localStorage.setItem(FB_BACKUP_KEY, JSON.stringify(q));
-      } catch(e){}
-    }
-    function _fbWithTimeout(promise, ms){
-      return new Promise(function(res, rej){
-        var t = setTimeout(function(){ rej(new Error('timeout')); }, ms);
-        promise.then(function(v){ clearTimeout(t); res(v); },
-                     function(e){ clearTimeout(t); rej(e); });
-      });
-    }
-
     async function submitFeedbackInternal() {
       var tempo = parseInt(document.getElementById('fb-tempo').value) || 0;
       var bloccato = document.getElementById('fb-bloccato').value;
@@ -2614,19 +2578,18 @@ init();
       var cifra = document.getElementById('fb-cifra').value || '';
       var note = document.getElementById('fb-note').value || '';
 
+      // FIX: usa state.score invece di variabili inesistenti
+      var finalScore = state.score;
+      var classification = getClassification(state.score);
+
       if (!fbPayChoice) { alert('Indica se pagheresti per l\'Atto 2'); return; }
 
       var btn = document.getElementById('fb-submit-btn');
       btn.textContent = 'Invio in corso...';
       btn.disabled = true;
 
-      var finalScore = state.score;
-      var classification = getClassification(state.score);
-
       var payload = {
-        session_id: 'sess-' + Date.now() + '-' + Math.random().toString(36).slice(2,7),
-        ts: new Date().toISOString(),
-        ua: navigator.userAgent.slice(0, 180),
+        session_id: 'sess-' + Date.now(),
         time_spent_minutes: tempo,
         blocked_where: bloccato,
         hints_used_count: state.hintLevelsUsed || 0,
@@ -2639,10 +2602,10 @@ init();
         classification: classification
       };
 
+      // Notifica via Apps Script (token Telegram mai esposto lato client)
       var tgScore = payload.final_score || 0;
       var tgDot = tgScore >= 90 ? '[VERDE]' : tgScore >= 75 ? '[GIALLO]' : tgScore >= 60 ? '[ARANCIO]' : '[ROSSO]';
-      var tgPaga = (payload.would_pay === 'si') ? 'Si - ' + (payload.pay_amount || '?') + ' EUR'
-                  : (payload.would_pay === 'forse') ? 'Forse - ' + (payload.pay_amount || '?') + ' EUR' : 'No';
+      var tgPaga = (payload.would_pay === 'si') ? 'Si - ' + (payload.pay_amount || '?') + ' EUR' : (payload.would_pay === 'forse') ? 'Forse - ' + (payload.pay_amount || '?') + ' EUR' : 'No';
       var tgMsg = tgDot + ' ARCHIVIO 17 - Nuovo Feedback\n\n'
         + 'Punteggio: ' + tgScore + '/100 - ' + (payload.classification || '?') + '\n'
         + 'Tempo: ' + (payload.time_spent_minutes || '?') + ' min\n'
@@ -2652,126 +2615,26 @@ init();
         + 'Pagherebbe: ' + tgPaga + '\n'
         + (payload.blocked_where && payload.blocked_where !== 'Mai bloccato' ? 'Bloccato: ' + payload.blocked_where + '\n' : '')
         + (payload.additional_notes ? 'Note: ' + payload.additional_notes : '');
+
       payload._tgMsg = tgMsg;
 
-      // (1) BACKUP LOCALE — sempre, prima di tutto
-      _fbPushQueue(payload);
+      // Invia al backend Apps Script (token Telegram rimane privato)
+      fetch('https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(function(e){ console.log('FB:', e); });
 
-      // (2) Tentativo PRIMARIO: backend base44
-      var sent = false;
-      try {
-        var resp = await _fbWithTimeout(
-          fetch(FB_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            keepalive: true
-          }), 6000
-        );
-        sent = !!(resp && (resp.ok || resp.status === 0));
-      } catch (e) {
-        console.warn('FB primary failed:', e && e.message);
-      }
-
-      // (2b) BACKUP automatico PRIMARIO: Web3Forms — affidabile, no conferma email richiesta
-      if (!sent) {
-        try {
-          var w3Body = {
-            access_key: FB_WEB3FORMS_KEY,
-            subject: '[ARCHIVIO 17] ' + tgDot + ' Punteggio ' + tgScore + '/100',
-            from_name: 'Archivio 17 — Beta Tester',
-            session_id: payload.session_id,
-            ts: payload.ts,
-            punteggio: tgScore + '/100 (' + payload.classification + ')',
-            tempo_minuti: payload.time_spent_minutes,
-            hint_usati: payload.hints_used_count,
-            bloccato_dove: payload.blocked_where || '(nessun blocco)',
-            sentirsi_investigatore: payload.felt_investigator_score + '/10',
-            voglia_atto2: payload.want_act2_score + '/10',
-            pagherebbe: tgPaga,
-            note: payload.additional_notes || '(nessuna)',
-            browser: payload.ua,
-            message: tgMsg
-          };
-          var resp2 = await _fbWithTimeout(
-            fetch(FB_WEB3FORMS_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify(w3Body),
-              keepalive: true
-            }), 8000
-          );
-          sent = !!(resp2 && resp2.ok);
-          if (sent) console.log('FB sent via Web3Forms');
-        } catch (e) {
-          console.warn('FB Web3Forms failed:', e && e.message);
-        }
-      }
-
-      // (2c) BACKUP secondario: FormSubmit.co
-      if (!sent) {
-        try {
-          var fsBody = {
-            _subject: '[ARCHIVIO 17] ' + tgDot + ' Punteggio ' + tgScore + '/100',
-            _template: 'box',
-            _captcha: 'false',
-            session_id: payload.session_id,
-            ts: payload.ts,
-            punteggio: tgScore + '/100 (' + payload.classification + ')',
-            riassunto: tgMsg
-          };
-          var resp3 = await _fbWithTimeout(
-            fetch(FB_FORMSUBMIT_URL, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-              body: JSON.stringify(fsBody),
-              keepalive: true
-            }), 6000
-          );
-          sent = !!(resp3 && resp3.ok);
-          if (sent) console.log('FB sent via FormSubmit fallback');
-        } catch (e) {
-          console.warn('FB FormSubmit failed:', e && e.message);
-        }
-      }
-
-      // FIX: marca feedback come inviato in state (anche se fetch fallita: backup locale c'è)
+      // FIX: marca feedback come inviato in state
       state.feedbackSubmitted = true;
       saveState();
 
+      // Mostra ringraziamento sempre, subito
       var formEl = document.getElementById('fb-form-inner');
       var thanksEl = document.getElementById('fb-thanks');
       if (formEl) formEl.style.display = 'none';
       if (thanksEl) thanksEl.classList.remove('hidden');
-
-      // (3) Se POST fallita, mostra fallback mailto subito sotto al thanks
-      if (!sent && thanksEl) {
-        var fallback = document.createElement('div');
-        fallback.style.cssText = 'margin-top:1rem;padding:.9rem 1rem;border:1px dashed var(--warning);background:var(--warning-dim);font-family:var(--font-mono);font-size:11px;line-height:1.6;color:var(--text-secondary);';
-        var subj = encodeURIComponent('[ARCHIVIO 17] Feedback ' + payload.session_id);
-        var body = encodeURIComponent(tgMsg + '\n\n--- DATI GREZZI ---\n' + JSON.stringify(payload, null, 2));
-        fallback.innerHTML = 'Connessione al server non riuscita. Il feedback è salvato localmente. '
-          + 'Per inviarlo subito allo staff: '
-          + '<a href="mailto:' + FB_FALLBACK_EMAIL + '?subject=' + subj + '&body=' + body
-          + '" style="color:var(--red-highlight);text-decoration:underline">apri client email →</a>';
-        thanksEl.parentNode.insertBefore(fallback, thanksEl.nextSibling);
-      }
     }
-
-    // === ADMIN: Ctrl+Shift+F per esportare tutti i feedback locali in JSON ===
-    document.addEventListener('keydown', function(e){
-      if (e.ctrlKey && e.shiftKey && (e.key === 'F' || e.key === 'f')) {
-        e.preventDefault();
-        var q = _fbReadQueue();
-        var blob = new Blob([JSON.stringify(q, null, 2)], { type: 'application/json' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'archivio17-feedback-' + new Date().toISOString().slice(0,10) + '.json';
-        a.click();
-        setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
-        showToast('Esportati ' + q.length + ' feedback locali');
-      }
-    });
 
   </script>
 </body>
