@@ -1895,13 +1895,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Se sessione già avviata, salta l'accesso
   loadState();
-  const hasProgress = state.docsOpened.length > 0
-    || state.t1Completed
-    || state.hintPenaltyTotal > 0
-    || state.errorsTerminal > 0;
+  const savedToken = localStorage.getItem('a17_atto1_session_token');
+  const savedCode  = localStorage.getItem('a17_atto1_access_code');
 
-  if(hasProgress){
-    bootApp();
+  if(savedToken && savedCode){
+    // Rivalidazione silenziosa al refresh — usa il token esistente
+    const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0,32);
+    fetch(API_BASE + '/validateCode', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ code: savedCode, session_token: savedToken, fingerprint: fp })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if(data && data.ok){
+        _sessionToken = data.session_token;
+        _codeId       = data.game_session ? data.game_session.code_id : null;
+        _accessCode   = savedCode;
+        if(data.game_session) mergeServerState(data.game_session);
+        bootApp();
+      } else {
+        // Token non più valido — mostra accesso
+        localStorage.removeItem('a17_atto1_session_token');
+        localStorage.removeItem('a17_atto1_code_id');
+        localStorage.removeItem('a17_atto1_access_code');
+      }
+    })
+    .catch(() => {
+      // Offline o errore rete — entra comunque con stato locale
+      _sessionToken = savedToken;
+      _accessCode   = savedCode;
+      bootApp();
+    });
+  } else {
+    const hasProgress = state.docsOpened.length > 0
+      || state.t1Completed
+      || state.hintPenaltyTotal > 0
+      || state.errorsTerminal > 0;
+    if(hasProgress) bootApp();
   }
 });
 </script>
