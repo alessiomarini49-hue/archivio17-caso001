@@ -853,10 +853,11 @@ const GLOBAL_KEY = 'a17_global_v1';
 
 const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
-// Sessione cloud
-let _sessionToken = localStorage.getItem('a17_atto2_session_token') || null;
-let _codeId       = localStorage.getItem('a17_atto2_code_id') || null;
-let _accessCode   = localStorage.getItem('a17_atto2_access_code') || null;
+// Sessione cloud (storage unificato in a17_session.cloud.atto2)
+const _auth = getCloudAuth(2) || {};
+let _sessionToken = _auth.token  || null;
+let _codeId       = _auth.codeId || null;
+let _accessCode   = _auth.code   || null;
 
 // ═══════════════════════════════════════════════
 // DATI — popolati da data/atto2.json
@@ -1722,9 +1723,7 @@ function confirmReset(){
   saveGlobal();
   // Pulisci token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
-  localStorage.removeItem('a17_atto2_session_token');
-  localStorage.removeItem('a17_atto2_code_id');
-  localStorage.removeItem('a17_atto2_access_code');
+  clearCloudAuth(2);
   state = defaultState();
   saveState();
   document.getElementById('confirm-overlay').classList.remove('visible');
@@ -1762,13 +1761,17 @@ function showToast(msg){
 // ===== INIT =====
 function init(){
   // Ripristina sessione cloud da localStorage
-  _sessionToken = _sessionToken || localStorage.getItem('a17_atto2_session_token');
-  _codeId       = _codeId       || localStorage.getItem('a17_atto2_code_id');
-  _accessCode   = _accessCode   || localStorage.getItem('a17_atto2_access_code');
+  const a2 = getCloudAuth(2) || {};
+  _sessionToken = _sessionToken || a2.token  || null;
+  _codeId       = _codeId       || a2.codeId || null;
+  _accessCode   = _accessCode   || a2.code   || null;
   // Prova a recuperare sessione da Atto 1 se non presente
-  if(!_sessionToken) _sessionToken = localStorage.getItem('a17_atto1_session_token');
-  if(!_codeId)       _codeId       = localStorage.getItem('a17_atto1_code_id');
-  if(!_accessCode)   _accessCode   = localStorage.getItem('a17_atto1_access_code');
+  if(!_sessionToken || !_codeId || !_accessCode){
+    const a1 = getCloudAuth(1) || {};
+    _sessionToken = _sessionToken || a1.token  || null;
+    _codeId       = _codeId       || a1.codeId || null;
+    _accessCode   = _accessCode   || a1.code   || null;
+  }
 
   loadState();
   renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');

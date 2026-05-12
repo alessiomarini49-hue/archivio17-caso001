@@ -455,10 +455,11 @@ const STATE_VERSION  = 3;
 const LOCAL_CODES    = ['A17-ATTO1', 'A17-DEMO'];
 const API_BASE       = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
-// Sessione cloud
-let _sessionToken = localStorage.getItem('a17_atto1_session_token') || null;
-let _codeId       = localStorage.getItem('a17_atto1_code_id') || null;
-let _accessCode   = localStorage.getItem('a17_atto1_access_code') || null;
+// Sessione cloud (storage unificato in a17_session.cloud.atto1)
+const _auth = getCloudAuth(1) || {};
+let _sessionToken = _auth.token  || null;
+let _codeId       = _auth.codeId || null;
+let _accessCode   = _auth.code   || null;
 // Sovrascritti da data/atto1.json al boot
 let REQUIRED_DOCS  = 4;   // documenti necessari per sbloccare il terminale
 let TOTAL_DOCS     = 5;
@@ -660,9 +661,7 @@ function doAccess(){
       _sessionToken = data.session_token;
       _codeId       = data.game_session ? data.game_session.code_id : null;
       _accessCode   = inp;
-      localStorage.setItem('a17_atto1_session_token', _sessionToken);
-      if(_codeId) localStorage.setItem('a17_atto1_code_id', _codeId);
-      localStorage.setItem('a17_atto1_access_code', inp);
+      setCloudAuth(1, { token: _sessionToken, codeId: _codeId, code: inp });
       // Ripristina stato server se presente
       if(data.game_session) mergeServerState(data.game_session);
       errEl.classList.remove('visible');
@@ -1263,9 +1262,7 @@ function confirmReset(){
   saveGlobal();
   // Pulisci anche token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
-  localStorage.removeItem('a17_atto1_session_token');
-  localStorage.removeItem('a17_atto1_code_id');
-  localStorage.removeItem('a17_atto1_access_code');
+  clearCloudAuth(1);
   state = defaultState();
   saveState();
   document.getElementById('confirm-overlay').classList.remove('visible');

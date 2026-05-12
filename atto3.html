@@ -1144,10 +1144,11 @@ const GLOBAL_KEY = 'a17_global_v1';
 const STATE_VERSION = 1;
 const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
-// Sessione cloud
-let _sessionToken = localStorage.getItem('a17_atto3_session_token') || null;
-let _codeId       = localStorage.getItem('a17_atto3_code_id') || null;
-let _accessCode   = localStorage.getItem('a17_atto3_access_code') || null;
+// Sessione cloud (storage unificato in a17_session.cloud.atto3)
+const _auth = getCloudAuth(3) || {};
+let _sessionToken = _auth.token  || null;
+let _codeId       = _auth.codeId || null;
+let _accessCode   = _auth.code   || null;
 
 // ═══════════════════════════════════════════════
 // DATI — popolati da data/atto3.json
@@ -2151,9 +2152,7 @@ function confirmReset(){
   saveGlobal();
   // Pulisci token cloud
   _sessionToken = null; _codeId = null; _accessCode = null;
-  localStorage.removeItem('a17_atto3_session_token');
-  localStorage.removeItem('a17_atto3_code_id');
-  localStorage.removeItem('a17_atto3_access_code');
+  clearCloudAuth(3);
   state = defaultState();
   saveState();
   document.getElementById('confirm-overlay').classList.remove('visible');
@@ -2206,15 +2205,12 @@ function showToast(msg, dur=3000){
 // ===== INIT =====
 function init(){
   // Ripristina sessione cloud (proprio atto o fallback dagli atti precedenti)
-  _sessionToken = _sessionToken || localStorage.getItem('a17_atto3_session_token')
-               || localStorage.getItem('a17_atto2_session_token')
-               || localStorage.getItem('a17_atto1_session_token');
-  _codeId       = _codeId       || localStorage.getItem('a17_atto3_code_id')
-               || localStorage.getItem('a17_atto2_code_id')
-               || localStorage.getItem('a17_atto1_code_id');
-  _accessCode   = _accessCode   || localStorage.getItem('a17_atto3_access_code')
-               || localStorage.getItem('a17_atto2_access_code')
-               || localStorage.getItem('a17_atto1_access_code');
+  const a3 = getCloudAuth(3) || {};
+  const a2 = getCloudAuth(2) || {};
+  const a1 = getCloudAuth(1) || {};
+  _sessionToken = _sessionToken || a3.token  || a2.token  || a1.token  || null;
+  _codeId       = _codeId       || a3.codeId || a2.codeId || a1.codeId || null;
+  _accessCode   = _accessCode   || a3.code   || a2.code   || a1.code   || null;
 
   loadState();
   renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
