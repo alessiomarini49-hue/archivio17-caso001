@@ -1384,6 +1384,7 @@ function submitTerminal3A(){
     const mCasellaEl = document.getElementById('minv-casella'); if(mCasellaEl){ mCasellaEl.textContent='disponibile'; mCasellaEl.className='inv-status-val active'; }
     saveState(); updateUI();
     renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
+    renderPuzzles(); // sblocca visibilita hint FASE 2 (P15) per T3B
     setTimeout(()=> showSection('parte2'), 2500);
   } else if(errors > 0){
     gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
@@ -1607,6 +1608,7 @@ function submitTerminal3B(){
       const el = document.getElementById(id); if(el) el.classList.remove('locked');
     });
     saveState(); updateUI();
+    renderPuzzles(); // sblocca visibilita hint FASE 3 (P16) per T3C
     setTimeout(()=> showSection('verifiche'), 2500);
   } else if(errors > 0){
     gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
