@@ -865,335 +865,56 @@ let _sessionToken = localStorage.getItem('a17_atto2_session_token') || null;
 let _codeId       = localStorage.getItem('a17_atto2_code_id') || null;
 let _accessCode   = localStorage.getItem('a17_atto2_access_code') || null;
 
-// ===== REPERTI PARTE 1 =====
-const DOCS_P1 = [
-  {
-    id:'B02', cat:'Documento contabile', title:'Cartella Manfredi · Irregolarità contabili',
-    desc:'Estratto da una cartella professionale relativa al cliente Roberto Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f506b56aa_ChatGPTImage9mag202601_07_06.png',
-    transcript:"Cartella cliente: Roberto Manfredi / Gruppo Manfredi S.r.l.\nOggetto: verifica interna movimenti contabili anomali.\nPeriodo esaminato: settembre–novembre 2024.\n\nNote studio:\n— movimenti ricorrenti non giustificati;\n— fatture con causali generiche;\n— flussi di cassa incompatibili con i contratti dichiarati;\n— richiesta di revisione urgente da parte di Andrea Marini;\n— possibile esposizione penale in caso di trasmissione atti a consulente esterno.",
-    note:'« Se questa pratica esce dallo studio, Manfredi non la prenderà bene. »'
-  },
-  {
-    id:'B03', cat:'Contratto', title:'Contratto Studio – Manfredi',
-    desc:'Accordo professionale tra Studio Marini e società riconducibile a Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/dc816050f_ChatGPTImage10mag202618_16_06.png',
-    transcript:"Contratto di consulenza continuativa tra Studio Marini & Associati e Gruppo Manfredi S.r.l.\n\nImporto mensile: € 12.500\n\nClausole accessorie:\n— consulenza fiscale straordinaria;\n— revisione contabile;\n— ottimizzazione flussi operativi;\n— gestione documentazione integrativa.",
-    note:'« Compensi fuori scala rispetto alle prestazioni dichiarate. »'
-  },
-  {
-    id:'B05', cat:'Tabulati', title:'Tabulati telefonici Andrea',
-    desc:'Estratto chiamate degli ultimi giorni prima della morte.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/a99b2d51a_ChatGPTImage9mag202601_07_20.png',
-    transcript:"10/11 — 18:12 — Roberto Manfredi — 07:42\n11/11 — 09:33 — Studio Legale Rinaldi — 02:16\n12/11 — 20:41 — Roberto Manfredi — 04:58\n13/11 — 11:05 — Stefano Marini — 01:12\n14/11 — 18:06 — Davide Serra — 00:43\n14/11 — 18:51 — Numero non salvato — 00:21\n14/11 — 19:04 — Stefano Marini — chiamata non risposta",
-    note:'Nessuna chiamata registrata dopo le 19:04.'
-  },
-  {
-    id:'B06', cat:'Documento bancario', title:'Estratto conto Andrea',
-    desc:'Movimenti selezionati del conto personale di Andrea Marini.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/1b7df3816_ChatGPTImage9mag202601_07_25.png',
-    transcript:"Estratto conto sintetico · ottobre–novembre 2024\n\nMovimenti rilevanti:\n03/10 — Premio assicurativo · Copertura debiti — € 412,00\n03/11 — Premio assicurativo · Copertura debiti — € 412,00\n06/11 — Bonifico Studio Marini — € 8.750,00\n08/11 — Pagamento consulenza esterna · Studio Legale Rinaldi — € 650,00\n13/11 — Prelievo contanti — € 1.200,00",
-    note:'Polizza collegata a copertura debitoria. Capitale assicurato: € 280.000.'
-  },
-  {
-    id:'B07', cat:'Documento bancario', title:'Atto di fideiussione',
-    desc:'Documento personale archiviato tra pratiche bancarie.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/4f758dc9c_ChatGPTImage10mag202618_13_44.png',
-    transcript:"Atto di fideiussione bancaria solidale.\nData sottoscrizione: 18/05/2024.\n\nSoggetti garanti:\n— Andrea Marini\n— Stefano Marini\n\nImporto massimo garantito: € 280.000\n\nFinalità: copertura esposizione debitoria relativa a società riconducibile a Stefano Marini.\n\nClausola: in caso di insolvenza del debitore principale, l'istituto potrà rivalersi integralmente sui garanti."
-  },
-  {
-    id:'B13', cat:'Nota personale', title:'Nota personale · tensione con Elena',
-    desc:'Bozza privata non inviata, recuperata tra file personali.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/c579a662f_ChatGPTImage9mag202601_21_40.png',
-    transcript:"Elena continua a chiedermi cosa stia succedendo.\nLe ho detto che è solo lavoro, ma non mi crede più.\n\nSe dovesse venire fuori tutto, non so cosa resterebbe di noi.\n\nNon posso dirle della copertura.\nNon ancora.",
-    note:"Documento recuperato tra bozze personali non inviate."
-  }
-];
+// ═══════════════════════════════════════════════
+// DATI — popolati da data/atto2.json
+// ═══════════════════════════════════════════════
+let CASE_DATA = null;
+let DOCS_P1 = [];
+let DOCS_P2 = [];
+let PUZZLES = [];
+let SOSPETTI = {};
+let SOSPETTI_ALIAS = {};
+let AMBIGUOUS_GENERIC = [];
+let ELEM_P1 = {};
+let ELEM_P2 = {};
+let UNVER_KW = [];
+let UNVER_AMBIGUOUS = [];
+let LIMIT_KW = [];
+let LIMIT_AMBIGUOUS = [];
+let ALT_KW = [];
+let SYNTH_KW = [];
 
-// ===== REPERTI PARTE 2 =====
-const DOCS_P2 = [
-  {
-    id:'B04', cat:'Audio · Trascrizione', title:'Telefonata Andrea – Manfredi',
-    desc:'Trascrizione parziale di una telefonata registrata due giorni prima del decesso.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0a8860720_ChatGPTImage10mag202618_26_04.png',
-    transcript:"Data: 12/11/2024\nPartecipanti: Andrea Marini / Roberto Manfredi\n\nANDREA:\n« Non posso più coprire questa cosa. Mi hai chiesto di chiudere gli occhi, ma ora stanno controllando. »\n\nMANFREDI:\n« Tu hai firmato carte, Andrea. Non fare finta di essere fuori. »\n\nANDREA:\n« Io sto parlando con un legale. »\n\nMANFREDI:\n« Parla con chi vuoi. Ma sai cosa succede se questa storia esce. »\n\nANDREA:\n« È una minaccia? »\n\nMANFREDI:\n« È un promemoria. »",
-    note:"L'audio completo risulta degradato. La trascrizione è stata prodotta da analisi interna dell'Archivio."
-  },
-  {
-    id:'B08', cat:'Comunicazione bancaria', title:'Sollecito bancario · Stefano',
-    desc:'Comunicazione collegata a una posizione debitoria familiare.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/8d2ac80cd_ChatGPTImage10mag202617_11_15.png',
-    transcript:"Oggetto: richiesta di rientro posizione debitoria.\nDestinatario: Stefano Marini.\nImporto esposizione: € 280.000.\nTermine di regolarizzazione: 30 giorni.\n\nIn assenza di rientro o piano di copertura accettato, l'istituto procederà all'attivazione delle garanzie sottoscritte.",
-    note:'Documento acquisito da cartella personale non classificata.'
-  },
-  {
-    id:'B10', cat:'Verbale interrogatorio', title:'Interrogatorio · Roberto Manfredi',
-    desc:'Seconda dichiarazione del cliente Manfredi.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55012b651_ChatGPTImage9mag202601_07_41.png',
-    transcript:"Roberto Manfredi conferma di aver avuto discussioni accese con Andrea Marini nei giorni precedenti alla morte.\n\nDichiara:\n« Andrea voleva tirarsi indietro da una situazione che aveva accettato per anni. »\n\nAlla domanda sulle minacce:\n« Ho detto che ci sarebbero state conseguenze. Economiche. Legali. Non altro. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero impegnato fuori sede per un incontro aziendale. Possono confermarlo. »",
-    note:'Alibi non ancora verificato in questa fase.'
-  },
-  {
-    id:'B11', cat:'Verbale interrogatorio', title:'Interrogatorio · Stefano Marini',
-    desc:'Seconda dichiarazione del fratello della vittima.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0b46950a8_ChatGPTImage9mag202601_07_45.png',
-    transcript:"Stefano Marini dichiara di non aver incontrato Andrea la sera del 14 novembre.\n\nDichiara:\n« L'ho sentito nei giorni precedenti, ma non quella sera. Eravamo entrambi sotto pressione. »\n\nAlla domanda sui rapporti economici:\n« C'erano alcune questioni, ma niente che riguardasse la sua morte. »\n\nAlla domanda sulla fideiussione:\n« Era una garanzia temporanea. Andrea voleva aiutarmi, tutto qui. »\n\nAlla domanda sull'appuntamento \"Cena con S.\":\n« Non so a chi si riferisse. »",
-    note:'Dichiarazione registrata. Coerenza interna da verificare.'
-  },
-  {
-    id:'B15', cat:'Verbale integrativo', title:'Dichiarazione integrativa · Davide Serra',
-    desc:'Dichiarazione aggiuntiva del collaboratore dello studio.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0c5442f84_ChatGPTImage9mag202601_08_58.png',
-    transcript:"Davide Serra conferma di essere stato il primo a entrare nello studio la mattina del rinvenimento.\n\nDichiara:\n« La porta era chiusa. Ho usato la mia copia. Non ho toccato nulla, ho chiamato subito. »\n\nAlla domanda sulle pratiche Manfredi:\n« Sapevo che c'erano tensioni, ma Andrea non mi spiegava tutto. »\n\nAlla domanda sull'archivio interno:\n« Il fascicolo Manfredi era già sulla scrivania quando sono entrato. »",
-    note:'Davide aveva accesso allo studio e conosceva la posizione dei fascicoli. Nessun elemento risolutivo.'
-  },
-  {
-    id:'B14', cat:'Verbale integrativo', title:'Dichiarazione integrativa · Elena Ricci',
-    desc:'Dichiarazione aggiuntiva della moglie di Andrea.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/35f116afa_ChatGPTImage9mag202601_08_37.png',
-    transcript:"Elena Ricci conferma tensioni con Andrea nelle ultime settimane.\n\nDichiara:\n« Non era più lui. Nascondeva telefonate, usciva dallo studio tardi, non voleva che guardassi i documenti. »\n\nAlla domanda sulla copertura assicurativa:\n« Sapevo che esisteva una copertura, ma Andrea diceva che era una formalità bancaria. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero da mia sorella. Ho uno scontrino della cena, ma sono uscita per circa venti minuti per una telefonata. »",
-    note:'Alibi parziale. Intervallo non verificato.'
-  }
-];
+const CASE_DATA_PROMISE = fetch('data/atto2.json')
+  .then(r => { if(!r.ok) throw new Error('Fetch dati atto2 fallito: ' + r.status); return r.json(); })
+  .then(d => {
+    CASE_DATA       = d;
+    DOCS_P1         = d.documents.parte1;
+    DOCS_P2         = d.documents.parte2;
+    PUZZLES         = d.puzzles;
+    SOSPETTI        = d.sospetti;
+    SOSPETTI_ALIAS  = d.sospettiAlias;
+    AMBIGUOUS_GENERIC = d.ambiguousGeneric;
+    ELEM_P1         = d.elemP1;
+    ELEM_P2         = d.elemP2;
+    UNVER_KW        = d.unverKw;
+    UNVER_AMBIGUOUS = d.unverAmbiguous;
+    LIMIT_KW        = d.limitKw;
+    LIMIT_AMBIGUOUS = d.limitAmbiguous;
+    ALT_KW          = d.altKw;
+    SYNTH_KW        = d.synthKw;
+  })
+  .catch(err => {
+    console.error('[Archivio17] Errore caricamento dati atto2:', err);
+    alert('Impossibile caricare i dati dell\'Atto II. Verifica di aver aperto il sito tramite un web server (non file://).');
+    throw err;
+  });
 
-// ===== PUZZLES =====
-const PUZZLES = [
-  {
-    id:'P05', part:1,
-    title:'La pista economica evidente',
-    scope:'Individuare la linea professionale più rumorosa senza obbligarsi a una sola risposta.',
-    hints:[
-      {lvl:1,cost:2,txt:'Le pressioni che Andrea stava gestendo non erano solo personali. Guarda dove si concentrano le comunicazioni nei giorni precedenti al 14 novembre.'},
-      {lvl:2,cost:5,txt:'Un professionista sotto pressione lascia tracce nei documenti che cerca di tenere separati. Cerca il punto in cui una pratica professionale e i movimenti personali si toccano.'},
-      {lvl:3,cost:8,txt:"C'è una figura esterna che compare nei contratti, nei tabulati e nella pressione degli ultimi giorni. Non è l'unica pista, ma è la più documentata nel fascicolo."}
-    ]
-  },
-  {
-    id:'P06', part:1,
-    title:"L'importo ricorrente",
-    scope:'Notare la cifra che compare in più documenti, in contesti diversi.',
-    hints:[
-      {lvl:1,cost:2,txt:'In un fascicolo economico, un numero che ritorna in documenti diversi non è mai casuale. Cerca la cifra che compare più di una volta.'},
-      {lvl:2,cost:5,txt:'Metti a confronto i documenti bancari personali con quelli di garanzia. La stessa cifra ha più di un contesto.'},
-      {lvl:3,cost:8,txt:'Quella cifra collega due ambiti distinti dell’indagine. Capire a chi appartiene in ciascun contesto cambia il peso di ogni pista.'}
-    ]
-  },
-  {
-    id:'P07', part:1,
-    title:'La timeline incompleta',
-    scope:'Identificare gli elementi temporali del 14 novembre che non trovano ancora conferma.',
-    hints:[
-      {lvl:1,cost:2,txt:'Non tutte le incongruenze sono economiche. Alcune riguardano gli orari. Guarda cosa succede il 14 novembre dopo le 19:00.'},
-      {lvl:2,cost:5,txt:'Confronta agenda e tabulati telefonici. C’è almeno un appuntamento e almeno una chiamata che non trovano conferma reciproca.'},
-      {lvl:3,cost:8,txt:'Una voce nell’agenda indica un incontro programmato. I tabulati mostrano un’interruzione netta nelle comunicazioni. Chi doveva essere lì, quella sera?'}
-    ]
-  },
-  {
-    id:'P08', part:1,
-    title:"Le zone d'ombra iniziali",
-    scope:"Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.",
-    hints:[
-      {lvl:1,cost:2,txt:'Non concentrarti solo sulla pista principale. Anche i dettagli secondari servono: definiscono i confini di quello che sai.'},
-      {lvl:2,cost:5,txt:'Considera chi aveva accesso fisico alla scena e chi conosceva le pratiche dello studio. Anche senza un movente chiaro, questi elementi restano rilevanti.'},
-      {lvl:3,cost:8,txt:'Due figure laterali — una domestica, una professionale — hanno accesso e conoscenza che nessuna dichiarazione ha ancora spiegato del tutto. Non sono la pista principale, ma non sono nemmeno irrilevanti.'}
-    ]
-  },
-  {
-    id:'P09', part:2,
-    title:'La minaccia più rumorosa',
-    scope:"Valutare il peso reale della telefonata e dell'interrogatorio Manfredi.",
-    hints:[
-      {lvl:1,cost:2,txt:'Una minaccia registrata è una prova di pressione. Chiedi però: pressione verso cosa, e abbastanza da spiegare tutto?'},
-      {lvl:2,cost:5,txt:'Leggi la telefonata e poi l’interrogatorio. La stessa persona parla due volte: vedi se il racconto regge.'},
-      {lvl:3,cost:8,txt:'C’è una contraddizione tra la forza della minaccia e quello che quella linea non riesce ancora a spiegare. Trovare quella contraddizione è la chiave per valutare questa pista.'}
-    ]
-  },
-  {
-    id:'P10', part:2,
-    title:'La linea familiare',
-    scope:'Collegare fideiussione, sollecito bancario e dichiarazione di Stefano senza trarre conclusioni affrettate.',
-    hints:[
-      {lvl:1,cost:2,txt:'La pressione economica intorno ad Andrea non riguardava solo il suo lavoro. Cerca chi altro era coinvolto in quella stessa esposizione.'},
-      {lvl:2,cost:5,txt:'Una garanzia firmata, un sollecito bancario e una dichiarazione parziale. Mettili in sequenza e vedi se raccontano la stessa storia.'},
-      {lvl:3,cost:8,txt:'C’è qualcuno nella cerchia familiare con un legame diretto all’esposizione economica di Andrea e un appuntamento che non ha ancora trovato conferma. Questo non è ancora una prova — ma è una direzione.'}
-    ]
-  },
-  {
-    id:'P11', part:2,
-    title:'Omissioni laterali',
-    scope:"Leggere Elena e Davide come zone d'ombra rilevanti, non come false piste.",
-    hints:[
-      {lvl:1,cost:2,txt:'Una dichiarazione incompleta non è necessariamente una bugia. Ma vale la pena chiedersi cosa non viene detto — e perché.'},
-      {lvl:2,cost:5,txt:'Guarda separatamente le due figure laterali: una ha un intervallo temporale non verificato, l’altra ha accesso fisico documentato. Cosa dice ciascuna di quell’accesso?'},
-      {lvl:3,cost:8,txt:'Entrambe le figure hanno qualcosa che non hanno spiegato del tutto. Non basta per chiudere una pista su di loro — ma basta per non escluderle.'}
-    ]
-  },
-  {
-    id:'P12', part:2,
-    title:'Ipotesi non conclusiva',
-    scope:'Costruire una lettura solida per il Terminale 02B: pista principale, limite e linea alternativa.',
-    hints:[
-      {lvl:1,cost:2,txt:'Prima di scrivere la sintesi, chiediti: cosa spiega bene la mia pista principale, e cosa lascia aperto?'},
-      {lvl:2,cost:5,txt:'Una lettura investigativa solida dichiara anche i propri limiti. Individua almeno un elemento che la tua pista principale non riesce ancora a chiudere.'},
-      {lvl:3,cost:8,txt:'Ogni pista spiega qualcosa e lascia qualcosa aperto. La sintesi più solida è quella che riconosce entrambe le cose — e indica dove l’indagine deve ancora andare.'}
-    ]
-  }
-];
-
-// ===== NORMALIZZAZIONE =====
-function normalize(str){
-  return String(str||'')
-    .toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[€£$]/g,'')
-    .replace(/[.,;:!?'"()\[\]\/\\]/g,' ')
-    .replace(/\s+/g,' ')
-    .trim();
-}
-function normNum(str){
-  return String(str||'')
-    .replace(/\b280[\s._]?000\b/g,'280000')
-    .replace(/\b280\s*mila\b/gi,'280000')
-    .replace(/\bduecentoottantamila\b/gi,'280000')
-    .replace(/\bduecentottantamila\b/gi,'280000')
-    .replace(/€\s*280[\s._]?000/gi,'280000');
-}
-function prep(val){ return normNum(normalize(val)); }
-
-// ===== DIZIONARI SOSPETTI =====
-const SOSPETTI = {
-  MANFREDI:['manfredi','roberto manfredi','gruppo manfredi','pratica manfredi',
-            'cliente manfredi','il cliente di andrea','il cliente dello studio',
-            'la pista del cliente','frode manfredi','pista manfredi','irregolarita manfredi'],
-  STEFANO: ['stefano','stefano marini','il fratello','fratello','pista familiare',
-            'linea familiare','garanzia familiare','debito del fratello',
-            'fideiussione del fratello','pista di stefano','famiglia marini'],
-  ELENA:   ['elena','elena ricci','moglie','la moglie','coniuge','linea domestica',
-            'pista domestica','tensione coniugale','alibi della moglie'],
-  DAVIDE:  ['davide','davide serra','collega','il collega','collaboratore',
-            'primo ad entrare','chiavi','accesso allo studio','copia delle chiavi']
-};
-
-// Alias che vanno disambiguati se usati da soli
-const SOSPETTI_ALIAS = {
-  'il cliente':   'MANFREDI',
-  'cliente':      'MANFREDI',
-  'il fratello':  'STEFANO',
-  'fratello':     'STEFANO',
-  'la moglie':    'ELENA',
-  'moglie':       'ELENA',
-  'il collega':   'DAVIDE',
-  'collega':      'DAVIDE',
-  'collaboratore':'DAVIDE'
-};
-
-// Risposte generiche che richiedono chiarimento (AMBIGUOUS)
-const AMBIGUOUS_GENERIC = [
-  'soldi','denaro','lavoro','famiglia','documenti','qualcuno',
-  'alibi','qualcuno mente','non so','forse','debito','casa',
-  'qualcosa','persone','una persona','il caso','non e chiaro'
-];
-
-function detectSospetto(val){
-  const v = prep(val);
-  if(!v) return null;
-  // Controlla dizionario principale
-  for(const key in SOSPETTI){
-    if(SOSPETTI[key].some(a => v.includes(a))) return key;
-  }
-  // Controlla alias esatti
-  for(const alias in SOSPETTI_ALIAS){
-    if(v === alias || v.startsWith(alias+' ') || v.endsWith(' '+alias) || v.includes(' '+alias+' ')){
-      return SOSPETTI_ALIAS[alias];
-    }
-  }
-  return null;
-}
-
-function isAmbiguousGeneric(val){
-  const v = prep(val);
-  return AMBIGUOUS_GENERIC.some(k => v === k);
-}
-
-// ===== ELEM P1 — dizionario elementi Terminale 02A =====
-const ELEM_P1 = {
-  MANFREDI:['frode','irregolar','contabil','contratto','minaccia','pratica manfredi',
-            'telefon','pressione','consulenza','compensi fuori scala','movimenti anomali',
-            'flussi di cassa','rapporto economico','cliente','compenso','anomal'],
-  STEFANO: ['fideiussion','garanzia','280000','copertura debiti','debito',
-            'esposizione','polizza','cena con s','appuntamento con s',
-            'chiamata non risposta','sollecito bancario','garanzia bancaria',
-            'garanzia familiare','esposizione debitoria'],
-  ELENA:   ['tensione','tensione coniugale','alibi','alibi parziale','uscita',
-            'venti minuti','telefonata','copertura','polizza','omission','moglie',
-            'non voleva che guardasse','sapeva della copertura','nascondeva'],
-  DAVIDE:  ['chiavi','copia delle chiavi','accesso','primo ingresso','primo ad entrare',
-            'fascicolo','scrivania','studio','collaboratore','conosceva i fascicoli',
-            'conoscenza pratica','scena']
-};
-
-// ===== ELEM P2 — dizionario elementi Terminale 02B =====
-const ELEM_P2 = {
-  MANFREDI:['frode','minaccia','telefonata','audio','chiamata','irregolar','contabil',
-            'contratto anomalo','compensi fuori scala','pratica manfredi',
-            'pressione professionale','movimenti anomali','flussi di cassa',
-            'consulenza sospetta','consulenza anomala','compenso'],
-  STEFANO: ['280000','fideiussion','garanzia','garanzia bancaria','garanzia familiare',
-            'sollecito bancario','copertura debiti','cena con s','chiamata non risposta',
-            'negazione','debito','esposizione debitoria','polizza'],
-  ELENA:   ['tensione coniugale','alibi parziale','uscita','venti minuti','telefonata',
-            'polizza','copertura','omission','moglie',
-            'non voleva che guardasse','sapeva della copertura'],
-  DAVIDE:  ['chiavi','copia delle chiavi','primo accesso','primo ad entrare',
-            'fascicolo','accesso allo studio','conoscenza pratica','collaboratore',
-            'scena','studio']
-};
-
-// ===== KEYWORD TERMINALE 02A — CAMPO 3 (non verificato) =====
-const UNVER_KW = [
-  'stefano','cena con s','appuntamento con s','chiamata non risposta',
-  'numero non salvato','280000','fideiussion','garanzia','polizza','copertura debiti',
-  'alibi manfredi','alibi elena','uscita di venti minuti','accesso davide','chiavi',
-  'telefonata','intervallo scoperto','timeline','orario','movimenti bancari',
-  'documenti economici','s ','s.'
-];
-const UNVER_AMBIGUOUS = [
-  'la cena','l appuntamento','l alibi','le chiamate','qualcosa','non so',
-  'non ricordo','non e chiaro','un elemento'
-];
-
-// ===== KEYWORD TERMINALE 02B — CAMPO 3 (limite ipotesi) =====
-const LIMIT_KW = [
-  'manca prova','manca una prova','non c e prova','alibi non verificato',
-  'alibi da verificare','accesso non certo','manca accesso','movente debole',
-  'manca movente','pista incompleta','non spiega tutto','non chiude','280000 non spiegato',
-  '280000','s non verificato','cena con s non verificata','manfredi troppo evidente',
-  'altri sospetti','altre linee','troppe omissioni','ci sono incongruenze',
-  'non conclusiv','incompleta','intervallo scoperto','timeline','orari','movimenti bancari',
-  'non si chiude','non e definitiv'
-];
-const LIMIT_AMBIGUOUS = [
-  'non basta','non e sicuro','manca qualcosa','non so','incerto','boh',
-  'non abbastanza','non e definitivo','manca ancora'
-];
-
-// ===== KEYWORD TERMINALE 02B — CAMPO 4 (linea alternativa) =====
-const ALT_KW = [
-  'manfredi','stefano','elena','davide','cliente','fratello','moglie','collega',
-  '280000','fideiussion','garanzia','polizza','copertura debiti','cena con s',
-  'chiavi','telefonata','accesso','alibi','numero non salvato',
-  'sollecito bancario','tensione coniugale','collaboratore','seconda pista',
-  'seconda linea','altra linea','altro sospetto'
-];
-
-// ===== KEYWORD TERMINALE 02B — CAMPO 5 (sintesi) =====
-const SYNTH_KW = [
-  'movente','manfredi','cliente','frode','minaccia','telefonata','contratto anomalo',
-  '280000','fideiussion','garanzia','copertura debiti','polizza','stefano','fratello',
-  'cena con s','elena','moglie','davide','collega','chiavi','accesso','alibi parziale',
-  'omission','pista incompleta','seconda linea','non conclusiv','troppe omissioni',
-  'economia','pressione','irregolar','contabil','movimenti anomali'
-];
+// ===== REPERTI PARTE 1 (popolati dal loader sopra) =====
+// ════════════════════════════════════════════════════════
+// (DOCS_P1, DOCS_P2, PUZZLES, SOSPETTI, ELEM_P*, UNVER_KW,
+//  LIMIT_KW, ALT_KW, SYNTH_KW e correlati sono popolati
+//  dal loader CASE_DATA_PROMISE definito sopra)
+// ════════════════════════════════════════════════════════
 
 // ===== STATE =====
 function defaultState(){
@@ -1359,12 +1080,7 @@ function submitTerminal2A(){
     document.getElementById('t2a-submit').style.display = 'none';
     document.getElementById('t2a-confirmed').classList.add('visible');
 
-    const feedbackMap = {
-      MANFREDI:'La linea Manfredi è la più rumorosa: frode, pressione e minaccia convergono.',
-      STEFANO: 'La linea familiare è meno visibile, ma gli elementi economici personali meritano approfondimento.',
-      ELENA:   'La linea domestica presenta omissioni e tensioni, ma richiede confronto con gli altri reperti.',
-      DAVIDE:  "La linea dell'accesso fisico ha una criticità: chi entra per primo può anche alterare la lettura della scena."
-    };
+    const feedbackMap = CASE_DATA.feedbackT2A;
 
     const gfb = document.getElementById('t2a-global-fb');
     gfb.innerHTML = "Linea investigativa registrata.<br><br>L'Archivio non conferma ancora una responsabilità. La pista selezionata presenta elementi sufficienti per accedere ai reperti ad alta sensibilità.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso intermedio autorizzato.</em>";
@@ -1524,12 +1240,7 @@ function submitTerminal2B(){
     document.getElementById('t2b-submit').style.display = 'none';
     document.getElementById('t2b-confirmed').classList.add('visible');
 
-    const feedbackMap = {
-      MANFREDI:'La pista Manfredi presenta il profilo di rischio più alto: frode documentale, pressione e minaccia registrata.',
-      STEFANO: 'La linea familiare è la meno visibile: debiti, coperture economiche e silenzi convergono.',
-      ELENA:   "La linea domestica è frammentata, ma l'alibi parziale e le omissioni non possono essere ignorati.",
-      DAVIDE:  "La linea dell'accesso fisico è la più silenziosa: chi entra per primo controlla la scena."
-    };
+    const feedbackMap = CASE_DATA.feedbackT2B;
 
     const gfb = document.getElementById('t2b-global-fb');
     gfb.innerHTML = "Ipotesi investigativa acquisita dall'Archivio.<br><br>"+(feedbackMap[sosp]||'')+"<br><br><em>Accesso all'esito autorizzato.</em>";
@@ -1713,12 +1424,8 @@ function renderEsito(){
   }
 
   // Copy finale differenziato per sospetto scelto in T02B
-  const finalCopy = {
-    MANFREDI: 'La pista Manfredi resta la pi\u00f9 rumorosa del fascicolo: pressione professionale, irregolarit\u00e0 contabili e minacce compongono una linea coerente.<br><br>Ma l\u2019Archivio non chiude un caso sulla linea pi\u00f9 rumorosa.',
-    STEFANO:  'Hai puntato sulla linea familiare. Fideiussione, esposizione debitoria e appuntamento non verificato compongono una pista solida.<br><br>Ma il fascicolo presenta ancora omissioni che attendono risposta.',
-    ELENA:    'Hai puntato sulla linea domestica. La tensione in casa Marini \u00e8 reale, l\u2019intervallo non verificato anche.<br><br>Ma le dichiarazioni di Elena rivelano solo una parte della storia.',
-    DAVIDE:   'Hai puntato sull\u2019accesso fisico. Chiavi, primo ingresso e conoscenza dei fascicoli rendono Davide una presenza rilevante.<br><br>Ma l\u2019Archivio distingue tra chi aveva accesso e chi aveva un motivo abbastanza forte.'
-  };
+  // Copy finale differenziato per sospetto scelto in T02B (popolato da data/atto2.json)
+  const finalCopy = CASE_DATA.finalCopy;
   const sosp = state.t2bSospetto || 'MANFREDI';
   const fbEl = document.getElementById('final-body-text');
   if(fbEl) fbEl.innerHTML = finalCopy[sosp] || finalCopy['MANFREDI'];
@@ -2093,7 +1800,10 @@ function computeScore(){
 }
 
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', async () => {
+  try { await CASE_DATA_PROMISE; } catch(e) { return; }
+  init();
+});
 </script>
 </body>
 
