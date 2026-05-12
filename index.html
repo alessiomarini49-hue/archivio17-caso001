@@ -998,6 +998,12 @@ function saveState(){
 }
 function loadState(){
   loadGlobal();
+  // Se non c'è un access_code salvato il global è orfano (browser condiviso/test) → reset
+  const savedCode = localStorage.getItem('a17_atto1_access_code') || localStorage.getItem('a17_atto2_access_code') || localStorage.getItem('a17_atto3_access_code');
+  if(!savedCode && (_global.penalty_act1.hints > 0 || _global.penalty_act1.errors > 0 || _global.penalty_act2.hints > 0 || _global.penalty_act2.errors > 0 || _global.penalty_act3.hints > 0 || _global.penalty_act3.errors > 0)){
+    _global = defaultGlobal();
+    saveGlobal();
+  }
   let raw;
   try{ raw = localStorage.getItem(LS_KEY); }
   catch(e){ console.warn('[Archivio17] localStorage non disponibile:', e); return; }
@@ -1102,6 +1108,15 @@ function doAccess(){
       _sessionToken = data.session_token;
       _codeId       = data.game_session ? data.game_session.code_id : null;
       _accessCode   = inp;
+      // Se il codice è diverso da quello salvato → nuovo giocatore, pulisci global
+      const prevCode = localStorage.getItem('a17_atto1_access_code');
+      if(prevCode && prevCode !== inp){
+        localStorage.removeItem(GLOBAL_KEY);
+        localStorage.removeItem(LS_KEY);
+        localStorage.removeItem('a17_atto2_v2');
+        localStorage.removeItem('a17_atto3_v1');
+        _global = defaultGlobal();
+      }
       localStorage.setItem('a17_atto1_session_token', _sessionToken);
       if(_codeId) localStorage.setItem('a17_atto1_code_id', _codeId);
       localStorage.setItem('a17_atto1_access_code', inp);
@@ -1130,6 +1145,15 @@ function mergeServerState(gs){
     Object.assign(state.hintsRevealed, gs.hints_revealed);
   if(typeof gs.penalty_act1_hints  === 'number') state.hintPenaltyTotal = gs.penalty_act1_hints;
   if(typeof gs.penalty_act1_errors === 'number') state.errorsTerminal   = Math.round(gs.penalty_act1_errors / 10);
+  // Sincronizza global con dati server (fonte di verità)
+  if(typeof gs.penalty_act1_hints  === 'number') _global.penalty_act1.hints  = gs.penalty_act1_hints;
+  if(typeof gs.penalty_act1_errors === 'number') _global.penalty_act1.errors = gs.penalty_act1_errors;
+  if(typeof gs.penalty_act2_hints  === 'number') _global.penalty_act2.hints  = gs.penalty_act2_hints;
+  if(typeof gs.penalty_act2_errors === 'number') _global.penalty_act2.errors = gs.penalty_act2_errors;
+  if(typeof gs.penalty_act3_hints  === 'number') _global.penalty_act3.hints  = gs.penalty_act3_hints;
+  if(typeof gs.penalty_act3_errors === 'number') _global.penalty_act3.errors = gs.penalty_act3_errors;
+  if(typeof gs.resets_used         === 'number') _global.resets_used         = gs.resets_used;
+  saveGlobal();
   saveState();
 }
 function showAccessError(msg){
