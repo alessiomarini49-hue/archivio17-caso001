@@ -837,6 +837,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 
 <footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono inventati. Ogni somiglianza con persone o fatti reali è puramente casuale.</footer>
 
+<script src="assets/config.js"></script>
 <script src="assets/case-app.js"></script>
 <script>
 'use strict';
@@ -844,14 +845,8 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 //  ARCHIVIO 17 — ATTO 2 — GAME ENGINE
 // ============================================================
 
+// CONFIG (APP_ID, API_BASE in assets/config.js)
 const LS_KEY  = 'a17_atto2_v2';
-
-// ═══════════════════════════════════════════════
-// INDICE INVESTIGATIVO GLOBALE — Caso 001
-// ═══════════════════════════════════════════════
-const GLOBAL_KEY = 'a17_global_v1';
-
-const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
 
 // Sessione cloud (storage unificato in a17_session.cloud.atto2)
 const _auth = getCloudAuth(2) || {};
