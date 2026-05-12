@@ -401,6 +401,12 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
   <p class="access-subtitle">Caso 001</p>
   <p class="access-act">Atto I — Prima lettura della scena</p>
 
+  <!-- Stato caricamento (visibile durante auto-login al refresh) -->
+  <div id="access-loading" style="display:none;text-align:center;padding:2rem 0">
+    <p style="font-family:var(--font-mono);font-size:.85rem;color:var(--text-meta);letter-spacing:.08em">Ripristino sessione in corso…</p>
+  </div>
+
+  <div id="access-form">
   <div class="access-box">
     <div class="access-classification">Accesso riservato</div>
     <p>Inserisci il codice di accesso ricevuto. Ogni codice è personale e valido per un singolo dispositivo.</p>
@@ -410,6 +416,7 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
     </div>
     <p id="access-error" class="access-error"></p>
     <button class="btn-primary full" id="access-btn" onclick="doAccess()">Accedi al Fascicolo</button>
+  </div>
   </div>
 
   <p class="access-footer">
@@ -1899,7 +1906,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedCode  = localStorage.getItem('a17_atto1_access_code');
 
   if(savedToken && savedCode){
-    // Rivalidazione silenziosa al refresh — usa il token esistente
+    // Mostra loader, nascondi form durante rivalidazione silenziosa
+    const loadingEl = document.getElementById('access-loading');
+    const formEl    = document.getElementById('access-form');
+    if(loadingEl) loadingEl.style.display = '';
+    if(formEl)    formEl.style.display    = 'none';
+
     const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0,32);
     fetch(API_BASE + '/validateCode', {
       method:'POST',
@@ -1915,14 +1927,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if(data.game_session) mergeServerState(data.game_session);
         bootApp();
       } else {
-        // Token non più valido — mostra accesso
+        // Token non più valido — pulisci e mostra form
         localStorage.removeItem('a17_atto1_session_token');
         localStorage.removeItem('a17_atto1_code_id');
         localStorage.removeItem('a17_atto1_access_code');
+        if(loadingEl) loadingEl.style.display = 'none';
+        if(formEl)    formEl.style.display    = '';
       }
     })
     .catch(() => {
-      // Offline o errore rete — entra comunque con stato locale
+      // Rete non disponibile — entra con stato locale senza chiedere il codice
       _sessionToken = savedToken;
       _accessCode   = savedCode;
       bootApp();
