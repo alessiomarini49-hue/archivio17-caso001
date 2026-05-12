@@ -1130,6 +1130,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 
 <footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono interamente inventati. — Archivio 17 · Caso 001 · Atto 3</footer>
 
+<script src="assets/case-app.js"></script>
 <script>
 'use strict';
 // ===== DATI =====
@@ -1139,14 +1140,6 @@ const LS_KEY = 'a17_atto3_v1';
 // INDICE INVESTIGATIVO GLOBALE — Caso 001
 // ═══════════════════════════════════════════════
 const GLOBAL_KEY = 'a17_global_v1';
-function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
-let _global = defaultGlobal();
-function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
-function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
-function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
-function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
-function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
-function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
 
 const STATE_VERSION = 1;
 const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
