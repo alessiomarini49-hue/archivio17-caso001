@@ -847,95 +847,46 @@ const API_BASE       = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c
 let _sessionToken = localStorage.getItem('a17_atto1_session_token') || null;
 let _codeId       = localStorage.getItem('a17_atto1_code_id') || null;
 let _accessCode   = localStorage.getItem('a17_atto1_access_code') || null;
-const REQUIRED_DOCS  = 4;   // documenti necessari per sbloccare il terminale
-const TOTAL_DOCS     = 5;
+// Sovrascritti da data/atto1.json al boot
+let REQUIRED_DOCS  = 4;   // documenti necessari per sbloccare il terminale
+let TOTAL_DOCS     = 5;
+
+// ═══════════════════════════════════════════════
+// DATI — popolati da data/atto1.json
+// ═══════════════════════════════════════════════
+let DOCUMENTS = [];
+let PUZZLES = [];
+let KW_T1_C1_OK = [];
+let KW_T1_C2_OK = [];
+let KW_T1_C3 = [];
+let AMBIGUOUS_GENERIC = [];
+let SUCCESS_MESSAGE_T1 = '';
+
+// Promise di caricamento dati — risolta prima di init()
+const CASE_DATA_PROMISE = fetch('data/atto1.json')
+  .then(r => { if(!r.ok) throw new Error('Fetch dati atto1 fallito: ' + r.status); return r.json(); })
+  .then(d => {
+    REQUIRED_DOCS       = d.config.requiredDocs;
+    TOTAL_DOCS          = d.config.totalDocs;
+    DOCUMENTS           = d.documents;
+    PUZZLES             = d.puzzles;
+    KW_T1_C1_OK         = d.terminal.fields[0].okKeywords;
+    KW_T1_C2_OK         = d.terminal.fields[1].okKeywords;
+    KW_T1_C3            = d.terminal.fields[2].okKeywords;
+    AMBIGUOUS_GENERIC   = d.terminal.ambiguousGeneric;
+    SUCCESS_MESSAGE_T1  = d.terminal.successMessage;
+  })
+  .catch(err => {
+    console.error('[Archivio17] Errore caricamento dati atto1:', err);
+    alert('Impossibile caricare i dati del caso. Verifica di aver aperto il sito tramite un web server (non file://). Esempio: python -m http.server 8000');
+    throw err;
+  });
 
 // ═══════════════════════════════════════════════
 // DATI — DOCUMENTI
 // ═══════════════════════════════════════════════
-const DOCUMENTS = [
-  {
-    id:'A01', cat:'Profilo personale', title:'Profilo Andrea Marini',
-    desc:'Dati anagrafici, abitudini documentate e informazioni preliminari sulla vittima.',
-    transcript:"Andrea Marini, 42 anni, consulente finanziario.\n\nConiuge: Elena Marini.\nFratello: Stefano Marini.\nMadre: Carla Bianchi.\n\nUltimo accesso registrato allo studio: 18:42.\n\nAbitudini e note personali:\n— compilava documenti e firmava prevalentemente con la mano sinistra;\n— non risultano consumi abituali di alcol;\n— nessuna diagnosi psichiatrica nota;\n— terapia farmacologica leggera in corso.",
-    note:"Nessun precedente clinico di rilievo. I rapporti familiari non sono approfonditi nel fascicolo preliminare. Ultima attività registrata nello studio: ore 18:42 del 14/11/2024.",
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/e3721ed14_ChatGPTImage11mag202614_38_59.png'
-  },
-  {
-    id:'A02', cat:'Verbale', title:'Verbale di rinvenimento',
-    desc:'Prima ricostruzione ufficiale dell\'accesso allo studio e degli elementi rinvenuti sulla scena.',
-    transcript:"In data 15/11/2024, alle ore 08:15, presso lo studio privato di Andrea Marini (Via del Corso 12, Roma), è stato rinvenuto il corpo privo di vita del suddetto.\n\nL'accesso ai locali è stato effettuato da Davide Serra, collaboratore dello studio, mediante propria copia delle chiavi. La porta risultava chiusa a chiave e non presentava segni evidenti di effrazione.\n\nLe chiavi personali di Andrea Marini sono state rinvenute nella tasca interna sinistra della giacca. L'arma è stata repertata nella mano destra del defunto. Sulla scrivania era presente un bicchiere contenente residui di whisky. L'ambiente appariva ordinato e non sono stati rilevati segni evidenti di colluttazione.\n\nSulla base dei primi rilievi, il decesso risulta verosimilmente collocabile nella serata del 14/11/2024, in un intervallo orario compreso tra le ore 19:30 e le ore 22:30.\n\nAl momento del primo sopralluogo non risultano testimoni oculari presenti sul posto.\n\nVerbalizzante: Isp. M. Longo — Supervisione: Dott. G. Ricci",
-    note:'La porta era chiusa a chiave, senza segni di effrazione. Davide Serra ha aperto con la propria copia delle chiavi. Le chiavi di Andrea erano nella tasca sinistra della giacca. L\'arma era nella mano destra della vittima. Decesso stimato tra le 19:30 e le 22:30 del 14/11/2024 — non compatibile con l\'orario del rinvenimento. Nessun testimone oculare al primo sopralluogo.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f3237378c_ChatGPTImage11mag202615_17_28.png'
-  },
-  {
-    id:'A03', cat:'Medico-legale', title:'Relazione medico-legale preliminare',
-    desc:'Osservazioni preliminari sulla ferita, sulla postura del corpo e sulla possibile dinamica.',
-    transcript:"Data: 15/11/2024 — Medico legale: Dott.ssa L. Ferri — Supervisione: Dott. G. Ricci\n\nAll'esame esterno preliminare, la vittima Andrea Marini presenta una ferita compatibile con colpo d'arma da fuoco alla tempia destra. I residui di sparo risultano presenti, ma la loro distribuzione non appare pienamente conclusiva ai fini della ricostruzione della dinamica.\n\nLa postura del corpo al momento del rinvenimento e la posizione dell'arma non consentono, allo stato attuale, di escludere l'intervento di terzi. Non si rilevano segni evidenti di colluttazione estesa, pur permanendo la necessità di ulteriori verifiche tecniche e comparative.\n\nSulla scrivania è stato rilevato un bicchiere contenente residui riconducibili a bevanda alcolica. Allo stato, tale elemento non risulta coerente con abitudini documentate in modo certo riferibili alla vittima.\n\nLa presente relazione ha carattere preliminare e dovrà essere integrata con gli esiti degli accertamenti balistici, tossicologici e medico-legali completi.",
-    note:'Ferita alla tempia destra — residui da sparo presenti ma distribuzione non conclusiva. L\'intervento di terzi non è escludibile. Nessuna colluttazione estesa rilevata, ma necessità di ulteriori verifiche. Il bicchiere con residui alcolici non è coerente con le abitudini documentate della vittima. Relazione preliminare — accertamenti balistici e tossicologici da completare.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/7fc4ee76d_ChatGPTImage11mag202615_24_11.png'
-  },
-  {
-    id:'A04', cat:'Rilievo fotografico', title:'Rilievo fotografico dello studio',
-    desc:'Documentazione visiva della scena nello studio privato del 14/11/2024.',
-    transcript:"Scena documentata nello studio privato di Andrea Marini, 14/11/2024.\n\nIl corpo è a terra in prossimità della scrivania. Sulla scrivania è visibile il bicchiere di whisky segnalato nel verbale.\n\nLa stanza appare in ordine. Non emergono segni di disordine o colluttazione nell'inquadratura documentata.",
-    note:'La stanza appare ordinata. Posizione del corpo: a terra, vicino alla scrivania. Il bicchiere di whisky è visibile sulla scrivania. Confrontare posizione dell\'arma con quanto indicato nel verbale e nella relazione medico-legale.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/18bbafdfd_ChatGPTImage11mag202615_20_15.png'
-  },
-  {
-    id:'A05', cat:'Agenda', title:'Agenda personale — 14 novembre',
-    desc:'Ultimi appuntamenti annotati nell\'agenda personale e nota manoscritta.',
-    transcript:"Agenda personale del 14 novembre 2024.\n\n09:30 — Banca.\n12:00 — Chiamare D.\n17:45 — Rivedere pratica M.\n19:30 — Cena con S.\n\nNota manoscritta: \"Non posso più coprire questa cosa.\"",
-    note:'Quattro appuntamenti registrati nel giorno. La cena delle 19:30 con "S." non risulta avvenuta. La nota finale è scritta a mano e non è datata con orario preciso. Le iniziali D., M., S. non vengono spiegate nel fascicolo preliminare.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/706b9ac19_ChatGPTImage8mag202616_39_16.png'
-  }
-];
-
+// DOCUMENTS, PUZZLES sono popolati da data/atto1.json (vedi loader sopra)
 // ═══════════════════════════════════════════════
-// DATI — PUZZLES / HINTS
-// ═══════════════════════════════════════════════
-const PUZZLES = [
-  {
-    id:'P01',
-    title:'L\'anomalia che nessuno commenta',
-    scope:'Identificare il dettaglio fisico più rilevante senza che il verbale lo interpreti.',
-    hints:[
-      {lvl:1, cost:2, txt:'Non cercare qualcosa di visibile nella foto. Cerca qualcosa che il verbale registra come dato oggettivo, senza trarne conseguenze.'},
-      {lvl:2, cost:5, txt:'Il verbale descrive dove è stata trovata l\'arma e con quale mano. Il profilo della vittima descrive come Andrea scriveva. Metti insieme questi due punti.'},
-      {lvl:3, cost:8, txt:'Confronta la mano abituale indicata nel profilo personale con la mano in cui viene repertata l\'arma. Se i due dati non coincidono, l\'anomalia fisica principale non è nella ferita, ma nella compatibilità del gesto.'}
-    ]
-  },
-  {
-    id:'P02',
-    title:'Il tempo che non torna',
-    scope:'Individuare la discrepanza temporale tra i dati del fascicolo.',
-    hints:[
-      {lvl:1, cost:2, txt:'L\'agenda di Andrea registra un impegno serale. Il verbale registra l\'orario dell\'ultimo accesso allo studio. Metti a confronto i due dati.'},
-      {lvl:2, cost:5, txt:'Metti in sequenza gli orari certi e quelli solo annotati. Un appuntamento segnato in agenda non ha lo stesso peso di un accesso registrato.'},
-      {lvl:3, cost:8, txt:'La frattura temporale nasce dal confronto tra ultimo accesso documentato, appuntamento serale e mancata conferma dell\'incontro. Registra la finestra che resta scoperta, non una conclusione definitiva.'}
-    ]
-  },
-  {
-    id:'P03',
-    title:'Quello che la nota non dice',
-    scope:'Interpretare la nota manoscritta nel contesto degli altri documenti.',
-    hints:[
-      {lvl:1, cost:2, txt:'La nota manoscritta non è datata con un orario. Ma è sull\'agenda del 14 novembre. Questo significa che è stata scritta — o è rilevante — in quel giorno. Chiediti cosa stava "coprendo" Andrea.'},
-      {lvl:2, cost:5, txt:'La nota non spiega cosa Andrea stesse coprendo. Confrontala con le iniziali e gli appuntamenti dell\'agenda: non serve identificare tutto ora, serve capire che esisteva una pressione precedente alla morte.'},
-      {lvl:3, cost:8, txt:'La nota è un\'ammissione indiretta. "Coprire" implica una complicità attiva — qualcosa che Andrea sapeva e teneva nascosto. Il tuo compito in questa fase non è identificare di cosa si tratta, ma registrare che la nota indica un contesto di pressione preesistente al decesso.'}
-    ]
-  },
-  {
-    id:'P04',
-    title:'La scena che non si è disordinata',
-    scope:'Valutare la coerenza tra la scena e le ipotesi possibili.',
-    hints:[
-      {lvl:1, cost:2, txt:'Il verbale dice: nessun segno di colluttazione. La stanza è ordinata. Questo può significare due cose opposte: che non c\'è stata lotta, oppure che qualcuno ha rimesso in ordine.'},
-      {lvl:2, cost:5, txt:'La porta era chiusa a chiave. Davide Serra ha una copia. Le chiavi di Andrea erano in tasca. Una stanza ordinata con una porta chiusa può essere coerente con un suicidio — ma anche con una scena gestita con cura da chi aveva accesso.'},
-      {lvl:3, cost:8, txt:'La sintesi investigativa corretta non è "sembra un suicidio" né "è stato un omicidio". È: la scena è troppo coerente per essere conclusiva. Ogni elemento — la porta, l\'assenza di disordine, il bicchiere — può essere letto in entrambe le direzioni. Questo è esattamente il punto di partenza dell\'indagine.'}
-    ]
-  }
-];
 
 // ═══════════════════════════════════════════════
 // STATE
@@ -1045,9 +996,7 @@ function isAmbiguousGeneric(text){
   const t = prep(text).trim();
   if(!t) return true;
   if(t.length < 4) return true;
-  const generic = ['anomalia','strano','qualcosa','non torna','non so','manca','forse','boh',
-    'incoerente','incoerenza','nulla','niente','dettaglio','contraddizione','agenda','giorno',
-    'orario','tempo','scena','indagine','caso','difficile','non capisco','incerto','vediamo'];
+  const generic = AMBIGUOUS_GENERIC;
   const tokens = t.split(/\s+/);
   if(tokens.length <= 2 && tokens.every(tok => generic.includes(tok))) return true;
   return generic.some(g => t === g);
@@ -1134,7 +1083,8 @@ function showAccessError(msg){
   e.textContent = msg;
   e.classList.add('visible');
 }
-function bootApp(){
+async function bootApp(){
+  try { await CASE_DATA_PROMISE; } catch(e) { return; }
   document.getElementById('access-screen').classList.add('hidden');
   document.getElementById('app-header').style.display = 'flex';
   document.getElementById('mobile-nav').style.display = '';
@@ -1314,29 +1264,8 @@ function closeViewer(){
 
 // ═══════════════════════════════════════════════
 // TERMINALE 01 — VALIDAZIONE
+// (KW_T1_C1_OK, KW_T1_C2_OK, KW_T1_C3 sono popolati da data/atto1.json)
 // ═══════════════════════════════════════════════
-// Campo 1 — Anomalia fisica (mancino / mano destra)
-const KW_T1_C1_OK = [
-  'mancino','sinistr','mano sinistra','scriveva con la sinistra','firmava con la sinistra',
-  'mano destra','arma nella destra','arma destra','colpo alla destra','impugnatura destra',
-  'mano sbagliata','contraddizione mano','incoerenza mano','destra mancino','sinistra destra'
-];
-
-// Campo 2 — Elemento temporale (cena/19:30/18:42/finestra)
-const KW_T1_C2_OK = [
-  'cena','1930','19 30','19:30','sera','stefano','appuntamento mancato','cena non avvenuta',
-  'cena saltata','cena con s','1842','18 42','18:42','ora del decesso','finestra temporale',
-  'finestra oraria','discrepanza temporale','dopo le 18','prima delle 19','appuntamento serale',
-  'impegno serale','non si e presentato','irreperibile','ultimo accesso'
-];
-
-// Campo 3 — Sintesi (libera: serve combinare elementi del fascicolo)
-const KW_T1_C3 = [
-  'mancino','sinistr','destra','anomalia','cena','agenda','appuntamento','nota','coprire',
-  'suicidio','omicidio','scena','porta','chiave','davide','chiusa','alcol','residui',
-  'tempia','arma','incoerenza','intervento di terzi','terzi','non conclusiv','escludere',
-  'non esclude','ordinata','colluttazione','copia chiavi','whisky','stefano'
-];
 
 function submitTerminal1(){
   if(state.t1Completed) return;
@@ -1418,7 +1347,7 @@ function submitTerminal1(){
       if(el) el.readOnly = true;
     });
 
-    gfb.textContent = 'Prima lettura registrata.\n\nHai identificato le fratture iniziali nella scena. L\'anomalia fisica, il tempo che manca e la coerenza troppo costruita della stanza sono i tre punti da cui parte ogni indagine reale.\n\nL\'esito dell\'Atto I è disponibile.';
+    gfb.textContent = SUCCESS_MESSAGE_T1;
     gfb.className = 'terminal-global-feedback show ok';
     state.t1Fb = { text: gfb.textContent, cls: gfb.className };
 
@@ -1840,7 +1769,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Se sessione già avviata, salta l'accesso
+  // Se sessione già avviata, salta l'accesso (bootApp await internamente i dati)
   loadState();
   const hasProgress = state.docsOpened.length > 0
     || state.t1Completed
