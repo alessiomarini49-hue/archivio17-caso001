@@ -984,6 +984,7 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
       </div>
       <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
       <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
+      <div class="inv-status-row" style="margin-top:.5rem"><span class="inv-status-label">Reset disponibili</span><span class="inv-status-val" id="inv-resets">●● 2/2</span></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
     </div>
     <div class="inv-section">
@@ -1119,10 +1120,11 @@ Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
 
 <div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
-    <h3 id="confirm-title">Azzera sessione?</h3>
-    <p>Tutti i progressi dell'Atto 3 verranno cancellati. L'indice investigativo verrà azzerato.</p>
+    <h3 id="confirm-title">Azzera Atto III?</h3>
+    <p>Tutti i progressi dell'Atto III verranno cancellati — documenti, hint ed errori. Il punteggio globale tornerà al valore che aveva all'ingresso dell'Atto III.</p>
+    <p style="font-family:var(--font-mono);font-size:.75rem;color:var(--amber);margin-top:.6rem">Reset disponibili: <span id="confirm-resets-left">—</span> / 2 · Dopo questa operazione ne resteranno <span id="confirm-resets-after">—</span>.</p>
     <div class="confirm-actions">
-      <button class="btn-primary" onclick="confirmReset()">Conferma</button>
+      <button class="btn-primary" onclick="confirmReset()">Conferma reset</button>
       <button class="btn-ghost" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
     </div>
   </div>
@@ -1139,9 +1141,9 @@ const LS_KEY = 'a17_atto3_v1';
 // INDICE INVESTIGATIVO GLOBALE — Caso 001
 // ═══════════════════════════════════════════════
 const GLOBAL_KEY = 'a17_global_v1';
-function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false }; }
+function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false, resets_used:0, resets_max:2 }; }
 let _global = defaultGlobal();
-function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})}}; }catch(e){_global=defaultGlobal();} }
+function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})},resets_used:typeof p.resets_used==='number'?p.resets_used:0}; }catch(e){_global=defaultGlobal();} }
 function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
 function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
 function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
@@ -2145,6 +2147,21 @@ function updateUI(){
     (done?' <span style="color:var(--text-dim)">✓</span>':'')+'</div>';
   const bdHtml3=_fmtBd3('Atto I:',_p1h,_p1e,_p1t,_global.act1_done)+_fmtBd3('Atto II:',_p2h,_p2e,_p2t,_global.act2_done)+_fmtBd3('Atto III:',_p3h,_p3e,_p3t,state.finalUnlocked);
   ['inv-breakdown','m-inv-breakdown'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=bdHtml3; });
+
+  // Reset disponibili — sidebar
+  const rUsed = _global.resets_used || 0;
+  const rMax  = _global.resets_max  || 2;
+  const rLeft = Math.max(0, rMax - rUsed);
+  const rDots = (rLeft >= 2 ? '\u25CF\u25CF' : rLeft === 1 ? '\u25CF\u25CB' : '\u25CB\u25CB');
+  const rLabel = rDots + ' ' + rLeft + '/2' + (rLeft === 0 ? ' \u2014 esauriti' : '');
+  const rColor = rLeft === 0 ? 'var(--text-dim)' : rLeft === 1 ? 'var(--amber)' : 'var(--success-text,#4CAF80)';
+  ['inv-resets','minv-resets'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.textContent = rLabel; el.style.color = rColor; }
+  });
+  document.querySelectorAll('[onclick="showResetConfirm()"]').forEach(btn => {
+    btn.style.display = (rLeft === 0 || state.finalUnlocked) ? 'none' : '';
+  });
 }
 
 // ===== HINT SYSTEM =====
@@ -2276,10 +2293,20 @@ function showResetConfirm(){
     showToast('Il caso è chiuso. La sessione non può essere azzerata.');
     return;
   }
+  const used = _global.resets_used || 0;
+  const max  = _global.resets_max  || 2;
+  const left = Math.max(0, max - used);
+  if(left === 0){ showToast('Reset esauriti — nessun tentativo disponibile.', 'error'); return; }
+  const rl = document.getElementById('confirm-resets-left');
+  const ra = document.getElementById('confirm-resets-after');
+  if(rl) rl.textContent = left;
+  if(ra) ra.textContent = Math.max(0, left - 1);
   document.getElementById('confirm-overlay').classList.add('visible');
 }
 function confirmReset(){
   localStorage.removeItem(LS_KEY);
+  // Incrementa contatore reset globale
+  _global.resets_used = Math.min((_global.resets_used||0) + 1, _global.resets_max||2);
   // Reset global atto 3 (mantieni gli altri atti)
   _global['penalty_act3'] = {hints:0, errors:0};
   _global['act3_done'] = false;
