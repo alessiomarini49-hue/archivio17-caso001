@@ -909,12 +909,49 @@ const CASE_DATA_PROMISE = fetch('data/atto2.json')
     throw err;
   });
 
-// ===== REPERTI PARTE 1 (popolati dal loader sopra) =====
 // ════════════════════════════════════════════════════════
 // (DOCS_P1, DOCS_P2, PUZZLES, SOSPETTI, ELEM_P*, UNVER_KW,
 //  LIMIT_KW, ALT_KW, SYNTH_KW e correlati sono popolati
 //  dal loader CASE_DATA_PROMISE definito sopra)
 // ════════════════════════════════════════════════════════
+
+// ===== NORMALIZZAZIONE =====
+function normalize(str){
+  return String(str||'')
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[€£$]/g,'')
+    .replace(/[.,;:!?'"()\[\]\/\\]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function normNum(str){
+  return String(str||'')
+    .replace(/\b280[\s._]?000\b/g,'280000')
+    .replace(/\b280\s*mila\b/gi,'280000')
+    .replace(/\bduecentoottantamila\b/gi,'280000')
+    .replace(/\bduecentottantamila\b/gi,'280000')
+    .replace(/€\s*280[\s._]?000/gi,'280000');
+}
+function prep(val){ return normNum(normalize(val)); }
+
+function detectSospetto(val){
+  const v = prep(val);
+  if(!v) return null;
+  for(const key in SOSPETTI){
+    if(SOSPETTI[key].some(a => v.includes(a))) return key;
+  }
+  for(const alias in SOSPETTI_ALIAS){
+    if(v === alias || v.startsWith(alias+' ') || v.endsWith(' '+alias) || v.includes(' '+alias+' ')){
+      return SOSPETTI_ALIAS[alias];
+    }
+  }
+  return null;
+}
+function isAmbiguousGeneric(val){
+  const v = prep(val);
+  return AMBIGUOUS_GENERIC.some(k => v === k);
+}
 
 // ===== STATE =====
 function defaultState(){
