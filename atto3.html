@@ -1,2434 +1,422 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Archivio 17 — Caso 001 · Atto 3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-main: #050506;
-  --bg-secondary: #0A0807;
-  --panel-1: #111318;
-  --panel-2: #17130F;
-  --panel-3: #1C1712;
-  --panel-4: #14100D;
-  --text-main: #EDE6D8;
-  --text-secondary: #AFA79A;
-  --text-meta: #7A7268;
-  --text-dim: #4A4440;
-  --red-logicus: #A71920;
-  --red-highlight: #C42028;
-  --red-dark: #641014;
-  --red-glow: rgba(167,25,32,0.18);
-  --amber: #B7833B;
-  --amber-dim: rgba(183,131,59,0.12);
-  --carta: #B9A174;
-  --success-bg: #0D1A14;
-  --success-border: #2A5C40;
-  --success-text: #5A9A74;
-  --error: #A71920;
-  --warning: #B7833B;
-  --border-gold: rgba(185,161,116,0.18);
-  --border-white: rgba(185,161,116,0.12);
-  --border-white-soft: rgba(185,161,116,0.07);
-  --border-red: rgba(167,25,32,0.28);
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --glow-red: 0 0 24px rgba(167,25,32,0.2), 0 0 48px rgba(167,25,32,0.08);
-  --shadow-deep: 0 8px 48px rgba(0,0,0,0.85), 0 2px 12px rgba(0,0,0,0.6);
-  --shadow-panel: 0 4px 24px rgba(0,0,0,0.6);
-  --transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
-  --border-dim: #2A2520;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font-sans);background:var(--bg-main);color:var(--text-main);min-height:100vh;overflow-x:hidden;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.055'/%3E%3C/svg%3E");pointer-events:none;z-index:1;mix-blend-mode:overlay;}
-body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 90% 90% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);pointer-events:none;z-index:1;}
-h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-track{background:var(--bg-main)}
-::-webkit-scrollbar-thumb{background:rgba(185,161,116,0.1);border-radius:2px}
-::-webkit-scrollbar-thumb:hover{background:rgba(185,161,116,0.2)}
-.app-section{display:none}.app-section.active{display:block}
-.btn-primary{background:var(--red-logicus);color:var(--text-main);border:none;padding:.9rem 1.75rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:var(--transition);display:inline-block;touch-action:manipulation;user-select:none;}
-.btn-primary:hover{background:var(--red-highlight);box-shadow:var(--glow-red)}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary.full{width:100%;display:block;text-align:center}
-.btn-secondary{background:transparent;color:var(--text-secondary);border:1px solid var(--border-white);padding:.6rem 1.2rem;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);}
-.btn-secondary:hover{border-color:rgba(255,255,255,0.18);color:var(--text-main)}
-.btn-ghost{background:transparent;color:var(--text-meta);border:1px solid rgba(255,255,255,.06);padding:.5rem .95rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:var(--transition);}
-.btn-ghost:hover{color:var(--text-secondary);border-color:var(--border-white)}
-.app-header{background:var(--bg-secondary);border-bottom:1px solid var(--border-gold);padding:0 1.5rem;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;flex-shrink:0;box-shadow:0 2px 20px rgba(0,0,0,0.6);}
-.header-left{display:flex;align-items:center;gap:1.25rem}
-.header-brand{font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;color:var(--red-logicus);text-transform:uppercase;}
-.header-sep{width:1px;height:18px;background:var(--border-white)}
-.header-case-info{font-family:var(--font-sans);font-size:12.5px;color:var(--text-meta);display:none;}
-@media(min-width:600px){.header-case-info{display:block}}
-.header-status-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--amber);margin-right:.4rem;animation:pulse-dot 2s infinite;}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.35}}
-.header-act-badge{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--amber);text-transform:uppercase;border:1px solid rgba(183,131,59,0.28);padding:2px 8px;display:none;}
-@media(min-width:800px){.header-act-badge{display:block}}
-.header-right{display:flex;align-items:center;gap:.75rem}
-.indice-badge{font-family:var(--font-mono);font-size:10.5px;color:var(--text-main);background:var(--panel-2);border:1px solid var(--border-white);padding:4px 10px;letter-spacing:.08em;display:flex;align-items:center;gap:.4rem;}
-.indice-label{color:var(--text-meta);font-size:9px;letter-spacing:.2em}
-.indice-value{color:var(--red-highlight);font-size:13px}
-.mobile-nav{display:none;background:var(--bg-secondary);border-bottom:1px solid var(--border-white);padding:0 .75rem;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
-.mobile-nav::-webkit-scrollbar{display:none}
-@media(max-width:900px){.mobile-nav{display:flex}}
-.mnav-item{padding:.7rem .9rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--text-meta);text-transform:uppercase;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:var(--transition);flex-shrink:0;}
-.mnav-item:hover{color:var(--text-secondary)}
-.mnav-item.active{color:var(--text-main);border-bottom-color:var(--amber)}
-.mnav-item.locked{opacity:.3;cursor:not-allowed}
-.app-body{display:flex;flex:1;min-height:calc(100vh - 54px);position:relative}
-.nav-sidebar{width:210px;background:var(--bg-secondary);border-right:1px solid var(--border-white);padding:1.25rem 0;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;}
-@media(max-width:900px){.nav-sidebar{display:none}}
-.nav-section-label{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.3em;color:var(--amber);text-transform:uppercase;padding:0 1.2rem .6rem;margin:.9rem 0 .35rem;border-bottom:1px solid var(--border-gold);}
-.nav-item{display:flex;align-items:center;gap:.65rem;padding:.58rem 1.2rem;cursor:pointer;transition:var(--transition);font-size:12.5px;color:var(--text-secondary);border-left:2px solid transparent;font-family:var(--font-sans);}
-.nav-item:hover{background:rgba(255,255,255,.028);color:var(--text-main)}
-.nav-item.active{background:rgba(183,131,59,.07);color:var(--carta);border-left-color:var(--amber)}
-.nav-item.locked{opacity:.28;cursor:not-allowed}
-.nav-item.locked:hover{background:transparent;color:var(--text-secondary)}
-.nav-dot{width:4px;height:4px;border-radius:50%;background:var(--text-dim);flex-shrink:0;transition:var(--transition)}
-.nav-item.active .nav-dot{background:var(--amber);box-shadow:0 0 5px var(--amber)}
-.nav-sidebar-footer{margin-top:auto;padding:1rem 1.2rem;border-top:1px solid var(--border-white)}
-.main-content{flex:1;overflow-y:auto;overflow-x:hidden;min-width:0}
-.section-wrapper{padding:2.25rem 2.5rem;max-width:820px}
-@media(max-width:640px){.section-wrapper{padding:1.5rem 1rem}}
-.investigation-panel{width:260px;background:var(--bg-secondary);border-left:1px solid var(--border-gold);padding:0;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;}
-@media(max-width:1180px){.investigation-panel{display:none}}
-.inv-panel-header{padding:1rem 1.25rem .75rem;border-bottom:1px solid var(--border-white);display:flex;align-items:center;gap:.6rem;}
-.inv-panel-title{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.3em;color:var(--text-meta);text-transform:uppercase;}
-.inv-section{padding:.9rem 1.25rem;border-bottom:1px solid var(--border-gold)}
-.inv-label{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.28em;color:var(--amber);text-transform:uppercase;margin-bottom:.55rem;}
-.inv-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem;}
-.inv-status-label{font-size:11.5px;color:var(--text-secondary)}
-.inv-status-val{font-family:var(--font-mono);font-size:10.5px;color:var(--text-meta);letter-spacing:.05em}
-.inv-status-val.active{color:var(--amber)}
-.inv-status-val.done{color:var(--success-text)}
-.inv-status-val.blocked{color:var(--text-dim)}
-.inv-status-val.err{color:var(--red-highlight)}
-.inv-case-status{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;}
-.inv-case-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--amber);animation:pulse-dot 1.8s infinite}
-.inv-indice-bar{margin:.6rem 0 .3rem;height:3px;background:rgba(255,255,255,.05);position:relative;overflow:hidden}
-.inv-indice-fill{height:100%;background:var(--red-logicus);transition:width .5s ease}
-.inv-indice-fill.high{background:var(--success-border)}
-.inv-indice-fill.mid{background:var(--warning)}
-.section-header{margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border-white)}
-.section-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.32em;color:var(--carta);text-transform:uppercase;margin-bottom:.5rem;display:flex;align-items:center;gap:.6rem;}
-.section-eyebrow::before{content:'';width:16px;height:1px;background:var(--amber)}
-.section-title{font-size:clamp(1.7rem,3.5vw,2.7rem);font-weight:300;letter-spacing:.01em;color:var(--text-main);line-height:1.1}
-.section-subtitle{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--text-secondary);margin-top:.3rem;font-weight:300}
-.section-desc{font-size:13.5px;color:var(--text-secondary);margin-top:.75rem;line-height:1.7}
-.intro-transmission{display:flex;align-items:center;gap:.6rem;margin-bottom:1.5rem}
-.intro-transmission-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--amber);text-transform:uppercase}
-.intro-transmission-line{flex:1;height:1px;background:linear-gradient(90deg,var(--amber),transparent)}
-.intro-panel{background:var(--panel-1);border:1px solid var(--border-gold);border-left:2px solid var(--amber);padding:2.25rem 2.25rem 2rem;position:relative;margin-bottom:2rem;box-shadow:var(--shadow-panel);}
-.intro-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--amber),rgba(183,131,59,.1),transparent);}
-.intro-text{font-family:var(--font-serif);font-size:clamp(1.08rem,2.2vw,1.28rem);color:var(--text-main);line-height:1.82;font-weight:300;font-style:italic;}
-.intro-text p{margin-bottom:1rem}
-.intro-text p:last-child{margin-bottom:0}
-.intro-signature{margin-top:1.75rem;padding-top:1.1rem;border-top:1px solid var(--border-white);font-family:var(--font-mono);font-size:10.5px;color:var(--text-meta);letter-spacing:.12em;}
-.promemoria-card{background:var(--panel-2);border:1px solid var(--border-gold);border-top:2px solid var(--amber);padding:1.75rem 2rem;position:relative;margin:2rem 0;}
-.promemoria-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--amber),transparent);}
-.promemoria-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.32em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;}
-.promemoria-text{font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-secondary);line-height:1.8;}
-.promemoria-text p{margin-bottom:.8rem}
-.promemoria-text p:last-child{margin-bottom:0}
-.promemoria-sig{font-family:var(--font-mono);font-size:10px;color:var(--text-meta);letter-spacing:.12em;text-align:right;margin-top:1.25rem;padding-top:.9rem;border-top:1px solid var(--border-white-soft);}
-.fascicolo-meta{display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;border:none;border-top:1px solid var(--border-gold);border-bottom:1px solid var(--border-gold);background:rgba(185,161,116,0.03);padding:.85rem 1.25rem;margin-bottom:1.5rem;}
-.fascicolo-meta-item{display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-meta);letter-spacing:.1em}
-.fascicolo-meta-item .val{color:var(--text-secondary)}
-.fascicolo-meta-sep{width:1px;height:14px;background:var(--border-white)}
-.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.9rem}
-@media(max-width:600px){.docs-grid{grid-template-columns:1fr}}
-.doc-card{background:linear-gradient(160deg,var(--panel-1),var(--panel-2));border:1px solid var(--border-gold);cursor:pointer;transition:var(--transition);position:relative;overflow:hidden;display:flex;flex-direction:column;}
-.doc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:transparent;transition:var(--transition)}
-.doc-card:hover{border-color:rgba(183,131,59,.35);background:var(--panel-2);box-shadow:0 4px 28px rgba(0,0,0,.55),0 0 0 1px rgba(183,131,59,.1);transform:translateY(-1px)}
-.doc-card:hover::before{background:linear-gradient(90deg,var(--amber),transparent)}
-.doc-card.consulted{border-color:rgba(42,92,64,.4)}
-.doc-card.consulted::before{background:linear-gradient(90deg,var(--success-border),transparent)!important}
-.doc-card.locked-card{opacity:.45;cursor:not-allowed;pointer-events:none}
-.doc-card.locked-card:hover{transform:none;box-shadow:none}
-.doc-thumb{width:100%;aspect-ratio:16/7;overflow:hidden;position:relative;background:var(--panel-4);border-bottom:1px solid var(--border-white-soft)}
-.doc-thumb img{width:100%;height:100%;object-fit:cover;filter:contrast(1.08) brightness(.7) saturate(.5) sepia(.12);transition:var(--transition)}
-.doc-card:hover .doc-thumb img{filter:contrast(1.08) brightness(.8) saturate(.6) sepia(.08)}
-.doc-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--panel-3),var(--panel-4))}
-.doc-thumb-placeholder span{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;text-align:center;line-height:1.8}
-.doc-thumb-locked{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--panel-4);gap:.4rem}
-.doc-thumb-locked .lock-icon{font-size:1.25rem;color:var(--text-dim);opacity:.5}
-.doc-thumb-locked span{font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase}
-.doc-card-body{padding:1.1rem 1.2rem 1.25rem;flex:1;display:flex;flex-direction:column}
-.doc-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.6rem}
-.doc-code{font-family:var(--font-mono);font-size:10.5px;color:var(--amber);letter-spacing:.2em;font-weight:500}
-.doc-status-badge{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;padding:2px 7px;border:1px solid}
-.doc-status-badge.available{color:var(--text-dim);border-color:rgba(255,255,255,.08)}
-.doc-status-badge.consulted{color:var(--success-border);border-color:var(--success-border);background:rgba(28,97,84,.1)}
-.doc-status-badge.locked{color:var(--text-dim);border-color:rgba(255,255,255,.05);opacity:.5}
-.doc-category{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.55rem}
-.doc-title{font-family:var(--font-serif);font-size:1.15rem;font-weight:400;color:var(--text-main);margin-bottom:.5rem;line-height:1.25}
-.doc-summary{font-size:12.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:auto;flex:1;padding-bottom:.9rem}
-.doc-cta{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--carta);display:flex;align-items:center;gap:.4rem;margin-top:.5rem;padding-top:.85rem;border-top:1px solid var(--border-white-soft)}
-.doc-cta::after{content:'→';transition:var(--transition)}
-.doc-card:hover .doc-cta::after{transform:translateX(3px)}
-.doc-cta.consulted-cta{color:var(--success-border)}
-.locked-banner{background:var(--panel-2);border:1px solid var(--border-red);padding:1.25rem 1.5rem;margin:1.5rem 0;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
-.locked-banner-icon{font-size:1.2rem;color:var(--text-dim);flex-shrink:0}
-.locked-banner-text{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-secondary);line-height:1.6}
-.locked-banner-text strong{color:var(--carta)}
-.terminal-unlock-bar{margin-top:1.5rem;background:rgba(18,58,50,.15);border:1px solid var(--success-border);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;}
-.terminal-unlock-msg{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--success-text)}
-.viewer-overlay{position:fixed;inset:0;background:rgba(5,5,6,0.88);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
-.viewer-overlay.open{display:flex}
-.viewer-card{background:var(--panel-2);border:1px solid var(--border-gold);max-width:700px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-deep);}
-.viewer-back-bar{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.25rem;border-bottom:1px solid var(--border-white);flex-shrink:0;}
-.viewer-doc-meta{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
-.viewer-doc-code{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.2em}
-.viewer-doc-cat{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase}
-.viewer-class-badge{font-family:var(--font-mono);font-size:8px;letter-spacing:.22em;color:var(--red-logicus);border:1px solid var(--border-red);padding:2px 7px;text-transform:uppercase}
-.viewer-consulted{font-family:var(--font-mono);font-size:9px;color:var(--success-border);letter-spacing:.15em}
-.viewer-close-btn{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;color:var(--text-meta);cursor:pointer;background:var(--panel-1);border:1px solid var(--border-white);padding:4px 12px;text-transform:uppercase;transition:var(--transition);}
-.viewer-close-btn:hover{color:var(--text-main)}
-.viewer-body{overflow-y:auto;padding:1.75rem;flex:1}
-.viewer-title{font-size:clamp(1.5rem,3.5vw,2.3rem);font-weight:300;margin-bottom:1.5rem;color:var(--text-main)}
-.evidence-frame{position:relative;display:block;width:100%;margin-bottom:1.5rem;border:1px solid rgba(185,161,116,.22);box-shadow:0 6px 36px rgba(0,0,0,.65);}
-.evidence-frame img{width:100%;display:block;filter:contrast(1.06) brightness(.88) saturate(.65) sepia(.1)}
-.evidence-frame-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(5,7,11,.92));padding:.75rem 1rem;font-family:var(--font-mono);font-size:8px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;}
-.evidence-no-image{background:var(--panel-2);border:1px dashed rgba(185,161,116,.1);padding:1.5rem;text-align:center;margin-bottom:1.5rem;}
-.evidence-no-image p{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.35rem}
-.evidence-no-image small{font-size:12px;color:var(--text-dim)}
-.content-panel{background:var(--panel-1);border:1px solid var(--border-gold);margin-bottom:.75rem;overflow:hidden}
-.content-panel-hdr{padding:.8rem 1.15rem;border-bottom:1px solid var(--border-gold);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
-.content-panel-hdr:hover{background:rgba(255,255,255,.02)}
-.content-panel-lbl{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--carta);text-transform:uppercase}
-.content-panel-arrow{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);transition:var(--transition)}
-.content-panel.open .content-panel-arrow{transform:rotate(180deg)}
-.content-panel-body{padding:1.15rem;display:none}
-.content-panel.open .content-panel-body{display:block}
-.transcript-text{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);line-height:1.85;white-space:pre-wrap;letter-spacing:.01em}
-.fascicolo-note{border-left:2px solid var(--border-gold);background:rgba(185,161,116,.03);padding:.9rem 1.1rem;font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-secondary);line-height:1.7;}
-.viewer-actions{display:flex;gap:.75rem;padding:.9rem 1.25rem;border-top:1px solid var(--border-white);flex-shrink:0;flex-wrap:wrap}
-.support-intro-panel{background:rgba(183,131,59,.04);border:1px solid var(--border-gold);border-left:2px solid var(--amber);padding:1.1rem 1.25rem;margin-bottom:1.5rem;}
-.support-intro-panel p{font-size:13.5px;color:var(--text-secondary);line-height:1.7}
-.support-intro-panel strong{color:var(--warning);font-weight:500}
-.hint-accordion{background:var(--panel-1);border:1px solid var(--border-gold);margin-bottom:.75rem;}
-.hint-accordion.open{border-color:rgba(183,131,59,.28)}
-.hint-hdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.15rem;cursor:pointer;user-select:none;transition:var(--transition);}
-.hint-hdr:hover{background:rgba(255,255,255,.025)}
-.hint-hdr-left{display:flex;flex-direction:column;gap:.25rem}
-.hint-puzzle-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase}
-.hint-puzzle-name{font-size:13.5px;color:var(--text-main);font-family:var(--font-serif)}
-.hint-puzzle-scope{font-size:11.5px;color:var(--text-meta);margin-top:.15rem}
-.hint-total-cost{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em}
-.hint-total-cost .spent{color:var(--warning)}
-.hint-hdr-right{display:flex;align-items:center;gap:.75rem}
-.hint-arrow{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);transition:var(--transition)}
-.hint-accordion.open .hint-arrow{transform:rotate(180deg)}
-.hint-body{padding:0 1.15rem 1.1rem;border-top:1px solid var(--border-white-soft)}
-.hint-levels-list{display:flex;flex-direction:column;gap:.5rem;margin-top:.9rem}
-.hint-level-row{display:flex;gap:.85rem;align-items:flex-start;padding:.65rem .85rem;background:rgba(0,0,0,.18);border:1px solid var(--border-white-soft);}
-.hint-level-row.used{border-color:rgba(183,131,59,.2);background:rgba(183,131,59,.04)}
-.hint-level-meta{display:flex;flex-direction:column;gap:.25rem;min-width:80px;flex-shrink:0}
-.hint-level-name{font-family:var(--font-mono);font-size:7.5px;letter-spacing:.15em;color:var(--text-dim);text-transform:uppercase;line-height:1.4}
-.hint-level-cost{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.05em}
-.hint-level-content{flex:1}
-.hint-reveal-btn{background:rgba(183,131,59,.08);border:1px solid rgba(183,131,59,.2);color:var(--text-meta);padding:.42rem .9rem;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:var(--transition);width:100%;text-align:left;}
-.hint-reveal-btn:hover{color:var(--text-secondary);background:rgba(183,131,59,.13)}
-.hint-text{font-family:var(--font-serif);font-size:1rem;font-style:italic;color:var(--text-secondary);line-height:1.65;display:none;padding:.35rem 0}
-.hint-text.revealed{display:block}
-.hint-used-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.18em;color:var(--warning);text-transform:uppercase;margin-top:.3rem;display:none}
-.hint-used-label.visible{display:block}
-.hints-group-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--red-logicus);text-transform:uppercase;padding:.5rem 0 .75rem;border-bottom:1px solid var(--border-white-soft);margin-bottom:.75rem}
-.terminal-frame{background:rgba(4,3,2,0);border:1px solid rgba(167,25,32,.3);position:relative;box-shadow:0 0 50px rgba(179,18,23,.06),var(--shadow-deep);max-width:700px;}
-.terminal-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red-dark),var(--red-logicus),var(--red-dark))}
-.terminal-topbar{display:flex;align-items:center;gap:.6rem;padding:.9rem 1.25rem;border-bottom:1px solid rgba(179,18,23,.12);background:rgba(0,0,0,.3);}
-.terminal-pulse{width:7px;height:7px;border-radius:50%;background:var(--red-dark);box-shadow:0 0 7px var(--red-dark);animation:pulse-dot 2s infinite}
-.terminal-sys-label{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.25em;color:var(--carta);text-transform:uppercase}
-.terminal-body{padding:1.5rem}
-.terminal-field{margin-bottom:1.5rem}
-.terminal-field-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem}
-.terminal-field-id{font-family:var(--font-mono);font-size:8.5px;color:var(--red-dark);letter-spacing:.2em}
-.terminal-field-state{font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:2px 7px;border:1px solid}
-.terminal-field-state.pending{color:var(--text-dim);border-color:rgba(255,255,255,.07)}
-.terminal-field-state.ok{color:var(--success-border);border-color:var(--success-border);background:rgba(28,97,84,.1)}
-.terminal-field-state.error{color:var(--error);border-color:rgba(169,50,50,.35);background:rgba(169,50,50,.07)}
-.terminal-q{font-family:var(--font-mono);font-size:11.5px;color:var(--text-secondary);margin-bottom:.55rem;line-height:1.55;letter-spacing:.02em}
-.terminal-input{width:100%;background:rgba(0,0,0,.55);border:1px solid rgba(179,18,23,.18);color:var(--text-main);padding:.72rem 1rem;font-family:var(--font-mono);font-size:13px;outline:none;transition:var(--transition);-webkit-appearance:none;letter-spacing:.05em;}
-.terminal-input:focus{border-color:var(--red-dark);box-shadow:0 0 14px rgba(179,18,23,.14)}
-.terminal-textarea{width:100%;background:rgba(0,0,0,.55);border:1px solid rgba(179,18,23,.18);color:var(--text-main);padding:.8rem 1rem;font-family:var(--font-mono);font-size:11.5px;outline:none;transition:var(--transition);resize:vertical;min-height:100px;line-height:1.65;-webkit-appearance:none;}
-.terminal-textarea:focus{border-color:var(--red-dark);box-shadow:0 0 14px rgba(179,18,23,.14)}
-.terminal-feedback-line{font-family:var(--font-mono);font-size:10.5px;margin-top:.38rem;letter-spacing:.05em;display:none}
-.terminal-feedback-line.ok{color:var(--success-text);display:block}
-.terminal-feedback-line.error{color:var(--error);display:block}
-.terminal-global-feedback{margin-top:1rem;padding:1.1rem 1.25rem;border-left:2px solid;font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.04em;display:none;white-space:pre-line;}
-.terminal-global-feedback.show{display:block}
-.terminal-global-feedback.ok{color:var(--success-text);border-color:var(--success-border);background:rgba(18,58,50,.12)}
-.terminal-global-feedback.warn{color:var(--carta);border-color:var(--amber);background:rgba(183,131,59,.06)}
-.terminal-submit{width:100%;background:var(--red-dark);color:var(--text-main);border:1px solid var(--red-logicus);padding:.95rem 1.5rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;transition:var(--transition);margin-top:.5rem;}
-.terminal-submit:hover{background:var(--red-logicus);box-shadow:0 0 24px rgba(179,18,23,.28)}
-.terminal-submit:disabled{opacity:.4;cursor:not-allowed}
-.terminal-confirmed{background:rgba(18,58,50,.2);border:1px solid var(--success-border);padding:1.25rem;margin-top:.75rem;text-align:center;display:none;}
-.terminal-confirmed.visible{display:block}
-.terminal-confirmed-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.28em;color:var(--success-border);text-transform:uppercase;margin-bottom:.4rem}
-.terminal-confirmed-msg{font-size:12.5px;color:var(--text-secondary)}
-.score-card{max-width:560px}
-.score-main-panel{background:var(--panel-1);border:1px solid var(--border-white);padding:2.5rem;text-align:center;position:relative;margin-bottom:.9rem;}
-.score-main-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red-logicus),transparent)}
-.score-number{font-family:var(--font-serif);font-size:clamp(4rem,10vw,7rem);font-weight:300;color:var(--carta);line-height:1;margin-bottom:.2rem}
-.score-number.good{color:var(--success-text)}
-.score-classlabel{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-meta);margin-bottom:.2rem}
-.score-classname{font-family:var(--font-serif);font-size:clamp(1.3rem,3vw,1.8rem);font-style:italic;color:var(--red-highlight);margin-bottom:1.5rem}
-.score-classname.good{color:var(--success-text)}
-.score-breakdown{background:var(--panel-2);border:1px solid var(--border-white);padding:1.15rem;margin-bottom:.9rem}
-.bd-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;font-size:13px;color:var(--text-secondary);border-bottom:1px solid rgba(255,255,255,.03);}
-.bd-row:last-child{border-bottom:none}
-.bd-row.total{font-family:var(--font-mono);font-size:13.5px;color:var(--text-main);padding-top:.7rem;margin-top:.2rem;border-top:1px solid var(--border-white);border-bottom:none}
-.bd-val{font-family:var(--font-mono)}
-.bd-val.penalty{color:var(--error)}
-.final-scene{background:var(--panel-1);border:1px solid var(--border-gold);border-top:1px solid var(--amber);padding:2.5rem;position:relative;text-align:center;box-shadow:0 0 50px rgba(167,25,32,.08),var(--shadow-deep);margin-bottom:1.25rem;}
-.final-scene::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent)}
-.final-tag{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.35em;color:var(--success-text);text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:center;gap:.6rem;}
-.final-tag::before,.final-tag::after{content:'';width:30px;height:1px;background:var(--success-border)}
-.final-headline{font-size:clamp(1.6rem,4vw,2.8rem);font-weight:300;color:var(--text-main);line-height:1.1;margin-bottom:.9rem}
-.final-body{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.5rem;line-height:1.75;max-width:520px;margin-left:auto;margin-right:auto}
-.final-divider{width:48px;height:1px;background:var(--border-white);margin:0 auto 1.5rem}
-.final-ipotesi-box{background:rgba(183,131,59,.05);border:1px solid var(--border-gold);padding:1.25rem 1.5rem;margin:0 auto 1.5rem;max-width:520px;text-align:left;}
-.final-ipotesi-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.28em;color:var(--amber);text-transform:uppercase;margin-bottom:.6rem}
-.final-ipotesi-text{font-size:13.5px;color:var(--text-secondary);line-height:1.7}
-.act3-tease{background:rgba(5,7,11,.7);border:1px solid rgba(179,18,23,.2);padding:1.75rem;margin:0 auto;max-width:460px;position:relative;text-align:left;}
-.act3-tease::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--red-dark),transparent)}
-.act3-tease-unlock{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.4rem}
-.act3-tease-title{font-family:var(--font-serif);font-size:1.5rem;color:var(--text-main);margin-bottom:.65rem}
-.act3-tease-hook{font-size:13.5px;color:var(--text-secondary);font-style:italic;line-height:1.6}
-.act3-tease-hook strong{font-style:normal;color:var(--red-highlight)}
-.divider{border:none;border-top:1px solid var(--border-white);margin:1.5rem 0}
-.app-footer{background:var(--bg-secondary);border-top:1px solid var(--border-gold);padding:.9rem 2rem;font-size:11px;color:var(--text-dim);text-align:center;line-height:1.5;font-style:italic;flex-shrink:0}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--panel-2);border:1px solid var(--border-white);padding:.7rem 1.4rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-main);z-index:2000;opacity:0;transition:all .3s ease;pointer-events:none;text-align:center;white-space:nowrap;}
-.toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
-#confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:900;display:none;align-items:center;justify-content:center;padding:1rem;}
-#confirm-overlay.visible{display:flex}
-.confirm-box{background:var(--panel-1);border:1px solid rgba(179,18,23,.28);padding:2rem;max-width:400px;width:100%;box-shadow:var(--shadow-deep)}
-.confirm-box h3{font-size:1.25rem;margin-bottom:.65rem;color:var(--text-main)}
-.confirm-box p{font-size:13px;color:var(--text-secondary);margin-bottom:1.4rem;line-height:1.65}
-.confirm-actions{display:flex;gap:.7rem;justify-content:flex-end}
-.mobile-inv-btn{display:none;position:fixed;bottom:1.25rem;right:1.25rem;z-index:90;background:var(--red-logicus);color:var(--text-main);border:none;padding:.7rem 1rem;cursor:pointer;font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;box-shadow:var(--glow-red);}
-@media(max-width:1180px){.mobile-inv-btn{display:block}}
-.mobile-inv-drawer{display:none;position:fixed;inset:0;z-index:150;background:rgba(5,5,6,.75);backdrop-filter:blur(3px)}
-.mobile-inv-drawer.open{display:block}
-.mobile-inv-panel{position:absolute;right:0;top:0;bottom:0;width:min(320px,90vw);background:var(--bg-secondary);border-left:1px solid var(--border-gold);overflow-y:auto}
-.mobile-inv-close{display:flex;justify-content:flex-end;padding:.75rem 1rem;border-bottom:1px solid var(--border-white)}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.anim-in{animation:fadeInUp .32s ease forwards}
-.hints-group-wrapper{margin-bottom:.25rem}
-.hints-group-badge{font-family:var(--font-mono);font-size:7px;letter-spacing:.22em;padding:2px 7px;border-radius:2px;text-transform:uppercase;vertical-align:middle;margin-left:.6rem}
-.hints-group-badge.unlocked{background:rgba(90,180,100,.12);color:var(--success-text);border:1px solid rgba(90,180,100,.25)}
-.hints-group-badge.locked{background:rgba(167,25,32,.1);color:var(--red-logicus);border:1px solid rgba(167,25,32,.25)}
-.hints-p2-locked-banner{background:rgba(5,7,11,.6);border:1px solid rgba(167,25,32,.18);padding:1.25rem 1.5rem;margin:.75rem 0 .6rem;text-align:center;position:relative}
-.hints-p2-locked-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(167,25,32,.4),transparent)}
-.hints-locked-icon{font-size:1.1rem;color:rgba(167,25,32,.4);margin-bottom:.5rem;letter-spacing:.5em}
-.hints-locked-title{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;color:var(--text-secondary);text-transform:uppercase;margin-bottom:.35rem;line-height:1.5}
-.hints-locked-sub{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.06em;color:var(--text-dim);font-style:italic}
-.hints-p2-locked-cards{display:flex;flex-direction:column;gap:.4rem;opacity:.45;pointer-events:none}
-.locked-card{border-color:rgba(255,255,255,.06)!important;background:rgba(5,7,11,.4)!important}
-.locked-hdr{cursor:default!important}
-.locked-title{color:var(--text-dim)!important;font-style:italic;letter-spacing:.04em}
-.hints-p2-unlocked-banner{background:rgba(90,180,100,.05);border:1px solid rgba(90,180,100,.2);padding:.85rem 1.25rem;margin:.75rem 0 .6rem;text-align:center}
-.terminal-feedback-line.ambiguous{color:#c8922a;background:rgba(200,146,42,.07);border-left:2px solid #c8922a;padding:.4rem .6rem;margin-top:.3rem;font-size:12px;border-radius:2px;display:block}
-.terminal-field-state.ambiguous{color:#c8922a;background:rgba(200,146,42,.12);border-color:rgba(200,146,42,.3)}
-.terminal-global-feedback.ambiguous{background:rgba(200,146,42,.06);border:1px solid rgba(200,146,42,.25);color:#c8922a;padding:1rem 1.25rem;margin-top:1rem;font-size:13px;line-height:1.6;border-radius:2px}
-
-.email-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.7rem;margin-top:.5rem;}
-@media(max-width:600px){.email-grid{grid-template-columns:1fr}}
-
-.email-card{background:var(--panel-1);border:1px solid var(--border-gold);padding:1rem 1.1rem;cursor:pointer;transition:var(--transition);position:relative;}
-
-.email-card-id{font-family:var(--font-mono);font-size:9.5px;color:var(--amber);letter-spacing:.2em;margin-bottom:.45rem;}
-
-.email-card-obj{font-family:var(--font-serif);font-size:1.05rem;color:var(--text-main);margin-bottom:.4rem;line-height:1.3;}
-
-.email-card-cat{font-family:var(--font-mono);font-size:8.5px;color:var(--text-dim);letter-spacing:.22em;text-transform:uppercase;}
-
-/* VERIFICA NOTES (was missing) */
-
-.casella-panel{background:var(--panel-2);border:1px solid var(--border-gold);border-top:2px solid var(--red-dark);padding:1.5rem;margin:1.5rem 0;position:relative;}
-
-.casella-title{font-family:var(--font-serif);font-size:1.4rem;color:var(--text-main);margin-bottom:.5rem;font-weight:400;}
-
-.casella-desc{font-size:13.5px;color:var(--text-secondary);line-height:1.65;margin-bottom:1rem;}
-
-.casella-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--red-highlight);text-transform:uppercase;margin-bottom:.6rem;}
-
-.casella-input-row{display:flex;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap;}
-
-
-
-.casella-msg{font-family:var(--font-mono);font-size:11px;line-height:1.6;padding:.5rem 0;min-height:1.4em;}
-.casella-msg.success{color:var(--success-text, #4CAF82);}
-.casella-msg.error{color:var(--error, #C42028);}
-.casella-msg.blocked{color:var(--text-dim);font-style:italic;}
-
-.casella-hint{font-family:var(--font-mono);font-size:10px;color:var(--amber);letter-spacing:.05em;margin-top:.5rem;font-style:italic;}
-
-.casella-note{font-family:var(--font-mono);font-size:9.5px;color:var(--text-dim);font-style:italic;margin-top:.8rem;padding-top:.6rem;border-top:1px solid var(--border-white-soft);}
-
-/* EMAIL GRID (was missing) */
-
-.casella-format-info{font-family:var(--font-mono);font-size:10.5px;color:var(--text-meta);line-height:1.7;background:rgba(0,0,0,.25);border-left:2px solid var(--amber);padding:.7rem 1rem;margin-bottom:1rem;}
-
-.verifica-notes{display:flex;flex-direction:column;gap:1rem;}
-
-.verifica-note-card{background:var(--panel-1);border:1px solid var(--border-gold);border-left:2px solid var(--amber);padding:1.25rem 1.5rem;position:relative;}
-
-.verifica-note-id{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.25em;color:var(--amber);text-transform:uppercase;margin-bottom:.45rem;}
-
-.verifica-note-title{font-family:var(--font-serif);font-size:1.15rem;color:var(--text-main);margin-bottom:.65rem;font-weight:400;}
-
-.verifica-note-text{font-family:var(--font-mono);font-size:11.5px;color:var(--text-secondary);line-height:1.75;white-space:pre-wrap;background:rgba(0,0,0,.18);border-left:1px solid var(--border-white-soft);padding:.8rem 1rem;margin-bottom:.75rem;}
-
-.verifica-note-nota{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-meta);line-height:1.65;border-top:1px solid var(--border-white-soft);padding-top:.6rem;}
-
-/* VIEWER */
-
-.unlock-banner{display:none;background:rgba(42,92,64,0.12);border:1px solid var(--success-border);padding:.7rem 1rem;margin:1rem 0;align-items:center;gap:.6rem;font-family:var(--font-mono);font-size:10px;color:var(--success-text);letter-spacing:.12em;}
-.unlock-banner.show{display:flex}
-
-.unlock-banner-dot{width:6px;height:6px;border-radius:50%;background:var(--success-text);box-shadow:0 0 8px var(--success-text);animation:pulse-dot 1.8s infinite;}
-
-.unlock-banner-text{text-transform:uppercase}
-
-.final-epilogo{margin:1.5rem auto;max-width:520px;text-align:left;background:rgba(5,7,11,.6);border:1px solid rgba(167,25,32,.18);padding:1.5rem 1.75rem;position:relative;}
-
-.final-epilogo-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--red-highlight);text-transform:uppercase;margin-bottom:.85rem;text-align:center;}
-
-.final-epilogo-text{font-family:var(--font-serif);font-style:italic;font-size:1rem;color:var(--text-secondary);line-height:1.75;}
-
-.final-epilogo-firm{font-family:var(--font-mono);font-size:9.5px;color:var(--text-meta);letter-spacing:.18em;text-align:right;margin-top:1.25rem;padding-top:.85rem;border-top:1px solid var(--border-white-soft);text-transform:uppercase;}
-
-.final-caso-chiuso{margin:1.5rem auto;max-width:560px;text-align:left;}
-
-.final-caso-chiuso-label{font-family:var(--font-mono);font-size:8px;letter-spacing:.3em;color:var(--success-text);text-transform:uppercase;margin-bottom:.75rem;text-align:center;}
-
-.final-caso-chiuso-text{font-family:var(--font-serif);font-style:italic;font-size:1.05rem;color:var(--text-secondary);line-height:1.8;}
-
-.final-actions{margin-top:1.5rem;display:flex;justify-content:center;gap:.75rem;flex-wrap:wrap;}
-
-/* MISC */
-
-.hint-scope{font-family:var(--font-serif);font-style:italic;font-size:.95rem;color:var(--text-meta);line-height:1.6;padding:.75rem 0;border-bottom:1px solid var(--border-white-soft);margin-bottom:.5rem;}
-
-.hint-cost-total{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.1em}
-
-.docs-section-label{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.3em;color:var(--carta);text-transform:uppercase;margin:1.25rem 0 .9rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-white);}
-
-/* DOCS GRID */
-
-.terminal-panel{background:var(--panel-1);border:1px solid var(--border-gold);border-left:2px solid var(--red-dark);padding:1.5rem;box-shadow:var(--shadow-panel);position:relative;max-width:760px;}
-
-.terminal-fields{display:flex;flex-direction:column;gap:1.25rem;margin-bottom:1rem;}
-
-.terminal-desc{font-size:13px;color:var(--text-secondary);line-height:1.65;margin-bottom:1.5rem;}
-
-.terminal-eyebrow{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.28em;color:var(--carta);text-transform:uppercase;margin-bottom:.6rem;}
-
-.casella-input{flex:1;min-width:160px;background:rgba(0,0,0,.55);border:1px solid var(--border-red);color:var(--text-main);padding:.7rem 1rem;font-family:var(--font-mono);font-size:14px;letter-spacing:.2em;outline:none;text-align:center;transition:var(--transition);}
-.casella-input:focus{border-color:var(--red-logicus);box-shadow:0 0 14px var(--red-glow);}
-.casella-input:disabled{opacity:.5}
-.hints-phase-desc{font-size:11px;color:var(--text-meta);font-family:var(--font-mono);letter-spacing:.08em;margin-bottom:.8rem;padding:.5rem .75rem;border-left:2px solid var(--border-white);line-height:1.6;}
-.locked-phase-desc{color:var(--text-dim);border-left-color:var(--border-dim, #2A2520);}
-.email-card.consulted{border-color:var(--amber);opacity:.85;}
-.email-card-consulted{font-family:var(--font-mono);font-size:9px;color:var(--amber);letter-spacing:.12em;margin-top:.4rem;text-transform:uppercase;}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://media.base44.com data:; connect-src 'self' https://api.base44.app;">
+  <title>Archivio 17 — Caso 001 · Atto 3 · La Chiusura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/case-app.css">
 </head>
 <body>
 
-<header class="app-header">
-  <div class="header-left">
-    <div class="header-brand">Archivio 17</div>
-    <div class="header-sep"></div>
-    <div class="header-case-info"><span class="header-status-dot"></span>Caso 001 — Il Caso Marini</div>
-    <div class="header-act-badge">Atto 3</div>
-  </div>
-  <div class="header-right">
-    <div class="indice-badge">
-      <span class="indice-label">Indice investigativo</span>
-      <span class="indice-value" id="live-indice">100</span>
-    </div>
-    <button class="btn-ghost" onclick="showResetConfirm()">Azzera sessione</button>
-  </div>
-</header>
+<div id="case-app-root"></div>
 
-<nav class="mobile-nav" id="mobile-nav">
-  <div class="mnav-item active" onclick="showSection('intro')" id="mnav-intro">Archivista</div>
-  <div class="mnav-item" onclick="showSection('parte1')" id="mnav-parte1">Parte 1</div>
-  <div class="mnav-item locked" onclick="showSection('terminale3a')" id="mnav-terminale3a">Term. 03A</div>
-  <div class="mnav-item locked" onclick="showSection('parte2')" id="mnav-parte2">Parte 2</div>
-  <div class="mnav-item locked" onclick="showSection('terminale3b')" id="mnav-terminale3b">Term. 03B</div>
-  <div class="mnav-item locked" onclick="showSection('verifiche')" id="mnav-verifiche">Verifiche</div>
-  <div class="mnav-item locked" onclick="showSection('terminale3c')" id="mnav-terminale3c">Term. 03C</div>
-  <div class="mnav-item locked" onclick="showSection('esito')" id="mnav-esito">Esito</div>
-  <div class="mnav-item" onclick="showSection('supporto')" id="mnav-supporto">Supporto</div>
-  <div class="mnav-item" onclick="toggleMobileDrawer()">Stato</div>
-</nav>
-
-
-<div class="app-body">
-
-  <nav class="nav-sidebar">
-    <div class="nav-section-label">Indice fascicolo</div>
-    <div class="nav-item active" onclick="showSection('intro')" id="nav-intro"><div class="nav-dot"></div>Messaggio Archivista</div>
-    <div class="nav-item" onclick="showSection('parte1')" id="nav-parte1"><div class="nav-dot"></div>Parte 1 — Omissioni e accessi</div>
-    <div class="nav-item locked" onclick="showSection('terminale3a')" id="nav-terminale3a"><div class="nav-dot"></div>Terminale 03A</div>
-    <div class="nav-item locked" onclick="showSection('parte2')" id="nav-parte2"><div class="nav-dot"></div>Parte 2 — Verifiche incrociate</div>
-    <div class="nav-item locked" onclick="showSection('terminale3b')" id="nav-terminale3b"><div class="nav-dot"></div>Terminale 03B</div>
-    <div class="nav-item locked" onclick="showSection('verifiche')" id="nav-verifiche"><div class="nav-dot"></div>Note di verifica</div>
-    <div class="nav-item locked" onclick="showSection('terminale3c')" id="nav-terminale3c"><div class="nav-dot"></div>Terminale 03C</div>
-    <div class="nav-item locked" onclick="showSection('esito')" id="nav-esito"><div class="nav-dot"></div>Esito finale</div>
-    <div class="nav-section-label" style="margin-top:.5rem">Strumenti</div>
-    <div class="nav-item" onclick="showSection('supporto')" id="nav-supporto"><div class="nav-dot"></div>Supporto Archivista</div>
-    <div class="nav-sidebar-footer">
-      <button class="btn-ghost" style="width:100%" onclick="showResetConfirm()">Azzera sessione</button>
-    </div>
-  </nav>
-
-  <main class="main-content">
-
-    <!-- INTRO -->
-    <div class="app-section active" id="section-intro">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Comunicazione Archivista — Atto 3</div>
-          <h2 class="section-title">Il punto cieco</h2>
-          <div class="section-subtitle">La prima indagine ha privilegiato la pista più rumorosa.</div>
-        </div>
-        <div class="intro-transmission">
-          <span class="intro-transmission-label">Trasmissione archivio · riservata</span>
-          <span class="intro-transmission-line"></span>
-        </div>
-        <div class="intro-panel anim-in">
-          <div class="intro-text">
-            <p>La prima indagine ha privilegiato la pista più rumorosa.</p>
-            <p>Questo fascicolo richiede l'opposto.</p>
-            <p>Non cerchi nuovi sospetti.<br>Cerchi ciò che è rimasto fuori dalla lettura iniziale.</p>
-            <p>Un accesso ignorato.<br>Un alibi non verificato.<br>Una data personale.<br>Una linea familiare rimasta ai margini.</p>
-            <p>Proceda con cautela.</p>
-          </div>
-          <div class="intro-signature">— L'Archivista · Archivio 17 · Caso 001</div>
-        </div>
-        <div style="margin-top:2rem">
-          <button class="btn-primary" onclick="showSection('parte1')">Apri Atto 3 →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- PARTE 1 -->
-    <div class="app-section" id="section-parte1">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Fascicolo — Atto 3 · Fase 1</div>
-          <h2 class="section-title">Parte 1 — Omissioni e accessi</h2>
-          <div class="section-subtitle">Esamini i reperti. Noti le sovrapposizioni.</div>
-          <p class="section-desc">Esamina i reperti disponibili. Individua le linee intrecciate. Quando ritieni di avere una lettura coerente, accedi al Terminale 03A per registrare la tua analisi iniziale.</p>
-        </div>
-        <div class="fascicolo-meta">
-          <div class="fascicolo-meta-item">Caso <span class="val">A17-001</span></div>
-          <div class="fascicolo-meta-sep"></div>
-          <div class="fascicolo-meta-item">Fase <span class="val">Parte 1 — Omissioni e accessi</span></div>
-          <div class="fascicolo-meta-sep"></div>
-          <div class="fascicolo-meta-item">Reperti <span class="val"><span id="p1-count">0</span> / 7</span></div>
-        </div>
-        <div class="unlock-banner" id="p1-unlock-banner">
-          <div class="unlock-banner-dot"></div>
-          <span class="unlock-banner-text">Terminale 03A disponibile</span>
-        </div>
-        <div class="docs-section-label">Reperti disponibili</div>
-        <div class="docs-grid" id="docs-grid-p1"></div>
-        <div style="margin-top:1.5rem">
-          <button class="btn-primary" onclick="showSection('terminale3a')">Accedi al Terminale 03A →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TERMINALE 03A -->
-    <div class="app-section" id="section-terminale3a">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Analisi — Terminale 03A</div>
-          <h2 class="section-title">Linee intrecciate</h2>
-          <div class="section-subtitle">Identifichi le sovrapposizioni. Non concluda ancora.</div>
-        </div>
-        <div class="terminal-panel">
-          <div class="terminal-eyebrow">Terminale 03A · Analisi delle linee intrecciate</div>
-          <div class="terminal-desc">Il fascicolo presenta più nomi con omissioni, accessi e intervalli non verificati. Risponda con precisione.</div>
-          <div class="terminal-fields">
-
-            <div class="terminal-field" id="t3a-field-1">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.01 — Linee intrecciate</div>
-                <div class="terminal-field-state pending" id="t3a-state-1">In attesa</div>
-              </div>
-              <div class="terminal-q">Quali nomi o linee del fascicolo sembrano intrecciarsi in questa fase?</div>
-              <textarea class="terminal-input" id="t3a-input-1" rows="2" placeholder="Identifichi almeno due soggetti o linee…"></textarea>
-              <div class="terminal-feedback-line" id="t3a-fb-1"></div>
-            </div>
-
-            <div class="terminal-field" id="t3a-field-2">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02 — Coinvolgimento multiplo</div>
-                <div class="terminal-field-state pending" id="t3a-state-2">In attesa</div>
-              </div>
-              <div class="terminal-q">Quali elementi fanno pensare che possa esserci più di un possibile coinvolto?</div>
-              <textarea class="terminal-input" id="t3a-input-2" rows="2" placeholder="Identifichi almeno un elemento concreto…"></textarea>
-              <div class="terminal-feedback-line" id="t3a-fb-2"></div>
-            </div>
-
-            <div class="terminal-field" id="t3a-field-3">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.03 — Elementi non verificati</div>
-                <div class="terminal-field-state pending" id="t3a-state-3">In attesa</div>
-              </div>
-              <div class="terminal-q">Quali elementi non sono ancora stati verificati con certezza?</div>
-              <textarea class="terminal-input" id="t3a-input-3" rows="2" placeholder="Identifichi almeno un elemento aperto…"></textarea>
-              <div class="terminal-feedback-line" id="t3a-fb-3"></div>
-            </div>
-
-          </div>
-          <button class="terminal-submit" id="t3a-submit" onclick="submitTerminal3A()">Invia al Terminale 03A</button>
-          <div class="terminal-global-feedback" id="t3a-global-fb"></div>
-          <div class="terminal-confirmed" id="t3a-confirmed">
-            <div class="terminal-confirmed-label">Analisi registrata — Terminale 03A</div>
-            <div class="terminal-confirmed-msg" id="t3a-confirmed-msg">Linee intrecciate registrate. Accesso alla Parte 2 autorizzato.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PARTE 2 -->
-    <div class="app-section" id="section-parte2">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Fascicolo — Atto 3 · Fase 2</div>
-          <h2 class="section-title">Parte 2 — Verifiche incrociate</h2>
-          <p class="section-desc">Esamina i reperti aggiuntivi. Confronta accessi, moventi e alibi prima di procedere ai terminali conclusivi.</p>
-        </div>
-        <div class="promemoria-card anim-in">
-          <div class="promemoria-label">Promemoria Archivista — dopo Terminale 03A</div>
-          <div class="promemoria-text">
-            <p>Il fascicolo non presenta ancora una soluzione.</p>
-            <p>Presenta accessi, omissioni e intervalli non verificati.</p>
-            <p>Non cerchi il nome più rumoroso. Cerchi chi unisce movente, accesso e assenza di alibi verificato.</p>
-            <p>Proceda con ordine.</p>
-          </div>
-        </div>
-
-        <!-- CASELLA PRIVATA -->
-        <div id="casella-privata-container">
-          <div class="casella-panel" id="casella-panel">
-            <div class="casella-eyebrow">Accesso opzionale — Casella privata</div>
-            <div class="casella-title">Casella privata Andrea Marini</div>
-            <div class="casella-desc">È stata individuata una sessione locale non sincronizzata nel profilo di Andrea Marini. L'accesso richiede una password numerica.</div>
-            <div class="casella-format-info">
-              Formato password: 8 cifre<br>
-              Tentativi disponibili: <span id="casella-attempts-label">3</span><br>
-              Supporto Archivista: non disponibile
-            </div>
-            <div class="casella-input-row">
-              <input type="text" class="casella-input" id="casella-input" maxlength="10" placeholder="00000000" inputmode="numeric">
-              <button class="btn-primary" onclick="submitCasella()" id="casella-btn">Accedi</button>
-            </div>
-            <div class="casella-msg" id="casella-msg"></div>
-            <div class="casella-hint">▸ Suggerimento di sistema: data familiare significativa</div>
-            <div class="casella-note">Il fascicolo resta risolvibile anche senza accesso alla casella privata.</div>
-          </div>
-
-          <!-- EMAIL dopo accesso -->
-          <div id="casella-email-section" style="display:none">
-            <div class="promemoria-card" style="border-color:var(--success-border)">
-              <div class="promemoria-label" style="color:var(--success-text)">Sincronizzazione completata — 5 elementi recuperati</div>
-              <div class="promemoria-text"><p>L'Archivio ha recuperato corrispondenza parziale dalla sessione locale di Andrea Marini. Esamini con attenzione.</p></div>
-            </div>
-            <div class="docs-section-label">Email recuperate</div>
-            <div class="email-grid" id="email-grid"></div>
-          </div>
-
-          <!-- Casella bloccata -->
-          <div id="casella-bloccata-section" style="display:none">
-            <div class="promemoria-card" style="border-color:var(--border-red)">
-              <div class="promemoria-label" style="color:var(--text-dim)">Accesso bloccato</div>
-              <div class="promemoria-text"><p>La casella privata non è più disponibile in questa sessione. Il fascicolo resta risolvibile attraverso i reperti standard.</p></div>
-            </div>
-          </div>
-        </div>
-
-        <div style="margin-top:2rem">
-          <div class="fascicolo-meta">
-            <div class="fascicolo-meta-item">Caso <span class="val">A17-001</span></div>
-            <div class="fascicolo-meta-sep"></div>
-            <div class="fascicolo-meta-item">Fase <span class="val">Verifiche incrociate</span></div>
-            <div class="fascicolo-meta-sep"></div>
-            <div class="fascicolo-meta-item">Reperti <span class="val"><span id="p2-count">0</span> / 5</span></div>
-          </div>
-          <div class="unlock-banner" id="p2-unlock-banner">
-            <div class="unlock-banner-dot"></div>
-            <span class="unlock-banner-text">Terminale 03B disponibile</span>
-          </div>
-          <div class="docs-section-label">Reperti — Verifiche incrociate</div>
-          <div class="docs-grid" id="docs-grid-p2"></div>
-        </div>
-        <div style="margin-top:1.5rem">
-          <button class="btn-primary" onclick="showSection('terminale3b')">Accedi al Terminale 03B →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TERMINALE 03B -->
-    <div class="app-section" id="section-terminale3b">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Analisi — Terminale 03B</div>
-          <h2 class="section-title">Movente · Accesso · Alibi</h2>
-          <div class="section-subtitle">Valuti ciascuna linea per convergenza, non per rumore.</div>
-        </div>
-        <div class="terminal-panel">
-          <div class="terminal-eyebrow">Terminale 03B · Analisi movente / accesso / alibi</div>
-          <div class="terminal-desc">Il fascicolo ha accumulato elementi su quattro linee. Risponda con precisione su ciascuna.</div>
-          <div class="terminal-fields">
-
-            <div class="terminal-field" id="t3b-field-1">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.01 — Accesso invisibile</div>
-                <div class="terminal-field-state pending" id="t3b-state-1">In attesa</div>
-              </div>
-              <div class="terminal-q">Quale accesso consentiva di entrare nello studio senza comparire nelle riprese principali?</div>
-              <textarea class="terminal-input" id="t3b-input-1" rows="2" placeholder="Identifichi l'accesso non sorvegliato…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-1"></div>
-            </div>
-
-            <div class="terminal-field" id="t3b-field-2">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02A — Movente Elena Ricci</div>
-                <div class="terminal-field-state pending" id="t3b-state-2">In attesa</div>
-              </div>
-              <div class="terminal-q">Quale potenziale movente emerge per Elena Ricci?</div>
-              <textarea class="terminal-input" id="t3b-input-2" rows="2" placeholder="Valuti la linea domestica…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-2"></div>
-            </div>
-
-            <div class="terminal-field" id="t3b-field-3">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02B — Movente Davide Serra</div>
-                <div class="terminal-field-state pending" id="t3b-state-3">In attesa</div>
-              </div>
-              <div class="terminal-q">Quale potenziale movente emerge per Davide Serra?</div>
-              <textarea class="terminal-input" id="t3b-input-3" rows="2" placeholder="Valuti la linea professionale…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-3"></div>
-            </div>
-
-            <div class="terminal-field" id="t3b-field-4">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02C — Movente Stefano Marini</div>
-                <div class="terminal-field-state pending" id="t3b-state-4">In attesa</div>
-              </div>
-              <div class="terminal-q">Quale potenziale movente emerge per Stefano Marini?</div>
-              <textarea class="terminal-input" id="t3b-input-4" rows="2" placeholder="Valuti la linea familiare…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-4"></div>
-            </div>
-
-            <div class="terminal-field" id="t3b-field-5">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02D — Movente Roberto Manfredi</div>
-                <div class="terminal-field-state pending" id="t3b-state-5">In attesa</div>
-              </div>
-              <div class="terminal-q">Quale potenziale movente emerge per Roberto Manfredi?</div>
-              <textarea class="terminal-input" id="t3b-input-5" rows="2" placeholder="Valuti la linea professionale esterna…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-5"></div>
-            </div>
-
-            <div class="terminal-field" id="t3b-field-6">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.03 — Convergenza</div>
-                <div class="terminal-field-state pending" id="t3b-state-6">In attesa</div>
-              </div>
-              <div class="terminal-q">Chi presenta contemporaneamente un potenziale movente, un potenziale accesso alla scena e nessun alibi verificato?</div>
-              <textarea class="terminal-input" id="t3b-input-6" rows="2" placeholder="Identifichi il soggetto…"></textarea>
-              <div class="terminal-feedback-line" id="t3b-fb-6"></div>
-            </div>
-
-          </div>
-          <button class="terminal-submit" id="t3b-submit" onclick="submitTerminal3B()">Invia al Terminale 03B</button>
-          <div class="terminal-global-feedback" id="t3b-global-fb"></div>
-          <div class="terminal-confirmed" id="t3b-confirmed">
-            <div class="terminal-confirmed-label">Analisi registrata — Terminale 03B</div>
-            <div class="terminal-confirmed-msg" id="t3b-confirmed-msg">La linea Stefano collega movente economico, accesso potenziale e assenza di alibi verificato. Accesso alle verifiche pre-finali autorizzato.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- NOTE DI VERIFICA -->
-    <div class="app-section" id="section-verifiche">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Fascicolo — Atto 3 · Pre-finale</div>
-          <h2 class="section-title">Note di verifica</h2>
-          <div class="section-subtitle">Il fascicolo integra i riscontri raccolti. Alcune linee vengono ridimensionate.</div>
-        </div>
-        <div class="verifica-notes">
-
-          <div class="verifica-note-card">
-            <div class="verifica-note-id">N01 — Riscontro telefonico Elena</div>
-            <div class="verifica-note-title">Chiamata Elena Ricci — 14/11</div>
-            <div class="verifica-note-text">Il numero chiamato da Elena Ricci durante l'intervallo dichiarato risulta associato alla Dott.ssa Marta Valenti, psicologa clinica.
-
-Chiamata: 14/11 — durata 19:48</div>
-            <div class="verifica-note-nota">La chiamata risulta compatibile con l'intervallo riferito da Elena durante la cena.</div>
-          </div>
-
-          <div class="verifica-note-card">
-            <div class="verifica-note-id">N02 — Riscontro telefonico Davide</div>
-            <div class="verifica-note-title">Chiamata ricevuta Davide Serra — 14/11</div>
-            <div class="verifica-note-text">La chiamata ricevuta da Davide Serra risulta provenire dal numero intestato a Sara Loi, coniuge di Davide Serra.
-
-Chiamata: 14/11 — durata 03:21</div>
-            <div class="verifica-note-nota">La chiamata non coincide con il numero contattato da Elena Ricci.</div>
-          </div>
-
-          <div class="verifica-note-card">
-            <div class="verifica-note-id">N03 — Ricevuta / posizione Davide</div>
-            <div class="verifica-note-title">Transazione elettronica Davide Serra — 14/11</div>
-            <div class="verifica-note-text">Ricevuta ristorante intestata a pagamento elettronico riconducibile a Davide Serra.
-
-Orario transazione: 14/11 — 20:31
-Luogo: ristorante a circa 20 minuti dallo Studio Marini.</div>
-            <div class="verifica-note-nota">Il dato conferma la presenza di Davide nell'area dichiarata, ma non risulta sufficiente da solo a ricostruire ogni spostamento successivo.</div>
-          </div>
-
-          <div class="verifica-note-card">
-            <div class="verifica-note-id">N04 — Verifica logistica Roberto Manfredi</div>
-            <div class="verifica-note-title">Alibi logistico Roberto Manfredi — 14/11</div>
-            <div class="verifica-note-text">Dalla documentazione acquisita risultano:
-— prenotazione veicolo a noleggio aziendale;
-— registrazione ingresso presso sala riunioni esterna;
-— pagamento parcheggio;
-— presenza confermata da due partecipanti all'incontro.
-
-Fascia oraria verificata: 14/11 — 19:40 / 22:35</div>
-            <div class="verifica-note-nota">Gli elementi confermano la presenza di Manfredi fuori sede nella fascia compatibile con il decesso.</div>
-          </div>
-
-        </div>
-        <div style="margin-top:1.5rem">
-          <button class="btn-primary" onclick="showSection('terminale3c')">Accedi al Terminale 03C →</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TERMINALE 03C -->
-    <div class="app-section" id="section-terminale3c">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Terminale finale — 03C</div>
-          <h2 class="section-title">Chiusura del caso</h2>
-          <div class="section-subtitle">Quattro domande. Risponda con precisione.</div>
-        </div>
-        <div class="terminal-panel">
-          <div class="terminal-eyebrow">Terminale 03C · Chiusura del caso</div>
-          <div class="terminal-desc">Il fascicolo è pronto per la chiusura. Risponda alle quattro domande finali.</div>
-          <div class="terminal-fields">
-
-            <div class="terminal-field" id="t3c-field-1">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.01 — Responsabile</div>
-                <div class="terminal-field-state pending" id="t3c-state-1">In attesa</div>
-              </div>
-              <div class="terminal-q">Chi ha ucciso Andrea Marini?</div>
-              <textarea class="terminal-input" id="t3c-input-1" rows="2" placeholder="Identifichi il responsabile…"></textarea>
-              <div class="terminal-feedback-line" id="t3c-fb-1"></div>
-            </div>
-
-            <div class="terminal-field" id="t3c-field-2">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.02 — Movente principale</div>
-                <div class="terminal-field-state pending" id="t3c-state-2">In attesa</div>
-              </div>
-              <div class="terminal-q">Qual era il movente principale?</div>
-              <textarea class="terminal-input" id="t3c-input-2" rows="2" placeholder="Identifichi il movente…"></textarea>
-              <div class="terminal-feedback-line" id="t3c-fb-2"></div>
-            </div>
-
-            <div class="terminal-field" id="t3c-field-3">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.03 — Modalità di accesso</div>
-                <div class="terminal-field-state pending" id="t3c-state-3">In attesa</div>
-              </div>
-              <div class="terminal-q">Come è entrato nello studio senza comparire nelle riprese principali?</div>
-              <textarea class="terminal-input" id="t3c-input-3" rows="2" placeholder="Identifichi l'accesso…"></textarea>
-              <div class="terminal-feedback-line" id="t3c-fb-3"></div>
-            </div>
-
-            <div class="terminal-field" id="t3c-field-4">
-              <div class="terminal-field-head">
-                <div class="terminal-field-id">CAMPO.04 — Provenienza arma</div>
-                <div class="terminal-field-state pending" id="t3c-state-4">In attesa</div>
-              </div>
-              <div class="terminal-q">Di chi era l'arma utilizzata per uccidere Andrea Marini?</div>
-              <textarea class="terminal-input" id="t3c-input-4" rows="2" placeholder="Identifichi la provenienza dell'arma…"></textarea>
-              <div class="terminal-feedback-line" id="t3c-fb-4"></div>
-            </div>
-
-          </div>
-          <button class="terminal-submit" id="t3c-submit" onclick="submitTerminal3C()">Chiudi il caso</button>
-          <div class="terminal-global-feedback" id="t3c-global-fb"></div>
-          <div class="terminal-confirmed" id="t3c-confirmed">
-            <div class="terminal-confirmed-label">Caso chiuso — Archivio 17</div>
-            <div class="terminal-confirmed-msg" id="t3c-confirmed-msg">Analisi conclusiva acquisita. Accesso all'esito finale autorizzato.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ESITO FINALE -->
-    <div class="app-section" id="section-esito">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Risultato — Atto 3</div>
-          <h2 class="section-title">Esito finale</h2>
-        </div>
-        <div class="score-card anim-in">
-          <div class="score-main-panel">
-            <div class="score-number" id="esito-score">100</div>
-            <div class="score-classlabel">Classificazione</div>
-            <div class="score-classname" id="esito-classname">—</div>
-          </div>
-          <div class="score-breakdown">
-            <div class="bd-row"><span>Punteggio base Caso 001</span><span class="bd-val">100</span></div>
-            <div class="bd-row" style="border-top:1px solid rgba(255,255,255,.06);margin-top:.3rem;padding-top:.6rem">
-              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO I</span>
-              <span class="bd-val penalty" id="esito-bd-act1">−0</span>
-            </div>
-            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act1-detail">hint −0 · errori −0</div>
-            <div class="bd-row" style="padding-top:.2rem">
-              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO II</span>
-              <span class="bd-val penalty" id="esito-bd-act2">−0</span>
-            </div>
-            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act2-detail">hint −0 · errori −0</div>
-            <div class="bd-row" style="padding-top:.2rem">
-              <span style="color:var(--text-meta);font-size:.75rem;font-family:var(--font-mono);letter-spacing:.08em">ATTO III</span>
-              <span class="bd-val penalty" id="esito-bd-act3">−0</span>
-            </div>
-            <div class="bd-row" style="font-size:11px;color:var(--text-dim);padding:.1rem 0 .4rem" id="esito-bd-act3-detail">hint −0 · errori −0</div>
-            <div class="bd-row total"><span>Indice Investigativo Globale</span><span class="bd-val" id="esito-total">100</span></div>
-          </div>
-        </div>
-
-        <div class="final-scene" id="esito-final-scene">
-          <div class="final-tag">CASO 001 — ARCHIVIATO</div>
-          <div class="final-headline risolto">Caso chiuso.</div>
-          <div class="final-divider"></div>
-
-          <div class="final-caso-chiuso">
-            <div class="final-caso-chiuso-label">Archivio 17 · Fascicolo A17-001 · Risolto</div>
-            <div class="final-caso-chiuso-text">La morte di Andrea Marini non era il risultato della pista più rumorosa.<br><br>Era il punto di convergenza di una linea rimasta fuori dalla prima indagine: un movente economico familiare, un accesso non sorvegliato, un'arma di famiglia, un'assenza di alibi verificato.<br><br>Stefano Marini aveva ciò che agli altri mancava: un motivo sufficiente, una via d'accesso, un mezzo disponibile e il tempo per costruire una scena leggibile come suicidio.<br><br>Il fascicolo A17-001 viene archiviato come risolto.<br><br>— L'Archivista</div>
-          </div>
-
-          <div class="final-divider"></div>
-
-          <div class="final-epilogo">
-            <div class="final-epilogo-label">Epilogo</div>
-            <div class="final-epilogo-text">Stefano Marini non è mai stato indagato per l'omicidio del fratello.<br><br>La fideiussione è stata estinta.<br>La madre, Carla, non ha mai saputo perché Andrea è morto davvero.<br><br>L'Archivio non decide cosa fare della verità.<br>La conserva.</div>
-            <div class="final-epilogo-firm">Fine fascicolo A17-001.</div>
-          </div>
-
-          <div class="final-actions">
-            <button class="btn-primary" onclick="showSection('intro')">Torna al riepilogo del caso</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SUPPORTO -->
-    <div class="app-section" id="section-supporto">
-      <div class="section-wrapper">
-        <div class="section-header">
-          <div class="section-eyebrow">Sistema di supporto — Atto 3</div>
-          <h2 class="section-title">Supporto Archivista</h2>
-          <div class="section-subtitle">Consulta con prudenza</div>
-        </div>
-        <div class="support-intro-panel">
-          <p>Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 · L2 → −5 · L3 → −8</strong>. I livelli sono indipendenti: paghi solo quello che richiedi. Massimo cumulabile per puzzle: −15.</p>
-          <p style="margin-top:.6rem;font-style:italic;color:var(--text-dim)">Nessun supporto disponibile per l'accesso alla casella privata.</p>
-        </div>
-        <div id="puzzles-container"></div>
-      </div>
-    </div>
-
-  </main>
-
-  <aside class="investigation-panel" id="investigation-panel">
-    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
-    <div class="inv-section">
-      <div class="inv-label">Scheda caso</div>
-      <div class="inv-case-status">Indagine aperta</div>
-      <div style="margin-top:.65rem">
-        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="inv-fase">Omissioni e accessi</span></div>
-      </div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Indice investigativo</div>
-      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
-        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="inv-score-big">100</span>
-        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
-      </div>
-      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="inv-score-bar" style="width:100%"></div></div>
-      <div class="inv-breakdown" id="inv-breakdown" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-meta);margin-top:.5rem;line-height:1.7;"></div>
-      <div class="inv-status-row" style="margin-top:.5rem"><span class="inv-status-label">Reset disponibili</span><span class="inv-status-val" id="inv-resets">●● 2/2</span></div>
-      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-meta);letter-spacing:.1em;margin-top:.3rem" id="inv-class-label">—</div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Progressione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="inv-p1">0 / 7</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="inv-casella">non disponibile</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="inv-p2">bloccati</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="inv-t3a">non validato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="inv-t3b">bloccato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="inv-t3c">bloccato</span></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Dati sessione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="inv-hints-used">0 livelli</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="inv-errors">0</span></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Timeline — 14 novembre</div>
-      <div style="display:flex;flex-direction:column;gap:0">
-        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--text-dim);background:var(--bg-main);flex-shrink:0;margin-top:3px"></div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">19:04</div>
-          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Ultima chiamata registrata di Andrea</div>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--amber);background:rgba(183,131,59,.12);flex-shrink:0;margin-top:3px"></div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:12</div>
-          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Chiamata ricevuta Davide — <span style="background:var(--text-dim);color:var(--text-dim);border-radius:2px;letter-spacing:1px;user-select:none" title="Numero non identificato">███████</span></div>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--amber);background:rgba(183,131,59,.12);flex-shrink:0;margin-top:3px"></div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:14</div>
-          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Chiamata Elena — <span style="background:var(--text-dim);color:var(--text-dim);border-radius:2px;letter-spacing:1px;user-select:none" title="Numero non identificato">███████</span></div>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--text-dim);background:var(--bg-main);flex-shrink:0;margin-top:3px"></div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">20:31</div>
-          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Transazione Davide — ristorante</div>
-        </div>
-        <div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-          <div style="width:11px;height:11px;border-radius:50%;border:1px solid var(--red-logicus);background:rgba(167,25,32,.1);flex-shrink:0;margin-top:3px"></div>
-          <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">15/11</div>
-          <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">Rinvenimento — Studio Marini</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-<button class="mobile-inv-btn" onclick="toggleMobileDrawer()">Stato fascicolo ↑</button>
-<div id="mobile-inv-drawer" class="mobile-inv-drawer" role="dialog" aria-modal="true" aria-label="Stato fascicolo" aria-hidden="true" onclick="closeMobileDrawerOutside(event)">
-  <div class="mobile-inv-panel">
-    <div class="mobile-inv-close">
-      <button class="btn-ghost" onclick="document.getElementById('mobile-inv-drawer').classList.remove('open')">× Chiudi</button>
-    </div>
-    <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
-    <div class="inv-section">
-      <div class="inv-label">Scheda caso</div>
-      <div class="inv-case-status">Indagine aperta</div>
-      <div style="margin-top:.65rem">
-        <div class="inv-status-row"><span class="inv-status-label">Caso</span><span class="inv-status-val">A17-001</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Atto</span><span class="inv-status-val">3 — Il punto cieco</span></div>
-        <div class="inv-status-row"><span class="inv-status-label">Fase</span><span class="inv-status-val active" id="minv-fase">Omissioni e accessi</span></div>
-      </div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Indice investigativo</div>
-      <div style="display:flex;align-items:baseline;gap:.4rem;margin-bottom:.4rem">
-        <span style="font-family:var(--font-serif);font-size:1.8rem;font-weight:300;color:var(--text-main)" id="minv-score-big">100</span>
-        <span style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em">/100</span>
-      </div>
-      <div class="inv-indice-bar"><div class="inv-indice-fill high" id="minv-score-bar" style="width:100%"></div></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Progressione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P1</span><span class="inv-status-val" id="minv-p1">0 / 7</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Casella privata</span><span class="inv-status-val blocked" id="minv-casella">non disponibile</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Reperti P2</span><span class="inv-status-val blocked" id="minv-p2">bloccati</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03A</span><span class="inv-status-val" id="minv-t3a">non validato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03B</span><span class="inv-status-val blocked" id="minv-t3b">bloccato</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Terminale 03C</span><span class="inv-status-val blocked" id="minv-t3c">bloccato</span></div>
-    </div>
-    <div class="inv-section">
-      <div class="inv-label">Dati sessione</div>
-      <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="minv-hints">0 livelli</span></div>
-      <div class="inv-status-row"><span class="inv-status-label">Errori terminali</span><span class="inv-status-val" id="minv-errors">0</span></div>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<!-- VIEWER -->
-<div class="viewer-overlay" id="viewer-overlay" role="dialog" aria-modal="true" aria-labelledby="v-title">
-  <div class="viewer-card">
-    <div class="viewer-back-bar">
-      <div class="viewer-doc-meta">
-        <span class="viewer-doc-code" id="v-code">—</span>
-        <span class="viewer-doc-cat" id="v-cat">—</span>
-        <span class="viewer-class-badge">RISERVATO</span>
-        <span class="viewer-consulted" id="v-consulted"></span>
-      </div>
-      <button class="viewer-close-btn" onclick="closeViewer()">× Chiudi</button>
-    </div>
-    <div class="viewer-body">
-      <h2 class="viewer-title" id="v-title">—</h2>
-      <div id="v-img-container"></div>
-      <div class="content-panel open" id="v-transcript-panel">
-        <div class="content-panel-hdr" onclick="this.parentElement.classList.toggle('open')">
-          <span class="content-panel-lbl">Trascrizione leggibile</span>
-          <span class="content-panel-arrow">▼</span>
-        </div>
-        <div class="content-panel-body">
-          <div class="transcript-text" id="v-transcript">—</div>
-        </div>
-      </div>
-      <div class="content-panel open" id="v-note-panel">
-        <div class="content-panel-hdr" onclick="this.parentElement.classList.toggle('open')">
-          <span class="content-panel-lbl">Note del fascicolo</span>
-          <span class="content-panel-arrow">▼</span>
-        </div>
-        <div class="content-panel-body">
-          <div class="fascicolo-note" id="v-note">—</div>
-        </div>
-      </div>
-    </div>
-    <div class="viewer-actions">
-      <button class="btn-primary" onclick="closeViewer()">✓ Esamina reperto</button>
-      <button class="btn-ghost" onclick="closeViewer()">Torna al fascicolo</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
-<div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
-  <div class="confirm-box">
-    <h3 id="confirm-title">Azzera Atto III?</h3>
-    <p>Tutti i progressi dell'Atto III verranno cancellati — documenti, hint ed errori. Il punteggio globale tornerà al valore che aveva all'ingresso dell'Atto III.</p>
-    <p style="font-family:var(--font-mono);font-size:.75rem;color:var(--amber);margin-top:.6rem">Reset disponibili: <span id="confirm-resets-left">—</span> / 2 · Dopo questa operazione ne resteranno <span id="confirm-resets-after">—</span>.</p>
-    <div class="confirm-actions">
-      <button class="btn-primary" onclick="confirmReset()">Conferma reset</button>
-      <button class="btn-ghost" onclick="document.getElementById('confirm-overlay').classList.remove('visible')">Annulla</button>
-    </div>
-  </div>
-</div>
-
-<footer class="app-footer">Opera di fantasia. Personaggi, eventi, luoghi e documenti sono interamente inventati. — Archivio 17 · Caso 001 · Atto 3</footer>
-
+<script src="assets/config.js"></script>
+<script src="assets/case-app.js"></script>
+<script src="assets/case-engine.js"></script>
 <script>
-'use strict';
-// ===== DATI =====
-const LS_KEY = 'a17_atto3_v1';
+(function(){
+  // ============================================================
+  // ATTO 3 — validators custom + section plugins (casella3, verifiche)
+  // ============================================================
 
-// ═══════════════════════════════════════════════
-// INDICE INVESTIGATIVO GLOBALE — Caso 001
-// ═══════════════════════════════════════════════
-const GLOBAL_KEY = 'a17_global_v1';
-function defaultGlobal(){ return { global_score:100, penalty_act1:{hints:0,errors:0}, penalty_act2:{hints:0,errors:0}, penalty_act3:{hints:0,errors:0}, act1_done:false, act2_done:false, act3_done:false, locked:false, resets_used:0, resets_max:2 }; }
-let _global = defaultGlobal();
-function loadGlobal(){ try{ const r=localStorage.getItem(GLOBAL_KEY); if(!r){_global=defaultGlobal();return;} const p=JSON.parse(r); _global={...defaultGlobal(),...p,penalty_act1:{...defaultGlobal().penalty_act1,...(p.penalty_act1||{})},penalty_act2:{...defaultGlobal().penalty_act2,...(p.penalty_act2||{})},penalty_act3:{...defaultGlobal().penalty_act3,...(p.penalty_act3||{})},resets_used:typeof p.resets_used==='number'?p.resets_used:0}; }catch(e){_global=defaultGlobal();} }
-function saveGlobal(){ try{ localStorage.setItem(GLOBAL_KEY, JSON.stringify(_global)); }catch(e){} }
-function globalScore(){ if(_global.locked) return _global.global_score; const p1=(_global.penalty_act1.hints||0)+(_global.penalty_act1.errors||0); const p2=(_global.penalty_act2.hints||0)+(_global.penalty_act2.errors||0); const p3=(_global.penalty_act3.hints||0)+(_global.penalty_act3.errors||0); return Math.max(0,100-p1-p2-p3); }
-function globalClassification(s){ if(s>=90)return'Archivista in formazione'; if(s>=75)return'Investigatore'; if(s>=60)return'Collaboratore'; return'Osservatore esterno'; }
-function updateGlobalFromActState(actNum,hintPenalty,errorPenalty){ if(_global.locked)return; _global['penalty_act'+actNum]={hints:hintPenalty,errors:errorPenalty}; _global.global_score=globalScore(); saveGlobal(); }
-function markActDone(actNum){ _global['act'+actNum+'_done']=true; if(actNum===3)_global.locked=true; _global.global_score=globalScore(); saveGlobal(); }
+  // --- Validator T3A: 3 campi, F1=subject-groups, F2/F3=hasAny -----------
+  function validatorT3A(ctx){
+    const { term, raws, helpers, data } = ctx;
+    const D = data.dictionaries || {};
+    const fields = term.validator.fields;
+    const texts = raws.map(v => helpers.normalize(v));
+    let errors = 0, allOk = true;
 
-const STATE_VERSION = 1;
-const API_BASE = 'https://api.base44.app/api/apps/69fdda0ce13e22a1cc6cd63c/functions';
+    // Campo 1 — sovrapposizioni: serve >= N gruppi-sospetto matched
+    const groups = D.t3aSubjectGroups || [];
+    const minG = D.t3aSubjectGroupsMin || 2;
+    const matchCount = groups.filter(g => g.some(k => texts[0].includes(helpers.normalize(k)))).length;
+    const fb1 = fields[0].feedback;
+    if(matchCount >= minG){
+      helpers.setFieldState(term.id, 1, 'ok', fb1.ok);
+    } else if(matchCount === 1 || helpers.isAmbiguousGeneric(raws[0], D.ambiguousGeneric)){
+      helpers.setFieldState(term.id, 1, 'ambiguous', fb1.ambiguous);
+      allOk = false;
+    } else {
+      helpers.setFieldState(term.id, 1, 'error', fb1.error);
+      errors++; allOk = false;
+    }
 
-// Sessione cloud
-let _sessionToken = localStorage.getItem('a17_atto3_session_token') || null;
-let _codeId       = localStorage.getItem('a17_atto3_code_id') || null;
-let _accessCode   = localStorage.getItem('a17_atto3_access_code') || null;
+    // Campo 2 — coinvolgimento multiplo
+    const fb2 = fields[1].feedback;
+    if(helpers.hasAny(texts[1], D.t3aKwElement || [])){
+      helpers.setFieldState(term.id, 2, 'ok', fb2.ok);
+    } else if(helpers.isAmbiguousGeneric(raws[1], D.ambiguousGeneric)){
+      helpers.setFieldState(term.id, 2, 'ambiguous', fb2.ambiguous);
+      allOk = false;
+    } else {
+      helpers.setFieldState(term.id, 2, 'error', fb2.error);
+      errors++; allOk = false;
+    }
 
-const DOCS_P1 = [
-  {
-    id:'C01', cat:'Profilo familiare', title:'Profilo nucleo familiare Marini',
-    desc:'Dati anagrafici del nucleo familiare diretto di Andrea Marini.',
-    transcript:"Nucleo familiare diretto — Andrea Marini\n\nMadre:\nCarla Bianchi\nnata il 12/04/1945\n\nPadre:\nGiovanni Marini\nnato il 08/09/1940\ndeceduto il 17/11/2009\n\nFratello:\nStefano Marini\nnato il 03/09/1975\n\nConiuge:\nElena Ricci\nnata il 21/06/1978\n\nFiglio:\nLorenzo Marini\nnato il 18/02/2005",
-    note:'Andrea Marini risultava referente principale per la gestione medica e amministrativa della madre.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/a970c67ef_ChatGPTImage10mag202600_57_46.png'
-  },
-  {
-    id:'C02', cat:'Verbale integrativo', title:'Dichiarazione integrativa Elena Ricci',
-    desc:'Dichiarazione aggiuntiva della moglie di Andrea Marini. Data: 20/11/2024.',
-    transcript:"ESTRATTO DICHIARAZIONE:\n\n\"Negli ultimi mesi Andrea era diventato molto più chiuso. Proteggeva in modo eccessivo il lavoro e non voleva che io leggessi documenti o appunti che lasciava nello studio.\n\nLa sera del 14 novembre ero a cena da mia sorella. Ho conservato lo scontrino del ristorante. In un momento della serata mi sono allontanata per una telefonata personale durata circa venti minuti.\n\nNon so dire con certezza chi lo stesse cercando in quei giorni, ma Andrea era agitato. Parlava poco, dormiva male e aveva l'impressione di essere sotto pressione, sia per questioni di lavoro sia per problemi economici di cui non voleva parlarmi apertamente.\"\n\nNOTA ARCHIVIO 17:\nLa dichiarazione amplia il contesto personale della vittima. Restano da verificare con riscontro esterno l'intervallo temporale dichiarato e la natura della telefonata.\n\nTag: Comportamento chiuso · Pressione percepita · Telefonata da verificare",
-    note:'Intervallo temporale e natura della telefonata da verificare con riscontro esterno.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f345cd098_ChatGPTImage10mag202601_30_26.png'},
-  {
-    id:'C03', cat:'Verbale integrativo', title:'Dichiarazione integrativa Davide Serra',
-    desc:'Dichiarazione aggiuntiva del collaboratore dello Studio Marini. Data: 20/11/2024.',
-    transcript:"ESTRATTO DICHIARAZIONE:\n\nLa sera del 14 novembre avevo finito tardi alcune commissioni e mi sono fermato a cena con un amico in un locale non lontano dallo studio. A un certo punto ho ricevuto una chiamata urgente da mia moglie e ho deciso di rientrare prima del previsto.\n\nLa mattina del 15 novembre sono stato tra i primi ad arrivare. La porta dello studio era chiusa e ho aperto con la mia copia delle chiavi, come capitava quando Andrea non era ancora arrivato. Una volta dentro ho visto il fascicolo Manfredi già sulla scrivania, ma non l'ho toccato.\n\nNegli ultimi giorni Andrea era nervoso e teneva per sé molte cose. Sapevo che la pratica Manfredi stava creando tensioni, ma non conoscevo tutto il contenuto delle carte che stava esaminando.\n\nNOTA ARCHIVIO 17:\nLa dichiarazione conferma l'accesso abituale allo studio e una conoscenza parziale delle pratiche sensibili. Restano da verificare con riscontri esterni gli spostamenti serali del dichiarante e la provenienza della chiamata ricevuta il 14/11.\n\nTag: Accesso abituale allo studio · Spostamenti serali da verificare · Chiamata ricevuta · Conoscenza parziale delle pratiche",
-    note:'Spostamenti serali e provenienza chiamata ricevuta il 14/11 da verificare con riscontri esterni.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/5290bfc36_ChatGPTImage10mag202601_30_32.png'},
-  {
-    id:'C04', cat:'Planimetria', title:'Piantina edificio / accessi',
-    desc:'Schema dell\'edificio e degli accessi allo studio.',
-    transcript:"Piantina sintetica edificio — Studio Marini\n\nAccesso principale:\n— ingresso da portone principale\n— copertura telecamera condominiale\n— passaggio registrato\n\nAccesso secondario:\n— scala di servizio interna\n— ingresso laterale non coperto da telecamere\n— collegamento con area retrostante\n— serratura meccanica non integrata nel sistema di videosorveglianza",
-    note:'La prima indagine ha valorizzato l\'accesso principale, ma non ha sviluppato l\'ipotesi dell\'accesso secondario.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/d8353713a_doc_C04.png'
-  },
-  {
-    id:'C05', cat:'Tabulati', title:'Tabulati serali parziali',
-    desc:'Estratto parziale delle comunicazioni serali del 14 novembre.',
-    transcript:"14 novembre — fascia serale\n\nElena Ricci:\n20:14 — chiamata uscente — numero non salvato — durata 19:48\n\nDavide Serra:\n20:12 — chiamata in entrata — numero privato / non annotato in fascicolo iniziale — durata 03:21\n\nAndrea Marini:\n19:04 — chiamata non risposta — Stefano Marini\nnessuna comunicazione registrata dopo le 19:04",
-    note:'Due intervalli temporali risultano non completamente verificati nella prima indagine.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/972ae4656_ChatGPTImage10mag202601_32_15.png'
-  },
-  {
-    id:'C06', cat:'Scheda Informativa', title:'Nota Informativa — Roberto Manfredi',
-    desc:'Scheda informativa interna. Soggetto: Roberto Manfredi — Imprenditore / Cliente dello Studio. Data: 20/11/2024.',
-    transcript:"ESTRATTO INFORMATIVO:\n\nRoberto Manfredi risulta titolare della pratica economico-finanziaria già emersa nei documenti precedenti. Negli ultimi giorni Andrea Marini aveva consultato più volte il relativo fascicolo e aveva annotato la necessità di un confronto diretto.\n\nSecondo le verifiche preliminari, tra Manfredi e la vittima esisteva un rapporto divenuto teso nelle settimane precedenti. L'oggetto del contrasto riguardava una documentazione sensibile e la possibile esposizione di terzi in caso di emersione della pratica.\n\nUn contatto tra le parti è considerato probabile, ma allo stato non è ancora dimostrato che Roberto Manfredi fosse presente presso lo studio nella fascia oraria compatibile con il decesso. La posizione del soggetto resta quindi di interesse investigativo, pur in assenza di elementi risolutivi.\n\n——\nNOTA ARCHIVIO 17:\nProfilo ad alta pressione. Movente potenziale collegato alla pratica economica, ma presenza sul luogo e dinamica materiale non ancora accertate.\n\nTag: Pratica sensibile · Pressioni documentate · Incontro da verificare · Presenza non accertata",
-    note:'Verifica interna in corso. Classificazione: Uso interno — Sezione Analisi.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/a251e137b_doc_C07.png'},
-  {
-    id:'C07', cat:'Nota economica', title:'Richiamo pista Stefano',
-    desc:'Richiamo alla linea economica familiare.',
-    transcript:"Riepilogo interno — garanzia familiare\n\nLa posizione Andrea-Stefano resta collegata a:\n— garanzia bancaria solidale\n— importo massimo garantito di €280.000\n— richiesta di regolarizzazione non ancora chiusa\n— documentazione incompleta sulla gestione successiva alla morte di Andrea",
-    note:'La linea economica familiare non è stata oggetto di approfondimento nella prima indagine.'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/273b67e02_doc_C06.png'}
-];
+    // Campo 3 — elementi non verificati
+    const fb3 = fields[2].feedback;
+    if(helpers.hasAny(texts[2], D.t3aKwOpen || [])){
+      helpers.setFieldState(term.id, 3, 'ok', fb3.ok);
+    } else if(helpers.isAmbiguousGeneric(raws[2], D.ambiguousGeneric)){
+      helpers.setFieldState(term.id, 3, 'ambiguous', fb3.ambiguous);
+      allOk = false;
+    } else {
+      helpers.setFieldState(term.id, 3, 'error', fb3.error);
+      errors++; allOk = false;
+    }
 
-const DOCS_P2 = [
-  {
-    id:'C08', cat:'Registro interno', title:'Registro copie chiavi',
-    desc:'Documento relativo alle copie delle chiavi dello studio.',
-    transcript:"Registro copie chiavi — Studio Marini\n\nCopie note:\n— Andrea Marini — titolare\n— Davide Serra — collaboratore autorizzato apertura mattutina\n— Elena Ricci — copia domestica non confermata in uso recente\n— Stefano Marini — copia consegnata anni prima per emergenze familiari",
-    note:'La copia consegnata a Stefano non risulta menzionata nella prima relazione investigativa.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/311f1031a_doc_C08.png'
-  },
-  {
-    id:'C09', cat:'Relazione tecnica', title:'Relazione integrativa accesso secondario',
-    desc:'Verifica percorsi e punto cieco videosorveglianza. Rif. A17-001 / Atto 3.',
-    transcript:"RELAZIONE INTEGRATIVA — ACCESSO SECONDARIO\nVerifica percorsi e punto cieco videosorveglianza\nData: 21/11/2024 · Rif.: accessi edificio / piano 2\n\n1. ESITO VERIFICA ACCESSI\nLo Studio Marini si trova al piano 2 dell\'edificio di Via del Corso 12, Roma. Oltre all\'ingresso principale dal portone su strada, esiste un accesso secondario tramite cortile interno e scala di servizio.\n\nLa telecamera condominiale copre il portone principale e l\'atrio iniziale, ma non riprende il cortile interno, la porta di servizio né il pianerottolo della scala secondaria.\n\nIl percorso secondario consente di raggiungere il piano 2 senza attraversare l\'ingresso principale monitorato.\n\n2. OSSERVAZIONI TECNICHE\n— La porta secondaria non presenta segni evidenti di effrazione.\n— Il sistema di chiusura è compatibile con apertura tramite chiave ordinaria.\n— Non risultano registri automatici di accesso per il percorso secondario.\n— Il tempo stimato dal cortile interno allo studio è breve e compatibile con un ingresso discreto.\n\n3. VALUTAZIONE INVESTIGATIVA\nL\'esistenza di questo percorso non monitorato indebolisce l\'ipotesi iniziale secondo cui chiunque sia entrato nell\'ufficio avrebbe necessariamente dovuto essere ripreso dall\'ingresso principale. Permane la possibilità che l\'accesso secondario sia stato utilizzato per raggiungere i locali senza generare tracciamento audiovisivo.",
-    note:"L\'accesso secondario non identifica da solo un responsabile, ma amplia in modo concreto le modalità compatibili con un ingresso non rilevato ai locali.",
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/9d83e352c_doc_C09.png'
-  },
-  {
-    id:'C10', cat:'Registro arma', title:'Arma di famiglia / provenienza',
-    desc:'Documento sulla provenienza dell\'arma utilizzata.',
-    transcript:"Arma registrata:\nPistola Beretta calibro 9\n\nIntestatario originario:\nGiovanni Marini\n\nStato:\narma non regolarmente aggiornata dopo il decesso dell'intestatario.",
-    note:"L'arma risulta riconducibile alla linea familiare Marini e non a una disponibilità professionale dello studio.",
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/73cc9f787_doc_C10.png'
-  },
-  {
-    id:'C11', cat:'Dichiarazione integrativa', title:'Chiavi date a Stefano',
-    desc:'Dichiarazione relativa alla copia delle chiavi.',
-    transcript:"Dichiarazione Elena Ricci — integrazione\n\n\"Andrea aveva dato una copia delle chiavi a Stefano anni fa, dopo un problema al condominio. Diceva che poteva servire in caso di emergenza.\n\nNon ricordo che qualcuno gliel'abbia mai chiesta indietro.\"",
-    note:'La copia delle chiavi in possesso di Stefano non risulta approfondita nella prima indagine.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/6d1542a18_doc_C12.png'
-  },
-  {
-    id:'C12', cat:'Nota scena', title:'Elemento aggiuntivo sulla scena',
-    desc:'Confronto tra accesso, posizione scena e ricostruzione iniziale.',
-    transcript:"La scena è stata valutata inizialmente come compatibile con suicidio.\n\nLa ricostruzione non ha però integrato:\n— accesso secondario\n— copie chiavi non censite\n— provenienza familiare dell'arma\n— incongruenze economiche già presenti nei documenti personali",
-    note:'Un singolo elemento non chiude il caso. La convergenza di più elementi modifica la lettura.',
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f31f8e639_doc_C11.png'
+    return { allOk: allOk, errors: errors };
   }
-];
 
-const EMAILS = [
-  {
-    id:'E01', cat:'Email recuperata', obj:'Domani',
-    body:"Andrea,\nbasta telefonate.\n\nCi vediamo di persona e sistemiamo questa storia.\nPorta i documenti che sai.\n\nSe hai già parlato con qualcuno, hai fatto un errore.\n\nR.M.",
-    from:'Roberto Manfredi', to:'Andrea Marini'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/2dbea3623_email_E01.png'},
-  {
-    id:'E02', cat:'Bozza email', obj:'Fascicolo Manfredi',
-    body:"Davide,\ndomani non aprire il fascicolo Manfredi senza di me.\n\nSo che hai visto alcune carte sulla scrivania.\nPer ora non parlarne con nessuno.\n\nSe qualcuno dovesse chiederti qualcosa, dimmi prima chi.\n\nA.",
-    from:'Andrea Marini', to:'Davide Serra — bozza non inviata'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/9787e2b13_email_E02.png'},
-  {
-    id:'E03', cat:'Email bancaria', obj:'Garanzia solidale — documentazione integrativa',
-    body:"Gentile Dott. Marini,\nla posizione collegata alla garanzia solidale risulta ancora esposta.\n\nImporto massimo garantito:\n€280.000\n\nIn assenza di integrazioni, la banca procederà secondo i termini contrattuali.",
-    from:'Istituto bancario', to:'Andrea Marini'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0d0d8d603_email_E03.png'},
-  {
-    id:'E04', cat:'Bozza email', obj:'Dobbiamo parlarne',
-    body:"Stefano,\nnon posso più tenere tutto sospeso.\n\nHo provato ad aiutarti, ma la banca non aspetterà ancora.\nSe la pratica Manfredi esplode prima che sistemiamo la garanzia, ci travolge entrambi.\n\nDomani dobbiamo parlare di persona.\nNiente telefonate.\n\nA.",
-    from:'Andrea Marini', to:'Stefano Marini — bozza non inviata'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/8c3a277f3_email_E04.png'},
-  {
-    id:'E05', cat:'Appunto personale', obj:'Appunti seduta — riservato',
-    body:"Mi ha chiesto di annotare quando torna quella sensazione.\n\nElena è distante.\nNon so se mi stia mentendo o se sia solo stanca di me.\n\nContinuo a pensare che mi nasconda qualcosa.\nForse un altro uomo.\nForse sono io che non riesco più a fidarmi di nessuno.\n\nDott.ssa V., ore 19:10 — richiamare se peggiora.",
-    from:'Appunto personale — Andrea Marini', to:'—'
-  ,
-    imageUrl:'https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/107cc7a8f_email_E05.png'}
-];
+  // --- Validator T3B: 6 campi, accesso + 4 linee suspect + convergenza --
+  function validatorT3B(ctx){
+    const { term, raws, helpers, data } = ctx;
+    const D = data.dictionaries || {};
+    const fields = term.validator.fields;
+    const texts = raws.map(v => helpers.normalize(v));
+    let errors = 0, allOk = true;
 
-const PUZZLES = [
-  {
-    id:'P13', part:1,
-    title:'Linee intrecciate',
-    scope:'Identificare le sovrapposizioni tra i soggetti presenti nel fascicolo.',
-    hints:[
-      {lvl:1,cost:2,txt:'Non cercare un solo nome. Cerca il punto in cui più linee si intersecano sul 14 novembre.'},
-      {lvl:2,cost:5,txt:'Ogni soggetto del fascicolo ha almeno un elemento che non torna: un accesso, una chiamata, un silenzio. Mettili in colonna e vedi quale riga è più lunga.'},
-      {lvl:3,cost:8,txt:'Una delle quattro linee ha qualcosa che le altre non hanno: non solo un movente o un’omissione, ma una combinazione. È quella combinazione che va cercata, non il nome.'}
-    ]
-  },
-  {
-    id:'P14', part:1,
-    title:'Accesso secondario',
-    scope:"Comprendere il ruolo dell'ingresso non sorvegliato nel fascicolo.",
-    hints:[
-      {lvl:1,cost:2,txt:'La telecamera copre l’ingresso principale. Ma non è l’unico modo per entrare nell’edificio.'},
-      {lvl:2,cost:5,txt:'Guarda la piantina dell’edificio e confrontala con il campo visivo della telecamera. C’è un percorso che non compare nelle riprese.'},
-      {lvl:3,cost:8,txt:'Chiunque conoscesse lo studio sapeva di quell’accesso. Ma non tutti lo frequentavano abbastanza da usarlo senza esitazione. Questo restringe il campo.'}
-    ]
-  },
-  {
-    id:'P15', part:2,
-    title:'Moventi a confronto',
-    scope:'Valutare il peso reale di ciascuna linea investigativa.',
-    hints:[
-      {lvl:1,cost:2,txt:'Un movente da solo non basta. Cerca chi ha anche accesso e un’assenza non verificata nella stessa serata.'},
-      {lvl:2,cost:5,txt:'Metti a confronto le quattro linee su tre criteri: movente documentato, accesso fisico possibile, alibi verificato. Non tutte le linee reggono su tutti e tre.'},
-      {lvl:3,cost:8,txt:'Una sola linea passa tutti e tre i filtri contemporaneamente. Le altre si fermano a uno o due. È quella la direzione da consolidare nel terminale.'}
-    ]
-  },
-  {
-    id:'P16', part:3,
-    title:'Chiusura del caso',
-    scope:'Costruire la risposta finale con convergenza di movente, accesso, arma e alibi.',
-    hints:[
-      {lvl:1,cost:2,txt:'La risposta finale non è un nome — è una convergenza. Movente, accesso, arma e alibi devono puntare nella stessa direzione.'},
-      {lvl:2,cost:5,txt:'Ripercorri il fascicolo con questi quattro criteri in mente. Quale linea li copre tutti? Quale lascia ancora qualcosa aperto?'},
-      {lvl:3,cost:8,txt:'Nel fascicolo ci sono elementi che collegano la stessa persona a un debito, a un accesso documentato, a un’arma di famiglia e a una serata senza riscontro. Trova quella persona e hai chiuso il caso.'}
-    ]
-  }
-];
+    const setField = (idx, st, msg) => helpers.setFieldState(term.id, fields[idx].id, st, msg);
 
-// ===== STATE =====
-function defaultState(){
-  return {
-    hintPenaltyTotal:0,
-    hintLevelsUsed:0,
-    errorsTerminal:0,
-    p1Opened:[],
-    p2Opened:[],
-    casellaAttempts:3,
-    casellaUnlocked:false,
-    casellaBlocked:false,
-    emailsOpened:[],
-    t3aCompleted:false,
-    t3aErrors:0,
-    t3bCompleted:false,
-    t3bErrors:0,
-    t3cCompleted:false,
-    t3cErrors:0,
-    finalUnlocked:false,
-    t3aFb:null,
-    t3bFb:null,
-    t3cFb:null,
-    hintsRevealed:{},
-    hintPuzzleCost:{},
-    puzzleOpen:{},
-    currentSection:'intro'
-  };
-}
+    // Campo 1 — accesso secondario
+    const fb1 = fields[0].feedback;
+    if(helpers.hasAny(texts[0], D.t3bKwAccess || [])){
+      setField(0, 'ok', fb1.ok);
+    } else if(texts[0].includes('principale')){
+      setField(0, 'error', fb1.errorMain || fb1.error);
+      errors++; allOk = false;
+    } else if(helpers.isAmbiguousGeneric(raws[0], D.ambiguousGeneric) || texts[0].includes('ingresso') || texts[0].includes('accesso')){
+      setField(0, 'ambiguous', fb1.ambiguous);
+      allOk = false;
+    } else {
+      setField(0, 'error', fb1.error);
+      errors++; allOk = false;
+    }
 
-let state = defaultState();
-
-function saveState(){
-  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){ console.warn('saveState failed:',e); }
-  // Sync cloud (fire-and-forget)
-  if(_sessionToken && _codeId){
-    fetch(API_BASE + '/updateSession', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        code_id: _codeId,
-        session_token: _sessionToken,
-        updates: {
-          t3a_completed:    state.t3aCompleted,
-          t3b_completed:    state.t3bCompleted,
-          t3c_completed:    state.t3cCompleted,
-          final_unlocked:   state.finalUnlocked,
-          docs_opened_act3: [...(state.p1Opened||[]), ...(state.p2Opened||[])],
-          hints_revealed:   state.hintsRevealed,
-          current_section:  state.currentSection,
-          current_act:      3
-        }
-      })
-    }).catch(()=>{});
-  }
-}
-function loadState(){
-  loadGlobal();
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return;
-    const saved = JSON.parse(raw);
-    const def = defaultState();
-    Object.keys(def).forEach(k=>{
-      if(saved[k] !== undefined){
-        if(typeof def[k]==='object' && def[k]!==null && !Array.isArray(def[k])){
-          state[k] = Object.assign({}, def[k], saved[k]);
-        } else {
-          state[k] = saved[k];
-        }
+    // Helper per linee suspect (Elena, Davide, Manfredi) — specific OR weak
+    function evalLine(idx, specKey, weakKey){
+      const t = texts[idx];
+      const raw = raws[idx];
+      const fb = fields[idx].feedback;
+      if(helpers.hasAny(t, D[specKey] || [])){
+        setField(idx, 'ok', fb.ok);
+      } else if(helpers.hasAny(t, D[weakKey] || [])){
+        setField(idx, 'ok', fb.okWeak || fb.ok);
+      } else if(helpers.isAmbiguousGeneric(raw, D.ambiguousGeneric)){
+        setField(idx, 'ambiguous', fb.ambiguous);
+        allOk = false;
+      } else {
+        setField(idx, 'error', fb.error);
+        errors++; allOk = false;
       }
-    });
-  }catch(e){ console.warn('loadState failed:',e); }
-}
-function computeScore(){
-  updateGlobalFromActState(3, state.hintPenaltyTotal, state.errorsTerminal * 10);
-  return globalScore();
-}
+    }
 
-// ===== NORMALIZE =====
+    // Campo 2 — Elena
+    evalLine(1, 't3bKwElenaSpec', 't3bKwElenaWeak');
 
-function normalize(str){
-  return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-    .replace(/[^a-z0-9\s]/g,'')
-    .replace(/\s+/g,' ').trim();
-}
-function normNum(str){
-  return str.replace(/280[\s.,]?000/g,'280000').replace(/€/g,'').replace(/280k/gi,'280000');
-}
-function prep(str){ return normalize(normNum(str)); }
+    // Campo 3 — Davide
+    evalLine(2, 't3bKwDavideSpec', 't3bKwDavideWeak');
 
-function hasAny(text, keywords){
-  return keywords.some(kw => text.includes(prep(kw)));
-}
-function hasAnyPartial(text, roots){
-  return roots.some(r => text.includes(r));
-}
-
-function isAmbiguousGeneric(text){
-  const t = prep(text).trim();
-  if(!t) return true;
-  if(t.length < 4) return true;
-  const generic = ['soldi','famiglia','arma','qualcosa','non so','manca','forse','boh','denaro','accesso',
-    'nulla','niente','non saprei','qualcuno','manca qualcosa','non capisco','incerto','difficile','complicato','non riesco'];
-  const tokens = t.split(/\s+/);
-  if(tokens.length <= 2 && tokens.every(tok => generic.includes(tok))) return true;
-  return generic.some(g => t === g);
-}
-
-function setFieldState(terminal, field, st, msg){
-  const stEl = document.getElementById(terminal+'-state-'+field);
-  const fbEl = document.getElementById(terminal+'-fb-'+field);
-  if(stEl){ stEl.textContent = st==='ok'?'Verificato':st==='error'?'Non valido':'Da specificare'; stEl.className='terminal-field-state '+st; }
-  if(fbEl){ fbEl.textContent = msg; fbEl.className='terminal-feedback-line '+st; }
-}
-
-// ===== TERMINALE 03A =====
-function submitTerminal3A(){
-  if(state.t3aCompleted) return;
-
-  const v1 = document.getElementById('t3a-input-1').value.trim();
-  const v2 = document.getElementById('t3a-input-2').value.trim();
-  const v3 = document.getElementById('t3a-input-3').value.trim();
-
-  if(!v1||!v2||!v3){ showToast('Completa tutti i campi prima di inviare'); return; }
-
-  const t1 = prep(v1), t2 = prep(v2), t3 = prep(v3);
-  let errors = 0;
-  let allOk = true;
-
-  // Campo 1 — almeno 2 nomi/linee
-  const subjects1 = [
-    ['elena','ricci','moglie','linea domestica'],
-    ['davide','serra','collega','linea professionale','accesso','chiavi'],
-    ['stefano','fratello','linea familiare','linea economica','chiamate'],
-    ['manfredi','cliente','linea economica esterna']
-  ];
-  const matchCount1 = subjects1.filter(s => s.some(k => t1.includes(prep(k)))).length;
-  if(matchCount1 >= 2){
-    setFieldState('t3a',1,'ok','Sovrapposizioni identificate correttamente.');
-  } else if(matchCount1 === 1 || isAmbiguousGeneric(v1)){
-    setFieldState('t3a',1,'ambiguous','Direzione plausibile, ma troppo generica. Specifichi almeno due soggetti o linee.');
-    allOk = false;
-  } else {
-    setFieldState('t3a',1,'error','Risposta non coerente con il fascicolo. Identifichi almeno due linee o soggetti.');
-    errors++; allOk = false;
-  }
-
-  // Campo 2 — elementi coinvolgimento multiplo
-  const kw2 = ['buco temporale','buco','intervallo','chiamata elena','chiamata davide','chiavi','venti minuti',
-    'accesso secondario','ingresso','280000','280','garanzia','fideiussione','sollecito','fascicolo manfredi',
-    'alibi','omissioni','piu persone','piu alibi','nascondeva'];
-  if(hasAny(t2, kw2)){
-    setFieldState('t3a',2,'ok','Elemento concreto identificato.');
-  } else if(isAmbiguousGeneric(v2)){
-    setFieldState('t3a',2,'ambiguous','Direzione plausibile, ma troppo generica. Specifichi un reperto, un soggetto o un collegamento.');
-    allOk = false;
-  } else {
-    setFieldState('t3a',2,'error','Risposta non supportata dal fascicolo. Identifichi un elemento concreto.');
-    errors++; allOk = false;
-  }
-
-  // Campo 3 — elementi non verificati
-  const kw3 = ['numero','numero chiamato','psicologa','chiamata elena','chiamata davide','posizione davide',
-    'accesso secondario','scala di servizio','ingresso laterale','chiavi stefano','chiavi','alibi manfredi',
-    'alibi elena','alibi davide','arma','data','password','casella','linea familiare','280000'];
-  if(hasAny(t3, kw3)){
-    setFieldState('t3a',3,'ok','Elemento aperto identificato correttamente.');
-  } else if(isAmbiguousGeneric(v3)){
-    setFieldState('t3a',3,'ambiguous','Direzione plausibile. Specifichi l\'elemento non ancora verificato.');
-    allOk = false;
-  } else {
-    setFieldState('t3a',3,'error','Risposta non supportata. Identifichi un elemento aperto nel fascicolo.');
-    errors++; allOk = false;
-  }
-
-  state.t3aErrors += errors;
-  state.errorsTerminal += errors;
-  saveState(); updateUI();
-
-  const gfb = document.getElementById('t3a-global-fb');
-
-  if(allOk){
-    state.t3aCompleted = true;
-    document.getElementById('t3a-submit').disabled = true;
-    document.getElementById('t3a-confirmed').classList.add('visible');
-    const cm = document.getElementById('t3a-confirmed-msg'); if(cm) cm.textContent = 'Linee intrecciate registrate. Il fascicolo autorizza la prosecuzione dell\'analisi.';
-    gfb.textContent = 'Linee intrecciate registrate.\n\nIl fascicolo non presenta ancora una soluzione.\nPresenta accessi, omissioni e intervalli non verificati.\n\nL\'Archivio autorizza la prosecuzione dell\'analisi.';
-    gfb.className = 'terminal-global-feedback show ok';
-    state.t3aFb = {text: gfb.innerHTML, cls: 'show ok'};
-    ['nav-parte2','mnav-parte2','nav-terminale3b','mnav-terminale3b'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.classList.remove('locked');
-    });
-    const casellaEl = document.getElementById('inv-casella'); if(casellaEl){ casellaEl.textContent='disponibile'; casellaEl.className='inv-status-val active'; }
-    const mCasellaEl = document.getElementById('minv-casella'); if(mCasellaEl){ mCasellaEl.textContent='disponibile'; mCasellaEl.className='inv-status-val active'; }
-    saveState(); updateUI();
-    renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
-    setTimeout(()=> showSection('parte2'), 2500);
-  } else if(errors > 0){
-    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
-    gfb.className = 'terminal-global-feedback show warn';
-  } else {
-    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
-    gfb.className = 'terminal-global-feedback show ambiguous';
-  }
-}
-
-// ===== CASELLA PRIVATA =====
-function submitCasella(){
-  if(state.casellaBlocked || state.casellaUnlocked) return;
-  const input = document.getElementById('casella-input');
-  const raw = (input.value || '').replace(/[\s\/\-]/g,'');
-  const msg = document.getElementById('casella-msg');
-  const correct = '12041945';
-
-  if(raw === correct){
-    state.casellaUnlocked = true;
-    state.casellaAttempts = 0;
-    saveState();
-    msg.textContent = 'Accesso autorizzato. Sincronizzazione parziale della casella privata completata. Sono stati recuperati 5 elementi.';
-    msg.className = 'casella-msg success';
-    document.getElementById('casella-btn').disabled = true;
-    input.disabled = true;
-    setTimeout(()=>{
-      document.getElementById('casella-panel').style.display='none';
-      document.getElementById('casella-email-section').style.display='block';
-      renderEmailGrid();
-      updateUI();
-    }, 1500);
-    updateUI();
-  } else {
-    state.casellaAttempts--;
-    if(state.casellaAttempts <= 0){
-      state.casellaBlocked = true;
-      state.casellaAttempts = 0;
-      saveState();
-      msg.textContent = 'Accesso bloccato. La casella privata non è più disponibile in questa sessione. Il fascicolo resta risolvibile attraverso i reperti standard.';
-      msg.className = 'casella-msg blocked';
-      document.getElementById('casella-btn').disabled = true;
-      input.disabled = true;
-      document.getElementById('casella-attempts-label').textContent = '0';
-      setTimeout(()=>{
-        document.getElementById('casella-panel').style.display='none';
-        document.getElementById('casella-bloccata-section').style.display='block';
-        updateUI();
-      }, 1500);
+    // Campo 4 — Stefano (strict, no weak fallback)
+    const fbS = fields[3].feedback;
+    if(helpers.hasAny(texts[3], D.t3bKwStefano || [])){
+      setField(3, 'ok', fbS.ok);
+    } else if(helpers.isAmbiguousGeneric(raws[3], D.ambiguousGeneric) || texts[3].includes('soldi') || texts[3].includes('denaro')){
+      setField(3, 'ambiguous', fbS.ambiguous);
+      allOk = false;
     } else {
-      saveState();
-      msg.textContent = 'Tentativo non valido. Tentativi residui: ' + state.casellaAttempts + '.';
-      msg.className = 'casella-msg error';
-      document.getElementById('casella-attempts-label').textContent = state.casellaAttempts;
+      setField(3, 'error', fbS.error);
+      errors++; allOk = false;
     }
-    input.value = '';
-  }
-}
 
-function renderEmailGrid(){
-  const grid = document.getElementById('email-grid');
-  if(!grid) return;
-  grid.innerHTML = '';
-  EMAILS.forEach(e=>{
-    const consulted = state.emailsOpened.includes(e.id);
-    const card = document.createElement('div');
-    card.className = 'email-card' + (consulted ? ' consulted' : '');
-    card.innerHTML = '<div class="email-card-id">'+e.id+'</div>'+
-                     '<div class="email-card-obj">'+e.obj+'</div>'+
-                     '<div class="email-card-cat">'+e.cat+'</div>'+
-                     (consulted ? '<div class="email-card-consulted">Consultato</div>' : '');
-    card.onclick = ()=> openEmail(e.id);
-    grid.appendChild(card);
-  });
-}
-
-
-function openEmail(eid){
-  const e = EMAILS.find(x=>x.id===eid);
-  if(!e) return;
-  if(!state.emailsOpened.includes(eid)) state.emailsOpened.push(eid);
-  saveState();
-
-  document.getElementById('v-code').textContent = e.id;
-  document.getElementById('v-cat').textContent = e.cat;
-  document.getElementById('v-consulted').textContent = 'Consultato';
-  document.getElementById('v-title').textContent = e.obj;
-
-  const imgCont = document.getElementById('v-img-container');
-  if(e.imageUrl){
-    imgCont.innerHTML = '<img src="'+e.imageUrl+'" alt="'+e.obj+'" style="width:100%;border-radius:2px;">';
-    const img = imgCont.querySelector('img');
-    img.addEventListener('error', function(){
-      imgCont.innerHTML = '<div class="doc-img-placeholder">— Immagine non disponibile —</div>';
-    });
-  } else {
-    imgCont.innerHTML = '';
-  }
-
-  document.getElementById('v-transcript').textContent = 'Da: '+e.from+'\nA: '+e.to+'\n\n'+e.body;
-  document.getElementById('v-note-panel').style.display = 'none';
-
-  const ov = document.getElementById('viewer-overlay');
-  ov.classList.add('open');
-  ov.scrollTop = 0;
-  const vbE = ov.querySelector('.viewer-body');
-  if(vbE) vbE.scrollTop = 0;
-  renderEmailGrid();
-}
-
-function submitTerminal3B(){
-  if(state.t3bCompleted) return;
-
-  const vals = [1,2,3,4,5,6].map(i=> document.getElementById('t3b-input-'+i).value.trim());
-  if(vals.some(v=>!v)){ showToast('Completa tutti i campi prima di inviare'); return; }
-
-  const texts = vals.map(v => prep(v));
-  let errors = 0, allOk = true;
-
-  // Campo 1 — accesso secondario
-  const kw_acc = ['secondario','scala di servizio','retro','laterale','non sorvegliato','non coperto',
-    'senza telecamere','senza riprese','ingresso sul retro','porta sul retro','porta laterale'];
-  if(hasAny(texts[0], kw_acc)){
-    setFieldState('t3b',1,'ok','Accesso non sorvegliato identificato.');
-  } else if(texts[0].includes('principale')){
-    setFieldState('t3b',1,'error','Risposta non coerente. Il fascicolo esclude l\'ingresso principale (coperto dalla telecamera).');
-    errors++; allOk = false;
-  } else if(isAmbiguousGeneric(vals[0]) || texts[0].includes('ingresso') || texts[0].includes('accesso')){
-    setFieldState('t3b',1,'ambiguous','Direzione plausibile. Specifichi quale tipo di accesso.');
-    allOk = false;
-  } else {
-    setFieldState('t3b',1,'error','Risposta non coerente. Identifichi l\'accesso non sorvegliato nel fascicolo.');
-    errors++; allOk = false;
-  }
-
-  // Campo 2 — Elena (specific vs weak)
-  const kw_elena_spec = ['tensione coniugale','tensione','coniugale','gelosia','sfiducia','polizza',
-    'assicurazione','copertura','psicologa','marta valenti','linea domestica'];
-  const kw_elena_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole','manca'];
-  if(hasAny(texts[1], kw_elena_spec)){
-    setFieldState('t3b',2,'ok','Linea Elena valutata correttamente.');
-  } else if(hasAny(texts[1], kw_elena_weak)){
-    setFieldState('t3b',2,'ok','Riconosciuta correttamente la debolezza della linea.');
-  } else if(isAmbiguousGeneric(vals[1])){
-    setFieldState('t3b',2,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
-    allOk = false;
-  } else {
-    setFieldState('t3b',2,'error','Risposta non supportata dal fascicolo.');
-    errors++; allOk = false;
-  }
-
-  // Campo 3 — Davide
-  const kw_davide_spec = ['pratica manfredi','fascicolo manfredi','conosceva','timore','coinvolgimento',
-    'professionale','sara loi','moglie','chiamata moglie','accesso allo studio','copia chiavi'];
-  const kw_davide_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole'];
-  if(hasAny(texts[2], kw_davide_spec)){
-    setFieldState('t3b',3,'ok','Linea Davide valutata correttamente.');
-  } else if(hasAny(texts[2], kw_davide_weak)){
-    setFieldState('t3b',3,'ok','Riconosciuta correttamente la debolezza della linea.');
-  } else if(isAmbiguousGeneric(vals[2])){
-    setFieldState('t3b',3,'ambiguous','Risposta troppo generica. Identifichi un elemento concreto o dichiari l\'assenza di movente forte.');
-    allOk = false;
-  } else {
-    setFieldState('t3b',3,'error','Risposta non supportata dal fascicolo.');
-    errors++; allOk = false;
-  }
-
-  // Campo 4 — Stefano (richiede sempre keyword economiche specifiche)
-  const kw_stefano = ['debito','fideiussione','garanzia','bancaria','familiare','esposizione','280000',
-    'copertura','polizza','sollecito','rischio economico','crollo','salvare','evitare','estinguere'];
-  if(hasAny(texts[3], kw_stefano)){
-    setFieldState('t3b',4,'ok','Linea Stefano identificata correttamente.');
-  } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('soldi') || texts[3].includes('denaro')){
-    setFieldState('t3b',4,'ambiguous','Direzione economica corretta. Specifichi il tipo di esposizione (fideiussione, garanzia, debito).');
-    allOk = false;
-  } else {
-    setFieldState('t3b',4,'error','Risposta non coerente con il fascicolo. La linea Stefano è economica.');
-    errors++; allOk = false;
-  }
-
-  // Campo 5 — Manfredi
-  const kw_manfredi_spec = ['frode','irregolarita','minaccia','pressione','pratica','riciclaggio',
-    'rischio legale','denunciarlo','tirarsi indietro','contratti anomali','compensi','fuori scala'];
-  const kw_manfredi_weak = ['manca movente','nessun movente','movente debole','non conclusivo','debole','alibi verificato'];
-  if(hasAny(texts[4], kw_manfredi_spec)){
-    setFieldState('t3b',5,'ok','Linea Manfredi valutata correttamente.');
-  } else if(hasAny(texts[4], kw_manfredi_weak)){
-    setFieldState('t3b',5,'ok','Riconosciuta correttamente la debolezza della linea (alibi verificato).');
-  } else if(isAmbiguousGeneric(vals[4]) || texts[4].includes('minaccioso') || texts[4].includes('pericoloso')){
-    setFieldState('t3b',5,'ambiguous','Direzione corretta. Specifichi il tipo di rischio o pressione.');
-    allOk = false;
-  } else {
-    setFieldState('t3b',5,'error','Risposta non supportata dal fascicolo.');
-    errors++; allOk = false;
-  }
-
-  // Campo 6 — convergenza Stefano
-  if(hasAny(texts[5], ['stefano','fratello'])){
-    setFieldState('t3b',6,'ok','Convergenza identificata correttamente.');
-  } else if(isAmbiguousGeneric(vals[5])){
-    setFieldState('t3b',6,'ambiguous','Risposta troppo generica. Identifichi il soggetto specifico.');
-    allOk = false;
-  } else {
-    setFieldState('t3b',6,'error','Risposta non coerente. La convergenza di movente, accesso e alibi punta a un soggetto specifico.');
-    errors++; allOk = false;
-  }
-
-  state.t3bErrors += errors;
-  state.errorsTerminal += errors;
-  saveState(); updateUI();
-
-  const gfb = document.getElementById('t3b-global-fb');
-  if(allOk){
-    state.t3bCompleted = true;
-    document.getElementById('t3b-submit').disabled = true;
-    document.getElementById('t3b-confirmed').classList.add('visible');
-    gfb.textContent = 'Analisi movente/accesso/alibi registrata.\n\nIl fascicolo può procedere alla verifica conclusiva.';
-    gfb.className = 'terminal-global-feedback show ok';
-    state.t3bFb = {text: gfb.innerHTML, cls: 'show ok'};
-    ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.classList.remove('locked');
-    });
-    saveState(); updateUI();
-    setTimeout(()=> showSection('verifiche'), 2500);
-  } else if(errors > 0){
-    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
-    gfb.className = 'terminal-global-feedback show warn';
-  } else {
-    gfb.textContent = 'Alcune risposte richiedono maggiore specificità. Integri prima di procedere.';
-    gfb.className = 'terminal-global-feedback show ambiguous';
-  }
-}
-
-// ===== TERMINALE 03C =====
-function submitTerminal3C(){
-  if(state.t3cCompleted) return;
-
-  const vals = [1,2,3,4].map(i=> document.getElementById('t3c-input-'+i).value.trim());
-  if(vals.some(v=>!v)){ showToast('Completa tutti i campi prima di inviare'); return; }
-
-  const texts = vals.map(v => prep(v));
-  let errors = 0;
-  let allOk = true;
-
-  // Campo 1 — chi ha ucciso
-  const kw_chi = ['stefano','fratello'];
-  if(hasAny(texts[0], kw_chi)){
-    setFieldState('t3c',1,'ok','Responsabile identificato.');
-  } else if(isAmbiguousGeneric(vals[0])){
-    setFieldState('t3c',1,'ambiguous','Risposta generica. Identifichi il responsabile per nome o ruolo.');
-    allOk = false;
-  } else {
-    setFieldState('t3c',1,'error','Identificazione non corretta.');
-    errors++; allOk = false;
-  }
-
-  // Campo 2 — movente
-  const kw_mov = ['fideiussion','fideiussione','debito','garanzia','bancaria','familiare','esposizion','esposizione',
-    '280000','280','copertur','copertura','polizza','sollecito','crollo','salv','salvare','finanziar',
-    'estingu','estinzione','morte estingueva','crollo finanziario','evitare il crollo'];
-  if(hasAny(texts[1], kw_mov)){
-    setFieldState('t3c',2,'ok','Movente correttamente identificato.');
-  } else if(isAmbiguousGeneric(vals[1]) || texts[1].includes('soldi') || texts[1].includes('denaro') || texts[1].includes('economico')){
-    setFieldState('t3c',2,'ambiguous','Direzione corretta. Specifichi il tipo di esposizione economica.');
-    allOk = false;
-  } else {
-    setFieldState('t3c',2,'error','Movente non corretto.');
-    errors++; allOk = false;
-  }
-
-  // Campo 3 — accesso
-  const kw_acc2 = ['secondari','secondario','scala di servizio','scala','retro','laterale',
-    'non sorvegliato','sorvegliato','non coperto','senza telecamere','telecamere','servizio',
-    'porta sul retro','ingresso laterale','chiavi','copia'];
-  if(hasAny(texts[2], kw_acc2)){
-    setFieldState('t3c',3,'ok','Modalità di accesso identificata correttamente.');
-  } else if(isAmbiguousGeneric(vals[2]) || texts[2].includes('ingresso') || texts[2].includes('accesso')){
-    setFieldState('t3c',3,'ambiguous','Direzione corretta. Specifichi quale ingresso o quale strumento.');
-    allOk = false;
-  } else {
-    setFieldState('t3c',3,'error','Accesso non corretto.');
-    errors++; allOk = false;
-  }
-
-  // Campo 4 — provenienza arma
-  const kw_arma = ['padre','giovanni marini','giovanni','marini giovanni','famiglia','familiar',
-    'arma di famiglia','pistola di famiglia','eredit','ereditata','apparteneva al padre',
-    'pistola del padre','intestata al padre'];
-  if(hasAny(texts[3], kw_arma)){
-    setFieldState('t3c',4,'ok','Provenienza dell\'arma identificata correttamente.');
-  } else if(isAmbiguousGeneric(vals[3]) || texts[3].includes('famiglia') || texts[3].includes('familiare')){
-    setFieldState('t3c',4,'ambiguous','Direzione corretta. Specifichi a chi apparteneva l\'arma.');
-    allOk = false;
-  } else {
-    setFieldState('t3c',4,'error','Provenienza dell\'arma non corretta.');
-    errors++; allOk = false;
-  }
-
-  state.t3cErrors += errors;
-  state.errorsTerminal += errors;
-
-  saveState(); updateUI();
-
-  const gfb = document.getElementById('t3c-global-fb');
-
-  if(allOk){
-    state.t3cCompleted = true;
-    state.finalUnlocked = true;
-    markActDone(3);
-    document.getElementById('t3c-submit').disabled = true;
-    document.getElementById('t3c-confirmed').classList.add('visible');
-    const cm = document.getElementById('t3c-confirmed-msg'); if(cm) cm.textContent = 'Analisi conclusiva acquisita. Accesso all\'esito finale autorizzato.';
-    gfb.textContent = 'Il fascicolo A17-001 viene archiviato come risolto.';
-    gfb.className = 'terminal-global-feedback show ok';
-    state.t3cFb = {text: gfb.innerHTML, cls: 'show ok'};
-    ['nav-esito','mnav-esito'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.classList.remove('locked');
-    });
-    renderEsito();
-    saveState(); updateUI();
-    // Salva punteggio Atto 3 sul backend (fire-and-forget)
-    if(_accessCode){
-      fetch(API_BASE + '/saveActScore', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          access_code:   _accessCode,
-          act:           3,
-          hint_penalty:  state.hintPenaltyTotal || 0,
-          error_penalty: state.errorsTerminal * 10
-        })
-      }).catch(()=>{});
-    }
-    setTimeout(()=> showSection('esito'), 2500);
-  } else if(errors > 0){
-    gfb.textContent = 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
-    gfb.className = 'terminal-global-feedback show warn';
-  } else {
-    gfb.textContent = 'Verifica conclusiva incompleta. Rileggere le note di verifica e i reperti chiave.';
-    gfb.className = 'terminal-global-feedback show warn';
-  }
-}
-
-// ===== RENDER ESITO =====
-function renderEsito(){
-  const total = computeScore();
-  const hc = state.hintPenaltyTotal;
-  const ec = state.errorsTerminal * 10;
-  let cls = 'Osservatore esterno';
-  if(total>=90) cls='Archivista in formazione';
-  else if(total>=75) cls='Investigatore';
-  else if(total>=60) cls='Collaboratore';
-
-  const setText = (id,val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-  setText('esito-score', total);
-  setText('esito-classname', cls);
-  setText('esito-hint-count', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
-  setText('esito-hint-cost', '−'+hc);
-  setText('esito-err-cost', '−'+ec);
-  setText('esito-total', total);
-
-  const scoreEl = document.getElementById('esito-score');
-  const classEl = document.getElementById('esito-classname');
-  if(scoreEl) scoreEl.className = total>=75?'score-number good':'score-number';
-  if(classEl) classEl.className = total>=75?'score-classname good':'score-classname';
-
-  // Breakdown per atto dal global
-  const _p1h = _global.penalty_act1.hints||0,  _p1e = _global.penalty_act1.errors||0;
-  const _p2h = _global.penalty_act2.hints||0,  _p2e = _global.penalty_act2.errors||0;
-  const _p3h = _global.penalty_act3.hints||0,  _p3e = _global.penalty_act3.errors||0;
-  const _fmtPen = (h,e) => { const t=h+e; return t>0 ? '−'+t : '0'; };
-
-  setText('esito-bd-act1',       _fmtPen(_p1h, _p1e));
-  setText('esito-bd-act1-detail','hint −'+_p1h+' · errori −'+_p1e);
-  setText('esito-bd-act2',       _fmtPen(_p2h, _p2e));
-  setText('esito-bd-act2-detail','hint −'+_p2h+' · errori −'+_p2e);
-  setText('esito-bd-act3',       _fmtPen(_p3h, _p3e));
-  setText('esito-bd-act3-detail','hint −'+_p3h+' · errori −'+_p3e);
-
-  // Nascondi il pulsante reset una volta che il caso è chiuso
-  const resetBtn = document.getElementById('btn-reset-final');
-  if(resetBtn) resetBtn.style.display = 'none';
-}
-
-// ===== DOCS GRID =====
-function renderDocsGrid(part, docs, containerId){
-  const grid = document.getElementById(containerId);
-  if(!grid) return;
-  grid.innerHTML = '';
-  const opened = part==='p1' ? state.p1Opened : state.p2Opened;
-  const isLocked = part==='p2' && !state.t3aCompleted;
-
-  docs.forEach(doc=>{
-    const isOpen = opened.includes(doc.id);
-    const div = document.createElement('div');
-    div.className = 'doc-card' + (isOpen?' consulted':'') + (isLocked?' locked-card':'');
-    if(!isLocked) div.onclick = ()=> openDoc(doc.id, part);
-
-    let imgHtml;
-    if(isLocked){
-      imgHtml = '<div class="doc-thumb"><div class="doc-thumb-locked"><span class="lock-icon">▣</span><span>ACCESSO BLOCCATO</span></div></div>';
-    } else if(doc.imageUrl){
-      imgHtml = '<div class="doc-thumb"><img src="'+doc.imageUrl+'" alt="" loading="lazy" data-doc="'+doc.id+'"></div>';
+    // Campo 5 — Manfredi (con varianti minaccioso/pericoloso → ambiguous)
+    const fbM = fields[4].feedback;
+    if(helpers.hasAny(texts[4], D.t3bKwManfrediSpec || [])){
+      setField(4, 'ok', fbM.ok);
+    } else if(helpers.hasAny(texts[4], D.t3bKwManfrediWeak || [])){
+      setField(4, 'ok', fbM.okWeak || fbM.ok);
+    } else if(helpers.isAmbiguousGeneric(raws[4], D.ambiguousGeneric) || texts[4].includes('minaccioso') || texts[4].includes('pericoloso')){
+      setField(4, 'ambiguous', fbM.ambiguous);
+      allOk = false;
     } else {
-      imgHtml = '<div class="doc-thumb"><div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div></div>';
+      setField(4, 'error', fbM.error);
+      errors++; allOk = false;
     }
 
-    div.innerHTML = imgHtml +
-      '<div class="doc-card-body">' +
-        '<div class="doc-card-top">' +
-          '<span class="doc-code">'+doc.id+'</span>' +
-          '<span class="doc-status-badge '+(isLocked?'locked':isOpen?'consulted':'available')+'">'+(isLocked?'Bloccato':isOpen?'Consultato':'Disponibile')+'</span>' +
-        '</div>' +
-        '<div class="doc-category">'+doc.cat+'</div>' +
-        '<div class="doc-title">'+doc.title+'</div>' +
-        '<div class="doc-summary">'+doc.desc+'</div>' +
-        (!isLocked ? '<div class="doc-cta '+(isOpen?'consulted-cta':'')+'">'+(isOpen?'Rileggi reperto':'Esamina reperto')+'</div>' : '') +
+    // Campo 6 — convergenza Stefano
+    const fbC = fields[5].feedback;
+    if(helpers.hasAny(texts[5], D.t3bKwConvergenza || [])){
+      setField(5, 'ok', fbC.ok);
+    } else if(helpers.isAmbiguousGeneric(raws[5], D.ambiguousGeneric)){
+      setField(5, 'ambiguous', fbC.ambiguous);
+      allOk = false;
+    } else {
+      setField(5, 'error', fbC.error);
+      errors++; allOk = false;
+    }
+
+    return { allOk: allOk, errors: errors };
+  }
+
+  // --- Section plugin: casella3 (password + emails + blocked) -----------
+  const casella3Plugin = {
+    render: function(ctx){
+      const c = ctx.data.casella3;
+      const pluginState = ctx.state.plugins.casella3 || {};
+      const remaining = (pluginState.attempts != null) ? pluginState.attempts : c.maxAttempts;
+      const emailsHtml = c.emails.map(function(e){
+        return '<div class="email-card" data-casella-email="' + e.id + '">' +
+          '<div class="email-card-id">' + e.id + '</div>' +
+          '<div class="email-card-obj">' + e.obj + '</div>' +
+          '<div class="email-card-cat">' + e.cat + '</div>' +
+          '<div class="email-card-consulted" data-casella-consulted="' + e.id + '" style="display:none">✓ Consultato</div>' +
+        '</div>';
+      }).join('');
+      return ''+
+      '<div class="section-header">'+
+      '  <div class="section-eyebrow">' + c.eyebrow + '</div>'+
+      '  <h2 class="section-title">' + c.title + '</h2>'+
+      '  <div class="section-subtitle">' + c.subtitle + '</div>'+
+      '  <p class="section-desc">' + c.desc + '</p>'+
+      '</div>'+
+      // Panel password
+      '<div class="casella-panel" id="casella3-panel">'+
+      '  <div class="casella-eyebrow">' + c.panelEyebrow + '</div>'+
+      '  <div class="casella-title">' + c.panelTitle + '</div>'+
+      '  <div class="casella-format-info">'+
+      '    ' + c.formatLabel + '<br>'+
+      '    ' + c.attemptsLabel + ': <span id="casella3-attempts-label">' + remaining + '</span><br>'+
+      '    ' + c.supportLabel +
+      '  </div>'+
+      '  <div class="casella-input-row">'+
+      '    <input type="text" class="casella-input" id="casella3-input" maxlength="10" placeholder="' + c.inputPlaceholder + '" inputmode="numeric" autocomplete="off">'+
+      '    <button class="btn-primary" id="casella3-submit">' + c.submitLabel + '</button>'+
+      '  </div>'+
+      '  <div class="casella-msg" id="casella3-msg"></div>'+
+      '  <div class="casella-hint">' + c.hint + '</div>'+
+      '  <div class="casella-note">' + c.note + '</div>'+
+      '</div>'+
+      // Unlocked view (emails)
+      '<div id="casella3-emails" style="display:none">'+
+      '  <div class="promemoria-card" style="border-color:var(--success-border)">'+
+      '    <div class="promemoria-label" style="color:var(--success-text)">' + c.unlockedHeaderLabel + '</div>'+
+      '    <div class="promemoria-text"><p>' + c.unlockedHeaderText + '</p></div>'+
+      '  </div>'+
+      '  <div class="docs-section-label">' + c.emailsLabel + '</div>'+
+      '  <div class="email-grid">' + emailsHtml + '</div>'+
+      '</div>'+
+      // Blocked view
+      '<div id="casella3-blocked" style="display:none">'+
+      '  <div class="promemoria-card" style="border-color:var(--border-red)">'+
+      '    <div class="promemoria-label" style="color:var(--text-dim)">' + c.blockedHeaderLabel + '</div>'+
+      '    <div class="promemoria-text"><p>' + c.blockedHeaderText + '</p></div>'+
+      '  </div>'+
       '</div>';
-    grid.appendChild(div);
-  });
+    },
 
-  // FIX: error handler immagini con event listener (più pulito di onerror inline con escape)
-  grid.querySelectorAll('img[data-doc]').forEach(img=>{
-    img.addEventListener('error', ()=>{
-      const wrap = img.parentElement;
-      if(wrap) wrap.innerHTML = '<div class="doc-thumb-placeholder"><span>DOCUMENTO · IN TRASCRIZIONE · CONTROLLATA</span></div>';
-    }, {once:true});
-  });
+    init: function(ctx){
+      const c = ctx.data.casella3;
+      // Garantisce shape state.plugins.casella3
+      if(!ctx.state.plugins.casella3){
+        ctx.state.plugins.casella3 = { attempts: c.maxAttempts, unlocked: false, blocked: false, emailsOpened: [] };
+      } else {
+        if(ctx.state.plugins.casella3.attempts == null) ctx.state.plugins.casella3.attempts = c.maxAttempts;
+        if(!Array.isArray(ctx.state.plugins.casella3.emailsOpened)) ctx.state.plugins.casella3.emailsOpened = [];
+      }
+      casella3Plugin._syncView(ctx);
+      casella3Plugin._wireSubmit(ctx);
+      casella3Plugin._wireEmails(ctx);
+    },
 
-  updateCounters();
-}
+    onReset: function(ctx){
+      const c = ctx.data.casella3;
+      ctx.state.plugins.casella3 = { attempts: c.maxAttempts, unlocked: false, blocked: false, emailsOpened: [] };
+      // Re-enable input se siamo dopo un reset post-blocco/unlock
+      const input = document.getElementById('casella3-input');
+      const btn   = document.getElementById('casella3-submit');
+      const msg   = document.getElementById('casella3-msg');
+      if(input){ input.disabled = false; input.value = ''; }
+      if(btn)  btn.disabled = false;
+      if(msg){ msg.textContent = ''; msg.className = 'casella-msg'; }
+      const lbl = document.getElementById('casella3-attempts-label');
+      if(lbl) lbl.textContent = c.maxAttempts;
+      casella3Plugin._syncView(ctx);
+    },
 
-// ===== OPEN DOC =====
-function openDoc(id, part){
-  const allDocs = [...DOCS_P1, ...DOCS_P2];
-  const doc = allDocs.find(d => d.id===id);
-  if(!doc) return;
+    _syncView: function(ctx){
+      const s = ctx.state.plugins.casella3;
+      const panel   = document.getElementById('casella3-panel');
+      const emails  = document.getElementById('casella3-emails');
+      const blocked = document.getElementById('casella3-blocked');
+      if(!panel || !emails || !blocked) return;
+      if(s.unlocked){
+        panel.style.display = 'none';
+        emails.style.display = 'block';
+        blocked.style.display = 'none';
+        // Marca email già consultate
+        s.emailsOpened.forEach(function(eid){
+          const flag = document.querySelector('[data-casella-consulted="' + eid + '"]');
+          if(flag) flag.style.display = 'block';
+          const card = document.querySelector('[data-casella-email="' + eid + '"]');
+          if(card) card.classList.add('consulted');
+        });
+      } else if(s.blocked){
+        panel.style.display = 'none';
+        emails.style.display = 'none';
+        blocked.style.display = 'block';
+      } else {
+        panel.style.display = '';
+        emails.style.display = 'none';
+        blocked.style.display = 'none';
+      }
+    },
 
-  const arr = part==='p1' ? state.p1Opened : state.p2Opened;
-  if(!arr.includes(id)){
-    arr.push(id);
-    saveState();
-    renderDocsGrid(part, part==='p1'?DOCS_P1:DOCS_P2, part==='p1'?'docs-grid-p1':'docs-grid-p2');
-    updateUI();
-  }
+    _wireSubmit: function(ctx){
+      const c = ctx.data.casella3;
+      const btn   = document.getElementById('casella3-submit');
+      const input = document.getElementById('casella3-input');
+      const msg   = document.getElementById('casella3-msg');
+      const lbl   = document.getElementById('casella3-attempts-label');
+      if(!btn || !input || !msg) return;
+      const s = ctx.state.plugins.casella3;
 
-  document.getElementById('v-code').textContent = doc.id;
-  document.getElementById('v-cat').textContent = doc.cat;
-  document.getElementById('v-title').textContent = doc.title;
-  document.getElementById('v-transcript').textContent = doc.transcript;
-  document.getElementById('v-consulted').textContent = arr.includes(id) ? '✓ CONSULTATO' : '';
+      // Stato post-load: se già unlocked/blocked, disabilita controlli
+      if(s.unlocked || s.blocked){
+        input.disabled = true;
+        btn.disabled = true;
+      }
 
-  const imgC = document.getElementById('v-img-container');
-  if(doc.imageUrl){
-    imgC.innerHTML = '<div class="evidence-frame"><img src="'+doc.imageUrl+'" alt="" loading="lazy"><div class="evidence-frame-label"><span>'+doc.id+' — '+doc.cat+'</span><span>PRIVATO</span></div></div>';
-  } else {
-    imgC.innerHTML = '<div class="evidence-no-image"><p>DOCUMENTO IN TRASCRIZIONE CONTROLLATA</p><small>· '+doc.id+' · Immagine non ancora acquisita ·</small></div>';
-  }
+      const tryUnlock = function(){
+        if(s.unlocked || s.blocked) return;
+        const raw = (input.value || '').replace(/[\s\/\-]/g, '');
+        if(raw === c.password){
+          s.unlocked = true;
+          s.attempts = 0;
+          ctx.helpers.saveState();
+          msg.textContent = c.unlockMsg;
+          msg.className = 'casella-msg success';
+          btn.disabled = true;
+          input.disabled = true;
+          setTimeout(function(){
+            casella3Plugin._syncView(ctx);
+            ctx.helpers.updateUI();
+          }, 1500);
+        } else {
+          s.attempts--;
+          if(s.attempts <= 0){
+            s.blocked = true;
+            s.attempts = 0;
+            ctx.helpers.saveState();
+            msg.textContent = c.blockedMsg;
+            msg.className = 'casella-msg blocked';
+            btn.disabled = true;
+            input.disabled = true;
+            if(lbl) lbl.textContent = '0';
+            setTimeout(function(){
+              casella3Plugin._syncView(ctx);
+              ctx.helpers.updateUI();
+            }, 1500);
+          } else {
+            ctx.helpers.saveState();
+            msg.textContent = c.wrongMsg.replace('{remaining}', s.attempts);
+            msg.className = 'casella-msg error';
+            if(lbl) lbl.textContent = s.attempts;
+          }
+          input.value = '';
+        }
+      };
+      btn.addEventListener('click', tryUnlock);
+      input.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); tryUnlock(); } });
+    },
 
-  // FIX: ripristino visibilità del pannello note (potrebbe essere stato nascosto da openEmail)
-  const notePanel = document.getElementById('v-note-panel');
-  if(doc.note){
-    document.getElementById('v-note').textContent = doc.note;
-    notePanel.style.display = '';
-  } else {
-    notePanel.style.display = 'none';
-  }
+    _wireEmails: function(ctx){
+      const c = ctx.data.casella3;
+      document.querySelectorAll('[data-casella-email]').forEach(function(card){
+        card.addEventListener('click', function(){
+          const eid = card.getAttribute('data-casella-email');
+          const e = c.emails.find(function(x){ return x.id === eid; });
+          if(!e) return;
+          const s = ctx.state.plugins.casella3;
+          if(!s.emailsOpened.includes(eid)){
+            s.emailsOpened.push(eid);
+            ctx.helpers.saveState();
+          }
+          card.classList.add('consulted');
+          const flag = document.querySelector('[data-casella-consulted="' + eid + '"]');
+          if(flag) flag.style.display = 'block';
 
-  const ovDoc = document.getElementById('viewer-overlay');
-  ovDoc.classList.add('open');
-  ovDoc.scrollTop = 0;
-  const vbDoc = ovDoc.querySelector('.viewer-body');
-  if(vbDoc) vbDoc.scrollTop = 0;
-}
-
-function closeViewer(){
-  document.getElementById('viewer-overlay').classList.remove('open');
-  const np = document.getElementById('v-note-panel');
-  if(np) np.style.display = '';
-}
-
-
-// ===== SHOW SECTION =====
-function showSection(id, silent){
-  const drawer = document.getElementById('mobile-inv-drawer');
-  if(drawer) drawer.classList.remove('open');
-  if(!silent){
-    if(id==='terminale3a' && state.p1Opened.length < 4){ showToast('Esamini almeno 4 reperti prima di accedere al Terminale 03A'); return; }
-    if(id==='parte2' && !state.t3aCompleted){ showToast('Completa il Terminale 03A per sbloccare la Parte 2'); return; }
-    if(id==='terminale3b' && (!state.t3aCompleted || state.p2Opened.length < 3)){ showToast('Esamini almeno 3 reperti della Parte 2 prima del Terminale 03B'); return; }
-    if(id==='verifiche' && !state.t3bCompleted){ showToast('Completa il Terminale 03B per accedere alle note di verifica'); return; }
-    if(id==='terminale3c' && !state.t3bCompleted){ showToast('Completa il Terminale 03B prima del Terminale 03C'); return; }
-    if(id==='esito' && !state.finalUnlocked){ showToast("Completa il Terminale 03C per accedere all'esito finale"); return; }
-  }
-  document.querySelectorAll('.app-section').forEach(s=>s.classList.remove('active'));
-  const sec = document.getElementById('section-'+id); if(sec) sec.classList.add('active');
-  ['nav-','mnav-'].forEach(pfx=>{
-    document.querySelectorAll('[id^="'+pfx+'"]').forEach(n=>n.classList.remove('active'));
-    const el = document.getElementById(pfx+id); if(el) el.classList.add('active');
-  });
-  state.currentSection = id;
-  saveState();
-  if(id==='esito') renderEsito();
-  window.scrollTo(0,0);
-}
-
-// ===== UPDATE COUNTERS =====
-function updateCounters(){
-  const p1c = document.getElementById('p1-count');
-  if(p1c) p1c.textContent = state.p1Opened.length;
-  const p2c = document.getElementById('p2-count');
-  if(p2c) p2c.textContent = state.p2Opened.length;
-
-  const p1ub = document.getElementById('p1-unlock-banner');
-  if(p1ub) p1ub.className = 'unlock-banner'+(state.p1Opened.length>=4?' show':'');
-  const p2ub = document.getElementById('p2-unlock-banner');
-  if(p2ub) p2ub.className = 'unlock-banner'+(state.p2Opened.length>=3?' show':'');
-
-  if(state.p1Opened.length>=4){
-    ['nav-terminale3a','mnav-terminale3a'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('locked');});
-  }
-}
-
-// ===== UPDATE UI =====
-function updateUI(){
-  const score = computeScore();
-
-  const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-
-  setText('live-indice', score);
-  setText('inv-score-big', score);
-  setText('minv-score-big', score);
-
-  const bar = document.getElementById('inv-score-bar');
-  if(bar){ bar.style.width = score+'%'; bar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
-  const mbar = document.getElementById('minv-score-bar');
-  if(mbar){ mbar.style.width = score+'%'; mbar.className='inv-indice-fill '+(score>=75?'high':score>=50?'mid':'low'); }
-
-  let cls = '—';
-  if(score>=90) cls='Archivista in formazione';
-  else if(score>=75) cls='Investigatore';
-  else if(score>=60) cls='Collaboratore';
-  else if(score>0) cls='Osservatore esterno';
-  setText('inv-class-label', cls);
-
-  setText('inv-p1', state.p1Opened.length+' / 7');
-  setText('minv-p1', state.p1Opened.length+' / 7');
-
-  const setStatus = (id, text, cls) => {
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.textContent = text;
-    el.className = 'inv-status-val '+(cls||'');
+          // Riusa il viewer-overlay dell'engine (condiviso con docs)
+          const setT = function(id, txt){ const el = document.getElementById(id); if(el) el.textContent = txt; };
+          setT('v-code', e.id);
+          setT('v-cat', e.cat);
+          setT('v-title', e.obj);
+          setT('v-consulted', '✓ CONSULTATO');
+          document.getElementById('v-transcript').textContent = 'Da: ' + e.from + '\nA: ' + e.to + '\n\n' + e.body;
+          const imgC = document.getElementById('v-img-container');
+          if(e.imageUrl){
+            imgC.innerHTML = '<div class="evidence-frame"><img src="' + e.imageUrl + '" alt="" loading="lazy"><div class="evidence-frame-label"><span>' + e.id + ' — ' + e.cat + '</span><span>RISERVATO</span></div></div>';
+          } else {
+            imgC.innerHTML = '';
+          }
+          const notePanel = document.getElementById('v-note-panel');
+          if(notePanel) notePanel.style.display = 'none';
+          document.getElementById('viewer-overlay').classList.add('open');
+          document.body.classList.add('no-scroll');
+          const vb = document.getElementById('viewer-body');
+          if(vb) vb.scrollTop = 0;
+        });
+      });
+    }
   };
 
-  // Casella
-  let casellaText, casellaCls;
-  if(state.casellaUnlocked){ casellaText='sincronizzata'; casellaCls='ok'; }
-  else if(state.casellaBlocked){ casellaText='bloccata'; casellaCls='blocked'; }
-  else if(state.t3aCompleted){ casellaText='disponibile'; casellaCls='active'; }
-  else { casellaText='non disponibile'; casellaCls='blocked'; }
-  setStatus('inv-casella', casellaText, casellaCls);
-  setStatus('minv-casella', casellaText, casellaCls);
-
-  // P2
-  setStatus('inv-p2', state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati', state.t3aCompleted?'':'blocked');
-  setStatus('minv-p2', state.t3aCompleted ? state.p2Opened.length+' / 5' : 'bloccati', state.t3aCompleted?'':'blocked');
-
-  // Terminali
-  setStatus('inv-t3a', state.t3aCompleted?'validato':'non validato', state.t3aCompleted?'ok':'');
-  setStatus('minv-t3a', state.t3aCompleted?'validato':'non validato', state.t3aCompleted?'ok':'');
-  setStatus('inv-t3b', state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato', state.t3bCompleted?'ok':state.t3aCompleted?'':'blocked');
-  setStatus('minv-t3b', state.t3bCompleted?'validato':state.t3aCompleted?'non validato':'bloccato', state.t3bCompleted?'ok':state.t3aCompleted?'':'blocked');
-  setStatus('inv-t3c', state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato', state.t3cCompleted?'ok':state.t3bCompleted?'':'blocked');
-  setStatus('minv-t3c', state.t3cCompleted?'validato':state.t3bCompleted?'non validato':'bloccato', state.t3cCompleted?'ok':state.t3bCompleted?'':'blocked');
-
-  setText('inv-hints-used', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
-  setText('minv-hints', state.hintLevelsUsed+' livell'+(state.hintLevelsUsed===1?'o':'i'));
-  setText('inv-errors', state.errorsTerminal);
-  setText('minv-errors', state.errorsTerminal);
-
-  let fase = 'Omissioni e accessi';
-  if(state.finalUnlocked) fase = 'Caso archiviato';
-  else if(state.t3bCompleted) fase = 'Chiusura del caso';
-  else if(state.t3aCompleted) fase = 'Verifiche incrociate';
-  setText('inv-fase', fase);
-  setText('minv-fase', fase);
-
-  const caseStatusEl = document.querySelector('.investigation-panel .inv-case-status');
-  if(caseStatusEl && state.finalUnlocked) caseStatusEl.textContent = 'Caso archiviato';
-
-  // Nasconde i pulsanti reset quando il caso è chiuso
-  document.querySelectorAll('[onclick="showResetConfirm()"]').forEach(btn => {
-    btn.style.display = state.finalUnlocked ? 'none' : '';
-  });
-
-  setText('p1-count', state.p1Opened.length);
-  setText('p2-count', state.p2Opened.length);
-
-  const ub1 = document.getElementById('p1-unlock-banner');
-  if(ub1) ub1.className = 'unlock-banner'+(state.p1Opened.length>=4?' show':'');
-  const ub2 = document.getElementById('p2-unlock-banner');
-  if(ub2) ub2.className = 'unlock-banner'+(state.p2Opened.length>=3?' show':'');
-
-  // unlock nav items based on progression
-  if(state.p1Opened.length>=4){
-    ['nav-terminale3a','mnav-terminale3a'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
-  }
-  if(state.t3aCompleted){
-    ['nav-parte2','mnav-parte2','nav-terminale3b','mnav-terminale3b'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
-  }
-  if(state.t3bCompleted){
-    ['nav-verifiche','mnav-verifiche','nav-terminale3c','mnav-terminale3c'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
-  }
-  if(state.finalUnlocked){
-    ['nav-esito','mnav-esito'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove('locked'); });
-  }
-
-  // Breakdown globale sidebar (tutti e 3 gli atti)
-  const _p1h=_global.penalty_act1.hints||0, _p1e=_global.penalty_act1.errors||0, _p1t=_p1h+_p1e;
-  const _p2h=_global.penalty_act2.hints||0, _p2e=_global.penalty_act2.errors||0, _p2t=_p2h+_p2e;
-  const _p3h=_global.penalty_act3.hints||0, _p3e=_global.penalty_act3.errors||0, _p3t=_p3h+_p3e;
-  const _fmtBd3=(label,ph,pe,pt,done)=>
-    '<div><span style="color:var(--text-secondary)">'+label+'</span> '+
-    (pt>0?'<span style="color:var(--red-highlight)">−'+pt+'</span>':'<span style="color:#4CAF80">0</span>')+
-    '<span style="color:var(--text-dim);font-size:.62rem"> (hint −'+ph+' · err −'+pe+')</span>'+
-    (done?' <span style="color:var(--text-dim)">✓</span>':'')+'</div>';
-  const bdHtml3=_fmtBd3('Atto I:',_p1h,_p1e,_p1t,_global.act1_done)+_fmtBd3('Atto II:',_p2h,_p2e,_p2t,_global.act2_done)+_fmtBd3('Atto III:',_p3h,_p3e,_p3t,state.finalUnlocked);
-  ['inv-breakdown','m-inv-breakdown'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=bdHtml3; });
-
-  // Reset disponibili — sidebar
-  const rUsed = _global.resets_used || 0;
-  const rMax  = _global.resets_max  || 2;
-  const rLeft = Math.max(0, rMax - rUsed);
-  const rDots = (rLeft >= 2 ? '\u25CF\u25CF' : rLeft === 1 ? '\u25CF\u25CB' : '\u25CB\u25CB');
-  const rLabel = rDots + ' ' + rLeft + '/2' + (rLeft === 0 ? ' \u2014 esauriti' : '');
-  const rColor = rLeft === 0 ? 'var(--text-dim)' : rLeft === 1 ? 'var(--amber)' : 'var(--success-text,#4CAF80)';
-  ['inv-resets','minv-resets'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el){ el.textContent = rLabel; el.style.color = rColor; }
-  });
-  document.querySelectorAll('[onclick="showResetConfirm()"]').forEach(btn => {
-    btn.style.display = (rLeft === 0 || state.finalUnlocked) ? 'none' : '';
-  });
-}
-
-// ===== HINT SYSTEM =====
-function useHint(pid, lvl){
-  const puzzle = PUZZLES.find(p=>p.id===pid);
-  if(!puzzle) return;
-  if(puzzle.part===2 && !state.t3aCompleted){ showToast('Completa il Terminale 03A prima di accedere a questi supporti'); return; }
-  if(puzzle.part===3 && !state.t3bCompleted){ showToast('Completa il Terminale 03B prima di accedere a questi supporti'); return; }
-  // Struttura per livello individuale: hintsRevealed[pid] = { 1: true, 3: true }
-  if(!state.hintsRevealed[pid]) state.hintsRevealed[pid] = {};
-  if(state.hintsRevealed[pid][lvl]) return; // già sbloccato
-  const h = puzzle.hints.find(x=>x.lvl===lvl);
-  const cost = h ? h.cost : 0;
-  state.hintsRevealed[pid][lvl] = true;
-  state.hintPuzzleCost[pid] = (state.hintPuzzleCost[pid]||0) + cost;
-  state.hintPenaltyTotal += cost;
-  state.hintLevelsUsed += 1;
-
-  saveState();
-  renderPuzzles();
-  updateUI();
-}
-
-function buildPuzzleEl(puzzle){
-  const revealed = state.hintsRevealed[puzzle.id] || {};
-  const isOpen = state.puzzleOpen[puzzle.id];
-  const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
-  let hintsHtml = '';
-  puzzle.hints.forEach(h=>{
-    const isRev = revealed && revealed[h.lvl] === true;
-    const lvlName = h.lvl===1?'Osservazione':h.lvl===2?'Connessione':'Quasi soluzione';
-    hintsHtml +=
-      '<div class="hint-level-row '+(isRev?'used':'')+'">' +
-        '<div class="hint-level-meta">' +
-          '<span class="hint-level-name">'+lvlName+' · Lv.'+h.lvl+'</span>' +
-          '<span class="hint-level-cost">−'+h.cost+' pt</span>' +
-        '</div>' +
-        '<div class="hint-level-content">' +
-          (isRev
-            ? '<div class="hint-text revealed">'+h.txt+'</div><div class="hint-used-label visible">Supporto utilizzato</div>'
-            : '<button class="hint-reveal-btn" onclick="useHint(\''+puzzle.id+'\','+h.lvl+')">— Richiedi supporto (−'+h.cost+' pt)</button>'
-          ) +
-        '</div>' +
+  // --- Section plugin: verifiche (4 note statiche) ----------------------
+  const verifichePlugin = {
+    render: function(ctx){
+      const v = ctx.data.verifiche;
+      const notesHtml = (v.notes || []).map(function(n){
+        return '<div class="verifica-note-card">' +
+          '<div class="verifica-note-id">' + n.label + '</div>' +
+          '<div class="verifica-note-title">' + n.title + '</div>' +
+          '<div class="verifica-note-text">' + n.text + '</div>' +
+          '<div class="verifica-note-nota">' + n.nota + '</div>' +
+        '</div>';
+      }).join('');
+      return ''+
+      '<div class="section-header">'+
+      '  <div class="section-eyebrow">' + v.eyebrow + '</div>'+
+      '  <h2 class="section-title">' + v.title + '</h2>'+
+      '  <div class="section-subtitle">' + v.subtitle + '</div>'+
+      '  <p class="section-desc">' + v.desc + '</p>'+
+      '</div>'+
+      '<div class="verifica-notes">' + notesHtml + '</div>'+
+      '<div style="margin-top:1.5rem">'+
+      '  <button class="btn-primary" data-section="' + v.ctaTarget + '">' + v.ctaLabel + '</button>'+
       '</div>';
-  });
-  const costLabel = totalSpent>0 ? '−'+totalSpent+' pt usati' : '0 pt usati';
-  const acc = document.createElement('div');
-  acc.className = 'hint-accordion' + (isOpen?' open':'');
-  acc.innerHTML =
-    '<div class="hint-hdr" onclick="togglePuzzle(\''+puzzle.id+'\')">' +
-      '<div class="hint-hdr-left">' +
-        '<span class="hint-puzzle-id">'+puzzle.id+'</span>' +
-        '<span class="hint-puzzle-name">'+puzzle.title+'</span>' +
-      '</div>' +
-      '<div class="hint-hdr-right">' +
-        '<span class="hint-cost-total">'+costLabel+'</span>' +
-        '<span class="hint-arrow">▼</span>' +
-      '</div>' +
-    '</div>' +
-    '<div class="hint-body">' +
-      '<div class="hint-scope">'+puzzle.scope+'</div>' +
-      hintsHtml +
-    '</div>';
-  return acc;
-}
+    }
+  };
 
-function togglePuzzle(pid){
-  state.puzzleOpen[pid] = !state.puzzleOpen[pid];
-  saveState();
-  renderPuzzles();
-}
-
-function renderPuzzles(){
-  const c = document.getElementById('puzzles-container');
-  if(!c) return;
-  c.innerHTML = '';
-
-  const p1puzzles = PUZZLES.filter(p=>p.part===1);
-  const p2puzzles = PUZZLES.filter(p=>p.part===2);
-  const p3puzzles = PUZZLES.filter(p=>p.part===3);
-
-  // FASE 1
-  const g1 = document.createElement('div');
-  g1.className = 'hints-group-wrapper';
-  g1.innerHTML =
-    '<div class="hints-group-label"><span>FASE 1 — OMISSIONI E ACCESSI</span><span class="hints-group-badge unlocked">DISPONIBILE</span></div>' +
-    '<div class="hints-phase-desc">Supporti per la prima fase dell’indagine. Puoi scegliere il livello di aiuto che preferisci, pagando solo il costo del livello scelto.</div>';
-  c.appendChild(g1);
-  p1puzzles.forEach(p=>c.appendChild(buildPuzzleEl(p)));
-
-  // FASE 2
-  const g2 = document.createElement('div');
-  g2.className = 'hints-group-wrapper';
-  g2.style.marginTop = '1.75rem';
-  if(!state.t3aCompleted){
-    g2.innerHTML =
-      '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
-      '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi, in linea con i progressi del fascicolo. Completa il Terminale 03A per sbloccare questa sezione.</div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la Fase 2 sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03A per autorizzare l\'accesso.</div></div>';
-  } else {
-    g2.innerHTML =
-      '<div class="hints-group-label"><span>FASE 2 — VERIFICHE INCROCIATE</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
-      '<div class="hints-phase-desc">Supporti avanzati per la valutazione incrociata delle piste. Ogni livello ha un costo individuale.</div>';
-    p2puzzles.forEach(p=>g2.appendChild(buildPuzzleEl(p)));
-  }
-  c.appendChild(g2);
-
-  // FASE 3
-  const g3 = document.createElement('div');
-  g3.className = 'hints-group-wrapper';
-  g3.style.marginTop = '1.75rem';
-  if(!state.t3bCompleted){
-    g3.innerHTML =
-      '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge locked">ACCESSO BLOCCATO</span></div>' +
-      '<div class="hints-phase-desc locked-phase-desc">Il sistema di supporto si apre per fasi. Completa il Terminale 03B per sbloccare il supporto finale.</div>' +
-      '<div class="hints-p2-locked-banner"><div class="hints-locked-title">I supporti per la chiusura del caso sono temporaneamente oscurati.</div><div class="hints-locked-sub">Completa il Terminale 03B per autorizzare l\'accesso.</div></div>';
-  } else {
-    g3.innerHTML =
-      '<div class="hints-group-label"><span>FASE 3 — CHIUSURA DEL CASO</span><span class="hints-group-badge unlocked">ACCESSO AUTORIZZATO</span></div>' +
-      '<div class="hints-phase-desc">Supporto finale per costruire la risposta conclusiva del Terminale 03C.</div>';
-    p3puzzles.forEach(p=>g3.appendChild(buildPuzzleEl(p)));
-  }
-  c.appendChild(g3);
-}
-
-
-function showResetConfirm(){
-  if(state.finalUnlocked){
-    showToast('Il caso è chiuso. La sessione non può essere azzerata.');
-    return;
-  }
-  const used = _global.resets_used || 0;
-  const max  = _global.resets_max  || 2;
-  const left = Math.max(0, max - used);
-  if(left === 0){ showToast('Reset esauriti — nessun tentativo disponibile.', 'error'); return; }
-  const rl = document.getElementById('confirm-resets-left');
-  const ra = document.getElementById('confirm-resets-after');
-  if(rl) rl.textContent = left;
-  if(ra) ra.textContent = Math.max(0, left - 1);
-  document.getElementById('confirm-overlay').classList.add('visible');
-}
-function confirmReset(){
-  localStorage.removeItem(LS_KEY);
-  // Incrementa contatore reset globale
-  _global.resets_used = Math.min((_global.resets_used||0) + 1, _global.resets_max||2);
-  // Reset global atto 3 (mantieni gli altri atti)
-  _global['penalty_act3'] = {hints:0, errors:0};
-  _global['act3_done'] = false;
-  _global.locked = false;
-  _global.global_score = globalScore();
-  saveGlobal();
-  // Pulisci token cloud
-  _sessionToken = null; _codeId = null; _accessCode = null;
-  localStorage.removeItem('a17_atto3_session_token');
-  localStorage.removeItem('a17_atto3_code_id');
-  localStorage.removeItem('a17_atto3_access_code');
-  state = defaultState();
-  saveState();
-  document.getElementById('confirm-overlay').classList.remove('visible');
-  ['t3a','t3b','t3c'].forEach(t=>{
-    [1,2,3,4,5,6].forEach(n=>{
-      const inp = document.getElementById(t+'-input-'+n); if(inp) inp.value='';
-      const fb = document.getElementById(t+'-fb-'+n); if(fb){ fb.textContent=''; fb.className='terminal-feedback-line'; }
-      const st = document.getElementById(t+'-state-'+n); if(st){ st.textContent='In attesa'; st.className='terminal-field-state pending'; }
-    });
-    const sub = document.getElementById(t+'-submit'); if(sub) sub.disabled=false;
-    const conf = document.getElementById(t+'-confirmed'); if(conf) conf.classList.remove('visible');
-    const gfb = document.getElementById(t+'-global-fb'); if(gfb){ gfb.textContent=''; gfb.className='terminal-global-feedback'; }
-  });
-  // casella reset
-  const ci = document.getElementById('casella-input'); if(ci){ ci.value=''; ci.disabled=false; }
-  const cb = document.getElementById('casella-btn'); if(cb) cb.disabled=false;
-  const cm = document.getElementById('casella-msg'); if(cm){ cm.textContent=''; cm.className='casella-msg'; }
-  const cal = document.getElementById('casella-attempts-label'); if(cal) cal.textContent='3';
-  document.getElementById('casella-panel').style.display='block';
-  document.getElementById('casella-email-section').style.display='none';
-  document.getElementById('casella-bloccata-section').style.display='none';
-  ['nav-terminale3a','mnav-terminale3a','nav-parte2','mnav-parte2',
-   'nav-terminale3b','mnav-terminale3b','nav-verifiche','mnav-verifiche',
-   'nav-terminale3c','mnav-terminale3c','nav-esito','mnav-esito'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.classList.add('locked');
-  });
-  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
-  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
-  renderPuzzles();
-  updateUI();
-  showSection('intro', true);
-  showToast('Sessione azzerata');
-}
-
-// ===== MOBILE =====
-function toggleMobileDrawer(){
-  const d = document.getElementById('mobile-inv-drawer');
-  d.classList.toggle('open');
-  d.setAttribute('aria-hidden', String(!d.classList.contains('open')));
-}
-function closeMobileDrawerOutside(e){ if(e.target===document.getElementById('mobile-inv-drawer')) document.getElementById('mobile-inv-drawer').classList.remove('open'); }
-
-// ===== TOAST =====
-function showToast(msg, dur=3000){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('visible');
-  setTimeout(()=>t.classList.remove('visible'), dur);
-}
-
-// ===== INIT =====
-function init(){
-  // Ripristina sessione cloud (proprio atto o fallback dagli atti precedenti)
-  _sessionToken = _sessionToken || localStorage.getItem('a17_atto3_session_token')
-               || localStorage.getItem('a17_atto2_session_token')
-               || localStorage.getItem('a17_atto1_session_token');
-  _codeId       = _codeId       || localStorage.getItem('a17_atto3_code_id')
-               || localStorage.getItem('a17_atto2_code_id')
-               || localStorage.getItem('a17_atto1_code_id');
-  _accessCode   = _accessCode   || localStorage.getItem('a17_atto3_access_code')
-               || localStorage.getItem('a17_atto2_access_code')
-               || localStorage.getItem('a17_atto1_access_code');
-
-  loadState();
-  renderDocsGrid('p1', DOCS_P1, 'docs-grid-p1');
-  renderDocsGrid('p2', DOCS_P2, 'docs-grid-p2');
-  renderPuzzles();
-
-  // ripristino stato casella
-  if(state.casellaUnlocked){
-    document.getElementById('casella-panel').style.display='none';
-    document.getElementById('casella-email-section').style.display='block';
-    renderEmailGrid();
-  } else if(state.casellaBlocked){
-    document.getElementById('casella-panel').style.display='none';
-    document.getElementById('casella-bloccata-section').style.display='block';
-  } else {
-    const cal = document.getElementById('casella-attempts-label'); if(cal) cal.textContent=state.casellaAttempts;
-  }
-
-  // ripristino terminali
-  ['t3a','t3b','t3c'].forEach(t=>{
-    const done = t==='t3a'?state.t3aCompleted:t==='t3b'?state.t3bCompleted:state.t3cCompleted;
-    if(done){
-      const sub = document.getElementById(t+'-submit'); if(sub) sub.disabled=true;
-      const conf = document.getElementById(t+'-confirmed'); if(conf) conf.classList.add('visible');
+  // --- Boot -------------------------------------------------------------
+  createCaseApp({
+    actNum: 3,
+    dataUrl: 'data/atto3.json',
+    storageKey: 'a17_atto3_v2',
+    storageVersion: 2,
+    localCodes: ['A17-ATTO3', 'A17-DEMO'],
+    skin: 'rich',
+    validators: {
+      'atto3-t3a': validatorT3A,
+      'atto3-t3b': validatorT3B
+    },
+    sectionPlugins: {
+      casella3: casella3Plugin,
+      verifiche: verifichePlugin
     }
   });
-
-  updateUI();
-  // Ripristino feedback globali terminali al reload
-  ['t3a','t3b','t3c'].forEach(t=>{
-    const fbKey = t+'Fb';
-    const fbData = state[fbKey];
-    const gfb = document.getElementById(t+'-global-fb');
-    if(fbData && gfb){ gfb.innerHTML = fbData.text; gfb.className = 'terminal-global-feedback ' + fbData.cls; }
-  });
-  showSection(state.currentSection || 'intro', true);
-}
-
-document.addEventListener('keydown', e=>{
-  if(e.key!=='Escape') return;
-  const ov = document.getElementById('viewer-overlay');
-  if(ov && ov.classList.contains('open')){ closeViewer(); return; }
-  const co = document.getElementById('confirm-overlay');
-  if(co && co.classList.contains('visible')){
-    co.classList.remove('visible'); return;
-  }
-  const dr = document.getElementById('mobile-inv-drawer');
-  if(dr && dr.classList.contains('open')){ dr.classList.remove('open'); return; }
-});
-document.addEventListener('DOMContentLoaded', init);
+})();
 </script>
 </body>
 </html>

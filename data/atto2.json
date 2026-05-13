@@ -1,0 +1,715 @@
+{
+  "actNum": 2,
+  "title": "Archivio 17 — Caso 001 · Atto 2 · Il Denaro",
+  "headerBadge": "Atto 2",
+  "caseLabel": "Caso 001 — Il Caso Marini",
+  "caseRef": "A17-001",
+  "attoLabel": "2 — Il denaro",
+
+  "access": {
+    "eyebrow": "Archivio 17",
+    "title": "Il Caso Marini",
+    "subtitle": "Caso 001",
+    "actLabel": "Atto II — Il Denaro",
+    "classification": "Accesso riservato",
+    "description": "Inserisci il codice di accesso ricevuto. Ogni codice è personale e valido per un singolo dispositivo.",
+    "fieldLabel": "Codice di accesso",
+    "placeholder": "A17-XXXXXX",
+    "buttonLabel": "Accedi al Fascicolo",
+    "loadingMessage": "Ripristino sessione in corso…",
+    "footer": "Archivio 17 è un'esperienza investigativa narrativa.<br>I documenti del fascicolo sono il punto di partenza."
+  },
+
+  "footer": "Opera di fantasia. Personaggi, eventi, luoghi e documenti sono inventati. Ogni somiglianza con persone o fatti reali è puramente casuale.",
+
+  "intro": {
+    "navLabel": "Messaggio Archivista",
+    "mNavLabel": "Archivista",
+    "eyebrow": "Comunicazione Archivista — Atto 2",
+    "title": "Il Denaro",
+    "subtitle": "La pista più visibile non è sempre quella più importante.",
+    "transmissionLabel": "Trasmissione archivio · riservata",
+    "paragraphs": [
+      "L'Atto 1 ha dimostrato che la scena non regge.",
+      "Ora il fascicolo cambia direzione.",
+      "Non cerchi più soltanto chi avrebbe potuto entrare nello studio.<br>Cerchi chi avrebbe tratto vantaggio dalla morte di Andrea Marini.",
+      "Segua il denaro.<br>Ma non confonda il denaro più visibile con quello più importante."
+    ],
+    "signature": "— L'Archivista · Archivio 17 · Caso 001",
+    "factGrid": [],
+    "unlockHint": "",
+    "actions": [
+      { "label": "Apri fascicolo — Parte 1 →", "section": "parte1", "variant": "primary" }
+    ]
+  },
+
+  "parts": [
+    {
+      "id": "p1",
+      "sectionId": "parte1",
+      "navLabel": "Parte 1 — Le prime crepe",
+      "mNavLabel": "Parte 1",
+      "section": {
+        "eyebrow": "Fascicolo A17-002 — Atto 2",
+        "title": "Parte 1 — Le prime crepe",
+        "subtitle": "I documenti iniziali del fascicolo economico",
+        "desc": "Esamina i reperti disponibili. Individua le linee investigative aperte. Quando ritieni di avere una lettura coerente, accedi al Terminale 02A per registrare la tua ipotesi iniziale.",
+        "metaPhase": "Parte 1 — Le prime crepe"
+      },
+      "totalDocs": 6,
+      "requiredDocs": 4,
+      "lockedUntilTerminal": null,
+      "lockedSiblingBanner": {
+        "icon": "▣",
+        "text": "<strong>Reperti ad alta sensibilità bloccati.</strong> Accedi al Terminale 02A dopo aver esaminato almeno 4 reperti per sbloccarli."
+      },
+      "unlockBar": {
+        "msg": "✓ Documentazione sufficiente — Terminale 02A disponibile",
+        "ctaLabel": "Terminale 02A →",
+        "ctaTarget": "terminale2a"
+      },
+      "documents": [
+        {
+          "id": "B02",
+          "cat": "Documento contabile",
+          "title": "Cartella Manfredi · Irregolarità contabili",
+          "desc": "Estratto da una cartella professionale relativa al cliente Roberto Manfredi.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/f506b56aa_ChatGPTImage9mag202601_07_06.png",
+          "transcript": "Cartella cliente: Roberto Manfredi / Gruppo Manfredi S.r.l.\nOggetto: verifica interna movimenti contabili anomali.\nPeriodo esaminato: settembre–novembre 2024.\n\nNote studio:\n— movimenti ricorrenti non giustificati;\n— fatture con causali generiche;\n— flussi di cassa incompatibili con i contratti dichiarati;\n— richiesta di revisione urgente da parte di Andrea Marini;\n— possibile esposizione penale in caso di trasmissione atti a consulente esterno.",
+          "note": "« Se questa pratica esce dallo studio, Manfredi non la prenderà bene. »"
+        },
+        {
+          "id": "B03",
+          "cat": "Contratto",
+          "title": "Contratto Studio – Manfredi",
+          "desc": "Accordo professionale tra Studio Marini e società riconducibile a Manfredi.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/dc816050f_ChatGPTImage10mag202618_16_06.png",
+          "transcript": "Contratto di consulenza continuativa tra Studio Marini & Associati e Gruppo Manfredi S.r.l.\n\nImporto mensile: € 12.500\n\nClausole accessorie:\n— consulenza fiscale straordinaria;\n— revisione contabile;\n— ottimizzazione flussi operativi;\n— gestione documentazione integrativa.",
+          "note": "« Compensi fuori scala rispetto alle prestazioni dichiarate. »"
+        },
+        {
+          "id": "B05",
+          "cat": "Tabulati",
+          "title": "Tabulati telefonici Andrea",
+          "desc": "Estratto chiamate degli ultimi giorni prima della morte.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/a99b2d51a_ChatGPTImage9mag202601_07_20.png",
+          "transcript": "10/11 — 18:12 — Roberto Manfredi — 07:42\n11/11 — 09:33 — Studio Legale Rinaldi — 02:16\n12/11 — 20:41 — Roberto Manfredi — 04:58\n13/11 — 11:05 — Stefano Marini — 01:12\n14/11 — 18:06 — Davide Serra — 00:43\n14/11 — 18:51 — Numero non salvato — 00:21\n14/11 — 19:04 — Stefano Marini — chiamata non risposta",
+          "note": "Nessuna chiamata registrata dopo le 19:04."
+        },
+        {
+          "id": "B06",
+          "cat": "Documento bancario",
+          "title": "Estratto conto Andrea",
+          "desc": "Movimenti selezionati del conto personale di Andrea Marini.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/1b7df3816_ChatGPTImage9mag202601_07_25.png",
+          "transcript": "Estratto conto sintetico · ottobre–novembre 2024\n\nMovimenti rilevanti:\n03/10 — Premio assicurativo · Copertura debiti — € 412,00\n03/11 — Premio assicurativo · Copertura debiti — € 412,00\n06/11 — Bonifico Studio Marini — € 8.750,00\n08/11 — Pagamento consulenza esterna · Studio Legale Rinaldi — € 650,00\n13/11 — Prelievo contanti — € 1.200,00",
+          "note": "Polizza collegata a copertura debitoria. Capitale assicurato: € 280.000."
+        },
+        {
+          "id": "B07",
+          "cat": "Documento bancario",
+          "title": "Atto di fideiussione",
+          "desc": "Documento personale archiviato tra pratiche bancarie.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/4f758dc9c_ChatGPTImage10mag202618_13_44.png",
+          "transcript": "Atto di fideiussione bancaria solidale.\nData sottoscrizione: 18/05/2024.\n\nSoggetti garanti:\n— Andrea Marini\n— Stefano Marini\n\nImporto massimo garantito: € 280.000\n\nFinalità: copertura esposizione debitoria relativa a società riconducibile a Stefano Marini.\n\nClausola: in caso di insolvenza del debitore principale, l'istituto potrà rivalersi integralmente sui garanti."
+        },
+        {
+          "id": "B13",
+          "cat": "Nota personale",
+          "title": "Nota personale · tensione con Elena",
+          "desc": "Bozza privata non inviata, recuperata tra file personali.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/c579a662f_ChatGPTImage9mag202601_21_40.png",
+          "transcript": "Elena continua a chiedermi cosa stia succedendo.\nLe ho detto che è solo lavoro, ma non mi crede più.\n\nSe dovesse venire fuori tutto, non so cosa resterebbe di noi.\n\nNon posso dirle della copertura.\nNon ancora.",
+          "note": "Documento recuperato tra bozze personali non inviate."
+        }
+      ],
+      "terminal": {
+        "id": "t2a",
+        "sectionId": "terminale2a",
+        "navLabel": "Terminale 02A",
+        "mNavLabel": "Term. 02A",
+        "section": {
+          "eyebrow": "Serratura narrativa — Atto 2",
+          "title": "Terminale 02A",
+          "subtitle": "Apertura linea investigativa",
+          "desc": "Registra la tua ipotesi iniziale. Il sistema non valuta la correttezza della pista — valuta la coerenza tra la pista scelta e gli elementi che la sorreggono. Risposte errate riducono l'indice di 10 punti."
+        },
+        "systemLabel": "A17 — Terminale 02A — Apertura Linea Investigativa",
+        "lockBanner": {
+          "title": "Accesso non autorizzato",
+          "desc": "Esamina almeno 4 reperti della Parte 1 per sbloccare questo terminale."
+        },
+        "panel": {
+          "eyebrow": "Terminale 02A · Apertura linea investigativa",
+          "desc": ""
+        },
+        "submitLabel": "Invia al Terminale 02A",
+        "confirmedLabel": "Linea investigativa registrata — 02A",
+        "confirmedMsg": "Accesso ai reperti ad alta sensibilità autorizzato.",
+        "successUnlocks": ["parte2", "terminale2b"],
+        "completesAct": false,
+        "successDelayMs": 2000,
+        "successJumpTo": "parte2",
+        "successToast": null,
+        "incompleteToast": "Completa tutti i campi prima di inviare",
+        "lockToast": "Esamina almeno 4 reperti prima di accedere al Terminale 02A",
+        "hideSubmitOnSuccess": true,
+        "successCopy": {
+          "template": "Linea investigativa registrata.<br><br>L'Archivio non conferma ancora una responsabilità. La pista selezionata presenta elementi sufficienti per accedere ai reperti ad alta sensibilità.<br><br>{bySospetto}<br><br><em>Accesso intermedio autorizzato.</em>",
+          "bySospettoMap": "feedbackT2A",
+          "confirmedMsgFrom": "feedbackT2A"
+        },
+        "validator": {
+          "type": "sospetto-branch",
+          "globalAmbiguousMsg": "Il Terminale rileva una pista coerente, ma richiede elementi più specifici del fascicolo. <strong>Nessuna penalità applicata</strong> — correggi i campi evidenziati in ambra.",
+          "globalErrorMsg": "Analisi incompleta. Rivedi i campi segnalati e collega le risposte ai reperti disponibili.",
+          "fields": [
+            {
+              "id": 1,
+              "role": "detect",
+              "label": "CAMPO.01 — Linea investigativa",
+              "question": "Quale linea investigativa ritieni più rilevante in questa fase?",
+              "placeholder": "Es. Manfredi / Stefano / Elena / Davide...",
+              "inputType": "text",
+              "ambiguousMinLen": 5,
+              "feedback": {
+                "ok": "Linea investigativa registrata.",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Risposta troppo generica. Il Terminale richiede un elemento più specifico: indica Manfredi, Stefano, Elena, Davide o un sinonimo del fascicolo.",
+                "error": "Linea non riconosciuta nei reperti. Indica: Manfredi / Stefano / Elena / Davide."
+              }
+            },
+            {
+              "id": 2,
+              "role": "branched-min-matches",
+              "label": "CAMPO.02 — Elemento probatorio",
+              "question": "Quale elemento sostiene la tua scelta?",
+              "placeholder": "Indica il reperto o l'elemento chiave...",
+              "inputType": "text",
+              "kwSource": "elemP1",
+              "minMatches": 1,
+              "looseTruncLen": 5,
+              "ambiguousMinLen": 4,
+              "feedback": {
+                "ok": "Elemento registrato.",
+                "empty": "Campo obbligatorio.",
+                "error_noSospetto": "Identifica prima il sospetto nel Campo 1.",
+                "ambiguous": "Elemento parziale. Specificare il riferimento del fascicolo.",
+                "error": "Elemento non coerente con i reperti disponibili. Rivedi la Parte 1."
+              }
+            },
+            {
+              "id": 3,
+              "role": "list-min-matches",
+              "label": "CAMPO.03 — Elemento non verificato",
+              "question": "Quale elemento resta ancora non verificato?",
+              "placeholder": "Indica cosa manca ancora...",
+              "inputType": "text",
+              "kw": "unverKw",
+              "minMatches": 1,
+              "looseRoots": ["alibi", "garanzi", "fideiussio", "280", "chiavi", "telefon", "cena", "copertur", "orario", "timeline", "moviment", "documenti", "appuntament"],
+              "ambiguousKwSource": "unverAmbiguous",
+              "ambiguousMinLen": 8,
+              "feedback": {
+                "ok": "Elemento non verificato registrato.",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Elemento parziale. Specificare il riferimento del fascicolo: quale alibi, quale cifra, quale appuntamento resta da chiarire.",
+                "error": "Indica un elemento concreto ancora non verificato nei reperti esaminati."
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "p2",
+      "sectionId": "parte2",
+      "navLabel": "Parte 2 — Alta sensibilità",
+      "mNavLabel": "Parte 2",
+      "section": {
+        "eyebrow": "Fascicolo A17-002 — Atto 2",
+        "title": "Parte 2 — Reperti ad alta sensibilità",
+        "subtitle": "Documentazione riservata — accesso autorizzato",
+        "desc": "Questi reperti approfondiscono le linee aperte nella prima parte. Non chiudono il caso. Rendono più complessa l'analisi. Quando hai completato la lettura, accedi al Terminale 02B.",
+        "metaPhase": "Parte 2 — Alta sensibilità"
+      },
+      "totalDocs": 6,
+      "requiredDocs": 3,
+      "lockedUntilTerminal": "t2a",
+      "lockedToast": "Completa il Terminale 02A per sbloccare la Parte 2",
+      "showCaseInMeta": false,
+      "promemoria": {
+        "label": "Promemoria Archivista — dopo Terminale 02A",
+        "paragraphs": [
+          "Il fascicolo presenta più linee di lettura.",
+          "Una linea è rumorosa: frode, minaccia, pressione professionale.",
+          "Altre linee sono più silenziose: importi ricorrenti, garanzie familiari, omissioni domestiche, accessi non verificati.",
+          "Non formuli una conclusione prima di aver confrontato importi, date e dichiarazioni."
+        ],
+        "sig": "— L'Archivista"
+      },
+      "unlockBar": {
+        "msg": "✓ Analisi sufficiente — Terminale 02B disponibile",
+        "ctaLabel": "Terminale 02B →",
+        "ctaTarget": "terminale2b"
+      },
+      "documents": [
+        {
+          "id": "B04",
+          "cat": "Audio · Trascrizione",
+          "title": "Telefonata Andrea – Manfredi",
+          "desc": "Trascrizione parziale di una telefonata registrata due giorni prima del decesso.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0a8860720_ChatGPTImage10mag202618_26_04.png",
+          "transcript": "Data: 12/11/2024\nPartecipanti: Andrea Marini / Roberto Manfredi\n\nANDREA:\n« Non posso più coprire questa cosa. Mi hai chiesto di chiudere gli occhi, ma ora stanno controllando. »\n\nMANFREDI:\n« Tu hai firmato carte, Andrea. Non fare finta di essere fuori. »\n\nANDREA:\n« Io sto parlando con un legale. »\n\nMANFREDI:\n« Parla con chi vuoi. Ma sai cosa succede se questa storia esce. »\n\nANDREA:\n« È una minaccia? »\n\nMANFREDI:\n« È un promemoria. »",
+          "note": "L'audio completo risulta degradato. La trascrizione è stata prodotta da analisi interna dell'Archivio."
+        },
+        {
+          "id": "B08",
+          "cat": "Comunicazione bancaria",
+          "title": "Sollecito bancario · Stefano",
+          "desc": "Comunicazione collegata a una posizione debitoria familiare.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/8d2ac80cd_ChatGPTImage10mag202617_11_15.png",
+          "transcript": "Oggetto: richiesta di rientro posizione debitoria.\nDestinatario: Stefano Marini.\nImporto esposizione: € 280.000.\nTermine di regolarizzazione: 30 giorni.\n\nIn assenza di rientro o piano di copertura accettato, l'istituto procederà all'attivazione delle garanzie sottoscritte.",
+          "note": "Documento acquisito da cartella personale non classificata."
+        },
+        {
+          "id": "B10",
+          "cat": "Verbale interrogatorio",
+          "title": "Interrogatorio · Roberto Manfredi",
+          "desc": "Seconda dichiarazione del cliente Manfredi.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/55012b651_ChatGPTImage9mag202601_07_41.png",
+          "transcript": "Roberto Manfredi conferma di aver avuto discussioni accese con Andrea Marini nei giorni precedenti alla morte.\n\nDichiara:\n« Andrea voleva tirarsi indietro da una situazione che aveva accettato per anni. »\n\nAlla domanda sulle minacce:\n« Ho detto che ci sarebbero state conseguenze. Economiche. Legali. Non altro. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero impegnato fuori sede per un incontro aziendale. Possono confermarlo. »",
+          "note": "Alibi non ancora verificato in questa fase."
+        },
+        {
+          "id": "B11",
+          "cat": "Verbale interrogatorio",
+          "title": "Interrogatorio · Stefano Marini",
+          "desc": "Seconda dichiarazione del fratello della vittima.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0b46950a8_ChatGPTImage9mag202601_07_45.png",
+          "transcript": "Stefano Marini dichiara di non aver incontrato Andrea la sera del 14 novembre.\n\nDichiara:\n« L'ho sentito nei giorni precedenti, ma non quella sera. Eravamo entrambi sotto pressione. »\n\nAlla domanda sui rapporti economici:\n« C'erano alcune questioni, ma niente che riguardasse la sua morte. »\n\nAlla domanda sulla fideiussione:\n« Era una garanzia temporanea. Andrea voleva aiutarmi, tutto qui. »\n\nAlla domanda sull'appuntamento \"Cena con S.\":\n« Non so a chi si riferisse. »",
+          "note": "Dichiarazione registrata. Coerenza interna da verificare."
+        },
+        {
+          "id": "B15",
+          "cat": "Verbale integrativo",
+          "title": "Dichiarazione integrativa · Davide Serra",
+          "desc": "Dichiarazione aggiuntiva del collaboratore dello studio.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/0c5442f84_ChatGPTImage9mag202601_08_58.png",
+          "transcript": "Davide Serra conferma di essere stato il primo a entrare nello studio la mattina del rinvenimento.\n\nDichiara:\n« La porta era chiusa. Ho usato la mia copia. Non ho toccato nulla, ho chiamato subito. »\n\nAlla domanda sulle pratiche Manfredi:\n« Sapevo che c'erano tensioni, ma Andrea non mi spiegava tutto. »\n\nAlla domanda sull'archivio interno:\n« Il fascicolo Manfredi era già sulla scrivania quando sono entrato. »",
+          "note": "Davide aveva accesso allo studio e conosceva la posizione dei fascicoli. Nessun elemento risolutivo."
+        },
+        {
+          "id": "B14",
+          "cat": "Verbale integrativo",
+          "title": "Dichiarazione integrativa · Elena Ricci",
+          "desc": "Dichiarazione aggiuntiva della moglie di Andrea.",
+          "imageUrl": "https://media.base44.com/images/public/69fdda0ce13e22a1cc6cd63c/35f116afa_ChatGPTImage9mag202601_08_37.png",
+          "transcript": "Elena Ricci conferma tensioni con Andrea nelle ultime settimane.\n\nDichiara:\n« Non era più lui. Nascondeva telefonate, usciva dallo studio tardi, non voleva che guardassi i documenti. »\n\nAlla domanda sulla copertura assicurativa:\n« Sapevo che esisteva una copertura, ma Andrea diceva che era una formalità bancaria. »\n\nAlla domanda sulla sera del 14 novembre:\n« Ero da mia sorella. Ho uno scontrino della cena, ma sono uscita per circa venti minuti per una telefonata. »",
+          "note": "Alibi parziale. Intervallo non verificato."
+        }
+      ],
+      "terminal": {
+        "id": "t2b",
+        "sectionId": "terminale2b",
+        "navLabel": "Terminale 02B",
+        "mNavLabel": "Term. 02B",
+        "section": {
+          "eyebrow": "Analisi del movente — Atto 2",
+          "title": "Terminale 02B",
+          "subtitle": "Valutazione investigativa finale",
+          "desc": "Il sistema valuta la qualità dell'ipotesi, non una risposta unica. Piste diverse ricevono feedback diverso. Risposte errate riducono l'indice di 10 punti."
+        },
+        "systemLabel": "A17 — Terminale 02B — Analisi del Movente",
+        "lockBanner": {
+          "title": "Accesso non autorizzato",
+          "desc": "Completa il Terminale 02A ed esamina almeno 3 reperti della Parte 2 per sbloccare il Terminale 02B."
+        },
+        "panel": { "eyebrow": "Terminale 02B · Analisi del movente", "desc": "" },
+        "submitLabel": "Invia al Terminale 02B",
+        "confirmedLabel": "Analisi registrata — Terminale 02B",
+        "confirmedMsg": "L'Archivio ha acquisito la tua ipotesi. Accesso all'esito autorizzato.",
+        "successUnlocks": ["esito"],
+        "completesAct": true,
+        "successDelayMs": 2000,
+        "successJumpTo": "esito",
+        "successToast": null,
+        "incompleteToast": "Completa tutti i campi prima di inviare",
+        "lockToast": "Esamina almeno 3 reperti della Parte 2 prima di accedere al Terminale 02B",
+        "hideSubmitOnSuccess": true,
+        "successCopy": {
+          "template": "Ipotesi investigativa acquisita dall'Archivio.<br><br>{bySospetto}<br><br><em>Accesso all'esito autorizzato.</em>",
+          "bySospettoMap": "feedbackT2B",
+          "confirmedMsgFrom": "feedbackT2B"
+        },
+        "validator": {
+          "type": "sospetto-branch",
+          "globalAmbiguousMsg": "Il Terminale rileva una pista coerente, ma richiede elementi più specifici del fascicolo. <strong>Nessuna penalità applicata</strong> — correggi i campi evidenziati in ambra.",
+          "globalErrorMsg": "Analisi incompleta. Rivedi i campi segnalati e collega le risposte ai reperti disponibili.",
+          "fields": [
+            {
+              "id": 1,
+              "role": "detect",
+              "label": "CAMPO.01 — Sospetto principale",
+              "question": "Quale sospetto ritieni più forte dopo l'analisi dell'Atto 2?",
+              "placeholder": "Es. Manfredi / Stefano / Elena / Davide...",
+              "inputType": "text",
+              "ambiguousMinLen": 4,
+              "feedback": {
+                "ok": "Sospetto registrato.",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Risposta troppo generica. Il Terminale richiede un elemento più specifico: indica Manfredi, Stefano, Elena, Davide o un sinonimo del fascicolo.",
+                "error": "Sospetto non riconosciuto nei reperti. Indica: Manfredi / Stefano / Elena / Davide."
+              }
+            },
+            {
+              "id": 2,
+              "role": "branched-min-matches",
+              "label": "CAMPO.02 — Elementi a sostegno",
+              "question": "Quali elementi sostengono questa ipotesi? (almeno due)",
+              "placeholder": "Elenca gli elementi probatori che supportano la tua scelta...",
+              "rows": 3,
+              "kwSource": "elemP2",
+              "minMatches": 2,
+              "looseTruncLen": 5,
+              "ambiguousMinLen": 5,
+              "feedback": {
+                "ok": "Elementi sufficienti registrati ({matches} rilevati).",
+                "empty": "Campo obbligatorio.",
+                "error_noSospetto": "Identifica prima il sospetto nel Campo 1.",
+                "ambiguous": "Il Terminale rileva una pista coerente, ma richiede un elemento più concreto del fascicolo. Aggiungi un secondo reperto.",
+                "error": "Elementi non coerenti con i reperti disponibili. Rivedi la Parte 2."
+              }
+            },
+            {
+              "id": 3,
+              "role": "list-min-matches",
+              "label": "CAMPO.03 — Limite dell'ipotesi",
+              "question": "Quale elemento rende la tua ipotesi ancora non conclusiva?",
+              "placeholder": "Cosa manca ancora per chiudere il caso...",
+              "inputType": "text",
+              "kw": "limitKw",
+              "minMatches": 1,
+              "looseRoots": ["prova", "manca", "alibi", "accesso", "movente", "omission", "incongruenz", "spiega", "chiude", "conclusiv", "incompleta", "orari", "timeline"],
+              "ambiguousKwSource": "limitAmbiguous",
+              "ambiguousMinLen": 8,
+              "feedback": {
+                "ok": "Limite dell'ipotesi registrato.",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Risposta accettabile come direzione, ma troppo generica. Specifica: quale prova manca, quale alibi resta incerto, quale elemento non si chiude.",
+                "error": "Specifica un elemento concreto che rende l'ipotesi non conclusiva."
+              }
+            },
+            {
+              "id": 4,
+              "role": "list-min-matches",
+              "label": "CAMPO.04 — Linea alternativa",
+              "question": "Quale altra linea del fascicolo non puoi ignorare?",
+              "placeholder": "Indica la seconda linea investigativa aperta...",
+              "inputType": "text",
+              "kw": "altKw",
+              "minMatches": 1,
+              "ambiguousMinLen": 4,
+              "feedback": {
+                "ok": "Linea alternativa registrata.",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Risposta troppo generica. Indica un sospetto, un documento o un importo del fascicolo.",
+                "error": "Indica almeno una seconda linea investigativa (sospetto, documento, importo del fascicolo)."
+              }
+            },
+            {
+              "id": 5,
+              "role": "list-min-matches",
+              "label": "CAMPO.05 — Sintesi investigativa",
+              "question": "Sintesi investigativa dell'Atto 2. Collega almeno tre elementi del fascicolo.",
+              "placeholder": "La tua analisi complessiva dell'Atto 2...",
+              "rows": 3,
+              "kw": "synthKw",
+              "minMatches": 3,
+              "nearMissMin": 2,
+              "ambiguousMinLen": 10,
+              "feedback": {
+                "ok": "Sintesi accettata ({matches} concetti rilevati).",
+                "empty": "Campo obbligatorio.",
+                "ambiguous": "Sintesi parziale ({matches}/{required} concetti rilevati). Aggiungi un terzo elemento: un sospetto, un importo o una linea alternativa.",
+                "ambiguous_short": "Sintesi troppo breve. Collega i reperti principali, la tua pista e almeno un'altra linea del fascicolo.",
+                "error": "Sintesi insufficiente ({matches}/{required} concetti rilevati). Collega più elementi del fascicolo."
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+
+  "dictionaries": {
+    "sospetti": {
+      "MANFREDI": ["manfredi", "roberto manfredi", "gruppo manfredi", "pratica manfredi", "cliente manfredi", "il cliente di andrea", "il cliente dello studio", "la pista del cliente", "frode manfredi", "pista manfredi", "irregolarita manfredi"],
+      "STEFANO":  ["stefano", "stefano marini", "il fratello", "fratello", "pista familiare", "linea familiare", "garanzia familiare", "debito del fratello", "fideiussione del fratello", "pista di stefano", "famiglia marini"],
+      "ELENA":    ["elena", "elena ricci", "moglie", "la moglie", "coniuge", "linea domestica", "pista domestica", "tensione coniugale", "alibi della moglie"],
+      "DAVIDE":   ["davide", "davide serra", "collega", "il collega", "collaboratore", "primo ad entrare", "chiavi", "accesso allo studio", "copia delle chiavi"]
+    },
+    "sospettiAlias": {
+      "il cliente": "MANFREDI",
+      "cliente": "MANFREDI",
+      "il fratello": "STEFANO",
+      "fratello": "STEFANO",
+      "la moglie": "ELENA",
+      "moglie": "ELENA",
+      "il collega": "DAVIDE",
+      "collega": "DAVIDE",
+      "collaboratore": "DAVIDE"
+    },
+    "ambiguousGeneric": [
+      "soldi", "denaro", "lavoro", "famiglia", "documenti", "qualcuno",
+      "alibi", "qualcuno mente", "non so", "forse", "debito", "casa",
+      "qualcosa", "persone", "una persona", "il caso", "non e chiaro"
+    ],
+    "elemP1": {
+      "MANFREDI": ["frode", "irregolar", "contabil", "contratto", "minaccia", "pratica manfredi", "telefon", "pressione", "consulenza", "compensi fuori scala", "movimenti anomali", "flussi di cassa", "rapporto economico", "cliente", "compenso", "anomal"],
+      "STEFANO":  ["fideiussion", "garanzia", "280000", "copertura debiti", "debito", "esposizione", "polizza", "cena con s", "appuntamento con s", "chiamata non risposta", "sollecito bancario", "garanzia bancaria", "garanzia familiare", "esposizione debitoria"],
+      "ELENA":    ["tensione", "tensione coniugale", "alibi", "alibi parziale", "uscita", "venti minuti", "telefonata", "copertura", "polizza", "omission", "moglie", "non voleva che guardasse", "sapeva della copertura", "nascondeva"],
+      "DAVIDE":   ["chiavi", "copia delle chiavi", "accesso", "primo ingresso", "primo ad entrare", "fascicolo", "scrivania", "studio", "collaboratore", "conosceva i fascicoli", "conoscenza pratica", "scena"]
+    },
+    "elemP2": {
+      "MANFREDI": ["frode", "minaccia", "telefonata", "audio", "chiamata", "irregolar", "contabil", "contratto anomalo", "compensi fuori scala", "pratica manfredi", "pressione professionale", "movimenti anomali", "flussi di cassa", "consulenza sospetta", "consulenza anomala", "compenso"],
+      "STEFANO":  ["280000", "fideiussion", "garanzia", "garanzia bancaria", "garanzia familiare", "sollecito bancario", "copertura debiti", "cena con s", "chiamata non risposta", "negazione", "debito", "esposizione debitoria", "polizza"],
+      "ELENA":    ["tensione coniugale", "alibi parziale", "uscita", "venti minuti", "telefonata", "polizza", "copertura", "omission", "moglie", "non voleva che guardasse", "sapeva della copertura"],
+      "DAVIDE":   ["chiavi", "copia delle chiavi", "primo accesso", "primo ad entrare", "fascicolo", "accesso allo studio", "conoscenza pratica", "collaboratore", "scena", "studio"]
+    },
+    "unverKw": [
+      "stefano", "cena con s", "appuntamento con s", "chiamata non risposta",
+      "numero non salvato", "280000", "fideiussion", "garanzia", "polizza", "copertura debiti",
+      "alibi manfredi", "alibi elena", "uscita di venti minuti", "accesso davide", "chiavi",
+      "telefonata", "intervallo scoperto", "timeline", "orario", "movimenti bancari",
+      "documenti economici", "s ", "s."
+    ],
+    "unverAmbiguous": [
+      "la cena", "l appuntamento", "l alibi", "le chiamate", "qualcosa", "non so",
+      "non ricordo", "non e chiaro", "un elemento"
+    ],
+    "limitKw": [
+      "manca prova", "manca una prova", "non c e prova", "alibi non verificato",
+      "alibi da verificare", "accesso non certo", "manca accesso", "movente debole",
+      "manca movente", "pista incompleta", "non spiega tutto", "non chiude", "280000 non spiegato",
+      "280000", "s non verificato", "cena con s non verificata", "manfredi troppo evidente",
+      "altri sospetti", "altre linee", "troppe omissioni", "ci sono incongruenze",
+      "non conclusiv", "incompleta", "intervallo scoperto", "timeline", "orari", "movimenti bancari",
+      "non si chiude", "non e definitiv"
+    ],
+    "limitAmbiguous": [
+      "non basta", "non e sicuro", "manca qualcosa", "non so", "incerto", "boh",
+      "non abbastanza", "non e definitivo", "manca ancora"
+    ],
+    "altKw": [
+      "manfredi", "stefano", "elena", "davide", "cliente", "fratello", "moglie", "collega",
+      "280000", "fideiussion", "garanzia", "polizza", "copertura debiti", "cena con s",
+      "chiavi", "telefonata", "accesso", "alibi", "numero non salvato",
+      "sollecito bancario", "tensione coniugale", "collaboratore", "seconda pista",
+      "seconda linea", "altra linea", "altro sospetto"
+    ],
+    "synthKw": [
+      "movente", "manfredi", "cliente", "frode", "minaccia", "telefonata", "contratto anomalo",
+      "280000", "fideiussion", "garanzia", "copertura debiti", "polizza", "stefano", "fratello",
+      "cena con s", "elena", "moglie", "davide", "collega", "chiavi", "accesso", "alibi parziale",
+      "omission", "pista incompleta", "seconda linea", "non conclusiv", "troppe omissioni",
+      "economia", "pressione", "irregolar", "contabil", "movimenti anomali"
+    ],
+    "feedbackT2A": {
+      "MANFREDI": "La linea Manfredi è la più rumorosa: frode, pressione e minaccia convergono.",
+      "STEFANO":  "La linea familiare è meno visibile, ma gli elementi economici personali meritano approfondimento.",
+      "ELENA":    "La linea domestica presenta omissioni e tensioni, ma richiede confronto con gli altri reperti.",
+      "DAVIDE":   "La linea dell'accesso fisico ha una criticità: chi entra per primo può anche alterare la lettura della scena."
+    },
+    "feedbackT2B": {
+      "MANFREDI": "La pista Manfredi presenta il profilo di rischio più alto: frode documentale, pressione e minaccia registrata.",
+      "STEFANO":  "La linea familiare è la meno visibile: debiti, coperture economiche e silenzi convergono.",
+      "ELENA":    "La linea domestica è frammentata, ma l'alibi parziale e le omissioni non possono essere ignorati.",
+      "DAVIDE":   "La linea dell'accesso fisico è la più silenziosa: chi entra per primo controlla la scena."
+    },
+    "finalCopy": {
+      "MANFREDI": "La pista Manfredi resta la più rumorosa del fascicolo: pressione professionale, irregolarità contabili e minacce compongono una linea coerente.<br><br>Ma l'Archivio non chiude un caso sulla linea più rumorosa.",
+      "STEFANO":  "Hai puntato sulla linea familiare. Fideiussione, esposizione debitoria e appuntamento non verificato compongono una pista solida.<br><br>Ma il fascicolo presenta ancora omissioni che attendono risposta.",
+      "ELENA":    "Hai puntato sulla linea domestica. La tensione in casa Marini è reale, l'intervallo non verificato anche.<br><br>Ma le dichiarazioni di Elena rivelano solo una parte della storia.",
+      "DAVIDE":   "Hai puntato sull'accesso fisico. Chiavi, primo ingresso e conoscenza dei fascicoli rendono Davide una presenza rilevante.<br><br>Ma l'Archivio distingue tra chi aveva accesso e chi aveva un motivo abbastanza forte."
+    }
+  },
+
+  "puzzles": [
+    {
+      "id": "P05", "part": "p1",
+      "title": "La pista economica evidente",
+      "scope": "Individuare la linea professionale più rumorosa senza obbligarsi a una sola risposta.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Le pressioni che Andrea stava gestendo non erano solo personali. Guarda dove si concentrano le comunicazioni nei giorni precedenti al 14 novembre." },
+        { "lvl": 2, "cost": 5, "txt": "Un professionista sotto pressione lascia tracce nei documenti che cerca di tenere separati. Cerca il punto in cui una pratica professionale e i movimenti personali si toccano." },
+        { "lvl": 3, "cost": 8, "txt": "C'è una figura esterna che compare nei contratti, nei tabulati e nella pressione degli ultimi giorni. Non è l'unica pista, ma è la più documentata nel fascicolo." }
+      ]
+    },
+    {
+      "id": "P06", "part": "p1",
+      "title": "L'importo ricorrente",
+      "scope": "Notare la cifra che compare in più documenti, in contesti diversi.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "In un fascicolo economico, un numero che ritorna in documenti diversi non è mai casuale. Cerca la cifra che compare più di una volta." },
+        { "lvl": 2, "cost": 5, "txt": "Metti a confronto i documenti bancari personali con quelli di garanzia. La stessa cifra ha più di un contesto." },
+        { "lvl": 3, "cost": 8, "txt": "Quella cifra collega due ambiti distinti dell'indagine. Capire a chi appartiene in ciascun contesto cambia il peso di ogni pista." }
+      ]
+    },
+    {
+      "id": "P07", "part": "p1",
+      "title": "La timeline incompleta",
+      "scope": "Identificare gli elementi temporali del 14 novembre che non trovano ancora conferma.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Non tutte le incongruenze sono economiche. Alcune riguardano gli orari. Guarda cosa succede il 14 novembre dopo le 19:00." },
+        { "lvl": 2, "cost": 5, "txt": "Confronta agenda e tabulati telefonici. C'è almeno un appuntamento e almeno una chiamata che non trovano conferma reciproca." },
+        { "lvl": 3, "cost": 8, "txt": "Una voce nell'agenda indica un incontro programmato. I tabulati mostrano un'interruzione netta nelle comunicazioni. Chi doveva essere lì, quella sera?" }
+      ]
+    },
+    {
+      "id": "P08", "part": "p1",
+      "title": "Le zone d'ombra iniziali",
+      "scope": "Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Non concentrarti solo sulla pista principale. Anche i dettagli secondari servono: definiscono i confini di quello che sai." },
+        { "lvl": 2, "cost": 5, "txt": "Considera chi aveva accesso fisico alla scena e chi conosceva le pratiche dello studio. Anche senza un movente chiaro, questi elementi restano rilevanti." },
+        { "lvl": 3, "cost": 8, "txt": "Due figure laterali — una domestica, una professionale — hanno accesso e conoscenza che nessuna dichiarazione ha ancora spiegato del tutto. Non sono la pista principale, ma non sono nemmeno irrilevanti." }
+      ]
+    },
+    {
+      "id": "P09", "part": "p2",
+      "title": "La minaccia più rumorosa",
+      "scope": "Valutare il peso reale della telefonata e dell'interrogatorio Manfredi.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Una minaccia registrata è una prova di pressione. Chiedi però: pressione verso cosa, e abbastanza da spiegare tutto?" },
+        { "lvl": 2, "cost": 5, "txt": "Leggi la telefonata e poi l'interrogatorio. La stessa persona parla due volte: vedi se il racconto regge." },
+        { "lvl": 3, "cost": 8, "txt": "C'è una contraddizione tra la forza della minaccia e quello che quella linea non riesce ancora a spiegare. Trovare quella contraddizione è la chiave per valutare questa pista." }
+      ]
+    },
+    {
+      "id": "P10", "part": "p2",
+      "title": "La linea familiare",
+      "scope": "Collegare fideiussione, sollecito bancario e dichiarazione di Stefano senza trarre conclusioni affrettate.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "La pressione economica intorno ad Andrea non riguardava solo il suo lavoro. Cerca chi altro era coinvolto in quella stessa esposizione." },
+        { "lvl": 2, "cost": 5, "txt": "Una garanzia firmata, un sollecito bancario e una dichiarazione parziale. Mettili in sequenza e vedi se raccontano la stessa storia." },
+        { "lvl": 3, "cost": 8, "txt": "C'è qualcuno nella cerchia familiare con un legame diretto all'esposizione economica di Andrea e un appuntamento che non ha ancora trovato conferma. Questo non è ancora una prova — ma è una direzione." }
+      ]
+    },
+    {
+      "id": "P11", "part": "p2",
+      "title": "Omissioni laterali",
+      "scope": "Leggere Elena e Davide come zone d'ombra rilevanti, non come false piste.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Una dichiarazione incompleta non è necessariamente una bugia. Ma vale la pena chiedersi cosa non viene detto — e perché." },
+        { "lvl": 2, "cost": 5, "txt": "Guarda separatamente le due figure laterali: una ha un intervallo temporale non verificato, l'altra ha accesso fisico documentato. Cosa dice ciascuna di quell'accesso?" },
+        { "lvl": 3, "cost": 8, "txt": "Entrambe le figure hanno qualcosa che non hanno spiegato del tutto. Non basta per chiudere una pista su di loro — ma basta per non escluderle." }
+      ]
+    },
+    {
+      "id": "P12", "part": "p2",
+      "title": "Ipotesi non conclusiva",
+      "scope": "Costruire una lettura solida per il Terminale 02B: pista principale, limite e linea alternativa.",
+      "hints": [
+        { "lvl": 1, "cost": 2, "txt": "Prima di scrivere la sintesi, chiediti: cosa spiega bene la mia pista principale, e cosa lascia aperto?" },
+        { "lvl": 2, "cost": 5, "txt": "Una lettura investigativa solida dichiara anche i propri limiti. Individua almeno un elemento che la tua pista principale non riesce ancora a chiudere." },
+        { "lvl": 3, "cost": 8, "txt": "Ogni pista spiega qualcosa e lascia qualcosa aperto. La sintesi più solida è quella che riconosce entrambe le cose — e indica dove l'indagine deve ancora andare." }
+      ]
+    }
+  ],
+
+  "people": [],
+
+  "investigationPanel": {
+    "caseStatusOpen": "Indagine aperta",
+    "caseStatusDone": "Atto 2 archiviato",
+    "showActRow": false,
+    "fasePhases": {
+      "initial": "Le prime crepe",
+      "terminalAvailable": "Terminale 02A disponibile",
+      "terminalDone": "Esito disponibile",
+      "actDone": "Atto 2 chiuso"
+    },
+    "terminalLabels": {
+      "validated": "validato",
+      "available": "non validato",
+      "locked": "bloccato"
+    },
+    "attoLabels": {
+      "inProgress": "in corso",
+      "done": "chiuso"
+    },
+    "timelineLabel": "Timeline — 10–15 novembre",
+    "timeline": [
+      { "date": "10/11", "text": "Pressione su pratica Manfredi", "color": "var(--amber)", "bg": "rgba(183,131,59,.12)" },
+      { "date": "12/11", "text": "Telefonata Andrea–Manfredi",   "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)" },
+      { "date": "13/11", "text": "Chiamata a Stefano — non risposta", "color": "var(--text-dim)", "bg": "var(--bg-main)" },
+      { "date": "14/11", "text": "Banca · Davide · <em style=\"font-style:normal;color:var(--amber)\">«Cena con S.»</em>", "color": "var(--amber)", "bg": "rgba(183,131,59,.12)" },
+      { "date": "15/11", "text": "Rinvenimento — fascicolo aperto", "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)" }
+    ]
+  },
+
+  "esito": {
+    "sectionId": "esito",
+    "navLabel": "Esito Atto 2",
+    "mNavLabel": "Esito",
+    "eyebrow": "Risultato — Atto 2",
+    "title": "Esito Finale",
+    "finalTag": "ANALISI ECONOMICA CONCLUSA",
+    "scoreClassLabel": "Classificazione",
+    "breakdownLabels": {
+      "hintCount": "Aiuti consultati",
+      "hintCountInitial": "0 richieste",
+      "hintCountUnit": "richieste",
+      "hintCost": "Penalità supporto Archivista",
+      "errCost": "Penalità errori Terminale"
+    },
+    "staticHeadline": "Il fascicolo non indica ancora un colpevole.",
+    "bodyTemplate": "{bySospetto}",
+    "bodyFromTerminal": "t2b",
+    "bodyBySospettoMap": "finalCopy",
+    "ipotesiBox": {
+      "label": "Elementi non allineati — ancora aperti",
+      "text": "Un importo che ricorre fuori dalla pratica Manfredi.<br>Una garanzia familiare non valutata.<br>Un alibi domestico con un intervallo scoperto.<br>Un collaboratore con accesso diretto alla scena.<br>Una iniziale rimasta senza verifica.<br><br>Il fascicolo non indica ancora un colpevole. Indica troppe omissioni."
+    },
+    "tiers": [
+      { "min": 90, "name": "Archivista in formazione", "headline": "—", "narrative": "—" },
+      { "min": 75, "name": "Investigatore",            "headline": "—", "narrative": "—" },
+      { "min": 60, "name": "Collaboratore",            "headline": "—", "narrative": "—" },
+      { "min":  0, "name": "Osservatore esterno",      "headline": "—", "narrative": "—" }
+    ],
+    "finalTease": {
+      "label": "Accesso — Atto III",
+      "text": "La pista economica è tracciata. Ma ogni linea lascia in ombra qualcosa.<br><br>L'Atto III ti mette davanti a quello che il fascicolo non ha detto apertamente: il dettaglio che è stato lasciato fuori dalla prima indagine.<br><br>Quando sarà pronto, acceda all'Atto III.",
+      "firm": "— L'Archivista · il fascicolo resta aperto"
+    },
+    "actions": [
+      { "label": "Continua → Atto III", "href": "atto3.html", "variant": "primary" },
+      { "label": "Torna al briefing", "section": "intro", "variant": "secondary" }
+    ],
+    "bottomReset": "Azzera e ricomincia"
+  },
+
+  "supporto": {
+    "sectionId": "supporto",
+    "navLabel": "Supporto Archivista",
+    "mNavLabel": "Supporto",
+    "eyebrow": "Sistema di supporto — Atto 2",
+    "title": "Supporto Archivista",
+    "subtitle": "Consulta con prudenza",
+    "intro1": "Ogni richiesta riduce il tuo Indice Investigativo. <strong>L1 → −2 pt · L2 → −5 pt · L3 → −8 pt</strong> (cumulativi per puzzle — massimo −15 per puzzle).",
+    "intro2": "Gli aiuti dell'Archivista non indicano un colpevole. Indicano un metodo di confronto.",
+    "groups": [
+      { "part": "p1", "label": "ATTO II — PARTE 1 · LE PRIME CREPE", "badge": "DISPONIBILE", "badgeClass": "unlocked" },
+      { "part": "p2", "label": "ATTO II — PARTE 2 · ALTA SENSIBILITÀ", "unlockedAfterTerminal": "t2a" }
+    ]
+  },
+
+  "resetConfirm": {
+    "title": "Azzera Atto II?",
+    "description": "Tutti i progressi dell'Atto II verranno cancellati — documenti, hint ed errori. Il punteggio globale tornerà al valore precedente all'Atto II.",
+    "buttonLabel": "Conferma",
+    "cancelLabel": "Annulla",
+    "doneToast": "Sessione azzerata"
+  }
+}
