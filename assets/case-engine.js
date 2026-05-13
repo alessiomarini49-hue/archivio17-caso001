@@ -118,6 +118,15 @@ function saveState(){
     Object.entries(state.terminals).forEach(([tid, t]) => {
       updates[tid + '_completed'] = !!t.completed;
     });
+    // Casella3 (atto3): mappa state.plugins.casella3 -> colonne email_* del backend
+    // (whitelist in vault-seventeen/functions/updateSession). emailsOpened resta locale:
+    // nessuna colonna dedicata e ininfluente sulla progressione.
+    const c3 = state.plugins && state.plugins.casella3;
+    if(c3){
+      if(typeof c3.attempts === 'number')  updates.email_attempts = c3.attempts;
+      if(typeof c3.unlocked === 'boolean') updates.email_unlocked = c3.unlocked;
+      if(typeof c3.blocked  === 'boolean') updates.email_blocked  = c3.blocked;
+    }
     _scheduleSyncToServer(updates);
   }
 }
@@ -989,6 +998,14 @@ function mergeServerState(gs){
   const penEKey = 'penalty_act' + config.actNum + '_errors';
   if(typeof gs[penHKey] === 'number') state.hintPenaltyTotal = gs[penHKey];
   if(typeof gs[penEKey] === 'number') state.errorsTerminal   = Math.round(gs[penEKey] / 10);
+  // Casella3 (atto3): merge dalle colonne email_* del backend in state.plugins.casella3.
+  // init() del plugin patcha i campi mancanti dopo il merge.
+  if(typeof gs.email_attempts === 'number' || typeof gs.email_unlocked === 'boolean' || typeof gs.email_blocked === 'boolean'){
+    state.plugins.casella3 = state.plugins.casella3 || {};
+    if(typeof gs.email_attempts === 'number')  state.plugins.casella3.attempts = gs.email_attempts;
+    if(typeof gs.email_unlocked === 'boolean') state.plugins.casella3.unlocked = gs.email_unlocked;
+    if(typeof gs.email_blocked  === 'boolean') state.plugins.casella3.blocked  = gs.email_blocked;
+  }
   saveState();
 }
 function bootApp(){
