@@ -78,6 +78,21 @@ let state = defaultState();
 let _storageWarned = false;
 let _toastTimer = null;
 let _lastFocusedBeforeViewer = null;
+let _syncTimer = null;
+
+// Debounce cloud sync: l'apertura rapida di più documenti coalescenza in una sola POST.
+function _scheduleSyncToServer(updates){
+  if(_syncTimer) clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(() => {
+    _syncTimer = null;
+    if(!_sessionToken || !_codeId) return;
+    fetch(API_BASE + '/updateSession', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
+    }).catch(()=>{});
+  }, 600);
+}
 
 // ---------- STORAGE ----------
 function saveState(){
@@ -89,7 +104,7 @@ function saveState(){
       _storageWarned = true;
     }
   }
-  // Cloud sync (fire-and-forget)
+  // Cloud sync (debounced, fire-and-forget)
   if(_sessionToken && _codeId){
     const allDocs = [];
     Object.values(state.docsOpened).forEach(arr => arr.forEach(id => allDocs.push(id)));
@@ -103,11 +118,7 @@ function saveState(){
     Object.entries(state.terminals).forEach(([tid, t]) => {
       updates[tid + '_completed'] = !!t.completed;
     });
-    fetch(API_BASE + '/updateSession', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
-    }).catch(()=>{});
+    _scheduleSyncToServer(updates);
   }
 }
 function loadState(){
@@ -905,12 +916,16 @@ function doAccess(){
   btn.textContent = 'Verifica...';
   const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0, 32);
 
+  const abortCtl = new AbortController();
+  const timeoutId = setTimeout(() => abortCtl.abort(), 10000);
+
   fetch(API_BASE + '/validateCode', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: inp, fingerprint: fp })
+    body: JSON.stringify({ code: inp, fingerprint: fp }),
+    signal: abortCtl.signal
   })
-  .then(r => r.json())
+  .then(r => { clearTimeout(timeoutId); return r.json(); })
   .then(d => {
     btn.disabled = false;
     btn.textContent = data.access.buttonLabel;
@@ -926,10 +941,15 @@ function doAccess(){
       showAccessError((d && d.error) || 'Codice non valido.');
     }
   })
-  .catch(() => {
+  .catch((e) => {
+    clearTimeout(timeoutId);
     btn.disabled = false;
     btn.textContent = data.access.buttonLabel;
-    showAccessError('Errore di connessione. Riprova.');
+    if(e && e.name === 'AbortError'){
+      showAccessError('Timeout connessione. Riprova.');
+    } else {
+      showAccessError('Errore di connessione. Riprova.');
+    }
   });
 }
 function showAccessError(msg){
@@ -2007,12 +2027,15 @@ async function boot(){
     if(formEl)    formEl.style.display    = 'none';
 
     const fp = btoa([navigator.userAgent, screen.width, screen.height, navigator.language].join('|')).slice(0, 32);
+    const abortCtl = new AbortController();
+    const timeoutId = setTimeout(() => abortCtl.abort(), 8000);
     fetch(API_BASE + '/validateCode', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: auth.code, session_token: auth.token, fingerprint: fp })
+      body: JSON.stringify({ code: auth.code, session_token: auth.token, fingerprint: fp }),
+      signal: abortCtl.signal
     })
-    .then(r => r.json())
+    .then(r => { clearTimeout(timeoutId); return r.json(); })
     .then(d => {
       if(d && d.ok){
         _sessionToken = d.session_token;
@@ -2029,7 +2052,8 @@ async function boot(){
       }
     })
     .catch(() => {
-      // Rete non disponibile — entra con stato locale
+      // Rete non disponibile o timeout (8s) — entra con stato locale
+      clearTimeout(timeoutId);
       _sessionToken = auth.token;
       _accessCode   = auth.code;
       _codeId       = auth.codeId || null;
