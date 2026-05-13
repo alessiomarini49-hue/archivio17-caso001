@@ -701,7 +701,7 @@
     "intro2": "Gli aiuti dell'Archivista non indicano un colpevole. Indicano un metodo di confronto.",
     "groups": [
       { "part": "p1", "label": "ATTO II — PARTE 1 · LE PRIME CREPE", "badge": "DISPONIBILE", "badgeClass": "unlocked" },
-      { "part": "p2", "label": "ATTO II — PARTE 2 · ALTA SENSIBILITÀ", "badge": "BLOCCATO", "badgeClass": "locked" }
+      { "part": "p2", "label": "ATTO II — PARTE 2 · ALTA SENSIBILITÀ", "unlockedAfterTerminal": "t2a" }
     ]
   },
 
