@@ -22,6 +22,7 @@
 //   - globalScore(), globalClassification(score)
 //   - updateGlobalFromActState(actNum, hintPenalty, errorPenalty)
 //   - markActDone(actNum)
+//   - resetsLeft(), canReset(), consumeReset()
 //   - getCloudAuth(actNum) → { token, codeId, code } | null
 //   - setCloudAuth(actNum, { token, codeId, code })
 //   - clearCloudAuth(actNum)
@@ -108,7 +109,9 @@ function defaultGlobal(){
     act1_done: false,
     act2_done: false,
     act3_done: false,
-    locked: false
+    locked: false,
+    resets_used: 0,
+    resets_max: 2
   };
 }
 
@@ -123,7 +126,9 @@ function loadGlobal(){
     ...def, ...p,
     penalty_act1: { ...def.penalty_act1, ...(p.penalty_act1 || {}) },
     penalty_act2: { ...def.penalty_act2, ...(p.penalty_act2 || {}) },
-    penalty_act3: { ...def.penalty_act3, ...(p.penalty_act3 || {}) }
+    penalty_act3: { ...def.penalty_act3, ...(p.penalty_act3 || {}) },
+    resets_used: typeof p.resets_used === 'number' ? p.resets_used : 0,
+    resets_max:  typeof p.resets_max  === 'number' ? p.resets_max  : 2
   };
 }
 
@@ -159,6 +164,23 @@ function markActDone(actNum){
   _global['act' + actNum + '_done'] = true;
   if(actNum === 3) _global.locked = true;
   _global.global_score = globalScore();
+  saveGlobal();
+}
+
+// ----------------------------------------------------------------
+// RESET COUNTER (limite reset sessione per giocatore)
+// ----------------------------------------------------------------
+function resetsLeft(){
+  const used = _global.resets_used || 0;
+  const max  = _global.resets_max  || 2;
+  return Math.max(0, max - used);
+}
+function canReset(){
+  return resetsLeft() > 0;
+}
+function consumeReset(){
+  const max = _global.resets_max || 2;
+  _global.resets_used = Math.min((_global.resets_used || 0) + 1, max);
   saveGlobal();
 }
 
