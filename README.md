@@ -8,7 +8,7 @@ Esperienza investigativa narrativa: il giocatore consulta documenti d'archivio (
 - **Dati narrativi** in JSON (`data/atto{1,2,3}.json`)
 - **Logica condivisa** in `assets/case-app.js` (scoring globale, storage unificato)
 - **Configurazione** in `assets/config.js` (APP_ID, API_BASE)
-- **Stile condiviso** in `assets/case-app.css` (atto1/index)
+- **Stile condiviso** in `assets/case-app.css` (tutti gli atti, scoping via `body.skin-classic` / `body.skin-rich`)
 - **Stato e progresso** in `localStorage` (chiave unificata `a17_session`)
 - **Sincronizzazione cloud** opzionale con backend Base44
 - **Deploy** come sito statico su GitHub Pages (`.nojekyll`)
@@ -25,7 +25,7 @@ archivio17-caso001/
 ├── assets/
 │   ├── config.js           ← APP_ID, API_BASE (single source of truth)
 │   ├── case-app.js         ← scoring globale + storage a17_session + migrazione
-│   └── case-app.css        ← CSS condiviso atto1/index
+│   └── case-app.css        ← CSS condiviso tutti gli atti (skin classic + rich)
 ├── data/
 │   ├── atto1.json          ← documenti, puzzle, hint, validazione Atto I
 │   ├── atto2.json          ← documenti, puzzle, sospetti, feedback Atto II
@@ -64,7 +64,6 @@ Già configurato per **GitHub Pages**:
 
 | Codice | Dove |
 |---|---|
-| `A17-BETA` | (da configurare in `LOCAL_CODES` di index.html — attualmente `A17-ATTO1`, `A17-DEMO`) |
 | `A17-ATTO1` | Codice locale Atto I — bypassa backend |
 | `A17-DEMO` | Codice demo Atto I — bypassa backend |
 
@@ -104,9 +103,9 @@ Una sola chiave principale in `localStorage`: **`a17_session`**
 ```
 
 Chiavi gameplay per atto (mantenute separate per isolamento):
-- `a17_atto1_v3` — stato gameplay Atto I
-- `a17_atto2_v2` — stato gameplay Atto II
-- `a17_atto3_v1` — stato gameplay Atto III
+- `a17_atto1_v3` — stato gameplay Atto I (`storageVersion: 3`)
+- `a17_atto2_v2` — stato gameplay Atto II (`storageVersion: 2`)
+- `a17_atto3_v2` — stato gameplay Atto III (`storageVersion: 2`)
 
 **Migrazione automatica**: al primo caricamento dopo l'aggiornamento, `case-app.js` migra le vecchie chiavi (`a17_global_v1`, `a17_atto*_session_token`, ecc.) in `a17_session` e le cancella. Trasparente per il giocatore.
 
