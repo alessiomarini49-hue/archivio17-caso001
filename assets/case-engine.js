@@ -26,6 +26,7 @@ const config = {
   localCodes: [],
   validators: {},
   sectionPlugins: {},
+  skin: 'classic',  // 'classic' (atto1/index, CSS via case-app.css) | 'rich' (atto2/atto3, CSS inline nel HTML)
   ...userConfig
 };
 if(!config.dataUrl)    throw new Error('[case-engine] config.dataUrl mancante');
@@ -201,6 +202,23 @@ function setFieldState(termPrefix, fieldId, st, msg){
   }
   if(fbEl){ fbEl.textContent = msg || ''; fbEl.className = 'terminal-feedback-line ' + (st || ''); }
 }
+function interp(template, ctx){
+  if(!template) return '';
+  return String(template).replace(/\{(\w+)\}/g, (_, k) => (ctx && ctx[k] != null ? ctx[k] : ''));
+}
+function detectSospetto(text, dicts){
+  const v = prep(text);
+  if(!v) return null;
+  const sospetti = (dicts && dicts.sospetti) || {};
+  for(const key in sospetti){
+    if((sospetti[key] || []).some(a => v.includes(prep(a)))) return key;
+  }
+  const aliases = (dicts && dicts.sospettiAlias) || {};
+  for(const alias in aliases){
+    if(v.includes(prep(alias))) return aliases[alias];
+  }
+  return null;
+}
 
 // ---------- DOM BUILDERS ----------
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
@@ -367,31 +385,83 @@ function buildIntroSection(){
 
 function buildFascicoloSection(p){
   const s = p.section;
+  const rich = config.skin === 'rich';
+
+  // Promemoria card opzionale (es. parte2 atto2 dopo t2a)
+  let promemoriaHtml = '';
+  if(p.promemoria){
+    const pm = p.promemoria;
+    const paragraphs = (pm.paragraphs || []).map(x => `<p>${x}</p>`).join('');
+    promemoriaHtml = `
+    <div class="promemoria-card anim-in">
+      <div class="promemoria-label">${esc(pm.label)}</div>
+      <div class="promemoria-text">${paragraphs}</div>
+      ${pm.sig ? `<div class="promemoria-sig">${esc(pm.sig)}</div>` : ''}
+    </div>`;
+  }
+
+  // section-desc opzionale (può essere assente)
+  const sectionDescHtml = s.desc ? `<p class="section-desc">${esc(s.desc)}</p>` : '';
+
+  // Locked sibling banner (es. parte1 atto2: "Reperti ad alta sensibilità bloccati")
+  let lockedSiblingHtml = '';
+  if(p.lockedSiblingBanner){
+    const lsb = p.lockedSiblingBanner;
+    lockedSiblingHtml = `
+    <div class="locked-banner" id="locked-sibling-${esc(p.id)}" style="margin-top:1.5rem">
+      ${lsb.icon ? `<span class="locked-banner-icon">${esc(lsb.icon)}</span>` : ''}
+      <span class="locked-banner-text">${lsb.text}</span>
+    </div>`;
+  }
+
+  // Meta row: per skin 'rich' è opzionale (atto2 omette la riga Caso in p2)
+  const metaItems = [];
+  if(p.showCaseInMeta !== false){
+    metaItems.push(`<div class="fascicolo-meta-item">Caso <span class="val">${esc(data.caseRef)}</span></div>`);
+  }
+  metaItems.push(`<div class="fascicolo-meta-item">Fase <span class="val">${esc(s.metaPhase)}</span></div>`);
+  metaItems.push(`<div class="fascicolo-meta-item">Reperti <span class="val"><span id="docs-count-${esc(p.id)}">0</span> / ${p.totalDocs}</span></div>`);
+  const metaHtml = metaItems.join('<div class="fascicolo-meta-sep"></div>');
+
+  // Unlock banner / unlock bar (variante per skin)
+  let unlockHtml = '';
+  if(p.unlockBar){
+    // Skin rich: unlock bar con CTA
+    const ub = p.unlockBar;
+    unlockHtml = `
+    <div class="terminal-unlock-bar" id="terminal-unlock-banner-${esc(p.id)}" style="margin-top:1.5rem;display:none">
+      <span class="terminal-unlock-msg">${esc(ub.msg)}</span>
+      <button class="btn-primary" data-section="${esc(ub.ctaTarget)}">${esc(ub.ctaLabel)}</button>
+    </div>`;
+  } else {
+    // Skin classic: banner semplice
+    unlockHtml = `
+    <div class="unlock-banner" id="terminal-unlock-banner-${esc(p.id)}">
+      <div class="unlock-banner-dot"></div>
+      <span class="unlock-banner-text">${esc(s.unlockBannerText)}</span>
+    </div>`;
+  }
+
+  const docsSectionLabelHtml = s.docsSectionLabel ? `<div class="docs-section-label">${esc(s.docsSectionLabel)}</div>` : '';
+  const ctaHtml = p.ctaNext && !p.unlockBar ? `<div style="margin-top:1.75rem"><button class="btn-primary" data-section="${esc(p.ctaNext.section)}">${esc(p.ctaNext.label)}</button></div>` : '';
+
   return `
 <div class="app-section" id="section-${esc(p.sectionId)}">
   <div class="section-wrapper">
+    ${promemoriaHtml}
     <div class="section-header">
       <div class="section-eyebrow">${esc(s.eyebrow)}</div>
       <h2 class="section-title">${esc(s.title)}</h2>
       <div class="section-subtitle">${esc(s.subtitle)}</div>
-      <p class="section-desc">${esc(s.desc)}</p>
+      ${sectionDescHtml}
     </div>
-    <div class="fascicolo-meta">
-      <div class="fascicolo-meta-item">Caso <span class="val">${esc(data.caseRef)}</span></div>
-      <div class="fascicolo-meta-sep"></div>
-      <div class="fascicolo-meta-item">Fase <span class="val">${esc(s.metaPhase)}</span></div>
-      <div class="fascicolo-meta-sep"></div>
-      <div class="fascicolo-meta-item">Reperti <span class="val"><span id="docs-count-${esc(p.id)}">0</span> / ${p.totalDocs}</span></div>
-    </div>
-    <div class="unlock-banner" id="terminal-unlock-banner-${esc(p.id)}">
-      <div class="unlock-banner-dot"></div>
-      <span class="unlock-banner-text">${esc(s.unlockBannerText)}</span>
-    </div>
-    <div class="docs-section-label">${esc(s.docsSectionLabel)}</div>
+    <div class="fascicolo-meta">${metaHtml}</div>
+    ${rich ? '' : unlockHtml}
+    ${docsSectionLabelHtml}
     <div class="docs-grid" id="docs-grid-${esc(p.id)}"></div>
-    <div style="margin-top:1.75rem">
-      <button class="btn-primary" data-section="${esc(p.ctaNext.section)}">${esc(p.ctaNext.label)}</button>
-    </div>
+    ${lockedSiblingHtml}
+    ${rich ? unlockHtml : ''}
+    ${ctaHtml}
   </div>
 </div>`;
 }
@@ -399,30 +469,42 @@ function buildFascicoloSection(p){
 function buildTerminaleSection(p){
   const t = p.terminal;
   const v = t.validator || {};
-  const fields = (v.fields || []).map(f => `
+  const rich = config.skin === 'rich';
+  const fields = (v.fields || []).map(f => {
+    const inputCtrl = (f.inputType === 'text')
+      ? `<input type="text" class="terminal-input" id="${esc(t.id)}-input-${f.id}" placeholder="${esc(f.placeholder||'')}" autocomplete="off" spellcheck="false">`
+      : `<textarea class="${rich ? 'terminal-textarea' : 'terminal-input'}" id="${esc(t.id)}-input-${f.id}" rows="${f.rows||2}" placeholder="${esc(f.placeholder||'')}"></textarea>`;
+    return `
       <div class="terminal-field" id="${esc(t.id)}-field-${f.id}">
         <div class="terminal-field-head">
           <div class="terminal-field-id">${esc(f.label)}</div>
           <div class="terminal-field-state pending" id="${esc(t.id)}-state-${f.id}">In attesa</div>
         </div>
         <div class="terminal-q">${esc(f.question)}</div>
-        <textarea class="terminal-input" id="${esc(t.id)}-input-${f.id}" rows="${f.rows||2}" placeholder="${esc(f.placeholder||'')}"></textarea>
+        ${inputCtrl}
         <div class="terminal-feedback-line" id="${esc(t.id)}-fb-${f.id}"></div>
-      </div>`).join('');
+      </div>`;
+  }).join('');
 
-  return `
-<div class="app-section" id="section-${esc(t.sectionId)}">
-  <div class="section-wrapper">
-    <div class="section-header">
-      <div class="section-eyebrow">${esc(t.section.eyebrow)}</div>
-      <h2 class="section-title">${esc(t.section.title)}</h2>
-      <div class="section-subtitle">${esc(t.section.subtitle)}</div>
-    </div>
-    <div id="${esc(t.id)}-lock-banner" class="lock-banner" style="display:none">
-      <strong>${esc(t.lockBanner.title)}</strong>
-      ${esc(t.lockBanner.desc)}
-    </div>
-    <div id="${esc(t.id)}-form" style="display:none">
+  const sectionDesc = t.section.desc ? `<p class="section-desc">${esc(t.section.desc)}</p>` : '';
+
+  const panelInner = rich ? `
+      <div class="terminal-frame">
+        <div class="terminal-topbar">
+          <div class="terminal-pulse"></div>
+          <div class="terminal-sys-label">${esc(t.systemLabel || (t.panel && t.panel.eyebrow) || t.navLabel)}</div>
+        </div>
+        <div class="terminal-body">
+          <div class="terminal-fields">${fields}</div>
+          <div class="terminal-global-feedback" id="${esc(t.id)}-global-fb"></div>
+          <div class="terminal-confirmed" id="${esc(t.id)}-confirmed">
+            <div class="terminal-confirmed-label">${esc(t.confirmedLabel)}</div>
+            <div class="terminal-confirmed-msg" id="${esc(t.id)}-confirmed-msg">${esc(t.confirmedMsg)}</div>
+          </div>
+          <button class="terminal-submit" id="${esc(t.id)}-submit" data-submit-terminal="${esc(t.id)}">${esc(t.submitLabel)}</button>
+        </div>
+      </div>
+  ` : `
       <div class="terminal-panel">
         <div class="terminal-eyebrow">${esc(t.panel.eyebrow)}</div>
         <div class="terminal-desc">${t.panel.desc}</div>
@@ -434,7 +516,22 @@ function buildTerminaleSection(p){
           <div class="terminal-confirmed-msg" id="${esc(t.id)}-confirmed-msg">${esc(t.confirmedMsg)}</div>
         </div>
       </div>
+  `;
+
+  return `
+<div class="app-section" id="section-${esc(t.sectionId)}">
+  <div class="section-wrapper">
+    <div class="section-header">
+      <div class="section-eyebrow">${esc(t.section.eyebrow)}</div>
+      <h2 class="section-title">${esc(t.section.title)}</h2>
+      <div class="section-subtitle">${esc(t.section.subtitle)}</div>
+      ${sectionDesc}
     </div>
+    <div id="${esc(t.id)}-lock-banner" class="lock-banner" style="display:none">
+      <strong>${esc(t.lockBanner.title)}</strong>
+      ${esc(t.lockBanner.desc)}
+    </div>
+    <div id="${esc(t.id)}-form" style="display:none">${panelInner}</div>
   </div>
 </div>`;
 }
@@ -449,10 +546,44 @@ function buildExtraSections(){
 
 function buildEsitoSection(){
   const e = data.esito;
+  const rich = config.skin === 'rich';
   const actions = (e.actions || []).map(a => {
     if(a.href) return `<a href="${esc(a.href)}" class="btn-${a.variant==='primary'?'primary':'secondary'}">${esc(a.label)}</a>`;
     return `<button class="btn-${a.variant==='primary'?'primary':'secondary'}" data-section="${esc(a.section)}">${esc(a.label)}</button>`;
   }).join('');
+
+  // Score-breakdown: skin rich usa label differenti (es. "Aiuti consultati" / "0 richieste")
+  const lbl = e.breakdownLabels || {};
+  const breakdownHtml = `
+      <div class="bd-row"><span>Punteggio base</span><span class="bd-val" style="color:var(--success-text)">100</span></div>
+      <div class="bd-row"><span>${esc(lbl.hintCount || 'Supporti richiesti')}</span><span class="bd-val" id="esito-hint-count">${esc(lbl.hintCountInitial || '0 livelli')}</span></div>
+      <div class="bd-row"><span>${esc(lbl.hintCost || 'Penalità supporti')}</span><span class="bd-val penalty" id="esito-hint-cost">0</span></div>
+      <div class="bd-row"><span>${esc(lbl.errCost || 'Penalità errori Terminale')}</span><span class="bd-val penalty" id="esito-err-cost">0</span></div>
+      <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>`;
+
+  // Headline statica (rich) o dinamica per tier (classic)
+  const headlineHtml = e.staticHeadline
+    ? `<div class="final-headline">${esc(e.staticHeadline)}</div>`
+    : `<div class="final-headline" id="esito-final-headline">—</div>`;
+
+  // Body: skin rich (final-body branched) vs classic (final-narrative per tier)
+  const bodyHtml = e.bodyTemplate
+    ? `<div class="final-body" id="esito-narrative">—</div>`
+    : `<div class="final-narrative">
+        <div class="final-narrative-label">${esc(e.narrativeLabel || '')}</div>
+        <div class="final-narrative-text" id="esito-narrative">—</div>
+      </div>`;
+
+  // Ipotesi box opzionale (atto2: elementi non allineati)
+  let ipotesiHtml = '';
+  if(e.ipotesiBox){
+    ipotesiHtml = `
+      <div class="final-ipotesi-box">
+        <div class="final-ipotesi-label">${esc(e.ipotesiBox.label)}</div>
+        <div class="final-ipotesi-text">${e.ipotesiBox.text}</div>
+      </div>`;
+  }
+
   return `
 <div class="app-section" id="section-${esc(e.sectionId)}">
   <div class="section-wrapper">
@@ -460,28 +591,20 @@ function buildEsitoSection(){
       <div class="section-eyebrow">${esc(e.eyebrow)}</div>
       <h2 class="section-title">${esc(e.title)}</h2>
     </div>
-    <div class="score-card">
+    <div class="score-card${rich ? ' anim-in' : ''}">
       <div class="score-main-panel">
-        <div class="score-classlabel">Indice investigativo</div>
+        <div class="score-classlabel">${esc(e.scoreClassLabel || 'Indice investigativo')}</div>
         <div class="score-number" id="esito-score">100</div>
         <div class="score-classname" id="esito-classname">—</div>
       </div>
-      <div class="score-breakdown">
-        <div class="bd-row"><span>Punteggio base</span><span class="bd-val" style="color:var(--success-text)">100</span></div>
-        <div class="bd-row"><span>Supporti richiesti</span><span class="bd-val" id="esito-hint-count">0 livelli</span></div>
-        <div class="bd-row"><span>Penalità supporti</span><span class="bd-val penalty" id="esito-hint-cost">0</span></div>
-        <div class="bd-row"><span>Penalità errori Terminale</span><span class="bd-val penalty" id="esito-err-cost">0</span></div>
-        <div class="bd-row total"><span>Indice investigativo finale</span><span class="bd-val" id="esito-total">100</span></div>
-      </div>
+      <div class="score-breakdown">${breakdownHtml}</div>
     </div>
     <div class="final-scene" id="esito-final-scene">
       <div class="final-tag">${esc(e.finalTag)}</div>
-      <div class="final-headline" id="esito-final-headline">—</div>
+      ${headlineHtml}
       <div class="final-divider"></div>
-      <div class="final-narrative">
-        <div class="final-narrative-label">${esc(e.narrativeLabel)}</div>
-        <div class="final-narrative-text" id="esito-narrative">—</div>
-      </div>
+      ${bodyHtml}
+      ${ipotesiHtml}
       <div class="final-divider"></div>
       <div class="final-tease">
         <div class="final-tease-label">${esc(e.finalTease.label)}</div>
@@ -490,6 +613,7 @@ function buildEsitoSection(){
       </div>
       <div class="final-actions">${actions}</div>
     </div>
+    ${e.bottomReset ? `<div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap"><button class="btn-ghost" data-action="reset-confirm">${esc(e.bottomReset)}</button></div>` : ''}
   </div>
 </div>`;
 }
@@ -518,10 +642,21 @@ function buildInvPanel(){
     `<div class="inv-status-row"><span class="inv-status-label">${esc(p.label)}</span><span class="inv-status-val" id="inv-person-${esc(p.id)}">${p.alwaysVisible ? esc(p.role) : '—'}</span></div>`
   ).join('');
   const termRows = data.parts.map(p =>
-    `<div class="inv-status-row"><span class="inv-status-label">${esc(p.terminal.navLabel)}</span><span class="inv-status-val" id="inv-${esc(p.terminal.id)}">${esc(data.investigationPanel.terminalLabels.available === 'disponibile' ? 'non validato' : '')}non validato</span></div>`
+    `<div class="inv-status-row"><span class="inv-status-label">${esc(p.terminal.navLabel)}</span><span class="inv-status-val" id="inv-${esc(p.terminal.id)}">non validato</span></div>`
   ).join('');
   const docsRows = data.parts.map(p =>
     `<div class="inv-status-row"><span class="inv-status-label">${data.parts.length > 1 ? esc(p.mNavLabel) + ' — Reperti' : 'Reperti'}</span><span class="inv-status-val" id="inv-docs-${esc(p.id)}">0 / ${p.totalDocs}</span></div>`
+  ).join('');
+  const showActRow = data.investigationPanel.showActRow !== false;
+  const showPeopleSection = (data.people || []).length > 0;
+  const timeline = data.investigationPanel.timeline || [];
+  const showTimeline = timeline.length > 0;
+  const timelineRowHtml = timeline.map(ev =>
+    `<div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+      <div style="width:11px;height:11px;border-radius:50%;border:1px solid ${ev.color || 'var(--text-dim)'};background:${ev.bg || 'var(--bg-main)'};flex-shrink:0;margin-top:3px"></div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">${esc(ev.date)}</div>
+      <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">${ev.text}</div>
+    </div>`
   ).join('');
   return `
 <aside class="investigation-panel" aria-label="Stato del fascicolo">
@@ -550,17 +685,23 @@ function buildInvPanel(){
     <div class="inv-label">Progressione</div>
     ${docsRows}
     ${termRows}
-    <div class="inv-status-row"><span class="inv-status-label">${esc(data.headerBadge)}</span><span class="inv-status-val blocked" id="inv-atto">${esc(data.investigationPanel.attoLabels.inProgress)}</span></div>
+    ${showActRow ? `<div class="inv-status-row"><span class="inv-status-label">${esc(data.headerBadge)}</span><span class="inv-status-val blocked" id="inv-atto">${esc(data.investigationPanel.attoLabels.inProgress)}</span></div>` : ''}
   </div>
   <div class="inv-section">
     <div class="inv-label">Dati sessione</div>
     <div class="inv-status-row"><span class="inv-status-label">Supporti richiesti</span><span class="inv-status-val" id="inv-hints-used">0 livelli</span></div>
     <div class="inv-status-row"><span class="inv-status-label">Errori terminale</span><span class="inv-status-val" id="inv-errors">0</span></div>
   </div>
+  ${showPeopleSection ? `
   <div class="inv-section">
     <div class="inv-label">Persone coinvolte</div>
     ${peopleRows}
-  </div>
+  </div>` : ''}
+  ${showTimeline ? `
+  <div class="inv-section">
+    <div class="inv-label">${esc(data.investigationPanel.timelineLabel || 'Timeline')}</div>
+    <div style="display:flex;flex-direction:column;gap:0">${timelineRowHtml}</div>
+  </div>` : ''}
 </aside>`;
 }
 
@@ -651,7 +792,7 @@ function buildViewerOverlay(){
 function buildResetConfirm(){
   const r = data.resetConfirm;
   return `
-<div id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+<div id="confirm-overlay" class="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
   <div class="confirm-box">
     <h3 id="confirm-title">${esc(r.title)}</h3>
     <p>${esc(r.description)}</p>
@@ -826,9 +967,25 @@ function showSection(id, silent){
   document.body.classList.remove('no-scroll');
 
   if(!silent){
-    // Gating dei terminali per requiredDocs
+    // Gating della part bloccata da terminale precedente (es. parte2 attende t2a)
+    const partForSection = data.parts.find(p => p.sectionId === id);
+    if(partForSection && partForSection.lockedUntilTerminal){
+      const blocker = state.terminals[partForSection.lockedUntilTerminal] || {};
+      if(!blocker.completed){
+        showToast(partForSection.lockedToast || ('Completa il terminale precedente per accedere a ' + partForSection.navLabel));
+        return;
+      }
+    }
+    // Gating del terminale che dipende da un'altra parte (es. terminale2b attende t2a)
     const partForTerm = data.parts.find(p => p.terminal.sectionId === id);
     if(partForTerm){
+      if(partForTerm.lockedUntilTerminal){
+        const blocker = state.terminals[partForTerm.lockedUntilTerminal] || {};
+        if(!blocker.completed){
+          showToast(partForTerm.lockedToast || ('Completa il terminale precedente prima di accedere al ' + partForTerm.terminal.navLabel));
+          return;
+        }
+      }
       const opened = state.docsOpened[partForTerm.id] || [];
       const term = partForTerm.terminal;
       const tState = state.terminals[term.id] || {};
@@ -1117,8 +1274,7 @@ function submitTerminal(termId){
   if(v.type === 'min-matches'){
     result = runMinMatchesValidator(term, raws);
   } else if(v.type === 'sospetto-branch'){
-    showToast('Validator sospetto-branch non ancora implementato', 'error');
-    return;
+    result = runSospettoBranchValidator(term, raws);
   } else if(v.type && v.type.startsWith('custom:')){
     const name = v.type.slice('custom:'.length);
     const fn = config.validators[name];
@@ -1136,6 +1292,7 @@ function submitTerminal(termId){
   const ts = state.terminals[term.id] = state.terminals[term.id] || { completed: false, errors: 0, fb: null };
   ts.errors = (ts.errors || 0) + Math.min(result.errors, fields.length);
   state.errorsTerminal += Math.min(result.errors, fields.length);
+  if(result.sospetto) ts.sospetto = result.sospetto;
   saveState();
   updateUI();
 
@@ -1148,14 +1305,44 @@ function submitTerminal(termId){
       if(typeof markActDone === 'function') markActDone(config.actNum);
     }
     document.getElementById(term.id + '-submit').disabled = true;
+    const subBtn = document.getElementById(term.id + '-submit');
+    if(subBtn && term.hideSubmitOnSuccess) subBtn.style.display = 'none';
     document.getElementById(term.id + '-confirmed').classList.add('visible');
     fields.forEach(f => {
       const el = document.getElementById(term.id + '-input-' + f.id);
       if(el) el.readOnly = true;
     });
-    gfb.textContent = v.successMessage || '';
+
+    // Success copy: template + bySospettoMap (sospetto-branch) o successMessage piatto (min-matches)
+    let copyHtml = '';
+    if(term.successCopy && term.successCopy.template){
+      const sc = term.successCopy;
+      let bySospettoText = '';
+      if(sc.bySospettoMap){
+        const dicts = data.dictionaries || {};
+        const mapName = sc.bySospettoMap;
+        const map = dicts[mapName] || sc.bySospettoMap; // accept inline mappa
+        if(typeof map === 'object' && result.sospetto){
+          bySospettoText = map[result.sospetto] || '';
+        }
+      }
+      copyHtml = interp(sc.template, { bySospetto: bySospettoText, sospetto: result.sospetto || '' });
+    } else {
+      copyHtml = v.successMessage || '';
+    }
+    gfb.innerHTML = copyHtml;
     gfb.className = 'terminal-global-feedback show ok';
-    ts.fb = { text: gfb.textContent, cls: gfb.className };
+    ts.fb = { text: copyHtml, cls: gfb.className };
+
+    // Aggiorna confirmed-msg specifico (bySospetto)
+    if(term.successCopy && term.successCopy.confirmedMsgFrom && result.sospetto){
+      const dicts = data.dictionaries || {};
+      const m = dicts[term.successCopy.confirmedMsgFrom];
+      if(m && m[result.sospetto]){
+        const cm = document.getElementById(term.id + '-confirmed-msg');
+        if(cm) cm.textContent = m[result.sospetto];
+      }
+    }
 
     // Sblocco delle sezioni dichiarate
     (term.successUnlocks || []).forEach(sid => {
@@ -1226,6 +1413,110 @@ function runMinMatchesValidator(term, raws){
   return { allOk, errors };
 }
 
+function runSospettoBranchValidator(term, raws){
+  const v = term.validator;
+  const fields = v.fields || [];
+  const dicts = data.dictionaries || {};
+  let errors = 0;
+  let allOk = true;
+  let sospetto = null;
+  // Default ambiguousGeneric: prima il validator.ambiguousGeneric, poi data.dictionaries.ambiguousGeneric
+  const defaultAmbiguous = v.ambiguousGeneric || dicts.ambiguousGeneric || [];
+
+  fields.forEach((f, idx) => {
+    const raw = raws[idx];
+    const fb = f.feedback || {};
+    const t = prep(raw);
+    let st, msg;
+
+    if(!raw){
+      st = 'error'; msg = fb.empty || fb.error || 'Campo obbligatorio.';
+      errors++; allOk = false;
+      setFieldState(term.id, f.id, st, msg); return;
+    }
+
+    if(f.role === 'detect'){
+      const hit = detectSospetto(raw, dicts);
+      if(hit){
+        sospetto = hit;
+        st = 'ok'; msg = interp(fb.ok, { sospetto });
+      } else if(isAmbiguousGeneric(raw, defaultAmbiguous) || (f.ambiguousMinLen && t.length < f.ambiguousMinLen)){
+        st = 'ambiguous'; msg = fb.ambiguous || '';
+        allOk = false;
+      } else {
+        st = 'error'; msg = fb.error || '';
+        errors++; allOk = false;
+      }
+    }
+    else if(f.role === 'branched-min-matches'){
+      const minM = f.minMatches || 1;
+      if(!sospetto){
+        st = 'error'; msg = fb.error_noSospetto || fb.error || 'Identifica prima il sospetto nel Campo 1.';
+        errors++; allOk = false;
+      } else {
+        const kwList = ((dicts[f.kwSource] || {})[sospetto]) || [];
+        const matches = kwList.filter(k => t.includes(prep(k))).length;
+        if(matches >= minM){
+          st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
+        } else if(matches >= 1 && minM > 1){
+          st = 'ambiguous'; msg = interp(fb.ambiguous, { matches, required: minM });
+          allOk = false;
+        } else if(f.ambiguousMinLen && t.length < f.ambiguousMinLen){
+          st = 'ambiguous'; msg = fb.ambiguous || '';
+          allOk = false;
+        } else if(f.looseTruncLen){
+          const tlen = f.looseTruncLen;
+          const looseRoots = kwList.map(k => prep(k).slice(0, tlen)).filter(k => k.length >= Math.max(2, tlen - 1));
+          const looseMatches = looseRoots.filter(r => t.includes(r)).length;
+          if(looseMatches >= minM){
+            st = 'ok'; msg = interp(fb.ok, { matches: looseMatches, required: minM, sospetto });
+          } else if(looseMatches >= 1 && minM > 1){
+            st = 'ambiguous'; msg = interp(fb.ambiguous, { matches: looseMatches, required: minM });
+            allOk = false;
+          } else {
+            st = 'error'; msg = fb.error || '';
+            errors++; allOk = false;
+          }
+        } else {
+          st = 'error'; msg = fb.error || '';
+          errors++; allOk = false;
+        }
+      }
+    }
+    else if(f.role === 'list-min-matches'){
+      const minM = f.minMatches || 1;
+      const kwList = (typeof f.kw === 'string') ? (dicts[f.kw] || []) : (Array.isArray(f.kw) ? f.kw : []);
+      const matches = kwList.filter(k => t.includes(prep(k))).length;
+      const ambList = (typeof f.ambiguousKwSource === 'string') ? (dicts[f.ambiguousKwSource] || []) : defaultAmbiguous;
+      if(matches >= minM){
+        st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
+      } else if(f.nearMissMin && matches >= f.nearMissMin){
+        st = 'ambiguous'; msg = interp(fb.ambiguous, { matches, required: minM });
+        allOk = false;
+      } else if(f.ambiguousMinLen && t.length < f.ambiguousMinLen){
+        st = 'ambiguous'; msg = fb.ambiguous_short || fb.ambiguous || '';
+        allOk = false;
+      } else if(ambList.some(k => t.includes(prep(k)))){
+        st = 'ambiguous'; msg = interp(fb.ambiguous, { matches, required: minM });
+        allOk = false;
+      } else if(f.looseRoots && f.looseRoots.some(r => t.includes(prep(r)))){
+        st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
+      } else {
+        st = 'error'; msg = interp(fb.error, { matches, required: minM });
+        errors++; allOk = false;
+      }
+    }
+    else {
+      st = 'error'; msg = 'role non supportato: ' + f.role;
+      errors++; allOk = false;
+    }
+
+    setFieldState(term.id, f.id, st, msg);
+  });
+
+  return { allOk, errors, sospetto };
+}
+
 // ---------- ESITO ----------
 function classifyByScore(score){
   const tiers = (data.esito.tiers || []).slice().sort((a, b) => b.min - a.min);
@@ -1240,16 +1531,48 @@ function renderEsito(){
   const hc = state.hintPenaltyTotal;
   const ec = state.errorsTerminal * 10;
 
+  const e = data.esito;
   const setText = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setText('esito-score', total);
   setText('esito-classname', tier.name);
-  setText('esito-hint-count', state.hintLevelsUsed + ' livell' + (state.hintLevelsUsed === 1 ? 'o' : 'i'));
+  // Hint count: label finale può essere personalizzato (es. "0 richieste" vs "0 livelli")
+  const hintCountLabel = e.breakdownLabels && e.breakdownLabels.hintCountUnit
+    ? state.hintLevelsUsed + ' ' + e.breakdownLabels.hintCountUnit
+    : state.hintLevelsUsed + ' livell' + (state.hintLevelsUsed === 1 ? 'o' : 'i');
+  setText('esito-hint-count', hintCountLabel);
   setText('esito-hint-cost', fmtPenalty(hc));
   setText('esito-err-cost', fmtPenalty(ec));
   setText('esito-total', total);
-  setText('esito-final-headline', tier.headline);
+  // Headline: dinamica (per tier) se staticHeadline non è settato
+  if(!e.staticHeadline) setText('esito-final-headline', tier.headline);
+
+  // Body: bodyTemplate (skin rich, branched per sospetto) oppure tier.narrative + appendBySospetto
+  let narrative;
+  if(e.bodyTemplate){
+    let sosp = '';
+    if(e.bodyTemplate.includes('{bySospetto}')){
+      const fromT = e.bodyFromTerminal || (data.parts[data.parts.length - 1].terminal.id);
+      sosp = (state.terminals[fromT] || {}).sospetto || '';
+    }
+    const dicts = data.dictionaries || {};
+    const map = (e.bodyBySospettoMap && dicts[e.bodyBySospettoMap]) || {};
+    const bySospettoText = sosp ? (map[sosp] || map[Object.keys(map)[0]] || '') : (map[Object.keys(map)[0]] || '');
+    narrative = interp(e.bodyTemplate, { bySospetto: bySospettoText, sospetto: sosp });
+  } else {
+    narrative = tier.narrative || '—';
+    const append = e.appendBySospetto;
+    if(append && append.fromTerminal){
+      const sosp = (state.terminals[append.fromTerminal] || {}).sospetto;
+      if(sosp){
+        const extra = (append.byValue || {})[sosp] || '';
+        if(extra){
+          narrative = narrative + (append.separator || '<br><br>') + extra;
+        }
+      }
+    }
+  }
   const narEl = document.getElementById('esito-narrative');
-  if(narEl) narEl.innerHTML = tier.narrative;
+  if(narEl) narEl.innerHTML = narrative;
 
   const scoreEl = document.getElementById('esito-score');
   const classEl = document.getElementById('esito-classname');
@@ -1460,11 +1783,30 @@ function updateUI(){
     btn.style.display = rLeft === 0 ? 'none' : '';
   });
 
-  // Banner unlock per parte
+  // Banner unlock per parte (sintassi diversa per skin)
   data.parts.forEach(p => {
     const ub = document.getElementById('terminal-unlock-banner-' + p.id);
+    if(!ub) return;
     const opened = state.docsOpened[p.id] || [];
-    if(ub) ub.className = 'unlock-banner' + (opened.length >= p.requiredDocs ? ' show' : '');
+    const tState = state.terminals[p.terminal.id] || {};
+    const visible = opened.length >= p.requiredDocs && !tState.completed;
+    if(p.unlockBar){
+      // skin rich: toggle inline display; preserva la class terminal-unlock-bar
+      ub.style.display = visible ? 'flex' : 'none';
+    } else {
+      // skin classic: toggle .show via className
+      ub.className = 'unlock-banner' + (visible ? ' show' : '');
+    }
+  });
+  // Locked sibling banner (es. parte1 atto2: "Reperti ad alta sensibilità bloccati")
+  data.parts.forEach(p => {
+    if(!p.lockedSiblingBanner) return;
+    const el = document.getElementById('locked-sibling-' + p.id);
+    if(!el) return;
+    // Mostra il banner finché il terminale "sbloccante" non è completato
+    const blockerId = p.terminal && p.terminal.id;
+    const tDone = blockerId ? (state.terminals[blockerId] || {}).completed : false;
+    el.style.display = tDone ? 'none' : '';
   });
 
   // Nav unlock per terminali raggiunti
@@ -1529,7 +1871,21 @@ function init(){
       });
       if(tState.fb){
         const gfb = document.getElementById(term.id + '-global-fb');
-        if(gfb){ gfb.textContent = tState.fb.text; gfb.className = tState.fb.cls; }
+        if(gfb){ gfb.innerHTML = tState.fb.text; gfb.className = tState.fb.cls; }
+      }
+      // Hide submit button su terminali con hideSubmitOnSuccess
+      if(term.hideSubmitOnSuccess){
+        const sub = document.getElementById(term.id + '-submit');
+        if(sub) sub.style.display = 'none';
+      }
+      // Reapply confirmed message bySospetto (se ricaricato da storage)
+      if(term.successCopy && term.successCopy.confirmedMsgFrom && tState.sospetto){
+        const dicts = data.dictionaries || {};
+        const m = dicts[term.successCopy.confirmedMsgFrom];
+        if(m && m[tState.sospetto]){
+          const cm = document.getElementById(term.id + '-confirmed-msg');
+          if(cm) cm.textContent = m[tState.sospetto];
+        }
       }
     }
   });
