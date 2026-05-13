@@ -503,6 +503,62 @@ function isTimeoutError(e) {
   return e && (e.name === 'AbortError' || /aborted/i.test(String(e.message || '')));
 }
 
+// ── CONFIRM MODAL ────────────────────────────────────────────────────────────
+// Sostituto on-brand di window.confirm(). Ritorna Promise<boolean>.
+// Riutilizza le classi .modal-overlay/.modal/.btn esistenti.
+function confirmModal({ title = 'Conferma', message = '', confirmLabel = 'Conferma', cancelLabel = 'Annulla', danger = false } = {}) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay visible';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.innerHTML = `
+      <div class="modal" style="max-width: 480px;">
+        <div class="modal-header">
+          <div class="modal-title"></div>
+          <button class="modal-close" type="button" aria-label="Chiudi">×</button>
+        </div>
+        <div class="modal-body" style="line-height:1.55"></div>
+        <div class="modal-footer">
+          <button class="btn secondary" type="button" data-act="cancel"></button>
+          <button class="btn" type="button" data-act="confirm"></button>
+        </div>
+      </div>
+    `;
+    overlay.querySelector('.modal-title').textContent = title;
+    overlay.querySelector('.modal-body').textContent = message;
+    const btnCancel = overlay.querySelector('[data-act="cancel"]');
+    const btnConfirm = overlay.querySelector('[data-act="confirm"]');
+    btnCancel.textContent = cancelLabel;
+    btnConfirm.textContent = confirmLabel;
+    if (danger) btnConfirm.classList.add('danger');
+
+    const cleanup = (result) => {
+      document.removeEventListener('keydown', onKey, true);
+      overlay.remove();
+      resolve(result);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        // Non lasciare che l'handler globale chiuda anche i modali sottostanti.
+        e.stopImmediatePropagation();
+        cleanup(false);
+      } else if (e.key === 'Enter') {
+        e.stopImmediatePropagation();
+        cleanup(true);
+      }
+    };
+    btnConfirm.addEventListener('click', () => cleanup(true));
+    btnCancel.addEventListener('click', () => cleanup(false));
+    overlay.querySelector('.modal-close').addEventListener('click', () => cleanup(false));
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) cleanup(false); });
+    // capture: true così intercettiamo Escape prima del listener globale.
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(overlay);
+    btnConfirm.focus();
+  });
+}
+
 // ── LOGIN ────────────────────────────────────────────────────────────────────
 async function doLogin() {
   const key = document.getElementById('admin-key-input').value.trim();
@@ -1218,7 +1274,13 @@ async function createCode(btn) {
 
 async function blockCode(codeId, btn) {
   if (btn && btn.disabled) return;
-  if (!confirm('Bloccare questo codice?')) return;
+  const ok = await confirmModal({
+    title: 'Bloccare codice',
+    message: 'Questo codice non potrà più essere usato per attivare nuovi dispositivi né per accedere al gioco. Procedere?',
+    confirmLabel: 'Blocca',
+    danger: true,
+  });
+  if (!ok) return;
   lockBtn(btn);
   try {
     const res = await adminAction('block_code', { code_id: codeId });
@@ -1247,7 +1309,13 @@ async function unblockCode(codeId, btn) {
 
 async function resetAllDevices(codeId, btn) {
   if (btn && btn.disabled) return;
-  if (!confirm('Resettare tutti i dispositivi di questo codice?')) return;
+  const ok = await confirmModal({
+    title: 'Resettare tutti i dispositivi',
+    message: 'Tutti i dispositivi attivi per questo codice verranno disattivati. Gli utenti dovranno effettuare di nuovo l’accesso. Procedere?',
+    confirmLabel: 'Resetta tutti',
+    danger: true,
+  });
+  if (!ok) return;
   lockBtn(btn);
   try {
     const res = await adminAction('reset_devices', { code_id: codeId });
@@ -1262,7 +1330,13 @@ async function resetAllDevices(codeId, btn) {
 
 async function resetSingleDevice(deviceId, codeId, btn) {
   if (btn && btn.disabled) return;
-  if (!confirm('Resettare questo dispositivo?')) return;
+  const ok = await confirmModal({
+    title: 'Resettare dispositivo',
+    message: 'Il dispositivo verrà disattivato e l’utente dovrà effettuare di nuovo l’accesso con il codice. Procedere?',
+    confirmLabel: 'Resetta',
+    danger: true,
+  });
+  if (!ok) return;
   lockBtn(btn);
   try {
     const res = await adminAction('reset_devices', { code_id: codeId, device_id: deviceId });
@@ -1277,7 +1351,12 @@ async function resetSingleDevice(deviceId, codeId, btn) {
 
 async function upgradeCode(codeId, btn) {
   if (btn && btn.disabled) return;
-  if (!confirm('Convertire questo codice da Individuale a Team (max 3 dispositivi)?')) return;
+  const ok = await confirmModal({
+    title: 'Convertire in Team',
+    message: 'Il codice diventerà di tipo Team e potrà attivare fino a 3 dispositivi. L’operazione non è reversibile dal pannello. Procedere?',
+    confirmLabel: 'Converti',
+  });
+  if (!ok) return;
   lockBtn(btn);
   try {
     const res = await adminAction('upgrade_code', { code_id: codeId });
