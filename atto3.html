@@ -26,13 +26,13 @@
     const { term, raws, helpers, data } = ctx;
     const D = data.dictionaries || {};
     const fields = term.validator.fields;
-    const texts = raws.map(v => helpers.prep(v));
+    const texts = raws.map(v => helpers.normalize(v));
     let errors = 0, allOk = true;
 
     // Campo 1 — sovrapposizioni: serve >= N gruppi-sospetto matched
     const groups = D.t3aSubjectGroups || [];
     const minG = D.t3aSubjectGroupsMin || 2;
-    const matchCount = groups.filter(g => g.some(k => texts[0].includes(helpers.prep(k)))).length;
+    const matchCount = groups.filter(g => g.some(k => texts[0].includes(helpers.normalize(k)))).length;
     const fb1 = fields[0].feedback;
     if(matchCount >= minG){
       helpers.setFieldState(term.id, 1, 'ok', fb1.ok);
@@ -76,7 +76,7 @@
     const { term, raws, helpers, data } = ctx;
     const D = data.dictionaries || {};
     const fields = term.validator.fields;
-    const texts = raws.map(v => helpers.prep(v));
+    const texts = raws.map(v => helpers.normalize(v));
     let errors = 0, allOk = true;
 
     const setField = (idx, st, msg) => helpers.setFieldState(term.id, fields[idx].id, st, msg);

@@ -183,10 +183,9 @@ function normalize(str){
     .replace(/[^a-z0-9\s]/g, '')
     .replace(/\s+/g, ' ').trim();
 }
-function prep(str){ return normalize(str); }
-function hasAny(text, keywords){ return keywords.some(kw => text.includes(prep(kw))); }
+function hasAny(text, keywords){ return keywords.some(kw => text.includes(normalize(kw))); }
 function isAmbiguousGeneric(text, ambiguousList){
-  const t = prep(text).trim();
+  const t = normalize(text).trim();
   if(!t) return true;
   if(t.length < 4) return true;
   const generic = ambiguousList || [];
@@ -211,15 +210,15 @@ function interp(template, ctx){
   return String(template).replace(/\{(\w+)\}/g, (_, k) => (ctx && ctx[k] != null ? ctx[k] : ''));
 }
 function detectSospetto(text, dicts){
-  const v = prep(text);
+  const v = normalize(text);
   if(!v) return null;
   const sospetti = (dicts && dicts.sospetti) || {};
   for(const key in sospetti){
-    if((sospetti[key] || []).some(a => v.includes(prep(a)))) return key;
+    if((sospetti[key] || []).some(a => v.includes(normalize(a)))) return key;
   }
   const aliases = (dicts && dicts.sospettiAlias) || {};
   for(const alias in aliases){
-    if(v.includes(prep(alias))) return aliases[alias];
+    if(v.includes(normalize(alias))) return aliases[alias];
   }
   return null;
 }
@@ -1013,8 +1012,7 @@ function showSection(id, silent){
       const tState = state.terminals[term.id] || {};
       if(opened.length < partForTerm.requiredDocs && !tState.completed){
         showToast('Consulti almeno ' + partForTerm.requiredDocs + ' reperti prima di accedere al ' + partForTerm.terminal.navLabel);
-        document.getElementById(term.id + '-lock-banner').style.display = 'block';
-        document.getElementById(term.id + '-form').style.display = 'none';
+        // Toggle DOM gestito sotto da loop unificato
       }
     }
     // Gating dell'esito
@@ -1451,8 +1449,8 @@ function runMinMatchesValidator(term, raws){
   let allOk = true;
   fields.forEach((f, idx) => {
     const raw = raws[idx];
-    const t = prep(raw);
-    const kwCount = (f.okKeywords || []).filter(k => t.includes(prep(k))).length;
+    const t = normalize(raw);
+    const kwCount = (f.okKeywords || []).filter(k => t.includes(normalize(k))).length;
     const minM = f.minMatches || 1;
     if(kwCount >= minM){
       setFieldState(term.id, f.id, 'ok', f.feedback.ok);
@@ -1485,7 +1483,7 @@ function runSospettoBranchValidator(term, raws){
   fields.forEach((f, idx) => {
     const raw = raws[idx];
     const fb = f.feedback || {};
-    const t = prep(raw);
+    const t = normalize(raw);
     let st, msg;
 
     if(!raw){
@@ -1514,7 +1512,7 @@ function runSospettoBranchValidator(term, raws){
         errors++; allOk = false;
       } else {
         const kwList = ((dicts[f.kwSource] || {})[sospetto]) || [];
-        const matches = kwList.filter(k => t.includes(prep(k))).length;
+        const matches = kwList.filter(k => t.includes(normalize(k))).length;
         if(matches >= minM){
           st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
         } else if(matches >= 1 && minM > 1){
@@ -1525,7 +1523,7 @@ function runSospettoBranchValidator(term, raws){
           allOk = false;
         } else if(f.looseTruncLen){
           const tlen = f.looseTruncLen;
-          const looseRoots = kwList.map(k => prep(k).slice(0, tlen)).filter(k => k.length >= Math.max(2, tlen - 1));
+          const looseRoots = kwList.map(k => normalize(k).slice(0, tlen)).filter(k => k.length >= Math.max(2, tlen - 1));
           const looseMatches = looseRoots.filter(r => t.includes(r)).length;
           if(looseMatches >= minM){
             st = 'ok'; msg = interp(fb.ok, { matches: looseMatches, required: minM, sospetto });
@@ -1545,7 +1543,7 @@ function runSospettoBranchValidator(term, raws){
     else if(f.role === 'list-min-matches'){
       const minM = f.minMatches || 1;
       const kwList = (typeof f.kw === 'string') ? (dicts[f.kw] || []) : (Array.isArray(f.kw) ? f.kw : []);
-      const matches = kwList.filter(k => t.includes(prep(k))).length;
+      const matches = kwList.filter(k => t.includes(normalize(k))).length;
       const ambList = (typeof f.ambiguousKwSource === 'string') ? (dicts[f.ambiguousKwSource] || []) : defaultAmbiguous;
       if(matches >= minM){
         st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
@@ -1555,10 +1553,10 @@ function runSospettoBranchValidator(term, raws){
       } else if(f.ambiguousMinLen && t.length < f.ambiguousMinLen){
         st = 'ambiguous'; msg = fb.ambiguous_short || fb.ambiguous || '';
         allOk = false;
-      } else if(ambList.some(k => t.includes(prep(k)))){
+      } else if(ambList.some(k => t.includes(normalize(k)))){
         st = 'ambiguous'; msg = interp(fb.ambiguous, { matches, required: minM });
         allOk = false;
-      } else if(f.looseRoots && f.looseRoots.some(r => t.includes(prep(r)))){
+      } else if(f.looseRoots && f.looseRoots.some(r => t.includes(normalize(r)))){
         st = 'ok'; msg = interp(fb.ok, { matches, required: minM, sospetto });
       } else {
         st = 'error'; msg = interp(fb.error, { matches, required: minM });
@@ -1988,7 +1986,7 @@ function init(){
 
 // ---------- HELPERS (esposti ai plugin) ----------
 const helpers = {
-  prep, normalize, hasAny, isAmbiguousGeneric, setFieldState,
+  normalize, hasAny, isAmbiguousGeneric, setFieldState,
   showToast, saveState, updateUI, renderDocsGrid, renderPuzzles,
   showSection
 };
