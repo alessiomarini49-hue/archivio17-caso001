@@ -446,12 +446,15 @@ tr:hover td { background: rgba(255,255,255,.02); }
 <!-- TOAST -->
 <div id="toast"></div>
 
+<script src="assets/config.js"></script>
 <script>
 'use strict';
 
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const APP_ID = '69fdda0ce13e22a1cc6cd63c';
-const FUNCTIONS_BASE = `https://api.base44.app/api/apps/${APP_ID}/functions`;
+// APP_ID e API_BASE provengono da assets/config.js (single source of truth).
+const FUNCTIONS_BASE = (typeof API_BASE !== 'undefined')
+  ? API_BASE
+  : `https://api.base44.app/api/apps/${APP_ID}/functions`;
 const ENDPOINT = `${FUNCTIONS_BASE}/adminActions`;
 
 const SESSION_KEY = 'a17_admin_session';
