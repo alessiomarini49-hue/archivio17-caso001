@@ -310,6 +310,14 @@ function buildHeader(){
 </header>`;
 }
 
+// Sincronizza classe .locked e aria-disabled su un item di navigazione.
+function setNavLocked(el, locked){
+  if(!el) return;
+  el.classList.toggle('locked', !!locked);
+  if(locked) el.setAttribute('aria-disabled', 'true');
+  else       el.removeAttribute('aria-disabled');
+}
+
 function buildMobileNav(){
   const items = [
     { id: 'intro', label: data.intro.mNavLabel || 'Archivista', locked: false }
@@ -328,7 +336,7 @@ function buildMobileNav(){
   return `
 <nav class="mobile-nav" id="mobile-nav" aria-label="Navigazione fascicolo" style="display:none">
 ${items.map((it, i) =>
-  `<button class="mnav-item${i===0?' active':''}${it.locked?' locked':''}" data-section="${esc(it.id)}" id="mnav-${esc(it.id)}">${esc(it.label)}</button>`
+  `<button class="mnav-item${i===0?' active':''}${it.locked?' locked':''}"${it.locked?' aria-disabled="true"':''} data-section="${esc(it.id)}" id="mnav-${esc(it.id)}">${esc(it.label)}</button>`
 ).join('')}
 <button class="mnav-item" data-action="toggle-mobile-drawer">Stato</button>
 </nav>`;
@@ -355,13 +363,13 @@ function buildSidebar(){
     `<button class="nav-item active" data-section="intro" id="nav-intro"><span class="nav-dot"></span>${esc(data.intro.navLabel)}</button>`
   ];
   data.parts.forEach(p => {
-    items.push(`<button class="nav-item${p.lockedUntilTerminal?' locked':''}" data-section="${esc(p.sectionId)}" id="nav-${esc(p.sectionId)}"><span class="nav-dot"></span>${esc(p.navLabel)}</button>`);
-    items.push(`<button class="nav-item locked" data-section="${esc(p.terminal.sectionId)}" id="nav-${esc(p.terminal.sectionId)}"><span class="nav-dot"></span>${esc(p.terminal.navLabel)}</button>`);
+    items.push(`<button class="nav-item${p.lockedUntilTerminal?' locked':''}"${p.lockedUntilTerminal?' aria-disabled="true"':''} data-section="${esc(p.sectionId)}" id="nav-${esc(p.sectionId)}"><span class="nav-dot"></span>${esc(p.navLabel)}</button>`);
+    items.push(`<button class="nav-item locked" aria-disabled="true" data-section="${esc(p.terminal.sectionId)}" id="nav-${esc(p.terminal.sectionId)}"><span class="nav-dot"></span>${esc(p.terminal.navLabel)}</button>`);
   });
   (data.extraSections || []).forEach(s => {
-    items.push(`<button class="nav-item${s.locked?' locked':''}" data-section="${esc(s.sectionId)}" id="nav-${esc(s.sectionId)}"><span class="nav-dot"></span>${esc(s.navLabel)}</button>`);
+    items.push(`<button class="nav-item${s.locked?' locked':''}"${s.locked?' aria-disabled="true"':''} data-section="${esc(s.sectionId)}" id="nav-${esc(s.sectionId)}"><span class="nav-dot"></span>${esc(s.navLabel)}</button>`);
   });
-  items.push(`<button class="nav-item locked" data-section="${esc(data.esito.sectionId)}" id="nav-${esc(data.esito.sectionId)}"><span class="nav-dot"></span>${esc(data.esito.navLabel)}</button>`);
+  items.push(`<button class="nav-item locked" aria-disabled="true" data-section="${esc(data.esito.sectionId)}" id="nav-${esc(data.esito.sectionId)}"><span class="nav-dot"></span>${esc(data.esito.navLabel)}</button>`);
   return `
 <nav class="nav-sidebar" aria-label="Indice fascicolo">
   <div class="nav-section-label">Indice fascicolo</div>
@@ -1163,8 +1171,8 @@ function openDoc(id, partId){
       showToast(term.navLabel + ' sbloccato', 'success');
       const navT  = document.getElementById('nav-'  + term.sectionId);
       const mnavT = document.getElementById('mnav-' + term.sectionId);
-      if(navT)  navT.classList.remove('locked');
-      if(mnavT) mnavT.classList.remove('locked');
+      setNavLocked(navT, false);
+      setNavLocked(mnavT, false);
     }
     updateUI();
   }
@@ -1439,7 +1447,7 @@ function submitTerminal(termId){
     (term.successUnlocks || []).forEach(sid => {
       ['nav-', 'mnav-'].forEach(pfx => {
         const el = document.getElementById(pfx + sid);
-        if(el) el.classList.remove('locked');
+        setNavLocked(el, false);
       });
     });
 
@@ -1735,26 +1743,26 @@ function confirmReset(){
   data.parts.forEach(p => {
     ['nav-', 'mnav-'].forEach(pfx => {
       const el = document.getElementById(pfx + p.terminal.sectionId);
-      if(el) el.classList.add('locked');
+      setNavLocked(el, true);
     });
     // Parti gated da un terminale precedente (es. atto3 parte2 da t3a, parte3 da t3b)
     if(p.lockedUntilTerminal){
       ['nav-', 'mnav-'].forEach(pfx => {
         const el = document.getElementById(pfx + p.sectionId);
-        if(el) el.classList.add('locked');
+        setNavLocked(el, true);
       });
     }
   });
   ['nav-', 'mnav-'].forEach(pfx => {
     const el = document.getElementById(pfx + data.esito.sectionId);
-    if(el) el.classList.add('locked');
+    setNavLocked(el, true);
   });
   // Sezioni extra originariamente locked (atto3: casella3, verifiche)
   (data.extraSections || []).forEach(s => {
     if(s.locked){
       ['nav-', 'mnav-'].forEach(pfx => {
         const el = document.getElementById(pfx + s.sectionId);
-        if(el) el.classList.add('locked');
+        setNavLocked(el, true);
       });
     }
   });
@@ -1943,13 +1951,13 @@ function updateUI(){
     }
     ['nav-', 'mnav-'].forEach(pfx => {
       const el = document.getElementById(pfx + p.terminal.sectionId);
-      if(el) el.classList.remove('locked');
+      setNavLocked(el, false);
     });
   });
   if(state.finalUnlocked){
     ['nav-', 'mnav-'].forEach(pfx => {
       const el = document.getElementById(pfx + data.esito.sectionId);
-      if(el) el.classList.remove('locked');
+      setNavLocked(el, false);
     });
   }
 }
