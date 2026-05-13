@@ -1636,7 +1636,17 @@ function renderEsito(){
 }
 
 // ---------- RESET ----------
+function isCaseClosed(){
+  // Caso chiuso = atto 3 completato. markActDone(3) setta _global.act3_done = true
+  // e _global.locked = true. Da quel momento il punteggio è definitivo e il reset
+  // non è più disponibile in nessun atto.
+  return typeof _global !== 'undefined' && !!_global.act3_done;
+}
 function showResetConfirm(){
+  if(isCaseClosed()){
+    showToast('Caso chiuso — punteggio definitivo.', 'error');
+    return;
+  }
   if(typeof resetsLeft !== 'function'){ confirmReset(); return; }
   const left = resetsLeft();
   if(left === 0){ showToast('Reset esauriti — nessun tentativo disponibile.', 'error'); return; }
@@ -1850,8 +1860,9 @@ function updateUI(){
     const el = document.getElementById(id);
     if(el){ el.textContent = rLabel; el.style.color = rColor; }
   });
+  const hideReset = rLeft === 0 || isCaseClosed();
   document.querySelectorAll('[data-action="reset-confirm"]').forEach(btn => {
-    btn.style.display = rLeft === 0 ? 'none' : '';
+    btn.style.display = hideReset ? 'none' : '';
   });
 
   // Banner unlock per parte (sintassi diversa per skin)
