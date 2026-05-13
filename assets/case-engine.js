@@ -26,11 +26,15 @@ const config = {
   localCodes: [],
   validators: {},
   sectionPlugins: {},
-  skin: 'classic',  // 'classic' (atto1/index, CSS via case-app.css) | 'rich' (atto2/atto3, CSS inline nel HTML)
+  skin: 'classic',  // 'classic' (atto1/index) | 'rich' (atto2/atto3). Lo scoping CSS avviene via body.skin-{skin}.
   ...userConfig
 };
 if(!config.dataUrl)    throw new Error('[case-engine] config.dataUrl mancante');
 if(!config.storageKey) throw new Error('[case-engine] config.storageKey mancante');
+
+// Body classes: scoping CSS per skin (skin-rich) e atto (atto-N). Tutte le varianti
+// in assets/case-app.css sono attaccate a questi selettori.
+document.body.classList.add('skin-' + config.skin, 'atto-' + config.actNum);
 
 // ---------- DATA ----------
 let data = null;
