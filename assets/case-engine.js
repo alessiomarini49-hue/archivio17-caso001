@@ -445,6 +445,24 @@ function buildFascicoloSection(p){
   const docsSectionLabelHtml = s.docsSectionLabel ? `<div class="docs-section-label">${esc(s.docsSectionLabel)}</div>` : '';
   const ctaHtml = p.ctaNext && !p.unlockBar ? `<div style="margin-top:1.75rem"><button class="btn-primary" data-section="${esc(p.ctaNext.section)}">${esc(p.ctaNext.label)}</button></div>` : '';
 
+  // narrativeOnly: parte priva di documenti (es. atto3 parte3 di pre-conclusione).
+  // Niente meta/docs/unlock-bar/locked-sibling — solo promemoria + section-header + CTA.
+  if(p.narrativeOnly){
+    return `
+<div class="app-section" id="section-${esc(p.sectionId)}">
+  <div class="section-wrapper">
+    ${promemoriaHtml}
+    <div class="section-header">
+      <div class="section-eyebrow">${esc(s.eyebrow)}</div>
+      <h2 class="section-title">${esc(s.title)}</h2>
+      <div class="section-subtitle">${esc(s.subtitle)}</div>
+      ${sectionDescHtml}
+    </div>
+    ${ctaHtml}
+  </div>
+</div>`;
+  }
+
   return `
 <div class="app-section" id="section-${esc(p.sectionId)}">
   <div class="section-wrapper">
@@ -644,7 +662,7 @@ function buildInvPanel(){
   const termRows = data.parts.map(p =>
     `<div class="inv-status-row"><span class="inv-status-label">${esc(p.terminal.navLabel)}</span><span class="inv-status-val" id="inv-${esc(p.terminal.id)}">non validato</span></div>`
   ).join('');
-  const docsRows = data.parts.map(p =>
+  const docsRows = data.parts.filter(p => !p.narrativeOnly).map(p =>
     `<div class="inv-status-row"><span class="inv-status-label">${data.parts.length > 1 ? esc(p.mNavLabel) + ' — Reperti' : 'Reperti'}</span><span class="inv-status-val" id="inv-docs-${esc(p.id)}">0 / ${p.totalDocs}</span></div>`
   ).join('');
   const showActRow = data.investigationPanel.showActRow !== false;
@@ -710,7 +728,7 @@ function buildMobileInvButton(){
 }
 
 function buildMobileDrawer(){
-  const docsRows = data.parts.map(p =>
+  const docsRows = data.parts.filter(p => !p.narrativeOnly).map(p =>
     `<div class="inv-status-row"><span class="inv-status-label">${data.parts.length > 1 ? esc(p.mNavLabel) + ' — Reperti' : 'Reperti'}</span><span class="inv-status-val" id="minv-docs-${esc(p.id)}">0 / ${p.totalDocs}</span></div>`
   ).join('');
   const termRows = data.parts.map(p =>
@@ -1160,35 +1178,59 @@ function renderPuzzles(){
   c.innerHTML = '';
   const groups = (data.supporto.groups && data.supporto.groups.length) ? data.supporto.groups : [{ part: 'all', label: '', badge: '', badgeClass: '' }];
   groups.forEach(g => {
+    // Badge dinamico: se g.unlockedAfterTerminal è impostato, override badge/class
+    // in base allo stato di completamento del terminale gating.
+    let badge = g.badge || '';
+    let badgeClass = g.badgeClass || '';
+    let groupLocked = false;
+    let gateTerminalLabel = '';
+    if(g.unlockedAfterTerminal){
+      const gate = state.terminals[g.unlockedAfterTerminal] || {};
+      if(gate.completed){
+        badge = g.badgeUnlocked || 'DISPONIBILE';
+        badgeClass = 'unlocked';
+      } else {
+        badge = g.badgeLocked || 'BLOCCATO';
+        badgeClass = 'locked';
+        groupLocked = true;
+        // Recupera la label del terminale gating per messaggio "Disponibile dopo …"
+        const gatePart = data.parts.find(p => p.terminal && p.terminal.id === g.unlockedAfterTerminal);
+        if(gatePart) gateTerminalLabel = gatePart.terminal.navLabel;
+      }
+    }
     const wrap = document.createElement('div');
     wrap.className = 'hints-group-wrapper';
-    if(g.label) wrap.innerHTML = '<div class="hints-group-label"><span>' + esc(g.label) + '</span><span class="hints-group-badge ' + esc(g.badgeClass || '') + '">' + esc(g.badge || '') + '</span></div>';
+    if(g.label) wrap.innerHTML = '<div class="hints-group-label"><span>' + esc(g.label) + '</span><span class="hints-group-badge ' + esc(badgeClass) + '">' + esc(badge) + '</span></div>';
     c.appendChild(wrap);
     const list = data.puzzles.filter(p => g.part === 'all' || p.part === g.part);
-    list.forEach(p => c.appendChild(buildPuzzleEl(p)));
+    list.forEach(p => c.appendChild(buildPuzzleEl(p, groupLocked, gateTerminalLabel, g.unlockedAfterTerminal)));
   });
 }
-function buildPuzzleEl(puzzle){
+function buildPuzzleEl(puzzle, groupLocked, gateTerminalLabel, gateTerminalId){
   const revealed = state.hintsRevealed[puzzle.id] || {};
   const isOpen = state.puzzleOpen[puzzle.id];
   const totalSpent = state.hintPuzzleCost[puzzle.id] || 0;
+  const lockedLabel = gateTerminalLabel ? ('— Disponibile dopo ' + gateTerminalLabel + ' —') : '— Fase bloccata —';
 
   let hintsHtml = '<div class="hint-levels-list">';
   puzzle.hints.forEach(h => {
     const isRev = revealed[h.lvl] === true;
     const lvlName = h.lvl === 1 ? 'Osservazione' : h.lvl === 2 ? 'Connessione' : 'Quasi soluzione';
+    let contentHtml;
+    if(isRev){
+      contentHtml = '<div class="hint-text revealed">' + h.txt + '</div><div class="hint-used-label visible">Supporto utilizzato</div>';
+    } else if(groupLocked){
+      contentHtml = '<button class="hint-reveal-btn" disabled>' + esc(lockedLabel) + '</button>';
+    } else {
+      contentHtml = '<button class="hint-reveal-btn" data-hint-puzzle="' + esc(puzzle.id) + '" data-hint-lvl="' + h.lvl + '">— Richiedi supporto (−' + h.cost + ' pt)</button>';
+    }
     hintsHtml +=
       '<div class="hint-level-row ' + (isRev ? 'used' : '') + '">' +
         '<div class="hint-level-meta">' +
           '<span class="hint-level-name">' + lvlName + ' · Lv.' + h.lvl + '</span>' +
           '<span class="hint-level-cost">−' + h.cost + ' pt</span>' +
         '</div>' +
-        '<div class="hint-level-content">' +
-          (isRev
-            ? '<div class="hint-text revealed">' + h.txt + '</div><div class="hint-used-label visible">Supporto utilizzato</div>'
-            : '<button class="hint-reveal-btn" data-hint-puzzle="' + esc(puzzle.id) + '" data-hint-lvl="' + h.lvl + '">— Richiedi supporto (−' + h.cost + ' pt)</button>'
-          ) +
-        '</div>' +
+        '<div class="hint-level-content">' + contentHtml + '</div>' +
       '</div>';
   });
   hintsHtml += '</div>';
@@ -1223,6 +1265,16 @@ function buildPuzzleEl(puzzle){
 function useHint(pid, lvl){
   const puzzle = data.puzzles.find(p => p.id === pid);
   if(!puzzle) return;
+  // Safety gate: blocca la richiesta se il gruppo di questo puzzle è gated
+  // da un terminale non ancora completato (allineato a renderPuzzles).
+  const grp = (data.supporto.groups || []).find(g => g.part === puzzle.part);
+  if(grp && grp.unlockedAfterTerminal){
+    const gate = state.terminals[grp.unlockedAfterTerminal] || {};
+    if(!gate.completed){
+      showToast('Fase bloccata — completa prima il terminale precedente', 'error');
+      return;
+    }
+  }
   if(!state.hintsRevealed[pid]) state.hintsRevealed[pid] = {};
   if(state.hintsRevealed[pid][lvl]) return;
 
@@ -1355,6 +1407,9 @@ function submitTerminal(termId){
     saveState();
     updateUI();
     renderEsito();
+    // Ricalcolo dei gruppi hint: il completamento del terminale può sbloccare
+    // gruppi gated via supporto.groups[].unlockedAfterTerminal (atto3 P2/P3).
+    renderPuzzles();
 
     // Salvataggio punteggio sul backend
     if(_accessCode && term.completesAct){
@@ -1627,16 +1682,32 @@ function confirmReset(){
     if(gfb){ gfb.textContent = ''; gfb.className = 'terminal-global-feedback'; }
   });
 
-  // Re-lock nav items (terminali + esito + sezioni extra)
+  // Re-lock nav items (terminali + esito + parti gated + sezioni extra originally locked)
   data.parts.forEach(p => {
     ['nav-', 'mnav-'].forEach(pfx => {
       const el = document.getElementById(pfx + p.terminal.sectionId);
       if(el) el.classList.add('locked');
     });
+    // Parti gated da un terminale precedente (es. atto3 parte2 da t3a, parte3 da t3b)
+    if(p.lockedUntilTerminal){
+      ['nav-', 'mnav-'].forEach(pfx => {
+        const el = document.getElementById(pfx + p.sectionId);
+        if(el) el.classList.add('locked');
+      });
+    }
   });
   ['nav-', 'mnav-'].forEach(pfx => {
     const el = document.getElementById(pfx + data.esito.sectionId);
     if(el) el.classList.add('locked');
+  });
+  // Sezioni extra originariamente locked (atto3: casella3, verifiche)
+  (data.extraSections || []).forEach(s => {
+    if(s.locked){
+      ['nav-', 'mnav-'].forEach(pfx => {
+        const el = document.getElementById(pfx + s.sectionId);
+        if(el) el.classList.add('locked');
+      });
+    }
   });
 
   // Reset case status
@@ -1809,15 +1880,21 @@ function updateUI(){
     el.style.display = tDone ? 'none' : '';
   });
 
-  // Nav unlock per terminali raggiunti
+  // Nav unlock per terminali raggiunti.
+  // Rispetta lockedUntilTerminal: terminale di una part gated resta locked
+  // finché il terminale prerequisito non è completato (necessario per parti narrativeOnly
+  // tipo atto3 parte3, dove requiredDocs=0 sbloccherebbe T3C subito).
   data.parts.forEach(p => {
     const opened = state.docsOpened[p.id] || [];
-    if(opened.length >= p.requiredDocs){
-      ['nav-', 'mnav-'].forEach(pfx => {
-        const el = document.getElementById(pfx + p.terminal.sectionId);
-        if(el) el.classList.remove('locked');
-      });
+    if(opened.length < p.requiredDocs) return;
+    if(p.lockedUntilTerminal){
+      const gate = state.terminals[p.lockedUntilTerminal] || {};
+      if(!gate.completed) return;
     }
+    ['nav-', 'mnav-'].forEach(pfx => {
+      const el = document.getElementById(pfx + p.terminal.sectionId);
+      if(el) el.classList.remove('locked');
+    });
   });
   if(state.finalUnlocked){
     ['nav-', 'mnav-'].forEach(pfx => {
