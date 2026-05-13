@@ -69,6 +69,38 @@ Già configurato per **GitHub Pages**:
 
 Codici aggiuntivi sono validati lato backend Base44 e gestiti dal pannello admin (`admin.html`).
 
+## Pannello admin
+
+`admin.html` è il pannello operativo per gestire codici di accesso, dispositivi attivi e sessioni di gioco. Autonomo dal flusso narrativo (non importa `case-app.js`), parla con la function Base44 `adminActions`.
+
+### Auth con token di sessione
+
+Il login richiede una chiave admin (env `ADMIN_KEY` sul backend Base44, confronto a tempo costante). Su `verify_admin` il backend rilascia un **session token opaco** (32 byte random hex) con TTL 8 ore, persistito nell'entity `AdminSession`. Il client salva il token in `sessionStorage` (mai la chiave) e lo manda come header `x-admin-token` in ogni richiesta successiva.
+
+- **Restore**: al reload `verify_token` valida il token in storage (non scaduto, non revocato) e ripristina la sessione senza ri-richiedere la chiave.
+- **Logout esplicito**: l'action `logout` marca `revoked=true` server-side; il token diventa inutilizzabile anche se qualcuno ne intercetta una copia.
+- **Idle auto-logout**: 30 minuti di inattività → warning di 60s → logout client-side + revoca server-side.
+- **Fallback legacy**: per non rompere durante deploy coordinati, il backend accetta ancora `x-admin-key` come alternativa al token sulle action operative. Lasciato come safety net durante la migrazione di Sessione C.
+
+### Action disponibili (POST `adminActions`)
+
+| Action | Auth | Note |
+|---|---|---|
+| `verify_admin` | x-admin-key | login, rilascia token |
+| `verify_token` | x-admin-token | restore sessione |
+| `logout` | x-admin-token | revoca token |
+| `list_codes` / `list_devices` / `list_sessions` | token o key | usa `filter({})`, non `list()` |
+| `create_code` | token o key | genera codice univoco A17I-/A17T- |
+| `block_code` / `unblock_code` | token o key | con `status_before_block` per ripristino |
+| `reset_devices` | token o key | tutti o singolo (con anti-spoof check) |
+| `upgrade_code` | token o key | individual → team |
+| `update_notes` | token o key | max 2000 char |
+
+### UX
+
+- **Modali di conferma on-brand** (`confirmModal()`) al posto di `confirm()` nativi: titolo, messaggio, label personalizzati, variante `danger`, Escape/Enter intercettati con `capture` per non chiudere modali sottostanti.
+- **Fetch timeout** 8s su tutte le request (`fetchWithTimeout` + `AbortController`): niente request che restano appese se la function Base44 cold-starta o la rete è instabile.
+
 ## Sistema di scoring
 
 - Punteggio base per atto: **100**
@@ -149,12 +181,13 @@ Valida se contiene almeno 2 concetti tra: suicidio non semplice, scena non coere
 
 ## Storia del refactor
 
-Il progetto è partito come 5 file HTML autonomi con CSS+JS inline duplicato (~531 KB totali). Refactor in 5 fasi:
+Il progetto è partito come 5 file HTML autonomi con CSS+JS inline duplicato (~531 KB totali). Refactor in fasi:
 
 1. **Dati narrativi → JSON** (`data/atto{1,2,3}.json`) — testi, puzzle, hint, validazione
 2. **CSS condiviso** (`assets/case-app.css`) — estratto da atto1/index
 3. **JS scoring engine** (`assets/case-app.js`) — funzioni `_global`, `loadGlobal`, ecc.
 4. **Storage unificato** (`a17_session`) — 10 chiavi → 1 + migrazione automatica
 5. **Config unico** (`assets/config.js`) — APP_ID, API_BASE single source
+6. **Hardening admin** — token di sessione opaco al posto della chiave in chiaro in `sessionStorage` (entity `AdminSession` + action `verify_admin/verify_token/logout`), modali custom on-brand al posto di `confirm()` nativi, timeout 8s su tutti i fetch del pannello
 
 Il design originale (`DESIGN.md`) prevede una migrazione futura a Next.js + React + CSS Modules: lo stack HTML vanilla attuale è la vertical slice precedente a quella migrazione.
