@@ -457,13 +457,16 @@ const FUNCTIONS_BASE = (typeof API_BASE !== 'undefined')
   : `https://api.base44.app/api/apps/${APP_ID}/functions`;
 const ENDPOINT = `${FUNCTIONS_BASE}/adminActions`;
 
-const SESSION_KEY = 'a17_admin_session';
+// v2: la chiave era una password in chiaro. Ora salviamo un token opaco
+// emesso dal backend, quindi cambiamo namespace per non interpretare per
+// errore la vecchia chiave come token al primo restore post-deploy.
+const SESSION_KEY = 'a17_admin_session_v2';
 const IDLE_TIMEOUT_MS = 30 * 60 * 1000;  // 30 minuti di inattività
 const IDLE_WARNING_MS = 60 * 1000;       // 60 sec di warning prima del logout
 const AUTO_REFRESH_MS = 60 * 1000;       // 60 sec auto-refresh
 const FETCH_TIMEOUT_MS = 8000;           // 8 sec timeout su ogni fetch
 
-let ADMIN_KEY = '';
+let ADMIN_TOKEN = '';
 let allCodes = [];
 let allDevices = [];
 let allSessions = [];
@@ -588,14 +591,14 @@ async function doLogin() {
     }
 
     const data = await res.json().catch(() => ({}));
-    if (!data.ok) {
+    if (!data.ok || !data.token) {
       showLoginError(data.error || 'Risposta inattesa dal server.');
       return;
     }
 
-    ADMIN_KEY = key;
+    ADMIN_TOKEN = data.token;
     if (remember) {
-      try { sessionStorage.setItem(SESSION_KEY, key); } catch(_) {}
+      try { sessionStorage.setItem(SESSION_KEY, data.token); } catch(_) {}
     }
     bootApp();
   } catch (e) {
@@ -628,7 +631,16 @@ function bootApp() {
 }
 
 function doLogout(reason) {
-  ADMIN_KEY = '';
+  // Revoca server-side best-effort (fire and forget, ignora errori/timeout).
+  const tokenToRevoke = ADMIN_TOKEN;
+  if (tokenToRevoke) {
+    fetchWithTimeout(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': tokenToRevoke },
+      body: JSON.stringify({ action: 'logout' })
+    }, 4000).catch(() => { /* niente: la sessione viene comunque chiusa lato client */ });
+  }
+  ADMIN_TOKEN = '';
   allCodes = []; allDevices = []; allSessions = [];
   try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
   stopAutoRefresh();
@@ -703,16 +715,16 @@ async function adminAction(action, params = {}) {
   try {
     res = await fetchWithTimeout(ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-admin-key': ADMIN_KEY },
+      headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_TOKEN },
       body: JSON.stringify({ action, ...params })
     });
   } catch (e) {
     if (isTimeoutError(e)) throw new Error('Timeout: il server non risponde.');
     throw e;
   }
-  // 401 = sessione scaduta / chiave revocata: forza logout
+  // 401 = sessione scaduta o revocata: forza logout
   if (res.status === 401) {
-    doLogout('Chiave non più valida. Effettua di nuovo il login.');
+    doLogout('Sessione scaduta. Effettua di nuovo il login.');
     throw new Error('Non autorizzato');
   }
   return res.json();
@@ -1495,25 +1507,26 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const saved = sessionStorage.getItem(SESSION_KEY);
     if (saved) {
-      ADMIN_KEY = saved;
+      ADMIN_TOKEN = saved;
       document.getElementById('remember-session').checked = true;
       fetchWithTimeout(ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-key': saved },
-        body: JSON.stringify({ action: 'verify_admin' })
+        headers: { 'Content-Type': 'application/json', 'x-admin-token': saved },
+        body: JSON.stringify({ action: 'verify_token' })
       })
-        .then(r => r.json())
+        .then(r => r.json().catch(() => ({})))
         .then(data => {
           if (data && data.ok) {
             bootApp();
           } else {
-            ADMIN_KEY = '';
+            ADMIN_TOKEN = '';
             try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
           }
         })
         .catch(() => {
-          ADMIN_KEY = '';
-          try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
+          // Su timeout/rete: non purgare il token (potrebbe essere ancora
+          // valido). L'utente farà di nuovo login se necessario.
+          ADMIN_TOKEN = '';
         });
     }
   } catch(_) {}
