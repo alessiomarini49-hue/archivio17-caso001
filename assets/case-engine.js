@@ -1298,6 +1298,18 @@ function applyTerminalsUI(){
         if(cm) cm.textContent = m[tState.sospetto];
       }
     }
+    // Sblocco delle sezioni dichiarate dal terminale (parte2, terminale3b,
+    // casella3, verifiche, esito…). Senza questo, su B che riceve via polling
+    // gs.t3a_completed=true le sezioni gated da T3A restano locked in
+    // nav-sidebar/mobile-nav anche se il merge ha aggiornato lo state. Lo
+    // stesso comportamento di submitTerminal locale, ma idempotente per ogni
+    // terminale già completato.
+    (term.successUnlocks || []).forEach(sid => {
+      ['nav-', 'mnav-'].forEach(pfx => {
+        const el = document.getElementById(pfx + sid);
+        setNavLocked(el, false);
+      });
+    });
   });
 }
 
@@ -1672,6 +1684,12 @@ function mergeServerState(gs, presence){
     const hasTerminalChange = remoteEvents.some(e => e.type === 'remote-terminal-completed');
     if(hasTerminalChange){
       try { applyTerminalsUI(); } catch(_){}
+      // Ri-render dei puzzle: alcuni gruppi hint sono gated via
+      // supporto.groups[].unlockedAfterTerminal (atto3 P2/P3). Senza questo,
+      // su B che riceve via polling il terminale precedente come completato
+      // i nuovi gruppi hint non vengono renderizzati finché non si refresha
+      // la sezione. submitTerminal locale già lo chiama (linea 2179 originale).
+      try { renderPuzzles(); } catch(_){}
     }
     // Hint nuovi da remoto: il pannello supporto è buildato una volta in init
     // e patchato solo da useHint locale. Senza re-render il tab B mostra ancora
