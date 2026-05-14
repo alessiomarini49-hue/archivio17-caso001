@@ -219,6 +219,16 @@ function saveState(){
     const updates = {
       final_unlocked:  state.finalUnlocked,
       hints_revealed:  state.hintsRevealed,
+      // Score components: vanno scritti server-side perché il backend max-merge
+      // li propaga a tutti i device team. Senza questi due campi, il polling di
+      // un altro device riceverebbe sempre 0 e non scalerebbe mai lo score.
+      // Backend whitelist + strategia 'max' → niente regressione possibile.
+      hint_penalty_total: Number(state.hintPenaltyTotal) || 0,
+      errors_terminal:    Number(state.errorsTerminal)   || 0,
+      // act{N}_completed: scritto qui (oltre che da saveActScore lato server)
+      // così tab B sa subito che l'atto è chiuso senza dover aspettare il round
+      // trip /saveActScore. Strategia 'or' lato backend → idempotente.
+      ['act' + config.actNum + '_completed']: !!state.finalUnlocked,
       current_section: state.currentSection,
       current_act:     config.actNum,
       ['docs_opened_act' + config.actNum]: allDocs
@@ -1098,6 +1108,7 @@ function _snapshotForDiff(){
     hintsRevealedKeys: {},
     hintPenaltyTotal: Number(state.hintPenaltyTotal) || 0,
     errorsTerminal:   Number(state.errorsTerminal)   || 0,
+    finalUnlocked:    !!state.finalUnlocked,
   };
   if(data && Array.isArray(data.parts)){
     data.parts.forEach(p => {
@@ -1162,6 +1173,12 @@ function _diffSnapshots(pre, post){
       type: 'remote-penalty-changed',
       detail: { hintPenaltyDelta: hintDelta, errorsDelta: errDelta }
     });
+  }
+  // 5) Atto completato da remoto: finalUnlocked false→true. Triggera renderEsito
+  // + markActDone lato consumer per popolare la sezione esito (oggi viene
+  // popolata solo da submitTerminal del device che ha chiuso l'atto).
+  if(!pre.finalUnlocked && post.finalUnlocked){
+    events.push({ type: 'remote-act-completed', detail: {} });
   }
   return events;
 }
@@ -1247,6 +1264,7 @@ function _applyPresence(presence){
 // resterebbe sovrascritto in ogni caso (clearTimeout in showToast). Il dispatch
 // granulare via window.dispatchEvent rimane disponibile per consumer custom.
 const _REMOTE_EVENT_PRIORITY = {
+  'remote-act-completed':      5,
   'remote-terminal-completed': 4,
   'remote-part-unlocked':      3,
   'remote-hint-revealed':      2,
@@ -1275,6 +1293,9 @@ function _toastForRemoteEvent(ev){
       msg = total > 0 ? ('Penalità aggiornata: −' + total) : 'Punteggio aggiornato';
       break;
     }
+    case 'remote-act-completed':
+      msg = 'Atto completato da un altro device — esito disponibile';
+      break;
     default: return;
   }
   try { showToast(msg, 'success'); } catch(_){}
@@ -1410,6 +1431,14 @@ function mergeServerState(gs, presence){
     const hasHintChange = remoteEvents.some(e => e.type === 'remote-hint-revealed');
     if(hasHintChange){
       try { renderPuzzles(); } catch(_){}
+    }
+    // Atto completato da altro device: popola la sezione esito (renderEsito
+    // viene chiamato solo dal device che chiude l'atto in submitTerminal) e
+    // marca l'atto come done nel global state per il scoring cross-act.
+    const hasActDone = remoteEvents.some(e => e.type === 'remote-act-completed');
+    if(hasActDone){
+      try { if(typeof markActDone === 'function') markActDone(config.actNum); } catch(_){}
+      try { renderEsito(); } catch(_){}
     }
     // Dispatch granulare per consumer esterni / debug.
     remoteEvents.forEach(ev => {
