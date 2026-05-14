@@ -1709,6 +1709,20 @@ function mergeServerState(gs, presence){
   // il merge della response di /updateSession ri-scatenerebbero un'altra POST verso
   // il server, che a sua volta tornerebbe game_session, → merge → POST → loop.
   _saveStateLocalOnly();
+  // applyTerminalsUI SEMPRE dopo il merge (non solo su hasTerminalChange): è
+  // idempotente e cattura due edge case altrimenti scoperti:
+  // 1) Primo merge dopo boot (isInitial=true): preSnap=null → _diffSnapshots
+  //    ritorna [] → nessun remote-terminal-completed → applyTerminalsUI
+  //    sarebbe stato chiamato solo dopo da init(), ma intanto updateUI()
+  //    (chiamato in fondo qui) sblocca SOLO nav-${terminal.sectionId},
+  //    NON nav-${part.sectionId} delle parti narrativeOnly (es. parte3
+  //    atto3) né nav-${extraSection.sectionId} (es. verifiche atto3).
+  //    Risultato: B vede solo terminale3c sbloccato ma non parte3/verifiche.
+  // 2) Polling tick con uno stato cumulativo (es. B perde un tick e al
+  //    successivo riceve sia t3a sia t3b completed): il diff vede solo i
+  //    cambi NUOVI, ma applyTerminalsUI applica sblocchi per TUTTI i
+  //    terminali completed, garantendo coerenza visiva.
+  try { applyTerminalsUI(); } catch(_){}
 
   // Diff pre/post per dispatchare eventi granulari "remoti" (4 categorie). Skippato
   // su self-write (vedi isSelfWrite sopra) per evitare doppi toast quando torna la
