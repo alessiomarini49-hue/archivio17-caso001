@@ -201,6 +201,14 @@ function _scheduleNextPoll(){
 function _startCloudPolling(){
   if(_pollStarted) return;
   if(!_sessionToken || !_codeId) return;
+  // Gate per licenze individuali (max_devices <= 1): polling semanticamente
+  // innocuo (merge no-op = stato remoto == locale) ma costa ~6 read/min.
+  // _lastPresenceState è già popolato qui perché _startCloudPolling è chiamato
+  // in bootApp() dopo che validateCode/updateSession hanno applicato presence.
+  // Se backend pre-team-license (presence null) procediamo fail-open. Trade-off
+  // accettato: upgrade individual→team a sessione aperta richiede un re-login
+  // per attivare il polling (edge case admin).
+  if(_lastPresenceState && Number.isFinite(_lastPresenceState.max) && _lastPresenceState.max <= 1) return;
   _pollStarted = true;
   _scheduleNextPoll();
 }
@@ -400,6 +408,7 @@ function buildShell(){
   root.innerHTML =
     buildAccessScreen() +
     buildHeader() +
+    buildRemoteJumpBanner() +
     buildMobileNav() +
     buildAppBody() +
     buildMobileInvButton() +
@@ -408,6 +417,43 @@ function buildShell(){
     buildResetConfirm() +
     buildToast() +
     buildFooter();
+}
+
+// Banner sticky mostrato su tab B (team) quando A chiude l'atto corrente e B
+// si trova ancora sulla pagina dell'atto appena completato. Linka il device a
+// atto{N+1}.html mantenendo il controllo (NO redirect automatico, NO modale).
+// Dismissibile via "×". Reso solo se config.actNum < 3 e licenza team (max>1).
+function buildRemoteJumpBanner(){
+  if(config.actNum >= 3) return '';
+  const romanFrom = ['', 'I', 'II', 'III'][config.actNum];
+  const romanTo   = ['', 'II', 'III'][config.actNum]; // mapping 1→II, 2→III
+  const nextHref  = 'atto' + (config.actNum + 1) + '.html';
+  return `
+<div class="remote-jump-banner" id="remote-jump-banner" hidden role="status" aria-live="polite">
+  <span class="rjb-text">L'Atto ${romanFrom} è stato chiuso dal team.</span>
+  <a class="rjb-cta" id="rjb-cta" href="${nextHref}">Continua all'Atto ${romanTo} →</a>
+  <button class="rjb-close" id="rjb-close" type="button" aria-label="Nascondi avviso">×</button>
+</div>`;
+}
+
+// Dismiss memoizzato per la durata della tab corrente. Una volta che B chiude
+// il banner, il polling continua a dispatchare remote-act-completed ma il
+// banner non riappare. Reset al reload (vita = tab). NON usiamo localStorage
+// perché lo stato "ho visto il banner" è effimero e per-device.
+let _remoteJumpDismissed = false;
+function _showRemoteJumpBanner(){
+  if(_remoteJumpDismissed) return;
+  if(config.actNum >= 3) return;
+  // Solo team: per individual il banner non ha senso (un solo device).
+  if(!_lastPresenceState || !(Number(_lastPresenceState.max) > 1)) return;
+  const el = document.getElementById('remote-jump-banner');
+  if(!el) return;
+  el.hidden = false;
+}
+function _dismissRemoteJumpBanner(){
+  _remoteJumpDismissed = true;
+  const el = document.getElementById('remote-jump-banner');
+  if(el) el.hidden = true;
 }
 
 function buildAccessScreen(){
@@ -1052,6 +1098,10 @@ function bindEvents(){
   document.querySelectorAll('[data-submit-terminal]').forEach(el =>
     el.addEventListener('click', () => submitTerminal(el.dataset.submitTerminal)));
 
+  // Remote jump banner close (Bug Lotto 2: jump inter-atto in team)
+  const rjbClose = document.getElementById('rjb-close');
+  if(rjbClose) rjbClose.addEventListener('click', _dismissRemoteJumpBanner);
+
   // Esc key
   document.addEventListener('keydown', e => {
     if(e.key !== 'Escape') return;
@@ -1285,6 +1335,30 @@ function _applyPresence(presence){
   badge.classList.toggle('at-limit', active >= max);
 }
 
+// Detection reset condiviso server-side. /resetSession scrive gs.reset_actN_at
+// = ISO ora; ogni device del team memoizza l'ultimo valore visto e al cambio
+// triggera un reload per ripartire con lo stato server canonicizzato.
+// Inizializzato a null per atto: il primo merge (boot) memoizza il valore
+// corrente SENZA reload, evitando un loop su sessioni con reset preesistente.
+const _lastSeenResetAt = { 1: null, 2: null, 3: null };
+function _detectReset(gs, isInitial, isSelfWrite){
+  if(isSelfWrite) return 0;
+  for(let n = 1; n <= 3; n++){
+    const key = 'reset_act' + n + '_at';
+    const val = gs[key];
+    if(typeof val !== 'string' || !val) continue;
+    if(isInitial || _lastSeenResetAt[n] === null){
+      _lastSeenResetAt[n] = val;
+      continue;
+    }
+    if(val !== _lastSeenResetAt[n]){
+      _lastSeenResetAt[n] = val;
+      return n;
+    }
+  }
+  return 0;
+}
+
 // Toast riassuntivo per eventi remoti. Più eventi nello stesso tick → mostriamo
 // SOLO il primo per priorità (terminal > part > hint > penalty), il toast
 // resterebbe sovrascritto in ogni caso (clearTimeout in showToast). Il dispatch
@@ -1339,6 +1413,19 @@ function mergeServerState(gs, presence){
   const isSelfWrite = !!(gs.last_updated_by && _sessionToken && gs.last_updated_by === _sessionToken);
   const isInitial = !_hasMerged;
   _hasMerged = true;
+
+  // Reset condiviso (Lotto 2): un altro device del team ha fatto reset di
+  // un atto → reload per ricaricare lo state server canonicizzato. Skippato
+  // su isSelfWrite (siamo stati noi, abbiamo già pulito localmente).
+  const resetAct = _detectReset(gs, isInitial, isSelfWrite);
+  if(resetAct){
+    const roman = ['', 'I', 'II', 'III'][resetAct];
+    try { showToast('Atto ' + roman + ' resettato dal team. Aggiornamento…', 'error'); } catch(_){}
+    _stopCloudPolling();
+    setTimeout(() => { try { location.reload(); } catch(_){} }, 2500);
+    return;
+  }
+
   const preSnap = (isSelfWrite || isInitial) ? null : _snapshotForDiff();
 
   data.parts.forEach(p => {
@@ -1405,6 +1492,48 @@ function mergeServerState(gs, presence){
   const penEKey = 'penalty_act' + config.actNum + '_errors';
   if(typeof gs[penHKey] === 'number') state.hintPenaltyTotal = gs[penHKey];
   if(typeof gs[penEKey] === 'number') state.errorsTerminal   = Math.round(gs[penEKey] / 10);
+  // Propaga le penalty canoniche server-side a _global.penalty_actN per TUTTI
+  // gli atti, non solo quello corrente. Senza questo, su B in atto2 i
+  // gs.penalty_act1_* scritti da A a fine atto1 arrivano via polling ma non
+  // entrano in _global.penalty_act1 → la classifica finale calcolata
+  // localmente sul device B sottostima gli atti che B non ha personalmente
+  // chiuso (mostra "Archivista in formazione" anche con team al 60).
+  // gs.penalty_act{N}_hints e gs.penalty_act{N}_errors sono già in "punti
+  // penalty" lato server, allineati col formato _global.penalty_actN.
+  // Skip se locked (case-3: atto3 chiuso → score immutabile) o se i valori
+  // sono già allineati (evita saveGlobal su ogni tick di polling 10s).
+  if(typeof updateGlobalFromActState === 'function' && typeof _global !== 'undefined' && !_global.locked){
+    for(let n = 1; n <= 3; n++){
+      const hk = 'penalty_act' + n + '_hints';
+      const ek = 'penalty_act' + n + '_errors';
+      const hasH = typeof gs[hk] === 'number';
+      const hasE = typeof gs[ek] === 'number';
+      if(!hasH && !hasE) continue;
+      const prev = _global['penalty_act' + n] || { hints: 0, errors: 0 };
+      const hints  = hasH ? gs[hk] : (prev.hints  || 0);
+      const errors = hasE ? gs[ek] : (prev.errors || 0);
+      if(hints !== (prev.hints || 0) || errors !== (prev.errors || 0)){
+        updateGlobalFromActState(n, hints, errors);
+      }
+    }
+  }
+  // Propaga "caso chiuso" server-side (gs.global_locked + gs.act3_completed)
+  // a _global.locked + _global.act3_done. In team B che è in atto1 quando A
+  // chiude atto3 non chiama markActDone(3) localmente → isCaseClosed() resta
+  // false → il bottone reset rimane visibile dopo che il team ha chiuso il
+  // caso. Gestiamo anche la transizione opposta (reset di atto3 → unlock)
+  // per non lasciare _global.locked=true dopo un reload post-reset.
+  if(typeof _global !== 'undefined' && typeof gs.global_locked === 'boolean'){
+    const targetLocked = gs.global_locked;
+    const targetDone   = !!(gs.act3_completed || gs.global_locked);
+    let dirty = false;
+    if(_global.act3_done !== targetDone){ _global.act3_done = targetDone; dirty = true; }
+    if(_global.locked !== targetLocked){ _global.locked = targetLocked; dirty = true; }
+    if(typeof gs.global_score === 'number' && gs.global_score !== _global.global_score){
+      _global.global_score = gs.global_score; dirty = true;
+    }
+    if(dirty && typeof saveGlobal === 'function') saveGlobal();
+  }
   // Deriva hintLevelsUsed + hintPuzzleCost + hintPenaltyTotal da hintsRevealed:
   // hintsRevealed è deep-mergiato server-side (strategia 'object'), idempotente,
   // quindi totalCost = somma esatta su tutto il team. Più robusto del max() su
@@ -1492,6 +1621,10 @@ function mergeServerState(gs, presence){
     if(hasActDone){
       try { if(typeof markActDone === 'function') markActDone(config.actNum); } catch(_){}
       try { renderEsito(); } catch(_){}
+      // Banner "Il team è passato all'Atto N+1": solo se NON siamo già su atto3
+      // (nessun "prossimo atto") e siamo in team. Self-write già escluso a monte
+      // (hasActDone è calcolato in branch !isSelfWrite).
+      try { _showRemoteJumpBanner(); } catch(_){}
     }
     // Dispatch granulare per consumer esterni / debug.
     remoteEvents.forEach(ev => {
@@ -1984,6 +2117,7 @@ function submitTerminal(termId){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_code:   _accessCode,
+          session_token: _sessionToken || null,
           act:           config.actNum,
           hint_penalty:  state.hintPenaltyTotal || 0,
           error_penalty: (state.errorsTerminal || 0) * 10
@@ -2220,9 +2354,69 @@ function showResetConfirm(){
   const ra = document.getElementById('confirm-resets-after');
   if(rl) rl.textContent = left;
   if(ra) ra.textContent = Math.max(0, left - 1);
+  // Ripristina lo stato pulsante (può essere stato lasciato "Reset in corso…"
+  // da un tentativo precedente fallito su rete).
+  const btn = document.getElementById('confirm-reset-btn');
+  if(btn){
+    btn.disabled = false;
+    btn.textContent = (data.resetConfirm && data.resetConfirm.buttonLabel) || 'Conferma reset';
+  }
+  // Avviso team-aware: in team il reset si propaga a TUTTI i device. Mostrato
+  // dinamicamente perché data.resetConfirm.description è statico nel JSON e
+  // condiviso col single player.
+  const isTeam = !!(_lastPresenceState && Number(_lastPresenceState.max) > 1);
+  let teamNotice = document.getElementById('confirm-team-notice');
+  const box = document.querySelector('#confirm-overlay .confirm-box');
+  if(isTeam){
+    if(!teamNotice && box){
+      teamNotice = document.createElement('p');
+      teamNotice.id = 'confirm-team-notice';
+      teamNotice.style.cssText = 'font-family:var(--font-mono);font-size:.7rem;color:var(--amber);margin-top:.4rem;letter-spacing:.06em';
+      const actLabels = ['', 'I', 'II', 'III'];
+      teamNotice.textContent = 'Sei in team: il reset dell\'Atto ' + actLabels[config.actNum] + ' verrà applicato a tutti i dispositivi collegati.';
+      box.insertBefore(teamNotice, box.querySelector('.confirm-actions'));
+    }
+  } else if(teamNotice){
+    teamNotice.remove();
+  }
   document.getElementById('confirm-overlay').classList.add('visible');
 }
-function confirmReset(){
+async function confirmReset(){
+  // In team il reset deve propagare al server (e quindi agli altri device via
+  // polling reset_actN_at). In single basta il cleanup locale come da single
+  // player tradizionale (che butta via anche cloud auth → re-login al prossimo
+  // boot). Determinato da presence: max>1 = team.
+  const isTeam = !!(_lastPresenceState && Number(_lastPresenceState.max) > 1);
+  const btn = document.getElementById('confirm-reset-btn');
+  if(isTeam && _accessCode && _sessionToken){
+    if(btn){ btn.disabled = true; btn.textContent = 'Reset in corso…'; }
+    try {
+      const r = await fetch(API_BASE + '/resetSession', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_code:   _accessCode,
+          session_token: _sessionToken,
+          act:           config.actNum
+        })
+      });
+      const d = await r.json().catch(() => null);
+      if(!r.ok || !d || !d.ok){
+        if(btn){ btn.disabled = false; btn.textContent = (data.resetConfirm && data.resetConfirm.buttonLabel) || 'Conferma reset'; }
+        showToast((d && d.error) || 'Reset non riuscito. Riprova.', 'error');
+        return;
+      }
+      // Memoizza il reset_at appena scritto: il polling tick successivo
+      // rivedrà lo stesso valore → niente self-reload (skippato anche da
+      // isSelfWrite, ma doppia robustezza non fa male).
+      if(d.reset_at) _lastSeenResetAt[config.actNum] = d.reset_at;
+    } catch(_){
+      if(btn){ btn.disabled = false; btn.textContent = (data.resetConfirm && data.resetConfirm.buttonLabel) || 'Conferma reset'; }
+      showToast('Reset non riuscito (rete). Riprova.', 'error');
+      return;
+    }
+  }
+
   try { localStorage.removeItem(config.storageKey); } catch(_){}
   if(typeof _global !== 'undefined'){
     _global['penalty_act' + config.actNum] = { hints: 0, errors: 0 };
@@ -2231,8 +2425,13 @@ function confirmReset(){
     if(typeof globalScore === 'function') _global.global_score = globalScore();
     if(typeof saveGlobal === 'function') saveGlobal();
   }
-  _sessionToken = null; _codeId = null; _accessCode = null;
-  if(typeof clearCloudAuth === 'function') clearCloudAuth(config.actNum);
+  // In team il device resta loggato: il backend ha già scritto reset_actN_at
+  // e il polling continuerà a girare. In single (max<=1) seguiamo il
+  // comportamento storico: clearCloudAuth + delogga.
+  if(!isTeam){
+    _sessionToken = null; _codeId = null; _accessCode = null;
+    if(typeof clearCloudAuth === 'function') clearCloudAuth(config.actNum);
+  }
   state = defaultState();
   data.parts.forEach(p => { state.docsOpened[p.id] = []; });
   // Section plugins: chance di reset

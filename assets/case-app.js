@@ -7,6 +7,10 @@
 //   a17_session : oggetto unificato { version, global, cloud }
 //     - .global : ex a17_global_v1
 //     - .cloud.atto{1,2,3} : ex a17_atto{N}_session_token / code_id / access_code
+//     - .cloud.shared : auth condivisa cross-atto (fallback per getCloudAuth).
+//       In team un solo Device serve tutta la sessione: senza fallback la
+//       transizione atto1→atto2 forzava un secondo validateCode "Nuovo device"
+//       saturando max_devices. Vedi project_archivio17_team_license.md Bug 3.
 //
 // Chiavi NON gestite qui (rimangono separate):
 //   a17_atto1_v3, a17_atto2_v2, a17_atto3_v1 : stato gameplay per atto
@@ -49,13 +53,17 @@ function _migrateLegacyStorage(){
       try { session.global = JSON.parse(legacyGlobal); migrated = true; } catch(e) {}
     }
 
-    // Cloud auth per atto
+    // Cloud auth per atto + shared cross-atto (vedi getCloudAuth/setCloudAuth)
     [1, 2, 3].forEach(n => {
       const token = localStorage.getItem('a17_atto' + n + '_session_token');
       const codeId = localStorage.getItem('a17_atto' + n + '_code_id');
       const code = localStorage.getItem('a17_atto' + n + '_access_code');
       if(token || codeId || code){
-        session.cloud['atto' + n] = { token, codeId, code };
+        const auth = { token, codeId, code };
+        session.cloud['atto' + n] = auth;
+        // L'ultimo atto trovato vince come shared: indifferente perché
+        // tutte le entry legacy puntavano comunque allo stesso Device.
+        if(token) session.cloud.shared = auth;
         migrated = true;
       }
     });
@@ -185,24 +193,51 @@ function consumeReset(){
 }
 
 // ----------------------------------------------------------------
-// CLOUD AUTH per atto (ex a17_atto{N}_session_token / code_id / access_code)
+// CLOUD AUTH cross-atto (ex a17_atto{N}_session_token / code_id / access_code)
 // ----------------------------------------------------------------
+// La sessione cloud (Device + session_token) è UNICA per tutta la partita:
+// validateCode crea un Device per (code_id, session_token) e quel record
+// vale per atti 1/2/3. cloud.shared è la fonte canonica; cloud.atto{N} resta
+// scritto per retrocompat con eventuali client vecchi che leggono solo per-atto.
 function getCloudAuth(actNum){
   const s = _readSession();
-  return (s.cloud && s.cloud['atto' + actNum]) || null;
+  if(!s.cloud) return null;
+  // 1) Lookup per-atto (prevale se presente)
+  const perAct = s.cloud['atto' + actNum];
+  if(perAct && perAct.token) return perAct;
+  // 2) Fallback condiviso (caso normale post-fix)
+  if(s.cloud.shared && s.cloud.shared.token) return s.cloud.shared;
+  // 3) Migrazione lazy: client vecchio che ha solo cloud.attoX → promuovi a shared
+  for(const k of ['atto1','atto2','atto3']){
+    const legacy = s.cloud[k];
+    if(legacy && legacy.token){
+      s.cloud.shared = { token: legacy.token, codeId: legacy.codeId || null, code: legacy.code || null };
+      _writeSession(s);
+      return s.cloud.shared;
+    }
+  }
+  return null;
 }
 function setCloudAuth(actNum, auth){
   const s = _readSession();
   if(!s.cloud) s.cloud = {};
-  s.cloud['atto' + actNum] = {
+  const normalized = {
     token:  auth && auth.token  != null ? auth.token  : null,
     codeId: auth && auth.codeId != null ? auth.codeId : null,
     code:   auth && auth.code   != null ? auth.code   : null
   };
+  s.cloud['atto' + actNum] = normalized;
+  s.cloud.shared = normalized;
   _writeSession(s);
 }
-function clearCloudAuth(actNum){
+// Pulisce TUTTO il blocco cloud (non solo l'atto richiesto): in team la sessione
+// cloud è condivisa, quindi revoke/logout/reset locale devono azzerare l'intera
+// auth, non solo quella per-atto (altrimenti il fallback shared resusciterebbe
+// un token ormai invalido al prossimo getCloudAuth). Gli altri device del team
+// mantengono il proprio token nel proprio localStorage — non sono toccati.
+function clearCloudAuth(_actNum){
   const s = _readSession();
-  if(s.cloud) delete s.cloud['atto' + actNum];
+  if(!s.cloud){ _writeSession(s); return; }
+  s.cloud = {};
   _writeSession(s);
 }
