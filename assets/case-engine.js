@@ -2216,11 +2216,14 @@ function submitTerminal(termId){
     }, term.successDelayMs || 2000);
 
   } else if(result.errors > 0){
-    gfb.textContent = v.globalErrorMsg || 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
+    // innerHTML perché i messaggi nel JSON possono contenere <strong> (es.
+    // atto2 globalAmbiguousMsg). Sorgente fidata (data autorale, non input
+    // utente) quindi non c'è rischio XSS.
+    gfb.innerHTML = v.globalErrorMsg || 'Alcune risposte non sono coerenti con il fascicolo. Riveda i campi segnalati.';
     gfb.className = 'terminal-global-feedback show warn';
     showToast('−' + (result.errors * 10) + ' pt — errori rilevati', 'error');
   } else {
-    gfb.textContent = v.globalAmbiguousMsg || 'Alcune risposte richiedono maggiore specificità. Integri le osservazioni prima di procedere.';
+    gfb.innerHTML = v.globalAmbiguousMsg || 'Alcune risposte richiedono maggiore specificità. Integri le osservazioni prima di procedere.';
     gfb.className = 'terminal-global-feedback show ambiguous';
   }
 }
