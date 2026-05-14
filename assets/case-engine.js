@@ -86,8 +86,11 @@ let _syncTimer = null;
 // mergeServerState — è "mezzo passo" di sync near-realtime in aggiunta al polling.
 function _scheduleSyncToServer(updates){
   if(_syncTimer) clearTimeout(_syncTimer);
+  // Blocco outbound durante la finestra reset→reload: vedi _resetPending.
+  if(_resetPending) return;
   _syncTimer = setTimeout(() => {
     _syncTimer = null;
+    if(_resetPending) return;
     if(!_sessionToken || !_codeId) return;
     fetch(API_BASE + '/updateSession', {
       method: 'POST',
@@ -104,6 +107,7 @@ function _scheduleSyncToServer(updates){
 // fuori dal debounce evita che due tentativi rapidi vengano coalescenza in uno solo.
 function _sendUpdateNow(updates){
   if(!_sessionToken || !_codeId) return Promise.resolve();
+  if(_resetPending) return Promise.resolve();
   return fetch(API_BASE + '/updateSession', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -1338,25 +1342,64 @@ function _applyPresence(presence){
 // Detection reset condiviso server-side. /resetSession scrive gs.reset_actN_at
 // = ISO ora; ogni device del team memoizza l'ultimo valore visto e al cambio
 // triggera un reload per ripartire con lo stato server canonicizzato.
-// Inizializzato a null per atto: il primo merge (boot) memoizza il valore
-// corrente SENZA reload, evitando un loop su sessioni con reset preesistente.
-const _lastSeenResetAt = { 1: null, 2: null, 3: null };
-function _detectReset(gs, isInitial, isSelfWrite){
+// Sentinel `undefined` = "mai visto" (memoizza al primo merge senza reload);
+// `null` = "visto come assente server-side" (transizione null→T va captata).
+// Distinzione critica: la v1 usava null come "mai visto" e si confondeva con
+// il null legittimo del server quando l'atto non è ancora stato resettato →
+// il primo cambio null→T1 veniva trattato come "primo memoize" e NON
+// triggerava il reload sui device remoti.
+const _lastSeenResetAt = { 1: undefined, 2: undefined, 3: undefined };
+function _detectReset(gs, _isInitial, isSelfWrite){
   if(isSelfWrite) return 0;
   for(let n = 1; n <= 3; n++){
     const key = 'reset_act' + n + '_at';
-    const val = gs[key];
-    if(typeof val !== 'string' || !val) continue;
-    if(isInitial || _lastSeenResetAt[n] === null){
+    const raw = gs[key];
+    const val = (typeof raw === 'string' && raw) ? raw : null;
+    const prev = _lastSeenResetAt[n];
+    if(prev === undefined){
       _lastSeenResetAt[n] = val;
       continue;
     }
-    if(val !== _lastSeenResetAt[n]){
+    if(val !== prev){
       _lastSeenResetAt[n] = val;
-      return n;
+      if(val !== null) return n;
     }
   }
   return 0;
+}
+
+// Flag set quando rileviamo un reset remoto: blocca _scheduleSyncToServer
+// (outbound) tra il rilevamento e il location.reload, altrimenti un saveState
+// armato prima del detect ri-popolerebbe il backend con i progressi pre-reset
+// del device locale (il merge monotono backend NON applica regressioni, quindi
+// quel POST sopravvivrebbe al reset di un altro device del team).
+let _resetPending = false;
+
+// Mappa atto → chiave storage gameplay. Hardcoded perché la chiave per gli
+// atti DIVERSI dall'atto corrente non è esposta via config.storageKey (config
+// è per-pagina). Allineata con atto1.html/atto2.html/atto3.html/index.html.
+const _ACT_STORAGE_KEYS = {
+  1: 'a17_atto1_v3',
+  2: 'a17_atto2_v2',
+  3: 'a17_atto3_v2',
+};
+
+// Pulisce localStorage relativo allo stato gameplay dell'atto resettato e
+// reset _global.penalty_actN PRIMA del reload. Senza questa pulizia il
+// reload ricaricherebbe lo state pre-reset dal localStorage e il merge
+// monotono backend non applicherebbe regressioni → progressi sopravvivono.
+function _purgeLocalForAct(actNum){
+  try {
+    const key = _ACT_STORAGE_KEYS[actNum];
+    if(key) localStorage.removeItem(key);
+  } catch(_){}
+  if(typeof _global !== 'undefined'){
+    _global['penalty_act' + actNum] = { hints: 0, errors: 0 };
+    _global['act' + actNum + '_done'] = false;
+    if(actNum === 3) _global.locked = false;
+    if(typeof globalScore === 'function') _global.global_score = globalScore();
+    if(typeof saveGlobal === 'function') saveGlobal();
+  }
 }
 
 // Toast riassuntivo per eventi remoti. Più eventi nello stesso tick → mostriamo
@@ -1420,8 +1463,17 @@ function mergeServerState(gs, presence){
   const resetAct = _detectReset(gs, isInitial, isSelfWrite);
   if(resetAct){
     const roman = ['', 'I', 'II', 'III'][resetAct];
-    try { showToast('Atto ' + roman + ' resettato dal team. Aggiornamento…', 'error'); } catch(_){}
+    // (1) Stop polling inbound. (2) Set _resetPending = true → blocca tutti
+    // gli outbound _scheduleSyncToServer/_sendUpdateNow. (3) Cancella il
+    // timer di debounce armato (un saveState in volo ri-popolerebbe il
+    // backend con i progressi pre-reset prima del reload). (4) Pulisci
+    // localStorage atto N e _global.penalty_actN → il reload non
+    // ricaricherà state stantio. (5) Toast + reload.
+    _resetPending = true;
     _stopCloudPolling();
+    if(_syncTimer){ clearTimeout(_syncTimer); _syncTimer = null; }
+    _purgeLocalForAct(resetAct);
+    try { showToast('Atto ' + roman + ' resettato dal team. Aggiornamento…', 'error'); } catch(_){}
     setTimeout(() => { try { location.reload(); } catch(_){} }, 2500);
     return;
   }
@@ -1515,6 +1567,21 @@ function mergeServerState(gs, presence){
       if(hints !== (prev.hints || 0) || errors !== (prev.errors || 0)){
         updateGlobalFromActState(n, hints, errors);
       }
+    }
+  }
+  // Counter reset condiviso: il backend incrementa resets_used su ogni
+  // /resetSession e lo espone in gs. Il client lo propaga monotono (max())
+  // in _global.resets_used così resetsLeft() di case-app.js riflette il
+  // valore team-condiviso. Senza questo, A consuma 1 reset → A vede 1/2 ma
+  // B continua a vedere 2/2 finché non clicca anche lui (e nel frattempo
+  // potrebbe sforare il cap RESETS_MAX, anche se il backstop server in
+  // /resetSession lo respingerebbe).
+  if(typeof _global !== 'undefined' && typeof gs.resets_used === 'number'){
+    const remote = Math.max(0, Math.floor(gs.resets_used));
+    const local  = Number(_global.resets_used) || 0;
+    if(remote > local){
+      _global.resets_used = remote;
+      if(typeof saveGlobal === 'function') saveGlobal();
     }
   }
   // Propaga "caso chiuso" server-side (gs.global_locked + gs.act3_completed)
