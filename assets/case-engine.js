@@ -140,9 +140,30 @@ let _pollTimer = null;
 let _pollInFlight = false;
 let _pollAbort = null;
 let _pollStarted = false;
+// Primo merge dopo boot: il preSnap rifletterebbe lo state default (vuoto) mentre
+// gs porta tutto il progresso della partita già in corso — _diffSnapshots
+// emetterebbe decine di eventi remote-* + un toast fantasma per il device che si
+// unisce a metà. Inibisce SOLO il diff, il merge dei dati resta.
+let _hasMerged = false;
+// Device revocato dall'admin (reset_devices → is_active=false → getSession 403).
+// Flag idempotente: il primo 403 ferma il polling e cancella l'auth, i tick già
+// in flight non devono ri-triggerare reload/toast.
+let _revoked = false;
+
+function _handleDeviceRevoked(){
+  if(_revoked) return;
+  _revoked = true;
+  _stopCloudPolling();
+  try { if(typeof clearCloudAuth === 'function') clearCloudAuth(config.actNum); } catch(_){}
+  _sessionToken = null; _codeId = null; _accessCode = null;
+  try { showToast('Sessione terminata dall\'amministratore. Aggiornamento…', 'error'); } catch(_){}
+  // Reload sull'access form: lo state locale resta (lo riprenderà al re-login),
+  // ma l'auth cloud è ora null → bootApp ricade sull'access form.
+  setTimeout(() => { try { location.reload(); } catch(_){} }, 2500);
+}
 
 function _pollOnce(){
-  if(_pollInFlight) return;
+  if(_pollInFlight || _revoked) return;
   if(!_sessionToken || !_codeId) return;
   _pollInFlight = true;
   _pollAbort = new AbortController();
@@ -153,11 +174,14 @@ function _pollOnce(){
     body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken }),
     signal: _pollAbort.signal
   })
-    .then(r => r.json())
+    .then(r => {
+      if(r.status === 403){ _handleDeviceRevoked(); return null; }
+      return r.json();
+    })
     .then(d => {
       if(d && d.ok && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     })
-    .catch(() => { /* offline / 403 / timeout: drop silenzioso, il prossimo tick riprova */ })
+    .catch(() => { /* offline / timeout: drop silenzioso, il prossimo tick riprova */ })
     .finally(() => {
       clearTimeout(timeoutId);
       _pollInFlight = false;
@@ -219,12 +243,14 @@ function saveState(){
     const updates = {
       final_unlocked:  state.finalUnlocked,
       hints_revealed:  state.hintsRevealed,
-      // Score components: vanno scritti server-side perché il backend max-merge
-      // li propaga a tutti i device team. Senza questi due campi, il polling di
-      // un altro device riceverebbe sempre 0 e non scalerebbe mai lo score.
-      // Backend whitelist + strategia 'max' → niente regressione possibile.
+      // hint_penalty_total: ancora inviato come valore assoluto (max-merge server),
+      // ma ormai il client lo deriva localmente da hintsRevealed (vedi
+      // mergeServerState). Resta utile come hint per saveActScore e per i client
+      // che leggono lo state remoto senza la nuova derivazione.
       hint_penalty_total: Number(state.hintPenaltyTotal) || 0,
-      errors_terminal:    Number(state.errorsTerminal)   || 0,
+      // errors_terminal NON va più inviato come totale: in team max(devA, devB)
+      // sottostima la somma. Ora il client invia errors_terminal_inc atomico
+      // dentro submitTerminal (cloudIncrement). Il server somma correttamente.
       // act{N}_completed: scritto qui (oltre che da saveActScore lato server)
       // così tab B sa subito che l'atto è chiuso senza dover aspettare il round
       // trip /saveActScore. Strategia 'or' lato backend → idempotente.
@@ -1311,7 +1337,9 @@ function mergeServerState(gs, presence){
   // == nostro session_token. In quel caso lo stato locale era già fonte della
   // verità, salta il diff/dispatch — eviti doppi toast e lavoro inutile.
   const isSelfWrite = !!(gs.last_updated_by && _sessionToken && gs.last_updated_by === _sessionToken);
-  const preSnap = isSelfWrite ? null : _snapshotForDiff();
+  const isInitial = !_hasMerged;
+  _hasMerged = true;
+  const preSnap = (isSelfWrite || isInitial) ? null : _snapshotForDiff();
 
   data.parts.forEach(p => {
     const t = p.terminal;
@@ -1332,13 +1360,18 @@ function mergeServerState(gs, presence){
   if(gs.final_unlocked || gs[actDoneKey]) state.finalUnlocked = true;
   const docsKey = 'docs_opened_act' + config.actNum;
   if(Array.isArray(gs[docsKey]) && gs[docsKey].length){
-    // Per atti single-part: tutti i docs vanno in p1. Per multi-part, distribuiscili per id documento.
+    // Union locale, NON sovrascrittura. Senza union, un doc aperto localmente
+    // ma non ancora syncato sparirebbe quando il polling porta il server-state
+    // (che non lo include perché non l'ha ancora ricevuto). Vedi Bug 2 team-license.
+    // Coordinato con la strategia 'union' server-side per docs_opened_act*.
     if(data.parts.length === 1){
-      state.docsOpened[data.parts[0].id] = gs[docsKey].slice();
+      const pid = data.parts[0].id;
+      const local = state.docsOpened[pid] || [];
+      state.docsOpened[pid] = Array.from(new Set([...local, ...gs[docsKey]]));
     } else {
       const byId = {};
       data.parts.forEach(p => { p.documents.forEach(d => { byId[d.id] = p.id; }); });
-      data.parts.forEach(p => { state.docsOpened[p.id] = []; });
+      data.parts.forEach(p => { state.docsOpened[p.id] = state.docsOpened[p.id] || []; });
       gs[docsKey].forEach(id => {
         const pid = byId[id];
         if(pid && !state.docsOpened[pid].includes(id)) state.docsOpened[pid].push(id);
@@ -1372,12 +1405,15 @@ function mergeServerState(gs, presence){
   const penEKey = 'penalty_act' + config.actNum + '_errors';
   if(typeof gs[penHKey] === 'number') state.hintPenaltyTotal = gs[penHKey];
   if(typeof gs[penEKey] === 'number') state.errorsTerminal   = Math.round(gs[penEKey] / 10);
-  // Deriva hintLevelsUsed + hintPuzzleCost da hintsRevealed: questi campi non
-  // sono sync esplicitamente (locali) ma vanno ricalcolati quando hintsRevealed
-  // cambia da remoto, altrimenti tab B mostra "0 livelli" / "0 pt usati" anche
-  // dopo che A ha speso punti. Sempre max() per non regredire valori locali.
+  // Deriva hintLevelsUsed + hintPuzzleCost + hintPenaltyTotal da hintsRevealed:
+  // hintsRevealed è deep-mergiato server-side (strategia 'object'), idempotente,
+  // quindi totalCost = somma esatta su tutto il team. Più robusto del max() su
+  // gs.hint_penalty_total, che in team sottostima quando due device rivelano
+  // hint in parallelo prima di vedersi (max(5,8) invece di 5+8). Resta dominante
+  // penalty_act{N}_hints sotto, perché è il valore canonico saveActScore.
   if(data && Array.isArray(data.puzzles)){
     let totalUsed = 0;
+    let totalCost = 0;
     state.hintPuzzleCost = state.hintPuzzleCost || {};
     data.puzzles.forEach(puzzle => {
       const revealed = state.hintsRevealed[puzzle.id] || {};
@@ -1391,8 +1427,16 @@ function mergeServerState(gs, presence){
       });
       state.hintPuzzleCost[puzzle.id] = Math.max(state.hintPuzzleCost[puzzle.id] || 0, cost);
       totalUsed += used;
+      totalCost += cost;
     });
     state.hintLevelsUsed = Math.max(Number(state.hintLevelsUsed) || 0, totalUsed);
+    // Derivazione SOLO durante l'atto: una volta che saveActScore ha scritto
+    // penalty_act{N}_hints (capped a 100 dalla function), quello è il valore canonico
+    // di scoring e va rispettato — non lo bypassiamo con totalCost che potrebbe
+    // ecceder il cap. Già assegnato sopra dalla riga `state.hintPenaltyTotal = gs[penHKey]`.
+    if(typeof gs[penHKey] !== 'number'){
+      state.hintPenaltyTotal = Math.max(Number(state.hintPenaltyTotal) || 0, totalCost);
+    }
   }
   // Casella3 (atto3): merge dalle colonne email_* del backend in state.plugins.casella3.
   // init() del plugin patcha i campi mancanti dopo il merge.
@@ -1858,11 +1902,16 @@ function submitTerminal(termId){
   }
 
   // Applica errori
+  const newErrors = Math.min(result.errors, fields.length);
   const ts = state.terminals[term.id] = state.terminals[term.id] || { completed: false, errors: 0, fb: null };
-  ts.errors = (ts.errors || 0) + Math.min(result.errors, fields.length);
-  state.errorsTerminal += Math.min(result.errors, fields.length);
+  ts.errors = (ts.errors || 0) + newErrors;
+  state.errorsTerminal += newErrors;
   if(result.sospetto) ts.sospetto = result.sospetto;
   saveState();
+  // Increment atomico server-side: evita che due device in team scrivano
+  // errors_terminal come max(devA_locale, devB_locale) invece della somma reale.
+  // Vedi INCREMENT_FIELDS in updateSession/entry.ts. Skippa se 0.
+  if(newErrors > 0) cloudIncrement('errors_terminal_inc', newErrors);
   updateUI();
 
   const gfb = document.getElementById(term.id + '-global-fb');
