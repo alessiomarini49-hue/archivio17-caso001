@@ -84,6 +84,17 @@ let _syncTimer = null;
 // La response di /updateSession contiene sempre la GameSession aggiornata server-side
 // (merge monotono incl. modifiche di altri device team): la applichiamo via
 // mergeServerState — è "mezzo passo" di sync near-realtime in aggiunta al polling.
+// Snapshot dei reset_actN_at noti a questo client. Il backend confronta con
+// gs.reset_actN_at corrente: se stale i campi atto N vengono droppati prima
+// del merge monotono. Chiude la race ~10s tra reset di A e polling tick di B
+// (vedi Bug 6 QA Lotto 3). Retrocompat backend pre-Lotto3: campo ignorato.
+function _seenResetsPayload(){
+  return {
+    1: _lastSeenResetAt[1] || null,
+    2: _lastSeenResetAt[2] || null,
+    3: _lastSeenResetAt[3] || null,
+  };
+}
 function _scheduleSyncToServer(updates){
   if(_syncTimer) clearTimeout(_syncTimer);
   // Blocco outbound durante la finestra reset→reload: vedi _resetPending.
@@ -95,7 +106,7 @@ function _scheduleSyncToServer(updates){
     fetch(API_BASE + '/updateSession', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
+      body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates, seen_resets: _seenResetsPayload() })
     }).then(r => r.json()).then(d => {
       if(d && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     }).catch(()=>{});
@@ -111,7 +122,7 @@ function _sendUpdateNow(updates){
   return fetch(API_BASE + '/updateSession', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
+    body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates, seen_resets: _seenResetsPayload() })
   }).then(r => r.json()).then(d => {
     if(d && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     return d;
@@ -435,8 +446,20 @@ function buildShell(){
 // atto{N+1}.html mantenendo il controllo (NO redirect automatico, NO modale).
 // Dismissibile via "×". Reso solo se config.actNum < 3 e licenza team (max>1).
 function buildRemoteJumpBanner(){
-  if(config.actNum >= 3) return '';
-  const romanFrom = ['', 'I', 'II', 'III'][config.actNum];
+  const isAtto3 = config.actNum >= 3;
+  const romanFrom = ['', 'I', 'II', 'III'][config.actNum] || 'III';
+  if(isAtto3){
+    // Atto III chiuso = caso chiuso. Non c'è un "prossimo atto": il CTA porta
+    // alla sezione esito invece di un altro file HTML. Stesso markup, stessa
+    // classe CSS, stesso meccanismo di dismiss → il banner è cosmetico-coerente.
+    const esitoId = (data && data.esito && data.esito.sectionId) ? data.esito.sectionId : 'esito';
+    return `
+<div class="remote-jump-banner" id="remote-jump-banner" hidden role="status" aria-live="polite">
+  <span class="rjb-text">Il caso è stato chiuso dal team.</span>
+  <a class="rjb-cta" id="rjb-cta" href="#" data-section-target="${esitoId}">Vai all'esito →</a>
+  <button class="rjb-close" id="rjb-close" type="button" aria-label="Nascondi avviso">×</button>
+</div>`;
+  }
   const romanTo   = ['', 'II', 'III'][config.actNum]; // mapping 1→II, 2→III
   const nextHref  = 'atto' + (config.actNum + 1) + '.html';
   return `
@@ -454,8 +477,8 @@ function buildRemoteJumpBanner(){
 let _remoteJumpDismissed = false;
 function _showRemoteJumpBanner(){
   if(_remoteJumpDismissed) return;
-  if(config.actNum >= 3) return;
   // Solo team: per individual il banner non ha senso (un solo device).
+  // (Atto3 ora gestito da buildRemoteJumpBanner come "caso chiuso" → nessun gate qui.)
   if(!_lastPresenceState || !(Number(_lastPresenceState.max) > 1)) return;
   const el = document.getElementById('remote-jump-banner');
   if(!el) return;
@@ -1112,6 +1135,15 @@ function bindEvents(){
   // Remote jump banner close (Bug Lotto 2: jump inter-atto in team)
   const rjbClose = document.getElementById('rjb-close');
   if(rjbClose) rjbClose.addEventListener('click', _dismissRemoteJumpBanner);
+  // CTA atto3: porta alla sezione esito invece di un altro file HTML
+  const rjbCta = document.getElementById('rjb-cta');
+  if(rjbCta && rjbCta.dataset.sectionTarget){
+    rjbCta.addEventListener('click', e => {
+      e.preventDefault();
+      try { showSection(rjbCta.dataset.sectionTarget, false); } catch(_){}
+      _dismissRemoteJumpBanner();
+    });
+  }
 
   // Esc key
   document.addEventListener('keydown', e => {
@@ -1461,6 +1493,7 @@ function _toastForRemoteEvent(ev){
   if(!ev || !ev.type) return;
   const d = ev.detail || {};
   let msg = '';
+  let duration = 3000;
   switch(ev.type){
     case 'remote-terminal-completed': {
       const label = d.partLabel || d.terminalId || 'un terminale';
@@ -1473,7 +1506,8 @@ function _toastForRemoteEvent(ev){
       break;
     }
     case 'remote-hint-revealed':
-      msg = 'Un compagno ha sbloccato un suggerimento';
+      msg = 'Un compagno ha chiesto aiuto — supporto rivelato';
+      duration = 5000;
       break;
     case 'remote-penalty-changed': {
       const total = (d.hintPenaltyDelta || 0) + (d.errorsDelta || 0);
@@ -1481,11 +1515,14 @@ function _toastForRemoteEvent(ev){
       break;
     }
     case 'remote-act-completed':
-      msg = 'Atto completato da un altro device — esito disponibile';
+      msg = (config.actNum >= 3)
+        ? 'Il caso è stato chiuso dal team — esito disponibile'
+        : 'Atto completato da un altro device — esito disponibile';
+      duration = 6000;
       break;
     default: return;
   }
-  try { showToast(msg, 'success'); } catch(_){}
+  try { showToast(msg, 'success', duration); } catch(_){}
 }
 
 function mergeServerState(gs, presence){
@@ -1500,6 +1537,12 @@ function mergeServerState(gs, presence){
   const isSelfWrite = !!(gs.last_updated_by && _sessionToken && gs.last_updated_by === _sessionToken);
   const isInitial = !_hasMerged;
   _hasMerged = true;
+
+  // Cattura state.finalUnlocked PRE-merge: serve al check del banner inter-atto
+  // sotto. NON usiamo _diffSnapshots per questo trigger perché al primo merge
+  // (isInitial=true, preSnap=null) il diff ritorna [] e B che si unisce DOPO
+  // la chiusura dell'atto non vedrebbe mai il banner. Vedi Bug 3 QA Lotto 3.
+  const wasFinalUnlocked = !!state.finalUnlocked;
 
   // Reset condiviso (Lotto 2): un altro device del team ha fatto reset di
   // un atto → reload per ricaricare lo state server canonicizzato. Skippato
@@ -1548,6 +1591,17 @@ function mergeServerState(gs, presence){
   //     esito anche se ha appena ricevuto act1_completed=true via polling.
   const actDoneKey = 'act' + config.actNum + '_completed';
   if(gs.final_unlocked || gs[actDoneKey]) state.finalUnlocked = true;
+  // Sblocca la nav-esito + mnav-esito quando state.finalUnlocked passa a true.
+  // applyTerminalsUI lo fa solo se "esito" è dichiarato in term.successUnlocks
+  // del terminale finale (T3C atto3, T2B atto2, T1 atto1). In atti dove non lo
+  // è, B non vedrebbe la nav esito sbloccata via polling. Idempotente: chiamato
+  // anche se state.finalUnlocked era già true. Vedi Bug 2 QA Lotto 3.
+  if(state.finalUnlocked && data && data.esito && data.esito.sectionId){
+    ['nav-', 'mnav-'].forEach(pfx => {
+      const el = document.getElementById(pfx + data.esito.sectionId);
+      if(el) setNavLocked(el, false);
+    });
+  }
   const docsKey = 'docs_opened_act' + config.actNum;
   if(Array.isArray(gs[docsKey]) && gs[docsKey].length){
     // Union locale, NON sovrascrittura. Senza union, un doc aperto localmente
@@ -1723,6 +1777,24 @@ function mergeServerState(gs, presence){
   //    cambi NUOVI, ma applyTerminalsUI applica sblocchi per TUTTI i
   //    terminali completed, garantendo coerenza visiva.
   try { applyTerminalsUI(); } catch(_){}
+  // renderPuzzles SEMPRE dopo applyTerminalsUI: i gruppi hint gated via
+  // supporto.groups[].unlockedAfterTerminal leggono state.terminals[gate].completed
+  // alla build, quindi vanno re-renderizzati ogni merge (non solo su
+  // hasTerminalChange). Sul polling tick "stato cumulativo" o sul join "tardi"
+  // (isInitial=true, _diffSnapshots=[]) il gruppo resterebbe locked.
+  // Vedi Bug 1 QA Lotto 3.
+  try { renderPuzzles(); } catch(_){}
+
+  // Banner inter-atto / "caso chiuso" basato su TRANSIZIONE wasFinalUnlocked → true.
+  // Sostituisce il vecchio gate via _diffSnapshots: in quel modo isInitial bloccava
+  // il dispatch (preSnap=null → events vuoto), e i device che si univano DOPO la
+  // chiusura dell'atto non vedevano mai il banner. Self-write escluso (è A che
+  // chiude l'atto, non vuole il banner inter-atto su se stesso). Presence applicata
+  // PRIMA del check così _lastPresenceState.max è valido. Vedi Bug 3 e Bug 7.
+  if(!wasFinalUnlocked && state.finalUnlocked && !isSelfWrite){
+    if(presence) _applyPresence(presence);
+    try { _showRemoteJumpBanner(); } catch(_){}
+  }
 
   // Diff pre/post per dispatchare eventi granulari "remoti" (4 categorie). Skippato
   // su self-write (vedi isSelfWrite sopra) per evitare doppi toast quando torna la
@@ -2653,13 +2725,14 @@ function toggleMobileDrawer(){
 }
 
 // ---------- TOAST ----------
-function showToast(msg, type){
+function showToast(msg, type, duration){
   const t = document.getElementById('toast');
   if(!t) return;
   t.textContent = msg;
   t.className = 'toast visible' + (type ? ' ' + type : '');
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => { t.className = 'toast' + (type ? ' ' + type : ''); }, 3000);
+  const ms = Number(duration);
+  _toastTimer = setTimeout(() => { t.className = 'toast' + (type ? ' ' + type : ''); }, Number.isFinite(ms) && ms > 0 ? ms : 3000);
 }
 
 // ---------- UI UPDATE ----------
