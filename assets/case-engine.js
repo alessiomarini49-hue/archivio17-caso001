@@ -273,6 +273,13 @@ function saveState(){
     };
     Object.entries(state.terminals).forEach(([tid, t]) => {
       updates[tid + '_completed'] = !!t.completed;
+      // sospetto per terminale (sospetto-branch validator): permette a B di
+      // ricostruire i feedback dinamici (gfb HTML + confirmed-msg via
+      // dictionaries) senza che debba ricalcolare il validator. Backend
+      // whitelist t{N}_sospetto + strategia overwrite (vedi MERGE_STRATEGIES).
+      if(t && typeof t.sospetto === 'string' && t.sospetto){
+        updates[tid + '_sospetto'] = t.sospetto;
+      }
     });
     // Casella3 (atto3): mappa state.plugins.casella3 -> colonne email_* del backend
     // (whitelist in vault-seventeen/functions/updateSession). emailsOpened resta locale:
@@ -1282,9 +1289,34 @@ function applyTerminalsUI(){
       const el = document.getElementById(term.id + '-input-' + f.id);
       if(el) el.readOnly = true;
     });
-    if(tState.fb){
-      const gfb = document.getElementById(term.id + '-global-fb');
-      if(gfb){ gfb.innerHTML = tState.fb.text; gfb.className = tState.fb.cls; }
+    // Feedback globale (gfb): in locale è scritto da submitTerminal, e ts.fb
+    // è valorizzato lì. Su B (device remoto) ts.fb non c'è perché non viaggia
+    // server-side (solo `completed` e `sospetto` sono nella whitelist). Lo
+    // ricostruiamo da term.successCopy + tState.sospetto + data.dictionaries
+    // così il box "global feedback" sotto il terminale mostra lo stesso testo
+    // sintetico che vede A. Idempotente: se ts.fb è già presente (caso locale)
+    // lo usiamo direttamente, altrimenti rebuild.
+    const gfb = document.getElementById(term.id + '-global-fb');
+    if(gfb){
+      if(tState.fb){
+        gfb.innerHTML = tState.fb.text;
+        gfb.className = tState.fb.cls;
+      } else if(term.successCopy && term.successCopy.template){
+        let bySospettoText = '';
+        if(term.successCopy.bySospettoMap && tState.sospetto){
+          const dicts = data.dictionaries || {};
+          const map = dicts[term.successCopy.bySospettoMap] || term.successCopy.bySospettoMap;
+          if(typeof map === 'object') bySospettoText = map[tState.sospetto] || '';
+        }
+        gfb.innerHTML = interp(term.successCopy.template, {
+          bySospetto: bySospettoText,
+          sospetto:   tState.sospetto || ''
+        });
+        gfb.className = 'terminal-global-feedback show ok';
+      } else if(term.validator && term.validator.successMessage){
+        gfb.innerHTML = term.validator.successMessage;
+        gfb.className = 'terminal-global-feedback show ok';
+      }
     }
     if(term.hideSubmitOnSuccess){
       const sub2 = document.getElementById(term.id + '-submit');
@@ -1497,6 +1529,13 @@ function mergeServerState(gs, presence){
     const key = t.id + '_completed';
     if(gs[key]){
       state.terminals[t.id] = { ...(state.terminals[t.id] || {}), completed: true };
+    }
+    // sospetto propagato server-side dal device che ha chiuso il terminale.
+    // Necessario per ricostruire i feedback dinamici (gfb innerHTML +
+    // confirmed-msg) su B via applyTerminalsUI senza riapplicare il validator.
+    const sKey = t.id + '_sospetto';
+    if(typeof gs[sKey] === 'string' && gs[sKey]){
+      state.terminals[t.id] = { ...(state.terminals[t.id] || {}), sospetto: gs[sKey] };
     }
   });
   // finalUnlocked per-atto: il client lo deriva da DUE fonti server-side (in OR):
