@@ -81,6 +81,9 @@ let _lastFocusedBeforeViewer = null;
 let _syncTimer = null;
 
 // Debounce cloud sync: l'apertura rapida di più documenti coalescenza in una sola POST.
+// La response di /updateSession contiene sempre la GameSession aggiornata server-side
+// (merge monotono incl. modifiche di altri device team): la applichiamo via
+// mergeServerState — è "mezzo passo" di sync near-realtime in aggiunta al polling.
 function _scheduleSyncToServer(updates){
   if(_syncTimer) clearTimeout(_syncTimer);
   _syncTimer = setTimeout(() => {
@@ -90,6 +93,8 @@ function _scheduleSyncToServer(updates){
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
+    }).then(r => r.json()).then(d => {
+      if(d && d.game_session) mergeServerState(d.game_session);
     }).catch(()=>{});
   }, 600);
 }
@@ -118,8 +123,83 @@ function cloudIncrement(field, n){
   return _sendUpdateNow({ [field]: inc });
 }
 
+// ---------- CLOUD POLLING (sync near-realtime per licenze team) ----------
+// Polling periodico di /getSession per propagare lo stato remoto degli altri
+// device collegati allo stesso codice team. Il merge è monotono (vedi
+// mergeServerState + backend mergeUpdates): nessuna regressione possibile.
+//
+// Intervallo: 10s con tab visibile, 30s con tab nascosto (visibilitychange).
+// Per licenze individuali (1 device) il polling è semanticamente innocuo —
+// il merge non cambia nulla — ma comporta ~6 read/min server-side: in futuro
+// si può gateare leggendo access_code.type da game_session.
+//
+// Eventi emessi: 'a17:remote-update' su window (vedi mergeServerState).
+const A17_POLL_INTERVAL_ACTIVE = 10000;
+const A17_POLL_INTERVAL_HIDDEN = 30000;
+let _pollTimer = null;
+let _pollInFlight = false;
+let _pollAbort = null;
+let _pollStarted = false;
+
+function _pollOnce(){
+  if(_pollInFlight) return;
+  if(!_sessionToken || !_codeId) return;
+  _pollInFlight = true;
+  _pollAbort = new AbortController();
+  const timeoutId = setTimeout(() => { try { _pollAbort.abort(); } catch(_){} }, 8000);
+  fetch(API_BASE + '/getSession', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken }),
+    signal: _pollAbort.signal
+  })
+    .then(r => r.json())
+    .then(d => {
+      if(d && d.ok && d.game_session) mergeServerState(d.game_session);
+    })
+    .catch(() => { /* offline / 403 / timeout: drop silenzioso, il prossimo tick riprova */ })
+    .finally(() => {
+      clearTimeout(timeoutId);
+      _pollInFlight = false;
+      _pollAbort = null;
+    });
+}
+
+function _scheduleNextPoll(){
+  if(_pollTimer){ clearInterval(_pollTimer); _pollTimer = null; }
+  if(!_pollStarted) return;
+  const interval = (typeof document !== 'undefined' && document.visibilityState === 'hidden')
+    ? A17_POLL_INTERVAL_HIDDEN
+    : A17_POLL_INTERVAL_ACTIVE;
+  _pollTimer = setInterval(_pollOnce, interval);
+}
+
+function _startCloudPolling(){
+  if(_pollStarted) return;
+  if(!_sessionToken || !_codeId) return;
+  _pollStarted = true;
+  _scheduleNextPoll();
+}
+function _stopCloudPolling(){
+  _pollStarted = false;
+  if(_pollTimer){ clearInterval(_pollTimer); _pollTimer = null; }
+  if(_pollAbort){ try { _pollAbort.abort(); } catch(_){} }
+}
+
+if(typeof document !== 'undefined'){
+  document.addEventListener('visibilitychange', () => {
+    if(!_pollStarted) return;
+    _scheduleNextPoll();
+    // Tab appena tornato visibile: poll immediato per ridurre il "tempo morto"
+    // tra l'ultimo tick a 30s e il ritorno dell'utente.
+    if(document.visibilityState === 'visible') _pollOnce();
+  });
+}
+
 // ---------- STORAGE ----------
-function saveState(){
+// Persistenza locale only. Usata da mergeServerState e dal polling per evitare
+// loop di sync: scrivere localStorage senza ri-scatenare _scheduleSyncToServer.
+function _saveStateLocalOnly(){
   try { localStorage.setItem(config.storageKey, JSON.stringify(state)); }
   catch(e){
     console.warn('[Archivio17] Impossibile salvare lo stato:', e);
@@ -128,6 +208,10 @@ function saveState(){
       _storageWarned = true;
     }
   }
+}
+
+function saveState(){
+  _saveStateLocalOnly();
   // Cloud sync (debounced, fire-and-forget)
   if(_sessionToken && _codeId){
     const allDocs = [];
@@ -1052,7 +1136,21 @@ function mergeServerState(gs){
     if(typeof gs.email_unlocked === 'boolean') state.plugins.casella3.unlocked = gs.email_unlocked;
     if(typeof gs.email_blocked  === 'boolean') state.plugins.casella3.blocked  = gs.email_blocked;
   }
-  saveState();
+  // IMPORTANTE: usa _saveStateLocalOnly e NON saveState — altrimenti il polling /
+  // il merge della response di /updateSession ri-scatenerebbero un'altra POST verso
+  // il server, che a sua volta tornerebbe game_session, → merge → POST → loop.
+  _saveStateLocalOnly();
+  // Refresh delle parti idempotenti della UI (score, conteggio reperti, badge):
+  // updateUI è safe da chiamare anche se la UI non è ancora montata (boot iniziale
+  // pre-bootApp) perché usa guard if(el) ovunque. Il rendering "ricco" (terminali
+  // appena completati da altro device, parti sbloccate, ecc.) viene gestito dai
+  // consumer di 'a17:remote-update' nel punto 5 del piano team-license.
+  try { updateUI(); } catch(_){}
+  try {
+    window.dispatchEvent(new CustomEvent('a17:remote-update', {
+      detail: { actNum: config.actNum, gameSession: gs }
+    }));
+  } catch(_){}
 }
 function bootApp(){
   document.getElementById('access-screen').classList.add('hidden');
@@ -1062,6 +1160,9 @@ function bootApp(){
   document.getElementById('mobile-inv-btn').style.display = '';
   document.getElementById('app-footer').style.display = '';
   init();
+  // Avvia polling near-realtime se autenticati (no-op se _sessionToken/_codeId mancano).
+  // Per licenze individuali è semanticamente innocuo: il merge non cambia nulla.
+  _startCloudPolling();
 }
 
 // ---------- NAVIGATION ----------
@@ -2138,7 +2239,16 @@ if(document.readyState === 'loading'){
   boot();
 }
 
-return { state: () => state, config, _internal: { showSection, updateUI, renderDocsGrid, renderPuzzles } };
+return {
+  state: () => state,
+  config,
+  sync: {
+    start: _startCloudPolling,
+    stop: _stopCloudPolling,
+    pollNow: _pollOnce
+  },
+  _internal: { showSection, updateUI, renderDocsGrid, renderPuzzles }
+};
 }
 
 global.createCaseApp = createCaseApp;
