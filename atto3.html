@@ -307,6 +307,9 @@
           }, 1500);
         } else {
           s.attempts--;
+          // Increment atomico server-side: il valore consumato cresce monotonicamente
+          // sul backend (email_attempts). Evita race in licenza team con più device.
+          if(ctx.helpers.cloudIncrement) ctx.helpers.cloudIncrement('email_attempts_inc', 1);
           if(s.attempts <= 0){
             s.blocked = true;
             s.attempts = 0;

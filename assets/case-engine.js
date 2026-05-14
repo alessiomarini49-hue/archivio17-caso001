@@ -94,6 +94,30 @@ function _scheduleSyncToServer(updates){
   }, 600);
 }
 
+// Invio immediato (non debounced) di un singolo update. Usato per gli pseudo-campi
+// "_inc" che richiedono atomicità server-side: il server applica current + N. Tenere
+// fuori dal debounce evita che due tentativi rapidi vengano coalescenza in uno solo.
+function _sendUpdateNow(updates){
+  if(!_sessionToken || !_codeId) return Promise.resolve();
+  return fetch(API_BASE + '/updateSession', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
+  }).then(r => r.json()).then(d => {
+    if(d && d.game_session) mergeServerState(d.game_session);
+    return d;
+  }).catch(()=>{});
+}
+
+// Helper esposto ai plugin per gli increment atomici lato server (vedi
+// INCREMENT_FIELDS in base44/functions/updateSession). Tipico uso: casella3
+// chiama cloudIncrement('email_attempts_inc', 1) ad ogni tentativo fallito.
+function cloudIncrement(field, n){
+  const inc = Number(n);
+  if(!field || !Number.isFinite(inc) || inc <= 0) return Promise.resolve();
+  return _sendUpdateNow({ [field]: inc });
+}
+
 // ---------- STORAGE ----------
 function saveState(){
   try { localStorage.setItem(config.storageKey, JSON.stringify(state)); }
@@ -121,9 +145,11 @@ function saveState(){
     // Casella3 (atto3): mappa state.plugins.casella3 -> colonne email_* del backend
     // (whitelist in vault-seventeen/functions/updateSession). emailsOpened resta locale:
     // nessuna colonna dedicata e ininfluente sulla progressione.
+    // NOTA: email_attempts (contatore consumati) NON viene scritto qui — è gestito
+    // server-side via cloudIncrement('email_attempts_inc', 1) dal plugin casella3,
+    // per evitare race tra device team in licenza condivisa.
     const c3 = state.plugins && state.plugins.casella3;
     if(c3){
-      if(typeof c3.attempts === 'number')  updates.email_attempts = c3.attempts;
       if(typeof c3.unlocked === 'boolean') updates.email_unlocked = c3.unlocked;
       if(typeof c3.blocked  === 'boolean') updates.email_blocked  = c3.blocked;
     }
@@ -1008,9 +1034,21 @@ function mergeServerState(gs){
   if(typeof gs[penEKey] === 'number') state.errorsTerminal   = Math.round(gs[penEKey] / 10);
   // Casella3 (atto3): merge dalle colonne email_* del backend in state.plugins.casella3.
   // init() del plugin patcha i campi mancanti dopo il merge.
+  // gs.email_attempts è il contatore monotono dei tentativi CONSUMATI server-side
+  // (nuova semantica post team-license). Lo convertiamo nel "rimanenti" che il
+  // plugin usa per la UI. Monotonia: i rimanenti possono solo scendere — se il
+  // valore locale è più basso (questo device ha già consumato di più) lo teniamo.
   if(typeof gs.email_attempts === 'number' || typeof gs.email_unlocked === 'boolean' || typeof gs.email_blocked === 'boolean'){
     state.plugins.casella3 = state.plugins.casella3 || {};
-    if(typeof gs.email_attempts === 'number')  state.plugins.casella3.attempts = gs.email_attempts;
+    if(typeof gs.email_attempts === 'number'){
+      const maxAttempts = (data && data.casella3 && typeof data.casella3.maxAttempts === 'number')
+        ? data.casella3.maxAttempts : 5;
+      const remoteRemaining = Math.max(0, maxAttempts - gs.email_attempts);
+      const local = state.plugins.casella3.attempts;
+      state.plugins.casella3.attempts = (typeof local === 'number')
+        ? Math.min(local, remoteRemaining)
+        : remoteRemaining;
+    }
     if(typeof gs.email_unlocked === 'boolean') state.plugins.casella3.unlocked = gs.email_unlocked;
     if(typeof gs.email_blocked  === 'boolean') state.plugins.casella3.blocked  = gs.email_blocked;
   }
@@ -2033,7 +2071,7 @@ function init(){
 const helpers = {
   normalize, hasAny, isAmbiguousGeneric, setFieldState,
   showToast, saveState, updateUI, renderDocsGrid, renderPuzzles,
-  showSection
+  showSection, cloudIncrement
 };
 
 // ---------- BOOT ----------
