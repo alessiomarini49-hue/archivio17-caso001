@@ -1320,7 +1320,16 @@ function mergeServerState(gs, presence){
       state.terminals[t.id] = { ...(state.terminals[t.id] || {}), completed: true };
     }
   });
-  if(gs.final_unlocked) state.finalUnlocked = true;
+  // finalUnlocked per-atto: il client lo deriva da DUE fonti server-side (in OR):
+  //   - gs.final_unlocked: flag GLOBALE scritto solo da saveActScore.ts a fine
+  //     atto3. Non è nella CLIENT_WRITABLE_FIELDS del backend (sanitizeUpdates
+  //     lo droppa), quindi NON viene mai propagato dal saveState dell'atto1/2.
+  //   - gs.act{N}_completed: flag PER-ATTO whitelist client-writable + merge 'or'
+  //     server-side. Questo è il segnale che B usa per sapere che A ha chiuso
+  //     l'atto corrente. Senza questo fallback, tab B non sblocca mai la nav
+  //     esito anche se ha appena ricevuto act1_completed=true via polling.
+  const actDoneKey = 'act' + config.actNum + '_completed';
+  if(gs.final_unlocked || gs[actDoneKey]) state.finalUnlocked = true;
   const docsKey = 'docs_opened_act' + config.actNum;
   if(Array.isArray(gs[docsKey]) && gs[docsKey].length){
     // Per atti single-part: tutti i docs vanno in p1. Per multi-part, distribuiscili per id documento.
