@@ -1316,12 +1316,54 @@ function mergeServerState(gs, presence){
     }
   }
   if(gs.hints_revealed && Object.keys(gs.hints_revealed).length){
-    Object.assign(state.hintsRevealed, gs.hints_revealed);
+    // Deep merge per part: Object.assign top-level sovrascriverebbe l'oggetto
+    // hintsRevealed[pid] del device locale (perdita di hint rivelati solo qui
+    // se il server arriva con un sottoinsieme — succede col merge monotono
+    // backend che potrebbe non ancora riflettere l'ultima write locale).
+    Object.keys(gs.hints_revealed).forEach(pid => {
+      const remote = gs.hints_revealed[pid];
+      if(!remote || typeof remote !== 'object') return;
+      state.hintsRevealed[pid] = { ...(state.hintsRevealed[pid] || {}), ...remote };
+    });
+  }
+  // Score sync: hint_penalty_total + errors_terminal sono i campi whitelist
+  // client-writable (max-merged backend), aggiornati ad ogni saveState. Il
+  // client locale fa max() per evitare regressioni se polling/response arriva
+  // con un valore più basso (race). penalty_act{N}_* sono scritti server-side
+  // solo da saveActScore (fine atto): se presenti li applichiamo come override
+  // perché sono i valori di scoring "ufficiali".
+  if(typeof gs.hint_penalty_total === 'number'){
+    state.hintPenaltyTotal = Math.max(Number(state.hintPenaltyTotal) || 0, gs.hint_penalty_total);
+  }
+  if(typeof gs.errors_terminal === 'number'){
+    state.errorsTerminal = Math.max(Number(state.errorsTerminal) || 0, gs.errors_terminal);
   }
   const penHKey = 'penalty_act' + config.actNum + '_hints';
   const penEKey = 'penalty_act' + config.actNum + '_errors';
   if(typeof gs[penHKey] === 'number') state.hintPenaltyTotal = gs[penHKey];
   if(typeof gs[penEKey] === 'number') state.errorsTerminal   = Math.round(gs[penEKey] / 10);
+  // Deriva hintLevelsUsed + hintPuzzleCost da hintsRevealed: questi campi non
+  // sono sync esplicitamente (locali) ma vanno ricalcolati quando hintsRevealed
+  // cambia da remoto, altrimenti tab B mostra "0 livelli" / "0 pt usati" anche
+  // dopo che A ha speso punti. Sempre max() per non regredire valori locali.
+  if(data && Array.isArray(data.puzzles)){
+    let totalUsed = 0;
+    state.hintPuzzleCost = state.hintPuzzleCost || {};
+    data.puzzles.forEach(puzzle => {
+      const revealed = state.hintsRevealed[puzzle.id] || {};
+      let cost = 0;
+      let used = 0;
+      (puzzle.hints || []).forEach(h => {
+        if(revealed[h.lvl]){
+          cost += Number(h.cost) || 0;
+          used += 1;
+        }
+      });
+      state.hintPuzzleCost[puzzle.id] = Math.max(state.hintPuzzleCost[puzzle.id] || 0, cost);
+      totalUsed += used;
+    });
+    state.hintLevelsUsed = Math.max(Number(state.hintLevelsUsed) || 0, totalUsed);
+  }
   // Casella3 (atto3): merge dalle colonne email_* del backend in state.plugins.casella3.
   // init() del plugin patcha i campi mancanti dopo il merge.
   // gs.email_attempts è il contatore monotono dei tentativi CONSUMATI server-side
@@ -1360,6 +1402,14 @@ function mergeServerState(gs, presence){
     const hasTerminalChange = remoteEvents.some(e => e.type === 'remote-terminal-completed');
     if(hasTerminalChange){
       try { applyTerminalsUI(); } catch(_){}
+    }
+    // Hint nuovi da remoto: il pannello supporto è buildato una volta in init
+    // e patchato solo da useHint locale. Senza re-render il tab B mostra ancora
+    // il bottone "Richiedi supporto" (anche se hintsRevealed in state è ok) e
+    // l'utente non può leggere il testo dell'hint sbloccato dall'altro device.
+    const hasHintChange = remoteEvents.some(e => e.type === 'remote-hint-revealed');
+    if(hasHintChange){
+      try { renderPuzzles(); } catch(_){}
     }
     // Dispatch granulare per consumer esterni / debug.
     remoteEvents.forEach(ev => {
