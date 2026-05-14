@@ -94,7 +94,7 @@ function _scheduleSyncToServer(updates){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
     }).then(r => r.json()).then(d => {
-      if(d && d.game_session) mergeServerState(d.game_session);
+      if(d && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     }).catch(()=>{});
   }, 600);
 }
@@ -109,7 +109,7 @@ function _sendUpdateNow(updates){
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code_id: _codeId, session_token: _sessionToken, updates })
   }).then(r => r.json()).then(d => {
-    if(d && d.game_session) mergeServerState(d.game_session);
+    if(d && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     return d;
   }).catch(()=>{});
 }
@@ -155,7 +155,7 @@ function _pollOnce(){
   })
     .then(r => r.json())
     .then(d => {
-      if(d && d.ok && d.game_session) mergeServerState(d.game_session);
+      if(d && d.ok && d.game_session) mergeServerState(d.game_session, _extractPresence(d));
     })
     .catch(() => { /* offline / 403 / timeout: drop silenzioso, il prossimo tick riprova */ })
     .finally(() => {
@@ -411,6 +411,10 @@ function buildHeader(){
     <div class="header-act-badge">${esc(data.headerBadge)}</div>
   </div>
   <div class="header-right">
+    <div class="presence-badge" id="presence-badge" hidden aria-live="polite" title="Dispositivi attivi su questo codice">
+      <span class="presence-dot" aria-hidden="true">&#9679;</span>
+      <span class="presence-count" id="presence-count">1/1</span>
+    </div>
     <div class="indice-badge" aria-live="polite">
       <span class="indice-label">Indice</span>
       <span class="indice-value" id="live-indice">100</span>
@@ -1061,7 +1065,7 @@ function doAccess(){
       _codeId       = d.game_session ? d.game_session.code_id : null;
       _accessCode   = inp;
       if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, { token: _sessionToken, codeId: _codeId, code: inp });
-      if(d.game_session) mergeServerState(d.game_session);
+      if(d.game_session) mergeServerState(d.game_session, _extractPresence(d));
       errEl.classList.remove('visible');
       bootApp();
     } else {
@@ -1084,8 +1088,210 @@ function showAccessError(msg){
   e.textContent = msg;
   e.classList.add('visible');
 }
-function mergeServerState(gs){
-  if(!gs) return;
+// Snapshot dei campi rilevanti dello state, usato per fare il diff pre/post in
+// mergeServerState e dispatchare eventi granulari (vedi punto 5 team-license).
+// Tenere allineato con _diffSnapshots e con applyTerminalsUI: se aggiungi un
+// evento granulare nuovo (es. final-unlocked), aggiungi qui il campo da snapshot.
+function _snapshotForDiff(){
+  const snap = {
+    terminalsCompleted: {},
+    hintsRevealedKeys: {},
+    hintPenaltyTotal: Number(state.hintPenaltyTotal) || 0,
+    errorsTerminal:   Number(state.errorsTerminal)   || 0,
+  };
+  if(data && Array.isArray(data.parts)){
+    data.parts.forEach(p => {
+      const tid = p.terminal && p.terminal.id;
+      if(tid) snap.terminalsCompleted[tid] = !!(state.terminals[tid] || {}).completed;
+    });
+  }
+  const hr = state.hintsRevealed || {};
+  Object.keys(hr).forEach(pid => {
+    const o = hr[pid];
+    snap.hintsRevealedKeys[pid] = (o && typeof o === 'object') ? Object.keys(o) : [];
+  });
+  return snap;
+}
+
+function _diffSnapshots(pre, post){
+  const events = [];
+  if(!pre || !post) return events;
+  // 1) Terminali completati da altro device
+  if(data && Array.isArray(data.parts)){
+    data.parts.forEach(p => {
+      const tid = p.terminal && p.terminal.id;
+      if(!tid) return;
+      if(!pre.terminalsCompleted[tid] && post.terminalsCompleted[tid]){
+        events.push({
+          type: 'remote-terminal-completed',
+          detail: { terminalId: tid, partId: p.id, partLabel: p.navLabel || p.mNavLabel || p.id }
+        });
+      }
+    });
+    // 2) Parti sbloccate: il prerequisito lockedUntilTerminal è ora true
+    data.parts.forEach(p => {
+      const blockerId = p.lockedUntilTerminal;
+      if(!blockerId) return;
+      const wasUnlocked = !!pre.terminalsCompleted[blockerId];
+      const isUnlocked  = !!post.terminalsCompleted[blockerId];
+      if(!wasUnlocked && isUnlocked){
+        events.push({
+          type: 'remote-part-unlocked',
+          detail: { partId: p.id, partLabel: p.navLabel || p.mNavLabel || p.id, blockerTerminalId: blockerId }
+        });
+      }
+    });
+  }
+  // 3) Hint sbloccati: chiavi nuove in hintsRevealed
+  Object.keys(post.hintsRevealedKeys).forEach(pid => {
+    const preKeys = new Set(pre.hintsRevealedKeys[pid] || []);
+    (post.hintsRevealedKeys[pid] || []).forEach(k => {
+      if(!preKeys.has(k)){
+        events.push({
+          type: 'remote-hint-revealed',
+          detail: { partId: pid, hintKey: k }
+        });
+      }
+    });
+  });
+  // 4) Penalità score: hint o errori cresciuti (mai decrescenti per merge monotono)
+  const hintDelta = post.hintPenaltyTotal - pre.hintPenaltyTotal;
+  const errDelta  = post.errorsTerminal   - pre.errorsTerminal;
+  if(hintDelta > 0 || errDelta > 0){
+    events.push({
+      type: 'remote-penalty-changed',
+      detail: { hintPenaltyDelta: hintDelta, errorsDelta: errDelta }
+    });
+  }
+  return events;
+}
+
+// Applica visivamente lo stato dei terminali completati: input readOnly, banner
+// confermato, feedback ripristinato. Originariamente vivente in init(), estratta
+// per essere ri-eseguita quando un terminale viene completato da altro device
+// (consumer remote-terminal-completed nel punto 5 team-license). Idempotente.
+function applyTerminalsUI(){
+  if(!data || !Array.isArray(data.parts)) return;
+  data.parts.forEach(p => {
+    const term = p.terminal;
+    if(!term) return;
+    const tState = state.terminals[term.id] || {};
+    if(!tState.completed) return;
+    const sub = document.getElementById(term.id + '-submit');
+    if(sub) sub.disabled = true;
+    const conf = document.getElementById(term.id + '-confirmed');
+    if(conf) conf.classList.add('visible');
+    (term.validator && term.validator.fields || []).forEach(f => {
+      const el = document.getElementById(term.id + '-input-' + f.id);
+      if(el) el.readOnly = true;
+    });
+    if(tState.fb){
+      const gfb = document.getElementById(term.id + '-global-fb');
+      if(gfb){ gfb.innerHTML = tState.fb.text; gfb.className = tState.fb.cls; }
+    }
+    if(term.hideSubmitOnSuccess){
+      const sub2 = document.getElementById(term.id + '-submit');
+      if(sub2) sub2.style.display = 'none';
+    }
+    if(term.successCopy && term.successCopy.confirmedMsgFrom && tState.sospetto){
+      const dicts = data.dictionaries || {};
+      const m = dicts[term.successCopy.confirmedMsgFrom];
+      if(m && m[tState.sospetto]){
+        const cm = document.getElementById(term.id + '-confirmed-msg');
+        if(cm) cm.textContent = m[tState.sospetto];
+      }
+    }
+  });
+}
+
+// Estrae il payload presenza dalla response top-level (validateCode, getSession,
+// updateSession). Restituisce null se i campi non sono presenti — backend
+// pre-team-license responde senza, e il client deve essere retrocompatibile.
+function _extractPresence(d){
+  if(!d || typeof d !== 'object') return null;
+  if(typeof d.active_devices_count !== 'number' && typeof d.max_devices !== 'number') return null;
+  return {
+    active_devices_count: d.active_devices_count,
+    max_devices: d.max_devices,
+  };
+}
+
+// Aggiorna il badge presenza in header (N/M). Mostrato solo per licenze
+// con max > 1: per la licenza individuale il badge resta nascosto. State viene
+// memoizzato per evitare un layout-thrash su ogni polling tick (dato stabile).
+let _lastPresenceState = null; // { active, max } o null
+function _applyPresence(presence){
+  if(!presence) return;
+  const active = Number(presence.active_devices_count);
+  const max    = Number(presence.max_devices);
+  if(!Number.isFinite(active) || !Number.isFinite(max) || max < 1) return;
+  if(_lastPresenceState && _lastPresenceState.active === active && _lastPresenceState.max === max){
+    return;
+  }
+  _lastPresenceState = { active, max };
+  const badge = document.getElementById('presence-badge');
+  const count = document.getElementById('presence-count');
+  if(!badge || !count) return;
+  if(max <= 1){
+    badge.hidden = true;
+    return;
+  }
+  count.textContent = active + '/' + max;
+  badge.hidden = false;
+  // Soglia visiva: se siamo al limite usa stato "warning" (ambra), altrimenti success.
+  badge.classList.toggle('at-limit', active >= max);
+}
+
+// Toast riassuntivo per eventi remoti. Più eventi nello stesso tick → mostriamo
+// SOLO il primo per priorità (terminal > part > hint > penalty), il toast
+// resterebbe sovrascritto in ogni caso (clearTimeout in showToast). Il dispatch
+// granulare via window.dispatchEvent rimane disponibile per consumer custom.
+const _REMOTE_EVENT_PRIORITY = {
+  'remote-terminal-completed': 4,
+  'remote-part-unlocked':      3,
+  'remote-hint-revealed':      2,
+  'remote-penalty-changed':    1,
+};
+function _toastForRemoteEvent(ev){
+  if(!ev || !ev.type) return;
+  const d = ev.detail || {};
+  let msg = '';
+  switch(ev.type){
+    case 'remote-terminal-completed': {
+      const label = d.partLabel || d.terminalId || 'un terminale';
+      msg = 'Terminale completato da un altro device: ' + label;
+      break;
+    }
+    case 'remote-part-unlocked': {
+      const label = d.partLabel || d.partId || 'una parte';
+      msg = label + ' sbloccata da un altro device';
+      break;
+    }
+    case 'remote-hint-revealed':
+      msg = 'Un compagno ha sbloccato un suggerimento';
+      break;
+    case 'remote-penalty-changed': {
+      const total = (d.hintPenaltyDelta || 0) + (d.errorsDelta || 0);
+      msg = total > 0 ? ('Penalità aggiornata: −' + total) : 'Punteggio aggiornato';
+      break;
+    }
+    default: return;
+  }
+  try { showToast(msg, 'success'); } catch(_){}
+}
+
+function mergeServerState(gs, presence){
+  if(!gs){
+    if(presence) _applyPresence(presence);
+    return;
+  }
+  // Self-write detection: la response di /updateSession (incluso il polling che
+  // riceve la game_session aggiornata da noi stessi) torna con last_updated_by
+  // == nostro session_token. In quel caso lo stato locale era già fonte della
+  // verità, salta il diff/dispatch — eviti doppi toast e lavoro inutile.
+  const isSelfWrite = !!(gs.last_updated_by && _sessionToken && gs.last_updated_by === _sessionToken);
+  const preSnap = isSelfWrite ? null : _snapshotForDiff();
+
   data.parts.forEach(p => {
     const t = p.terminal;
     const key = t.id + '_completed';
@@ -1140,15 +1346,52 @@ function mergeServerState(gs){
   // il merge della response di /updateSession ri-scatenerebbero un'altra POST verso
   // il server, che a sua volta tornerebbe game_session, → merge → POST → loop.
   _saveStateLocalOnly();
+
+  // Diff pre/post per dispatchare eventi granulari "remoti" (4 categorie). Skippato
+  // su self-write (vedi isSelfWrite sopra) per evitare doppi toast quando torna la
+  // nostra stessa scrittura. Pre-snapshot già preso prima del merge.
+  let remoteEvents = [];
+  if(!isSelfWrite){
+    const postSnap = _snapshotForDiff();
+    remoteEvents = _diffSnapshots(preSnap, postSnap);
+    // Se un terminale è stato completato da altro device, ri-applica visivamente
+    // (banner confermato, input readOnly, feedback). Altrimenti l'utente lo vede
+    // solo cambiando sezione.
+    const hasTerminalChange = remoteEvents.some(e => e.type === 'remote-terminal-completed');
+    if(hasTerminalChange){
+      try { applyTerminalsUI(); } catch(_){}
+    }
+    // Dispatch granulare per consumer esterni / debug.
+    remoteEvents.forEach(ev => {
+      try {
+        window.dispatchEvent(new CustomEvent('a17:' + ev.type, {
+          detail: Object.assign({ actNum: config.actNum }, ev.detail)
+        }));
+      } catch(_){}
+    });
+    // Toast UX-friendly: un solo toast per tick di merge, scegliendo l'evento
+    // più informativo per priorità. Skip se la UI non è ancora montata (toast
+    // non esiste pre-bootApp, showToast resta no-op).
+    if(remoteEvents.length){
+      const top = remoteEvents.slice().sort((a, b) =>
+        (_REMOTE_EVENT_PRIORITY[b.type] || 0) - (_REMOTE_EVENT_PRIORITY[a.type] || 0)
+      )[0];
+      _toastForRemoteEvent(top);
+    }
+  }
+
+  // Badge presenza (active_devices_count / max_devices). Dato dalla response
+  // top-level, non dalla GameSession — viene aggiornato anche se isSelfWrite.
+  if(presence) _applyPresence(presence);
+
   // Refresh delle parti idempotenti della UI (score, conteggio reperti, badge):
   // updateUI è safe da chiamare anche se la UI non è ancora montata (boot iniziale
-  // pre-bootApp) perché usa guard if(el) ovunque. Il rendering "ricco" (terminali
-  // appena completati da altro device, parti sbloccate, ecc.) viene gestito dai
-  // consumer di 'a17:remote-update' nel punto 5 del piano team-license.
+  // pre-bootApp) perché usa guard if(el) ovunque.
   try { updateUI(); } catch(_){}
+  // Evento generico legacy: utile per consumer che vogliono il payload grezzo.
   try {
     window.dispatchEvent(new CustomEvent('a17:remote-update', {
-      detail: { actNum: config.actNum, gameSession: gs }
+      detail: { actNum: config.actNum, gameSession: gs, remoteEvents, isSelfWrite, presence: presence || null }
     }));
   } catch(_){}
 }
@@ -2130,39 +2373,9 @@ function init(){
   renderDocsGrid();
   renderPuzzles();
 
-  // Ripristino terminali completati (input readOnly, banner confirmed, feedback)
-  data.parts.forEach(p => {
-    const term = p.terminal;
-    const tState = state.terminals[term.id] || {};
-    if(tState.completed){
-      const sub = document.getElementById(term.id + '-submit');
-      if(sub) sub.disabled = true;
-      const conf = document.getElementById(term.id + '-confirmed');
-      if(conf) conf.classList.add('visible');
-      (term.validator.fields || []).forEach(f => {
-        const el = document.getElementById(term.id + '-input-' + f.id);
-        if(el) el.readOnly = true;
-      });
-      if(tState.fb){
-        const gfb = document.getElementById(term.id + '-global-fb');
-        if(gfb){ gfb.innerHTML = tState.fb.text; gfb.className = tState.fb.cls; }
-      }
-      // Hide submit button su terminali con hideSubmitOnSuccess
-      if(term.hideSubmitOnSuccess){
-        const sub = document.getElementById(term.id + '-submit');
-        if(sub) sub.style.display = 'none';
-      }
-      // Reapply confirmed message bySospetto (se ricaricato da storage)
-      if(term.successCopy && term.successCopy.confirmedMsgFrom && tState.sospetto){
-        const dicts = data.dictionaries || {};
-        const m = dicts[term.successCopy.confirmedMsgFrom];
-        if(m && m[tState.sospetto]){
-          const cm = document.getElementById(term.id + '-confirmed-msg');
-          if(cm) cm.textContent = m[tState.sospetto];
-        }
-      }
-    }
-  });
+  // Ripristino visivo terminali completati (estratto in funzione standalone così
+  // i listener remoti del punto 5 team-license possono ri-applicarlo on demand).
+  applyTerminalsUI();
 
   updateUI();
   showSection(state.currentSection || 'intro', true);
@@ -2206,7 +2419,7 @@ async function boot(){
         _codeId       = d.game_session ? d.game_session.code_id : (auth.codeId || null);
         _accessCode   = auth.code;
         if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, { token: _sessionToken, codeId: _codeId, code: _accessCode });
-        if(d.game_session) mergeServerState(d.game_session);
+        if(d.game_session) mergeServerState(d.game_session, _extractPresence(d));
         bootApp();
       } else {
         if(typeof clearCloudAuth === 'function') clearCloudAuth(config.actNum);

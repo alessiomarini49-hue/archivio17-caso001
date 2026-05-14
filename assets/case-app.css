@@ -94,6 +94,15 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .indice-label{color:var(--text-meta);font-size:9px;letter-spacing:.2em;display:none}
 @media(min-width:500px){.indice-label{display:inline}}
 .indice-value{color:var(--red-highlight);font-size:13px}
+/* Presence badge: visibile solo per licenze team (max_devices > 1), mostrato dal
+   client tramite #presence-badge[hidden] toggle. Stesso linguaggio visivo di
+   .indice-badge (font-mono, panel-2 bg) per coerenza cross-skin. */
+.presence-badge[hidden]{display:none!important}
+.presence-badge{font-family:var(--font-mono);font-size:10.5px;color:var(--text-main);background:var(--panel-2);border:1px solid var(--border-white);padding:4px 10px;letter-spacing:.08em;display:flex;align-items:center;gap:.4rem;}
+.presence-badge .presence-dot{color:var(--success-text,#5A9A74);font-size:11px;line-height:1;animation:pulse-dot 2.4s infinite;}
+.presence-badge .presence-count{color:var(--text-main);font-size:11px}
+.presence-badge.at-limit{border-color:rgba(183,131,59,0.32);}
+.presence-badge.at-limit .presence-dot{color:var(--amber);}
 
 /* MOBILE NAV */
 .mobile-nav{display:none;background:var(--bg-secondary);border-bottom:1px solid var(--border-white);padding:0 .75rem;overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
