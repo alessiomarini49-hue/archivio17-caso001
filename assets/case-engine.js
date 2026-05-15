@@ -1810,63 +1810,66 @@ function mergeServerState(gs, presence){
     try { _showRemoteJumpBanner(); } catch(_){}
   }
 
-  // Diff pre/post per dispatchare eventi granulari "remoti" (4 categorie). Skippato
-  // su self-write (vedi isSelfWrite sopra) per evitare doppi toast quando torna la
-  // nostra stessa scrittura. Pre-snapshot già preso prima del merge.
-  let remoteEvents = [];
-  if(!isSelfWrite){
-    const postSnap = _snapshotForDiff();
-    remoteEvents = _diffSnapshots(preSnap, postSnap);
-    // Se un terminale è stato completato da altro device, ri-applica visivamente
-    // (banner confermato, input readOnly, feedback). Altrimenti l'utente lo vede
-    // solo cambiando sezione.
-    const hasTerminalChange = remoteEvents.some(e => e.type === 'remote-terminal-completed');
-    if(hasTerminalChange){
-      try { applyTerminalsUI(); } catch(_){}
-      // Ri-render dei puzzle: alcuni gruppi hint sono gated via
-      // supporto.groups[].unlockedAfterTerminal (atto3 P2/P3). Senza questo,
-      // su B che riceve via polling il terminale precedente come completato
-      // i nuovi gruppi hint non vengono renderizzati finché non si refresha
-      // la sezione. submitTerminal locale già lo chiama (linea 2179 originale).
-      try { renderPuzzles(); } catch(_){}
-    }
-    // Hint nuovi da remoto: il pannello supporto è buildato una volta in init
-    // e patchato solo da useHint locale. Senza re-render il tab B mostra ancora
-    // il bottone "Richiedi supporto" (anche se hintsRevealed in state è ok) e
-    // l'utente non può leggere il testo dell'hint sbloccato dall'altro device.
-    const hasHintChange = remoteEvents.some(e => e.type === 'remote-hint-revealed');
-    if(hasHintChange){
-      try { renderPuzzles(); } catch(_){}
-    }
-    // Atto completato da altro device: popola la sezione esito (renderEsito
-    // viene chiamato solo dal device che chiude l'atto in submitTerminal) e
-    // marca l'atto come done nel global state per il scoring cross-act.
-    const hasActDone = remoteEvents.some(e => e.type === 'remote-act-completed');
-    if(hasActDone){
-      try { if(typeof markActDone === 'function') markActDone(config.actNum); } catch(_){}
-      try { renderEsito(); } catch(_){}
-      // Banner "Il team è passato all'Atto N+1": solo se NON siamo già su atto3
-      // (nessun "prossimo atto") e siamo in team. Self-write già escluso a monte
-      // (hasActDone è calcolato in branch !isSelfWrite).
-      try { _showRemoteJumpBanner(); } catch(_){}
-    }
-    // Dispatch granulare per consumer esterni / debug.
-    remoteEvents.forEach(ev => {
-      try {
-        window.dispatchEvent(new CustomEvent('a17:' + ev.type, {
-          detail: Object.assign({ actNum: config.actNum }, ev.detail)
-        }));
-      } catch(_){}
-    });
-    // Toast UX-friendly: un solo toast per tick di merge, scegliendo l'evento
-    // più informativo per priorità. Skip se la UI non è ancora montata (toast
-    // non esiste pre-bootApp, showToast resta no-op).
-    if(remoteEvents.length){
-      const top = remoteEvents.slice().sort((a, b) =>
-        (_REMOTE_EVENT_PRIORITY[b.type] || 0) - (_REMOTE_EVENT_PRIORITY[a.type] || 0)
-      )[0];
-      _toastForRemoteEvent(top);
-    }
+  // Diff pre/post per dispatchare eventi granulari "remoti" (4 categorie).
+  // Hotfix #6 Lotto 4 (parte 2): NON gated su isSelfWrite. Il diff è
+  // naturalmente no-op su self-write puri (preSnap == postSnap perché lo state
+  // locale è già allineato con quello che torna dal backend), ma cattura i
+  // cambi remoti durante write paralleli A+B (es. B scrive un doc mentre A
+  // completa T2B → polling di B vede gs.last_updated_by=B → isSelfWrite=true
+  // MA gs ha anche t2b_completed=true di A → diff dispatch toast). Prima del
+  // fix, atto1 mostrava i toast solo perché B scriveva meno; atto2/3 con più
+  // dinamica → isSelfWrite=true quasi sempre → toast persi.
+  const postSnap = _snapshotForDiff();
+  let remoteEvents = _diffSnapshots(preSnap, postSnap);
+  // Se un terminale è stato completato da altro device, ri-applica visivamente
+  // (banner confermato, input readOnly, feedback). Altrimenti l'utente lo vede
+  // solo cambiando sezione.
+  const hasTerminalChange = remoteEvents.some(e => e.type === 'remote-terminal-completed');
+  if(hasTerminalChange){
+    try { applyTerminalsUI(); } catch(_){}
+    // Ri-render dei puzzle: alcuni gruppi hint sono gated via
+    // supporto.groups[].unlockedAfterTerminal (atto3 P2/P3). Senza questo,
+    // su B che riceve via polling il terminale precedente come completato
+    // i nuovi gruppi hint non vengono renderizzati finché non si refresha
+    // la sezione. submitTerminal locale già lo chiama (linea 2179 originale).
+    try { renderPuzzles(); } catch(_){}
+  }
+  // Hint nuovi da remoto: il pannello supporto è buildato una volta in init
+  // e patchato solo da useHint locale. Senza re-render il tab B mostra ancora
+  // il bottone "Richiedi supporto" (anche se hintsRevealed in state è ok) e
+  // l'utente non può leggere il testo dell'hint sbloccato dall'altro device.
+  const hasHintChange = remoteEvents.some(e => e.type === 'remote-hint-revealed');
+  if(hasHintChange){
+    try { renderPuzzles(); } catch(_){}
+  }
+  // Atto completato da altro device: popola la sezione esito (renderEsito
+  // viene chiamato solo dal device che chiude l'atto in submitTerminal) e
+  // marca l'atto come done nel global state per il scoring cross-act.
+  const hasActDone = remoteEvents.some(e => e.type === 'remote-act-completed');
+  if(hasActDone){
+    try { if(typeof markActDone === 'function') markActDone(config.actNum); } catch(_){}
+    try { renderEsito(); } catch(_){}
+    // Banner "Il team è passato all'Atto N+1": idempotente con quello già
+    // sparato sopra via wasFinalUnlocked → state.finalUnlocked. Lasciato come
+    // backstop per il caso act-completed senza transizione finalUnlocked.
+    try { _showRemoteJumpBanner(); } catch(_){}
+  }
+  // Dispatch granulare per consumer esterni / debug.
+  remoteEvents.forEach(ev => {
+    try {
+      window.dispatchEvent(new CustomEvent('a17:' + ev.type, {
+        detail: Object.assign({ actNum: config.actNum }, ev.detail)
+      }));
+    } catch(_){}
+  });
+  // Toast UX-friendly: un solo toast per tick di merge, scegliendo l'evento
+  // più informativo per priorità. Skip se la UI non è ancora montata (toast
+  // non esiste pre-bootApp, showToast resta no-op).
+  if(remoteEvents.length){
+    const top = remoteEvents.slice().sort((a, b) =>
+      (_REMOTE_EVENT_PRIORITY[b.type] || 0) - (_REMOTE_EVENT_PRIORITY[a.type] || 0)
+    )[0];
+    _toastForRemoteEvent(top);
   }
 
   // Badge presenza (active_devices_count / max_devices). Dato dalla response
