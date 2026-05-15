@@ -840,7 +840,7 @@
       { "id": "ev-15-11-arma", "date": "15/11", "text": "Arma di famiglia",                            "color": "var(--amber)",        "bg": "rgba(183,131,59,.12)", "revealAfterDoc": "C10" },
       { "id": "ev-20-11", "date": "20/11", "text": "Dichiarazioni integrative · Elena · Davide",       "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)",  "revealAfterDocs": ["C02","C03"] },
       { "id": "ev-21-11", "date": "21/11", "text": "Verifica accesso secondario",                      "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)",  "revealAfterDoc": "C09" },
-      { "id": "ev-22-11", "date": "22/11", "text": "Riscontri telefonici · alibi Manfredi verificato", "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)",  "revealAfterTerminal": "t3c" }
+      { "id": "ev-22-11", "date": "22/11", "text": "Riscontri telefonici · alibi Manfredi verificato", "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)",  "revealAfterTerminal": "t3b" }
     ]
   },
 
