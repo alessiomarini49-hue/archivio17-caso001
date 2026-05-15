@@ -642,10 +642,10 @@
     "timelineLabel": "Timeline — 10–15 novembre",
     "timeline": [
       { "date": "10/11", "text": "Pressione su pratica Manfredi", "color": "var(--amber)", "bg": "rgba(183,131,59,.12)" },
-      { "date": "12/11", "text": "Telefonata Andrea–Manfredi",   "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)" },
-      { "date": "13/11", "text": "Chiamata a Stefano — non risposta", "color": "var(--text-dim)", "bg": "var(--bg-main)" },
+      { "id": "ev-12-11", "date": "12/11", "text": "Telefonata Andrea–Manfredi",   "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)", "revealAfterDoc": "B04" },
+      { "id": "ev-13-11", "date": "13/11", "text": "Telefonata Andrea–Stefano", "color": "var(--amber)", "bg": "rgba(183,131,59,.12)", "revealAfterDoc": "B05" },
       { "date": "14/11", "text": "Banca · Davide · <em style=\"font-style:normal;color:var(--amber)\">«Cena con S.»</em>", "color": "var(--amber)", "bg": "rgba(183,131,59,.12)" },
-      { "date": "15/11", "text": "Rinvenimento — fascicolo aperto", "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)" }
+      { "id": "ev-15-11", "date": "15/11", "text": "Rinvenimento — fascicolo aperto", "color": "var(--red-logicus)", "bg": "rgba(167,25,32,.1)", "revealAfterDoc": "B15" }
     ]
   },
 

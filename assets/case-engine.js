@@ -948,13 +948,18 @@ function buildInvPanel(){
   const showPeopleSection = (data.people || []).length > 0;
   const timeline = data.investigationPanel.timeline || [];
   const showTimeline = timeline.length > 0;
-  const timelineRowHtml = timeline.map(ev =>
-    `<div style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
-      <div style="width:11px;height:11px;border-radius:50%;border:1px solid ${ev.color || 'var(--text-dim)'};background:${ev.bg || 'var(--bg-main)'};flex-shrink:0;margin-top:3px"></div>
+  const timelineRowHtml = timeline.map(ev => {
+    const hidden = !!ev.revealAfterDoc;
+    const dotColor  = hidden ? 'var(--text-dim)' : (ev.color || 'var(--text-dim)');
+    const dotBg     = hidden ? 'transparent'     : (ev.bg    || 'var(--bg-main)');
+    const textHtml  = hidden ? '—'               : ev.text;
+    const wrapAttr  = ev.id ? ` id="inv-timeline-${esc(ev.id)}"` : '';
+    return `<div${wrapAttr} style="display:flex;gap:.75rem;align-items:flex-start;padding:.4rem 0;border-top:1px solid var(--border-white-soft)">
+      <div class="inv-timeline-dot" style="width:11px;height:11px;border-radius:50%;border:1px solid ${dotColor};background:${dotBg};flex-shrink:0;margin-top:3px"></div>
       <div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);flex-shrink:0;margin-top:1px;min-width:40px">${esc(ev.date)}</div>
-      <div style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">${ev.text}</div>
-    </div>`
-  ).join('');
+      <div class="inv-timeline-text" style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-top:1px">${textHtml}</div>
+    </div>`;
+  }).join('');
   return `
 <aside class="investigation-panel" aria-label="Stato del fascicolo">
   <div class="inv-panel-header"><div class="inv-panel-title">Stato fascicolo</div></div>
@@ -2857,6 +2862,27 @@ function updateUI(){
         const el = document.getElementById('inv-person-' + p.id);
         if(el) el.textContent = p.role;
       }
+    });
+  }
+
+  // Timeline (eventi rivelati dopo apertura di un doc specifico)
+  const timelineEvents = (data.investigationPanel && data.investigationPanel.timeline) || [];
+  if(timelineEvents.some(ev => ev.id && ev.revealAfterDoc)){
+    const openedSet = new Set();
+    Object.values(state.docsOpened || {}).forEach(arr => (arr || []).forEach(id => openedSet.add(id)));
+    timelineEvents.forEach(ev => {
+      if(!ev.id || !ev.revealAfterDoc) return;
+      if(!openedSet.has(ev.revealAfterDoc)) return;
+      const wrap = document.getElementById('inv-timeline-' + ev.id);
+      if(!wrap || wrap.dataset.revealed === '1') return;
+      const dot  = wrap.querySelector('.inv-timeline-dot');
+      const txt  = wrap.querySelector('.inv-timeline-text');
+      if(dot){
+        dot.style.borderColor = ev.color || 'var(--text-dim)';
+        dot.style.background  = ev.bg    || 'var(--bg-main)';
+      }
+      if(txt) txt.innerHTML = ev.text;
+      wrap.dataset.revealed = '1';
     });
   }
 
