@@ -221,10 +221,20 @@ function getCloudAuth(actNum){
 function setCloudAuth(actNum, auth){
   const s = _readSession();
   if(!s.cloud) s.cloud = {};
+  // nickname: feature leaderboard 2026-05-15. Persistente cross-atto, usato
+  // per highlight self-row in leaderboard.html. Non scriviamo null se l'auth
+  // passata omette il campo: conserviamo il valore precedente (utile in autologin
+  // dove la response GameSession può popolarlo anche su device che non l'ha mai
+  // inserito — caso TEAM secondo device).
+  const prevShared = s.cloud.shared || {};
+  const nickname = (auth && typeof auth.nickname !== 'undefined')
+    ? (auth.nickname || null)
+    : (prevShared.nickname || null);
   const normalized = {
-    token:  auth && auth.token  != null ? auth.token  : null,
-    codeId: auth && auth.codeId != null ? auth.codeId : null,
-    code:   auth && auth.code   != null ? auth.code   : null
+    token:    auth && auth.token  != null ? auth.token  : null,
+    codeId:   auth && auth.codeId != null ? auth.codeId : null,
+    code:     auth && auth.code   != null ? auth.code   : null,
+    nickname: nickname
   };
   s.cloud['atto' + actNum] = normalized;
   s.cloud.shared = normalized;

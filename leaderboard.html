@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.base44.app;">
+<title>Classifica — Archivio 17 · Caso 001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/case-app.css">
+<style>
+/* ───────── Leaderboard page ─────────
+   Riusa le custom properties di case-app.css (--panel-1, --amber, --font-mono, ecc.)
+   per restare coerente con DESIGN.md: dark, premium, cinematografico.
+*/
+body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-height:100vh;font-family:var(--font-sans);}
+.lb-shell{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+.lb-header{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--border-gold);padding-bottom:1.25rem;margin-bottom:2rem;}
+.lb-brand{font-family:var(--font-mono);letter-spacing:.18em;color:var(--amber);font-size:13px;text-transform:uppercase;}
+.lb-back{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--text-meta);text-decoration:none;text-transform:uppercase;transition:var(--transition);}
+.lb-back:hover{color:var(--amber);}
+.lb-hero{text-align:center;margin-bottom:2.5rem;}
+.lb-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;color:var(--text-meta);text-transform:uppercase;margin-bottom:.6rem;}
+.lb-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2rem,5vw,3rem);line-height:1.15;color:var(--text-main);margin-bottom:.5rem;}
+.lb-subtitle{font-size:14px;color:var(--text-secondary);max-width:560px;margin:0 auto;line-height:1.6;}
+.lb-tabs{display:flex;gap:.5rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap;}
+.lb-tab{background:transparent;border:1px solid rgba(185,161,116,.25);color:var(--text-meta);padding:.5rem 1.1rem;font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:var(--transition);}
+.lb-tab:hover{border-color:var(--amber);color:var(--amber);}
+.lb-tab.active{background:rgba(183,131,59,.12);border-color:var(--amber);color:var(--amber);}
+.lb-status{font-family:var(--font-mono);font-size:11px;color:var(--text-meta);text-align:center;letter-spacing:.1em;padding:1.5rem 0;}
+.lb-error{color:var(--red-highlight);}
+.lb-table-wrap{background:var(--panel-1);border:1px solid var(--border-gold);overflow:hidden;}
+.lb-table{width:100%;border-collapse:collapse;font-size:13px;}
+.lb-table thead th{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-meta);text-align:left;padding:.85rem .9rem;background:rgba(0,0,0,.35);border-bottom:1px solid var(--border-gold);font-weight:400;}
+.lb-table tbody td{padding:.85rem .9rem;border-bottom:1px solid rgba(185,161,116,.08);vertical-align:middle;}
+.lb-table tbody tr:last-child td{border-bottom:none;}
+.lb-table tbody tr.lb-self{background:rgba(183,131,59,.08);position:relative;}
+.lb-table tbody tr.lb-self::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber);}
+.lb-rank{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);width:60px;font-variant-numeric:tabular-nums;}
+.lb-rank-medal{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0;}
+.lb-medal-gold{background:linear-gradient(135deg,#f4d27b,#c79b3d);color:#1a120a;}
+.lb-medal-silver{background:linear-gradient(135deg,#dfe0e3,#9a9da3);color:#1a120a;}
+.lb-medal-bronze{background:linear-gradient(135deg,#d49266,#8a5536);color:#1a120a;}
+.lb-nickname{font-family:var(--font-sans);font-size:14px;color:var(--text-main);font-weight:500;word-break:break-word;}
+.lb-mode-badge{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:.18rem .55rem;border:1px solid;border-radius:2px;margin-left:.4rem;vertical-align:middle;}
+.lb-mode-individual{color:#a8c9e6;border-color:rgba(168,201,230,.4);}
+.lb-mode-team{color:#e6c188;border-color:rgba(230,193,136,.45);}
+.lb-num{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums;text-align:right;}
+.lb-score{font-family:var(--font-mono);font-size:16px;color:var(--amber);font-weight:500;font-variant-numeric:tabular-nums;text-align:right;}
+.lb-date{font-family:var(--font-mono);font-size:11px;color:var(--text-meta);letter-spacing:.04em;}
+.lb-footer{text-align:center;margin-top:2rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-meta);}
+.lb-details-toggle{display:none;}
+
+/* Mobile: nascondi colonne secondarie, mostra accordion */
+@media (max-width: 720px){
+  .lb-shell{padding:1.5rem 1rem 3rem;}
+  .lb-table thead{display:none;}
+  .lb-table, .lb-table tbody, .lb-table tr, .lb-table td{display:block;width:100%;}
+  .lb-table tbody tr{border-bottom:1px solid rgba(185,161,116,.12);padding:.75rem .9rem;position:relative;}
+  .lb-table tbody tr.lb-self{padding-left:1rem;}
+  .lb-table tbody td{padding:.15rem 0;border:none;display:flex;justify-content:space-between;align-items:center;}
+  .lb-table tbody td.lb-cell-primary{justify-content:flex-start;gap:.6rem;padding-bottom:.4rem;}
+  .lb-table tbody td[data-label]::before{content:attr(data-label);font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-meta);margin-right:.5rem;}
+  .lb-num, .lb-score, .lb-date{text-align:right;}
+  .lb-details{display:none;padding-top:.5rem;}
+  .lb-details.open{display:block;}
+  .lb-details-toggle{display:inline-block;margin-left:auto;background:none;border:none;color:var(--text-meta);font-family:var(--font-mono);font-size:11px;cursor:pointer;letter-spacing:.1em;}
+  .lb-details-toggle::after{content:'▾';margin-left:.3rem;display:inline-block;transition:transform .2s;}
+  .lb-details-toggle.open::after{transform:rotate(180deg);}
+}
+</style>
+</head>
+<body class="leaderboard-page">
+
+<div class="lb-shell">
+
+  <header class="lb-header">
+    <div class="lb-brand">Archivio 17 · Caso 001</div>
+    <a href="index.html" class="lb-back">← Torna al fascicolo</a>
+  </header>
+
+  <section class="lb-hero">
+    <div class="lb-eyebrow">Classifica</div>
+    <h1 class="lb-title">Top 30 — Il Caso Marini</h1>
+    <p class="lb-subtitle">I trenta migliori archivisti del Caso 001. Ordine per punteggio finale, modalità, precisione e numero di reset.</p>
+  </section>
+
+  <div class="lb-tabs" role="tablist">
+    <button class="lb-tab active" data-filter="all" role="tab">Tutti</button>
+    <button class="lb-tab" data-filter="individual" role="tab">Individuale</button>
+    <button class="lb-tab" data-filter="team" role="tab">Team</button>
+  </div>
+
+  <div id="lb-status" class="lb-status">Caricamento classifica…</div>
+
+  <div id="lb-table-wrap" class="lb-table-wrap" style="display:none">
+    <table class="lb-table">
+      <thead>
+        <tr>
+          <th>Pos</th>
+          <th>Nickname</th>
+          <th style="text-align:right">Indice</th>
+          <th style="text-align:right">Penalità supporti</th>
+          <th style="text-align:right">Errori</th>
+          <th style="text-align:right">Reset</th>
+          <th>Data</th>
+        </tr>
+      </thead>
+      <tbody id="lb-tbody"></tbody>
+    </table>
+  </div>
+
+  <p class="lb-footer">
+    Aggiornata al completamento dell'Atto III. Punteggi congelati al momento dell'esito.
+  </p>
+
+</div>
+
+<script src="assets/config.js"></script>
+<script>
+(function(){
+  'use strict';
+  const API_URL = (typeof API_BASE === 'string' ? API_BASE : '') + '/leaderboard';
+  const CASE_ID = '001';
+
+  // Self nickname dal cloud.shared (per highlight). Lettura best-effort.
+  function getSelfNickname(){
+    try {
+      const raw = localStorage.getItem('a17_session');
+      if(!raw) return null;
+      const p = JSON.parse(raw);
+      const nick = p && p.cloud && p.cloud.shared && p.cloud.shared.nickname;
+      return nick ? String(nick).toLowerCase() : null;
+    } catch(_){ return null; }
+  }
+  const SELF_NICK_LOWER = getSelfNickname();
+
+  // Format data relativa: "oggi", "ieri", "3 giorni fa", "2 settimane fa".
+  function relativeDate(iso){
+    if(!iso) return '—';
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return '—';
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffDays = Math.floor(diffMs / (24 * 3600 * 1000));
+    if(diffDays <= 0) return 'oggi';
+    if(diffDays === 1) return 'ieri';
+    if(diffDays < 7) return diffDays + ' giorni fa';
+    if(diffDays < 30) return Math.floor(diffDays/7) + ' settiman' + (Math.floor(diffDays/7)===1?'a':'e') + ' fa';
+    if(diffDays < 365) return Math.floor(diffDays/30) + ' mes' + (Math.floor(diffDays/30)===1?'e':'i') + ' fa';
+    return Math.floor(diffDays/365) + ' ann' + (Math.floor(diffDays/365)===1?'o':'i') + ' fa';
+  }
+  function absoluteDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso);
+    if(isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  function esc(s){
+    const map = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => map[c]);
+  }
+
+  function rankMedal(rank){
+    if(rank === 1) return '<span class="lb-rank-medal lb-medal-gold">1</span>';
+    if(rank === 2) return '<span class="lb-rank-medal lb-medal-silver">2</span>';
+    if(rank === 3) return '<span class="lb-rank-medal lb-medal-bronze">3</span>';
+    return String(rank);
+  }
+
+  function modeBadge(mode){
+    if(mode === 'team') return '<span class="lb-mode-badge lb-mode-team">TEAM</span>';
+    return '<span class="lb-mode-badge lb-mode-individual">INDIVIDUALE</span>';
+  }
+
+  function rowHtml(entry){
+    const isSelf = SELF_NICK_LOWER && entry.nickname && entry.nickname.toLowerCase() === SELF_NICK_LOWER;
+    const cls = isSelf ? 'lb-self' : '';
+    const dateRel = relativeDate(entry.completed_at);
+    const dateAbs = absoluteDate(entry.completed_at);
+    return `
+<tr class="${cls}" data-mode="${esc(entry.mode)}">
+  <td class="lb-rank lb-cell-primary" data-label="Pos">${rankMedal(entry.rank)}</td>
+  <td class="lb-nickname lb-cell-primary" data-label="Nickname">${esc(entry.nickname)}${modeBadge(entry.mode)}</td>
+  <td class="lb-score" data-label="Indice">${entry.score_final}</td>
+  <td class="lb-num" data-label="Penalità supporti" title="Atto I: ${entry.hints_act1} · Atto II: ${entry.hints_act2} · Atto III: ${entry.hints_act3}">${entry.hints_total}</td>
+  <td class="lb-num" data-label="Errori">${entry.errors_terminal}</td>
+  <td class="lb-num" data-label="Reset">${entry.resets_used}</td>
+  <td class="lb-date" data-label="Data" title="${esc(dateAbs)}">${dateRel}</td>
+</tr>`;
+  }
+
+  function render(entries, currentFilter){
+    const tbody = document.getElementById('lb-tbody');
+    const wrap = document.getElementById('lb-table-wrap');
+    const status = document.getElementById('lb-status');
+
+    const filtered = currentFilter === 'all'
+      ? entries
+      : entries.filter(e => e.mode === currentFilter);
+
+    if(!filtered.length){
+      wrap.style.display = 'none';
+      status.style.display = '';
+      status.classList.remove('lb-error');
+      status.textContent = currentFilter === 'all'
+        ? 'Ancora nessuno ha chiuso il caso. La prima posizione attende.'
+        : 'Nessun risultato in questa categoria.';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(rowHtml).join('');
+    wrap.style.display = '';
+    status.style.display = 'none';
+
+    // Auto-scroll alla riga self se fuori vista
+    if(SELF_NICK_LOWER){
+      const selfRow = tbody.querySelector('tr.lb-self');
+      if(selfRow){
+        const rect = selfRow.getBoundingClientRect();
+        if(rect.top < 0 || rect.bottom > window.innerHeight){
+          selfRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+  }
+
+  function showError(msg){
+    const status = document.getElementById('lb-status');
+    status.style.display = '';
+    status.classList.add('lb-error');
+    status.textContent = msg;
+    document.getElementById('lb-table-wrap').style.display = 'none';
+  }
+
+  let allEntries = [];
+  let currentFilter = 'all';
+
+  document.querySelectorAll('.lb-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lb-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      render(allEntries, currentFilter);
+    });
+  });
+
+  // Fetch
+  const abortCtl = new AbortController();
+  const timeoutId = setTimeout(() => abortCtl.abort(), 10000);
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ case_id: CASE_ID }),
+    signal: abortCtl.signal
+  })
+    .then(r => { clearTimeout(timeoutId); return r.json(); })
+    .then(d => {
+      if(!d || !d.ok){
+        showError((d && d.error) || 'Errore caricamento classifica.');
+        return;
+      }
+      allEntries = Array.isArray(d.entries) ? d.entries : [];
+      render(allEntries, currentFilter);
+    })
+    .catch(err => {
+      clearTimeout(timeoutId);
+      if(err && err.name === 'AbortError') showError('Timeout connessione. Ricarica la pagina.');
+      else showError('Errore di connessione. Ricarica la pagina.');
+    });
+})();
+</script>
+
+</body>
+</html>

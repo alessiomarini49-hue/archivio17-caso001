@@ -76,6 +76,8 @@ h1,h2,h3,h4{font-family:var(--font-serif);font-weight:400}
 .access-input:focus{border-color:var(--red-dark);box-shadow:0 0 14px rgba(179,18,23,.14);}
 .access-error{font-family:var(--font-mono);font-size:11px;color:var(--red-highlight);margin-top:.5rem;display:none;letter-spacing:.04em;}
 .access-error.visible{display:block}
+.access-hint{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--text-meta);margin-top:.35rem;line-height:1.5;}
+#nickname-input{text-transform:none;letter-spacing:.06em;}
 .access-footer{margin-top:2rem;text-align:center;font-size:11px;color:var(--text-dim);max-width:420px;width:100%;font-style:italic;line-height:1.6;position:relative;z-index:1;}
 
 /* HEADER */
@@ -424,6 +426,7 @@ body.skin-rich .access-field label{font-size:8.5px;letter-spacing:.22em;margin-b
 body.skin-rich .access-input{border:1px solid var(--border-white);padding:.7rem 1rem;font-size:13px;letter-spacing:.06em;text-transform:none;}
 body.skin-rich .access-input:focus{border-color:var(--amber);box-shadow:0 0 14px rgba(183,131,59,.14);}
 body.skin-rich .access-error{font-size:10px;letter-spacing:.06em;margin:.4rem 0 .8rem;min-height:14px;}
+body.skin-rich .access-hint{font-size:10px;letter-spacing:.04em;margin-top:.3rem;}
 body.skin-rich .access-footer{font-family:var(--font-mono);font-size:9px;font-style:normal;letter-spacing:.12em;text-transform:uppercase;max-width:none;text-align:inherit;position:static;z-index:auto;}
 
 /* Indice label — rich la mostra sempre, senza media query */

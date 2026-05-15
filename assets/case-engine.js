@@ -527,6 +527,11 @@ function buildAccessScreen(){
         <label for="code-input">${esc(a.fieldLabel)}</label>
         <input type="text" id="code-input" class="access-input" placeholder="${esc(a.placeholder)}" autocomplete="off" spellcheck="false">
       </div>
+      <div class="access-field" id="nickname-field">
+        <label for="nickname-input">${esc(a.nicknameLabel || 'Nickname')}</label>
+        <input type="text" id="nickname-input" class="access-input" placeholder="${esc(a.nicknamePlaceholder || '')}" autocomplete="off" spellcheck="false" maxlength="40">
+        <p class="access-hint" id="nickname-hint">${esc(a.nicknameHint || '')}</p>
+      </div>
       <p id="access-error" class="access-error"></p>
       <button class="btn-primary full" id="access-btn">${esc(a.buttonLabel)}</button>
     </div>
@@ -908,7 +913,7 @@ function buildEsitoSection(){
         <div class="final-tease-text">${e.finalTease.text}</div>
         <div class="final-tease-firm">${esc(e.finalTease.firm)}</div>
       </div>
-      <div class="final-actions">${actions}</div>
+      <div class="final-actions">${actions}${config.actNum === 3 ? `<a href="leaderboard.html" class="btn-primary leaderboard-cta">Vai alla classifica →</a>` : ''}</div>
     </div>
     ${e.bottomReset ? `<div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap"><button class="btn-ghost" data-action="reset-confirm">${esc(e.bottomReset)}</button></div>` : ''}
   </div>
@@ -1117,11 +1122,23 @@ function buildFooter(){
 
 // ---------- EVENT BINDING ----------
 function bindEvents(){
-  // Access button + Enter on code input
+  // Access button + Enter on code input + nickname input
   const accessBtn = document.getElementById('access-btn');
   if(accessBtn) accessBtn.addEventListener('click', doAccess);
   const codeInput = document.getElementById('code-input');
   if(codeInput) codeInput.addEventListener('keydown', e => { if(e.key === 'Enter') doAccess(); });
+  const nicknameInput = document.getElementById('nickname-input');
+  if(nicknameInput){
+    nicknameInput.addEventListener('keydown', e => { if(e.key === 'Enter') doAccess(); });
+    // Pre-fill se l'utente ha già un nickname salvato (autologin fallito / rete giù
+    // / utente delogato manualmente). Comodità: evita di re-digitare il proprio nick.
+    try {
+      const auth = (typeof getCloudAuth === 'function' ? getCloudAuth(config.actNum) : null);
+      if(auth && auth.nickname && !nicknameInput.value){
+        nicknameInput.value = auth.nickname;
+      }
+    } catch(_){}
+  }
 
   // Section navigation (sidebar, mobile nav, CTAs)
   document.querySelectorAll('[data-section]').forEach(el => {
@@ -1181,17 +1198,52 @@ function bindEvents(){
 }
 
 // ---------- ACCESS ----------
+// Validazione nickname client-side (specchio della regex server in
+// validateCode/entry.ts). Solo format check: parolacce e unicità le
+// verifica il server (lista hardcoded server-side, query DB).
+const NICKNAME_MIN = 2;
+const NICKNAME_MAX = 20;
+const NICKNAME_BASE_CHARSET = /^[a-zA-Z0-9 _\-àèéìòùÀÈÉÌÒÙ]+$/;
+const NICKNAME_EMOJI_RE = /\p{Extended_Pictographic}/gu;
+function normalizeNicknameClient(raw){
+  return String(raw || '').replace(/\s+/g, ' ').trim();
+}
+function validateNicknameClient(raw){
+  const normalized = normalizeNicknameClient(raw);
+  if(normalized.length === 0) return { ok:false, msg: 'Inserisci un nickname.' };
+  const len = [...normalized].length;
+  if(len < NICKNAME_MIN) return { ok:false, msg: `Nickname troppo corto (minimo ${NICKNAME_MIN} caratteri).` };
+  if(len > NICKNAME_MAX) return { ok:false, msg: `Nickname troppo lungo (massimo ${NICKNAME_MAX} caratteri).` };
+  const stripped = normalized.replace(NICKNAME_EMOJI_RE, '');
+  if(stripped.length > 0 && !NICKNAME_BASE_CHARSET.test(stripped)){
+    return { ok:false, msg: 'Caratteri non ammessi. Usa lettere, numeri, spazi, _, - o emoji.' };
+  }
+  return { ok:true, normalized };
+}
+
 function doAccess(){
   const inpEl = document.getElementById('code-input');
+  const nickEl = document.getElementById('nickname-input');
   const errEl = document.getElementById('access-error');
   const btn = document.getElementById('access-btn');
   const inp = (inpEl.value || '').trim().toUpperCase();
+  const nickRaw = nickEl ? (nickEl.value || '') : '';
 
   if(!inp){ showAccessError('Inserisci il codice di accesso.'); return; }
 
+  // Codici locali (demo/dev): saltano sia validazione backend sia nickname.
   if((config.localCodes || []).includes(inp)){
     errEl.classList.remove('visible');
     bootApp();
+    return;
+  }
+
+  // Validazione nickname client-side. Server riceverà il nickname normalizzato
+  // ma può comunque scartarlo se la sessione esiste già con nickname (caso TEAM).
+  const nickCheck = validateNicknameClient(nickRaw);
+  if(!nickCheck.ok){
+    showAccessError(nickCheck.msg);
+    if(nickEl) nickEl.focus();
     return;
   }
 
@@ -1205,7 +1257,7 @@ function doAccess(){
   fetch(API_BASE + '/validateCode', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code: inp, fingerprint: fp }),
+    body: JSON.stringify({ code: inp, fingerprint: fp, nickname: nickCheck.normalized }),
     signal: abortCtl.signal
   })
   .then(r => { clearTimeout(timeoutId); return r.json(); })
@@ -1216,12 +1268,31 @@ function doAccess(){
       _sessionToken = d.session_token;
       _codeId       = d.game_session ? d.game_session.code_id : null;
       _accessCode   = inp;
-      if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, { token: _sessionToken, codeId: _codeId, code: inp });
+      // Nickname effettivo: quello della GameSession (autorevole per TEAM dove
+      // il primo device decide). Fallback a quello inserito localmente per
+      // sessioni create proprio adesso.
+      const effectiveNick = (d.game_session && d.game_session.nickname) || nickCheck.normalized || null;
+      if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, {
+        token: _sessionToken,
+        codeId: _codeId,
+        code: inp,
+        nickname: effectiveNick,
+      });
       if(d.game_session) mergeServerState(d.game_session, _extractPresence(d));
       errEl.classList.remove('visible');
+      // Caso TEAM con nickname già impostato dal primo device: avvisa l'utente
+      // se il nickname che ha digitato è diverso da quello reale del team.
+      if(effectiveNick && nickCheck.normalized && effectiveNick.toLowerCase() !== nickCheck.normalized.toLowerCase()){
+        try { showToast('Squadra: "' + effectiveNick + '"', 'info', 4000); } catch(_){}
+      }
       bootApp();
     } else {
       showAccessError((d && d.error) || 'Codice non valido.');
+      // Se l'errore riguarda il nickname, sposta il focus lì.
+      if(d && typeof d.error_code === 'string' && d.error_code.indexOf('NICKNAME') !== -1 && nickEl){
+        nickEl.focus();
+        try { nickEl.select(); } catch(_){}
+      }
     }
   })
   .catch((e) => {
@@ -3060,7 +3131,11 @@ async function boot(){
         _sessionToken = d.session_token;
         _codeId       = d.game_session ? d.game_session.code_id : (auth.codeId || null);
         _accessCode   = auth.code;
-        if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, { token: _sessionToken, codeId: _codeId, code: _accessCode });
+        // Aggiorna cloud.shared con il nickname canonical della GameSession
+        // (utile in TEAM: secondo device autologin riceve il nickname del team
+        // anche se nel proprio localStorage non era stato salvato).
+        const serverNick = (d.game_session && d.game_session.nickname) || auth.nickname || null;
+        if(typeof setCloudAuth === 'function') setCloudAuth(config.actNum, { token: _sessionToken, codeId: _codeId, code: _accessCode, nickname: serverNick });
         if(d.game_session) mergeServerState(d.game_session, _extractPresence(d));
         bootApp();
       } else {

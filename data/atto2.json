@@ -15,6 +15,10 @@
     "description": "Inserisci il codice di accesso ricevuto. Ogni codice è personale e valido per un singolo dispositivo.",
     "fieldLabel": "Codice di accesso",
     "placeholder": "A17-XXXXXX",
+    "nicknameLabel": "Nickname (tu o il tuo team)",
+    "nicknamePlaceholder": "Il tuo nickname",
+    "nicknameHint": "2-20 caratteri. Lettere, numeri, spazi, _, - o emoji.",
+    "nicknameTeamReadonlyLabel": "Squadra",
     "buttonLabel": "Accedi al Fascicolo",
     "loadingMessage": "Ripristino sessione in corso…",
     "footer": "Archivio 17 è un'esperienza investigativa narrativa.<br>I documenti del fascicolo sono il punto di partenza."
