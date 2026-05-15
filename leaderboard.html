@@ -48,6 +48,11 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
 .lb-mode-team{color:#e6c188;border-color:rgba(230,193,136,.45);}
 .lb-num{font-family:var(--font-mono);font-size:13px;color:var(--text-secondary);font-variant-numeric:tabular-nums;}
 .lb-score{font-family:var(--font-mono);font-size:16px;color:var(--amber);font-weight:500;font-variant-numeric:tabular-nums;}
+.lb-tier{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-secondary);white-space:nowrap;}
+.lb-tier-archivist{color:var(--amber);}
+.lb-tier-investigator{color:var(--text-secondary);}
+.lb-tier-collaborator{color:var(--text-meta);}
+.lb-tier-observer{color:var(--text-meta);opacity:.72;}
 .lb-date{font-family:var(--font-mono);font-size:11px;color:var(--text-meta);letter-spacing:.04em;}
 .lb-footer{text-align:center;margin-top:2rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-meta);}
 
@@ -80,6 +85,15 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
   .lb-nickname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px;}
   .lb-nickname .lb-mode-badge{font-size:8.5px;padding:.12rem .4rem;margin-left:.35rem;letter-spacing:.1em;}
   .lb-score{font-size:15px;justify-self:end;font-weight:500;}
+  /* Grado: full-width sotto la prima riga, sempre visibile (non collassa con expand) */
+  .lb-table tbody td.lb-tier{
+    grid-column:2 / 4;
+    justify-self:end;
+    font-size:10px;
+    letter-spacing:.08em;
+    margin-top:-.15rem;
+    padding:0;
+  }
   /* Chevron a destra (rotates on expand) */
   .lb-table tbody tr::after{
     content:'';
@@ -155,6 +169,7 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
           <th>Pos</th>
           <th>Nickname</th>
           <th>Indice</th>
+          <th>Grado</th>
           <th>Penalità supporti</th>
           <th>Errori</th>
           <th>Reset</th>
@@ -228,16 +243,29 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
     return '<span class="lb-mode-badge lb-mode-individual">INDIVIDUALE</span>';
   }
 
+  // Tier dal punteggio finale — soglie da data/atto3.json (esito.tiers).
+  // Mantieni sincronizzato se quelle soglie cambiano.
+  function tierFromScore(score){
+    const s = Number(score);
+    if(!isFinite(s)) return { name: 'Osservatore esterno', key: 'observer' };
+    if(s >= 90) return { name: 'Archivista in formazione', key: 'archivist' };
+    if(s >= 75) return { name: 'Investigatore',            key: 'investigator' };
+    if(s >= 60) return { name: 'Collaboratore',            key: 'collaborator' };
+    return                  { name: 'Osservatore esterno', key: 'observer' };
+  }
+
   function rowHtml(entry){
     const isSelf = SELF_NICK_LOWER && entry.nickname && entry.nickname.toLowerCase() === SELF_NICK_LOWER;
     const cls = isSelf ? 'lb-self' : '';
     const dateRel = relativeDate(entry.completed_at);
     const dateAbs = absoluteDate(entry.completed_at);
+    const tier = tierFromScore(entry.score_final);
     return `
 <tr class="${cls}" data-mode="${esc(entry.mode)}">
   <td class="lb-rank lb-cell-primary" data-label="Pos">${rankMedal(entry.rank)}</td>
   <td class="lb-nickname lb-cell-primary" data-label="Nickname">${esc(entry.nickname)}${modeBadge(entry.mode)}</td>
   <td class="lb-score lb-cell-primary" data-label="Indice">${entry.score_final}</td>
+  <td class="lb-tier lb-tier-${tier.key} lb-cell-primary" data-label="Grado">${esc(tier.name)}</td>
   <td class="lb-num lb-cell-detail" data-label="Penalità supporti" title="Atto I: ${entry.hints_act1} · Atto II: ${entry.hints_act2} · Atto III: ${entry.hints_act3}">${entry.hints_total}</td>
   <td class="lb-num lb-cell-detail" data-label="Errori">${entry.errors_terminal}</td>
   <td class="lb-num lb-cell-detail" data-label="Reset">${entry.resets_used}</td>
