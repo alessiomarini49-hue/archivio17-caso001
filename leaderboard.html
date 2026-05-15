@@ -65,8 +65,8 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
   .lb-table, .lb-table tbody{display:block;width:100%;}
   .lb-table tbody tr{
     display:grid;
-    grid-template-columns:auto minmax(0,1fr) auto auto;
-    column-gap:.5rem;
+    grid-template-columns:auto 1fr auto;
+    column-gap:.75rem;
     row-gap:0;
     align-items:center;
     padding:.85rem 2.2rem .85rem 1rem;
@@ -80,21 +80,22 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
   .lb-table tbody tr:active{background:rgba(183,131,59,.05);}
   .lb-table tbody tr.lb-self{padding-left:1.1rem;}
   .lb-table tbody td{padding:0;border:none;display:block;}
-  /* Riga primaria — pos / nickname / tier / score (4 colonne, inline) */
+  /* Riga primaria — pos / nickname / score */
   .lb-rank{grid-column:1;font-size:13px;min-width:32px;width:auto;}
   .lb-nickname{grid-column:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px;}
   .lb-nickname .lb-mode-badge{font-size:8.5px;padding:.12rem .4rem;margin-left:.35rem;letter-spacing:.1em;}
+  .lb-score{grid-column:3;font-size:15px;justify-self:end;font-weight:500;}
+  /* Grado: sotto la riga primaria, allineato a sinistra sotto il nickname,
+     sempre visibile (non collassa con expand). Font piccolo per non sovrastare il nome. */
   .lb-table tbody td.lb-tier{
-    grid-column:3;
-    justify-self:end;
-    align-self:center;
-    font-size:9px;
-    letter-spacing:.04em;
-    white-space:nowrap;
-    margin:0;
+    grid-column:2 / 4;
+    justify-self:start;
+    font-size:9.5px;
+    letter-spacing:.06em;
+    margin-top:-.15rem;
     padding:0;
+    white-space:nowrap;
   }
-  .lb-score{grid-column:4;font-size:15px;justify-self:end;font-weight:500;}
   /* Chevron a destra (rotates on expand) */
   .lb-table tbody tr::after{
     content:'';
