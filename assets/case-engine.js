@@ -366,7 +366,25 @@ function loadState(){
 // ---------- SCORING ----------
 function computeScore(){
   if(typeof updateGlobalFromActState === 'function'){
-    updateGlobalFromActState(config.actNum, state.hintPenaltyTotal, state.errorsTerminal * 10);
+    // Bugfix Lotto 4 (score cumulativo): state.hintPenaltyTotal e
+    // state.errorsTerminal sono TOP-LEVEL CUMULATIVI cross-act (max-merged
+    // backend + derivazione locale). Attribuirli direttamente a
+    // _global.penalty_act{N} causa doppio conteggio in globalScore (le
+    // penalty degli atti precedenti — già canonicamente memorizzate in
+    // _global.penalty_act{n<N} via saveActScore → propagate a
+    // mergeFromGameSession — verrebbero ri-sommate). Sottraiamo qui le
+    // past penalties per ottenere la sola quota atto-corrente.
+    let pastHints = 0, pastErrors = 0;
+    if(typeof _global !== 'undefined'){
+      for(let n = 1; n < config.actNum; n++){
+        const p = _global['penalty_act' + n] || { hints: 0, errors: 0 };
+        pastHints  += (p.hints  || 0);
+        pastErrors += (p.errors || 0);
+      }
+    }
+    const currHints  = Math.max(0, (state.hintPenaltyTotal || 0)         - pastHints);
+    const currErrors = Math.max(0, (state.errorsTerminal   || 0) * 10    - pastErrors);
+    updateGlobalFromActState(config.actNum, currHints, currErrors);
   }
   return (typeof globalScore === 'function') ? globalScore() : 100;
 }
