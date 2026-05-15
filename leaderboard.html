@@ -94,8 +94,11 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
     pointer-events:none;
   }
   .lb-table tbody tr.expanded::after{transform:translateY(-30%) rotate(-135deg);border-color:var(--amber);}
-  /* Dettagli: full-width, srotolati on .expanded */
-  .lb-cell-detail{
+  /* Dettagli: full-width, srotolati on .expanded.
+     Selettori qualificati con `.lb-table tbody td.lb-cell-detail` per battere
+     in specificity la regola generale `.lb-table tbody td{display:block}`
+     che altrimenti vincerebbe il `display:none` di base. */
+  .lb-table tbody td.lb-cell-detail{
     grid-column:1 / -1;
     display:none;
     justify-content:space-between;
@@ -103,12 +106,12 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
     padding:.4rem .15rem;
     font-size:12px;
   }
-  .lb-cell-detail:first-of-type{
+  .lb-table tbody td.lb-cell-detail:first-of-type{
     margin-top:.6rem;
     padding-top:.55rem;
     border-top:1px solid rgba(185,161,116,.15);
   }
-  .lb-cell-detail::before{
+  .lb-table tbody td.lb-cell-detail::before{
     content:attr(data-label);
     font-family:var(--font-mono);
     font-size:10px;
@@ -116,7 +119,7 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
     text-transform:uppercase;
     color:var(--text-meta);
   }
-  tr.expanded .lb-cell-detail{display:flex;}
+  .lb-table tbody tr.expanded td.lb-cell-detail{display:flex;}
   /* Date e numeri allineati a destra dentro la cella detail (label sx, valore dx) */
   .lb-cell-detail.lb-num, .lb-cell-detail.lb-date{text-align:right;}
 }
