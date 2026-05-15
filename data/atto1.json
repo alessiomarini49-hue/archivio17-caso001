@@ -269,7 +269,7 @@
 
   "people": [
     { "id": "victim",  "label": "Andrea Marini", "role": "vittima",   "alwaysVisible": true },
-    { "id": "elena",   "label": "Elena M.",      "role": "moglie",    "revealAfterDocs": 1 },
+    { "id": "elena",   "label": "Elena R.",      "role": "moglie",    "revealAfterDocs": 1 },
     { "id": "stefano", "label": "Stefano M.",    "role": "fratello",  "revealAfterDocs": 1 },
     { "id": "davide",  "label": "Davide S.",     "role": "collega",   "revealAfterDocs": 1 }
   ],
