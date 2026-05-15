@@ -949,7 +949,7 @@ function buildInvPanel(){
   const timeline = data.investigationPanel.timeline || [];
   const showTimeline = timeline.length > 0;
   const timelineRowHtml = timeline.map(ev => {
-    const hidden = !!ev.revealAfterDoc;
+    const hidden = !!(ev.revealAfterDoc || (Array.isArray(ev.revealAfterDocs) && ev.revealAfterDocs.length) || ev.revealAfterTerminal);
     const dotColor  = hidden ? 'var(--text-dim)' : (ev.color || 'var(--text-dim)');
     const dotBg     = hidden ? 'transparent'     : (ev.bg    || 'var(--bg-main)');
     const textHtml  = hidden ? '—'               : ev.text;
@@ -2865,14 +2865,19 @@ function updateUI(){
     });
   }
 
-  // Timeline (eventi rivelati dopo apertura di un doc specifico)
+  // Timeline (eventi rivelati dopo apertura di doc o completamento terminale)
   const timelineEvents = (data.investigationPanel && data.investigationPanel.timeline) || [];
-  if(timelineEvents.some(ev => ev.id && ev.revealAfterDoc)){
+  const hasGated = timelineEvents.some(ev => ev.id && (ev.revealAfterDoc || (Array.isArray(ev.revealAfterDocs) && ev.revealAfterDocs.length) || ev.revealAfterTerminal));
+  if(hasGated){
     const openedSet = new Set();
     Object.values(state.docsOpened || {}).forEach(arr => (arr || []).forEach(id => openedSet.add(id)));
     timelineEvents.forEach(ev => {
-      if(!ev.id || !ev.revealAfterDoc) return;
-      if(!openedSet.has(ev.revealAfterDoc)) return;
+      if(!ev.id) return;
+      let reveal = false;
+      if(ev.revealAfterDoc)                                              reveal = openedSet.has(ev.revealAfterDoc);
+      else if(Array.isArray(ev.revealAfterDocs) && ev.revealAfterDocs.length) reveal = ev.revealAfterDocs.every(id => openedSet.has(id));
+      else if(ev.revealAfterTerminal)                                    reveal = !!(state.terminals && state.terminals[ev.revealAfterTerminal] && state.terminals[ev.revealAfterTerminal].completed);
+      if(!reveal) return;
       const wrap = document.getElementById('inv-timeline-' + ev.id);
       if(!wrap || wrap.dataset.revealed === '1') return;
       const dot  = wrap.querySelector('.inv-timeline-dot');
