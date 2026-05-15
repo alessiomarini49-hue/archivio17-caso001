@@ -2650,13 +2650,12 @@ function showResetConfirm(){
   document.getElementById('confirm-overlay').classList.add('visible');
 }
 async function confirmReset(){
-  // In team il reset deve propagare al server (e quindi agli altri device via
-  // polling reset_actN_at). In single basta il cleanup locale come da single
-  // player tradizionale (che butta via anche cloud auth → re-login al prossimo
-  // boot). Determinato da presence: max>1 = team.
-  const isTeam = !!(_lastPresenceState && Number(_lastPresenceState.max) > 1);
+  // Il reset propaga SEMPRE al server (sia INDIVIDUAL sia TEAM): il backend ha
+  // la canonical GameSession e applica merge monotono OR/max in /updateSession
+  // — senza /resetSession dedicato il saveState locale post-reset sarebbe un
+  // no-op e al primo reload il backend rimanderebbe lo stato vecchio.
   const btn = document.getElementById('confirm-reset-btn');
-  if(isTeam && _accessCode && _sessionToken){
+  if(_accessCode && _sessionToken){
     if(btn){ btn.disabled = true; btn.textContent = 'Reset in corso…'; }
     try {
       const r = await fetch(API_BASE + '/resetSession', {
@@ -2693,13 +2692,11 @@ async function confirmReset(){
     if(typeof globalScore === 'function') _global.global_score = globalScore();
     if(typeof saveGlobal === 'function') saveGlobal();
   }
-  // In team il device resta loggato: il backend ha già scritto reset_actN_at
-  // e il polling continuerà a girare. In single (max<=1) seguiamo il
-  // comportamento storico: clearCloudAuth + delogga.
-  if(!isTeam){
-    _sessionToken = null; _codeId = null; _accessCode = null;
-    if(typeof clearCloudAuth === 'function') clearCloudAuth(config.actNum);
-  }
+  // Il device resta sempre loggato. Per INDIVIDUAL il logout client
+  // causerebbe self-lockout al re-login: il backend non disattiva il Device
+  // su /resetSession (is_active=true resta), e il form path di validateCode
+  // non manda session_token → max_devices=1 saturo → 403 senza canale di
+  // self-recovery (solo admin reset_devices sblocca).
   state = defaultState();
   data.parts.forEach(p => { state.docsOpened[p.id] = []; });
   // Section plugins: chance di reset
