@@ -166,9 +166,10 @@
               "rows": 2,
               "minMatches": 1,
               "okKeywords": [
-                "mancino", "sinistr", "mano sinistra", "scriveva con la sinistra", "firmava con la sinistra",
+                "mancino", "mancina", "sinistr", "mano sinistra", "scriveva con la sinistra", "firmava con la sinistra",
                 "mano destra", "arma nella destra", "arma destra", "colpo alla destra", "impugnatura destra",
-                "mano sbagliata", "contraddizione mano", "incoerenza mano", "destra mancino", "sinistra destra"
+                "mano sbagliata", "contraddizione mano", "incoerenza mano", "destra mancino", "sinistra destra",
+                "era mancino", "era mancina", "vittima mancina", "vittima mancino"
               ],
               "feedback": {
                 "ok": "Anomalia fisica correttamente identificata.",

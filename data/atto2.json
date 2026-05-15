@@ -471,13 +471,13 @@
     ],
     "elemP1": {
       "MANFREDI": ["frode", "irregolar", "contabil", "contratto", "minaccia", "pratica manfredi", "telefon", "pressione", "consulenza", "compensi fuori scala", "movimenti anomali", "flussi di cassa", "rapporto economico", "cliente", "compenso", "anomal"],
-      "STEFANO":  ["fideiussion", "garanzia", "280000", "copertura debiti", "debito", "esposizione", "polizza", "cena con s", "appuntamento con s", "chiamata non risposta", "sollecito bancario", "garanzia bancaria", "garanzia familiare", "esposizione debitoria"],
+      "STEFANO":  ["fideiussion", "garanzia", "garante", "280000", "copertura debiti", "debito", "esposizione", "polizza", "cena con s", "appuntamento con s", "chiamata non risposta", "sollecito bancario", "garanzia bancaria", "garanzia familiare", "esposizione debitoria", "tensione", "tens", "tes"],
       "ELENA":    ["tensione", "tensione coniugale", "alibi", "alibi parziale", "uscita", "venti minuti", "telefonata", "copertura", "polizza", "omission", "moglie", "non voleva che guardasse", "sapeva della copertura", "nascondeva"],
       "DAVIDE":   ["chiavi", "copia delle chiavi", "accesso", "primo ingresso", "primo ad entrare", "fascicolo", "scrivania", "studio", "collaboratore", "conosceva i fascicoli", "conoscenza pratica", "scena"]
     },
     "elemP2": {
       "MANFREDI": ["frode", "minaccia", "telefonata", "audio", "chiamata", "irregolar", "contabil", "contratto anomalo", "compensi fuori scala", "pratica manfredi", "pressione professionale", "movimenti anomali", "flussi di cassa", "consulenza sospetta", "consulenza anomala", "compenso"],
-      "STEFANO":  ["280000", "fideiussion", "garanzia", "garanzia bancaria", "garanzia familiare", "sollecito bancario", "copertura debiti", "cena con s", "chiamata non risposta", "negazione", "debito", "esposizione debitoria", "polizza"],
+      "STEFANO":  ["280000", "fideiussion", "garanzia", "garante", "garanzia bancaria", "garanzia familiare", "sollecito bancario", "copertura debiti", "cena con s", "chiamata non risposta", "negazione", "debito", "esposizione debitoria", "polizza", "tensione", "tens", "tes"],
       "ELENA":    ["tensione coniugale", "alibi parziale", "uscita", "venti minuti", "telefonata", "polizza", "copertura", "omission", "moglie", "non voleva che guardasse", "sapeva della copertura"],
       "DAVIDE":   ["chiavi", "copia delle chiavi", "primo accesso", "primo ad entrare", "fascicolo", "accesso allo studio", "conoscenza pratica", "collaboratore", "scena", "studio"]
     },
@@ -493,7 +493,9 @@
       "non ricordo", "non e chiaro", "un elemento"
     ],
     "limitKw": [
-      "manca prova", "manca una prova", "non c e prova", "alibi non verificato",
+      "manca prova", "manca una prova", "non c e prova", "prove", "non abbastanza prove",
+      "non ci sono prove", "manca le prove", "mancano prove", "poche prove", "prove insufficienti",
+      "alibi non verificato",
       "alibi da verificare", "accesso non certo", "manca accesso", "movente debole",
       "manca movente", "pista incompleta", "non spiega tutto", "non chiude", "280000 non spiegato",
       "280000", "s non verificato", "cena con s non verificata", "manfredi troppo evidente",
@@ -542,82 +544,82 @@
   "puzzles": [
     {
       "id": "P05", "part": "p1",
-      "title": "La pista economica evidente",
-      "scope": "Individuare la linea professionale più rumorosa senza obbligarsi a una sola risposta.",
+      "title": "La pratica Manfredi",
+      "scope": "Riconoscere la pista professionale documentata su un singolo cliente, senza obbligarsi alla risposta più rumorosa.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Le pressioni che Andrea stava gestendo non erano solo personali. Guarda dove si concentrano le comunicazioni nei giorni precedenti al 14 novembre." },
-        { "lvl": 2, "cost": 5, "txt": "Un professionista sotto pressione lascia tracce nei documenti che cerca di tenere separati. Cerca il punto in cui una pratica professionale e i movimenti personali si toccano." },
-        { "lvl": 3, "cost": 8, "txt": "C'è una figura esterna che compare nei contratti, nei tabulati e nella pressione degli ultimi giorni. Non è l'unica pista, ma è la più documentata nel fascicolo." }
+        { "lvl": 1, "cost": 2, "txt": "Tra i clienti dello studio ce n'è uno il cui rapporto con Andrea, negli ultimi mesi, ha smesso di essere routinario. È la figura su cui le carte di Andrea ricompaiono più spesso, anche dove non dovrebbero." },
+        { "lvl": 2, "cost": 5, "txt": "Una cartella professionale segnala movimenti non giustificati e un appunto privato sul rischio di farla uscire dallo studio. Un contratto fissa compensi che non corrispondono alle prestazioni dichiarate. Lette insieme, queste pagine indicano una pressione che parte dall'esterno." },
+        { "lvl": 3, "cost": 8, "txt": "La forza di questa pista è la quantità di tracce documentali — una pratica sotto verifica, un contratto fuori scala, comunicazioni concentrate negli ultimi giorni — che si fissano sulla stessa figura. Il suo limite, in questa fase, è simmetrico: di quella figura il fascicolo riporta solo quello che dice di sé. Cosa abbia fatto la sera del 14 novembre non ha ancora trovato un riscontro indipendente." }
       ]
     },
     {
       "id": "P06", "part": "p1",
-      "title": "L'importo ricorrente",
-      "scope": "Notare la cifra che compare in più documenti, in contesti diversi.",
+      "title": "L'esposizione familiare",
+      "scope": "Riconoscere la linea economica condivisa con un familiare, senza trasformare una garanzia in un movente.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "In un fascicolo economico, un numero che ritorna in documenti diversi non è mai casuale. Cerca la cifra che compare più di una volta." },
-        { "lvl": 2, "cost": 5, "txt": "Metti a confronto i documenti bancari personali con quelli di garanzia. La stessa cifra ha più di un contesto." },
-        { "lvl": 3, "cost": 8, "txt": "Quella cifra collega due ambiti distinti dell'indagine. Capire a chi appartiene in ciascun contesto cambia il peso di ogni pista." }
+        { "lvl": 1, "cost": 2, "txt": "Non tutta la pressione economica intorno ad Andrea viene dai clienti. Una parte riguarda chi porta il suo stesso cognome — e una firma che Andrea non poteva ritirare." },
+        { "lvl": 2, "cost": 5, "txt": "Un atto bancario solidale lega Andrea a un familiare su una cifra alta. La stessa cifra ricompare in più documenti personali. In agenda, per la sera del 14, c'è un appuntamento segnato solo con un'iniziale — e nei tabulati una chiamata che non trova risposta poco prima della fascia oraria del decesso." },
+        { "lvl": 3, "cost": 8, "txt": "Questa lettura tiene perché incrocia tre dati: un'esposizione economica condivisa, un incontro serale che nessuno ha ancora confermato, un silenzio nelle comunicazioni proprio nel momento decisivo. Il punto che resta scoperto è temporale: cosa sia avvenuto, davvero, in quella finestra. Su questo elemento il fascicolo non ha ancora prodotto un riscontro." }
       ]
     },
     {
       "id": "P07", "part": "p1",
-      "title": "La timeline incompleta",
-      "scope": "Identificare gli elementi temporali del 14 novembre che non trovano ancora conferma.",
+      "title": "Le ombre domestiche",
+      "scope": "Leggere la tensione domestica come elemento del fascicolo, non solo come sfondo emotivo.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Non tutte le incongruenze sono economiche. Alcune riguardano gli orari. Guarda cosa succede il 14 novembre dopo le 19:00." },
-        { "lvl": 2, "cost": 5, "txt": "Confronta agenda e tabulati telefonici. C'è almeno un appuntamento e almeno una chiamata che non trovano conferma reciproca." },
-        { "lvl": 3, "cost": 8, "txt": "Una voce nell'agenda indica un incontro programmato. I tabulati mostrano un'interruzione netta nelle comunicazioni. Chi doveva essere lì, quella sera?" }
+        { "lvl": 1, "cost": 2, "txt": "Una persona molto vicina ad Andrea aveva cominciato a sentirsi tenuta fuori dalle sue giornate. Le pagine più private del fascicolo parlano più di lei che dei clienti dello studio." },
+        { "lvl": 2, "cost": 5, "txt": "Tra Andrea ed Elena, nelle settimane prima del decesso, qualcosa aveva smesso di passare. Andrea teneva il proprio lavoro in disparte e non condivideva quello che lo metteva sotto pressione. In parallelo, tra i suoi movimenti bancari compare una polizza con causale di copertura debiti — un dettaglio personale che entra in una formalità bancaria. Sono due piani dello stesso silenzio domestico." },
+        { "lvl": 3, "cost": 8, "txt": "Questa pista poggia su tensioni intime documentate e su cose che Andrea aveva smesso di condividere a casa. Il suo limite, in questa fase, è speculare: della sera del 14 esiste solo la versione di chi viveva con lui, con un intervallo che — per quanto piccolo — non si chiude da solo e attende un riscontro esterno." }
       ]
     },
     {
       "id": "P08", "part": "p1",
-      "title": "Le zone d'ombra iniziali",
-      "scope": "Riconoscere che anche linee laterali hanno elementi rilevanti, senza trasformarle in piste principali.",
+      "title": "Chi entra per primo",
+      "scope": "Considerare l'accesso fisico come elemento documentale rilevante, anche in assenza di movente forte.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Non concentrarti solo sulla pista principale. Anche i dettagli secondari servono: definiscono i confini di quello che sai." },
-        { "lvl": 2, "cost": 5, "txt": "Considera chi aveva accesso fisico alla scena e chi conosceva le pratiche dello studio. Anche senza un movente chiaro, questi elementi restano rilevanti." },
-        { "lvl": 3, "cost": 8, "txt": "Due figure laterali — una domestica, una professionale — hanno accesso e conoscenza che nessuna dichiarazione ha ancora spiegato del tutto. Non sono la pista principale, ma non sono nemmeno irrilevanti." }
+        { "lvl": 1, "cost": 2, "txt": "Una persona frequenta lo studio quanto Andrea, ma non per ragioni economiche. La sua posizione nel fascicolo nasce da un dettaglio fisico, non da un movente." },
+        { "lvl": 2, "cost": 5, "txt": "Il verbale di rinvenimento racconta una porta chiusa a chiave aperta con una copia che non apparteneva alla vittima. La stessa persona conosceva le pratiche più sensibili e sapeva dove si trovavano sulla scrivania." },
+        { "lvl": 3, "cost": 8, "txt": "Questa lettura regge per due ragioni: un accesso quotidiano e una conoscenza diretta dei fascicoli più delicati. Per ora le manca però un motivo personale forte. È questo squilibrio — molto sul piano dell'accesso, poco su quello del movente — a tenerla aperta come zona d'ombra, non a chiuderla come pista principale." }
       ]
     },
     {
       "id": "P09", "part": "p2",
-      "title": "La minaccia più rumorosa",
-      "scope": "Valutare il peso reale della telefonata e dell'interrogatorio Manfredi.",
+      "title": "Manfredi — la pressione registrata",
+      "scope": "Pesare la pressione documentata sul cliente esterno insieme al limite che ancora la accompagna.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Una minaccia registrata è una prova di pressione. Chiedi però: pressione verso cosa, e abbastanza da spiegare tutto?" },
-        { "lvl": 2, "cost": 5, "txt": "Leggi la telefonata e poi l'interrogatorio. La stessa persona parla due volte: vedi se il racconto regge." },
-        { "lvl": 3, "cost": 8, "txt": "C'è una contraddizione tra la forza della minaccia e quello che quella linea non riesce ancora a spiegare. Trovare quella contraddizione è la chiave per valutare questa pista." }
+        { "lvl": 1, "cost": 2, "txt": "Nella seconda metà del fascicolo, due reperti pesano insieme: una voce registrata e una dichiarazione formale. La stessa persona si difende e attacca a poche pagine di distanza." },
+        { "lvl": 2, "cost": 5, "txt": "Nella telefonata la pressione è esplicita e la minaccia è mascherata da \"promemoria\". Nell'interrogatorio successivo, però, tutto viene spostato su un piano economico-legale, e compare un alibi dichiarato che il fascicolo non ha ancora confermato. Tra le due fonti rimane uno scarto." },
+        { "lvl": 3, "cost": 8, "txt": "La forza di questa lettura sta nell'accumulo: pratica sotto verifica, minaccia registrata, pressione professionale. Il suo limite è proprio nel salto fra la voce ascoltata e la versione ufficiale — e da quello scarto nasce un'assenza che pesa: nessun riscontro indipendente sulla presenza sulla scena. Una sintesi solida tiene insieme tutto questo senza lasciare fuori almeno un'altra direzione del fascicolo." }
       ]
     },
     {
       "id": "P10", "part": "p2",
-      "title": "La linea familiare",
-      "scope": "Collegare fideiussione, sollecito bancario e dichiarazione di Stefano senza trarre conclusioni affrettate.",
+      "title": "Stefano — la garanzia familiare",
+      "scope": "Pesare la posizione economica familiare insieme a ciò che resta non confermato.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "La pressione economica intorno ad Andrea non riguardava solo il suo lavoro. Cerca chi altro era coinvolto in quella stessa esposizione." },
-        { "lvl": 2, "cost": 5, "txt": "Una garanzia firmata, un sollecito bancario e una dichiarazione parziale. Mettili in sequenza e vedi se raccontano la stessa storia." },
-        { "lvl": 3, "cost": 8, "txt": "C'è qualcuno nella cerchia familiare con un legame diretto all'esposizione economica di Andrea e un appuntamento che non ha ancora trovato conferma. Questo non è ancora una prova — ma è una direzione." }
+        { "lvl": 1, "cost": 2, "txt": "La pressione economica sulla famiglia, in questa fase, smette di essere un dettaglio. Diventa una posizione bancaria attiva con scadenze in corso." },
+        { "lvl": 2, "cost": 5, "txt": "Un sollecito formale fissa un termine breve. La dichiarazione del familiare conferma il legame economico, ma minimizza e nega l'appuntamento serale. Le due fonti non si contraddicono apertamente — non si confermano del tutto a vicenda." },
+        { "lvl": 3, "cost": 8, "txt": "Questa lettura tiene per l'incrocio tra un debito condiviso, un sollecito incalzante e un incontro che resta sospeso. Il suo limite è che, per ora, sulla figura familiare manca una prova materiale diretta. Il fascicolo continua a indicare almeno un'altra linea con peso documentale: una sintesi onesta non la lascia fuori." }
       ]
     },
     {
       "id": "P11", "part": "p2",
-      "title": "Omissioni laterali",
-      "scope": "Leggere Elena e Davide come zone d'ombra rilevanti, non come false piste.",
+      "title": "Elena — le omissioni domestiche",
+      "scope": "Pesare le omissioni domestiche insieme alla forza relativa delle altre linee.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Una dichiarazione incompleta non è necessariamente una bugia. Ma vale la pena chiedersi cosa non viene detto — e perché." },
-        { "lvl": 2, "cost": 5, "txt": "Guarda separatamente le due figure laterali: una ha un intervallo temporale non verificato, l'altra ha accesso fisico documentato. Cosa dice ciascuna di quell'accesso?" },
-        { "lvl": 3, "cost": 8, "txt": "Entrambe le figure hanno qualcosa che non hanno spiegato del tutto. Non basta per chiudere una pista su di loro — ma basta per non escluderle." }
+        { "lvl": 1, "cost": 2, "txt": "La voce domestica, in questa fase, smette di essere solo una nota privata di Andrea. Diventa una dichiarazione formale, con un'ammissione precisa." },
+        { "lvl": 2, "cost": 5, "txt": "L'integrazione racconta tensioni progressive, telefonate nascoste, una serata fuori casa e un'uscita personale di durata limitata. È proprio nella durata di quell'uscita — non nella cena in sé — che la dichiarazione lascia aperto un margine." },
+        { "lvl": 3, "cost": 8, "txt": "Questa lettura poggia sulle omissioni accumulate e sulle tensioni intime documentate. Il suo limite, in questa fase, è quasi sempre lo stesso: per la sera del 14 esiste solo la versione di chi parla, e nelle linee più forti del fascicolo restano i conti, non gli affetti. Una sintesi onesta riconosce entrambe le cose." }
       ]
     },
     {
       "id": "P12", "part": "p2",
-      "title": "Ipotesi non conclusiva",
-      "scope": "Costruire una lettura solida per il Terminale 02B: pista principale, limite e linea alternativa.",
+      "title": "Davide — la conoscenza della scena",
+      "scope": "Pesare l'accesso fisico insieme all'assenza di un movente economico diretto.",
       "hints": [
-        { "lvl": 1, "cost": 2, "txt": "Prima di scrivere la sintesi, chiediti: cosa spiega bene la mia pista principale, e cosa lascia aperto?" },
-        { "lvl": 2, "cost": 5, "txt": "Una lettura investigativa solida dichiara anche i propri limiti. Individua almeno un elemento che la tua pista principale non riesce ancora a chiudere." },
-        { "lvl": 3, "cost": 8, "txt": "Ogni pista spiega qualcosa e lascia qualcosa aperto. La sintesi più solida è quella che riconosce entrambe le cose — e indica dove l'indagine deve ancora andare." }
+        { "lvl": 1, "cost": 2, "txt": "In questa fase, la posizione di chi è entrato per primo nello studio passa da elemento operativo a dichiarazione. Cambia il peso, non i fatti." },
+        { "lvl": 2, "cost": 5, "txt": "L'integrazione conferma porta chiusa, copia delle chiavi e fascicolo sensibile già sulla scrivania la mattina del rinvenimento. Conferma anche una conoscenza parziale — non totale — delle pratiche delicate: una distanza che protegge e accusa allo stesso tempo." },
+        { "lvl": 3, "cost": 8, "txt": "La forza di questa pista è l'accesso fisico continuativo e la familiarità con i fascicoli più delicati. Il suo limite è la mancanza di un movente personale, in un fascicolo dove i moventi più documentati si trovano altrove. Una sintesi solida riconosce che l'accesso, da solo, non chiude — e tiene aperte le linee economiche più rumorose." }
       ]
     }
   ],
