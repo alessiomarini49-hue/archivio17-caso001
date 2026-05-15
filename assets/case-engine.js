@@ -1887,8 +1887,13 @@ function mergeServerState(gs, presence){
   });
   // Toast UX-friendly: un solo toast per tick di merge, scegliendo l'evento
   // più informativo per priorità. Skip se la UI non è ancora montata (toast
-  // non esiste pre-bootApp, showToast resta no-op).
-  if(remoteEvents.length){
+  // non esiste pre-bootApp, showToast resta no-op). Gateato sulla licenza
+  // team: in INDIVIDUAL le response self-write di /updateSession farebbero
+  // partire toast con testo team-style ("Un compagno...") senza compagno
+  // reale. Gli eventi granulari restano dispatched (sopra) per consumer
+  // tipo plugin casella3 che aggiornano DOM indipendentemente dal toast.
+  const isTeam = !!(_lastPresenceState && Number(_lastPresenceState.max) > 1);
+  if(isTeam && remoteEvents.length){
     const top = remoteEvents.slice().sort((a, b) =>
       (_REMOTE_EVENT_PRIORITY[b.type] || 0) - (_REMOTE_EVENT_PRIORITY[a.type] || 0)
     )[0];
