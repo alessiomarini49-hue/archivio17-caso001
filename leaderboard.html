@@ -50,24 +50,75 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
 .lb-score{font-family:var(--font-mono);font-size:16px;color:var(--amber);font-weight:500;font-variant-numeric:tabular-nums;}
 .lb-date{font-family:var(--font-mono);font-size:11px;color:var(--text-meta);letter-spacing:.04em;}
 .lb-footer{text-align:center;margin-top:2rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-meta);}
-.lb-details-toggle{display:none;}
 
-/* Mobile: nascondi colonne secondarie, mostra accordion */
+/* Mobile: riga compatta (pos · nickname · indice), tap espande i dettagli.
+   Layout grid 3 colonne per la riga primaria + chevron pseudo-element.
+   I .lb-cell-detail sono nascosti default e si srotolano quando <tr> ha .expanded. */
 @media (max-width: 720px){
   .lb-shell{padding:1.5rem 1rem 3rem;}
   .lb-table thead{display:none;}
-  .lb-table, .lb-table tbody, .lb-table tr, .lb-table td{display:block;width:100%;}
-  .lb-table tbody tr{border-bottom:1px solid rgba(185,161,116,.12);padding:.75rem .9rem;position:relative;}
-  .lb-table tbody tr.lb-self{padding-left:1rem;}
-  .lb-table tbody td{padding:.15rem 0;border:none;display:flex;justify-content:space-between;align-items:center;}
-  .lb-table tbody td.lb-cell-primary{justify-content:flex-start;gap:.6rem;padding-bottom:.4rem;}
-  .lb-table tbody td[data-label]::before{content:attr(data-label);font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-meta);margin-right:.5rem;}
-  .lb-num, .lb-score, .lb-date{text-align:right;}
-  .lb-details{display:none;padding-top:.5rem;}
-  .lb-details.open{display:block;}
-  .lb-details-toggle{display:inline-block;margin-left:auto;background:none;border:none;color:var(--text-meta);font-family:var(--font-mono);font-size:11px;cursor:pointer;letter-spacing:.1em;}
-  .lb-details-toggle::after{content:'▾';margin-left:.3rem;display:inline-block;transition:transform .2s;}
-  .lb-details-toggle.open::after{transform:rotate(180deg);}
+  .lb-table, .lb-table tbody{display:block;width:100%;}
+  .lb-table tbody tr{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    column-gap:.75rem;
+    row-gap:0;
+    align-items:center;
+    padding:.85rem 2.2rem .85rem 1rem;
+    border-bottom:1px solid rgba(185,161,116,.12);
+    cursor:pointer;
+    position:relative;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:background .15s;
+  }
+  .lb-table tbody tr:active{background:rgba(183,131,59,.05);}
+  .lb-table tbody tr.lb-self{padding-left:1.1rem;}
+  .lb-table tbody td{padding:0;border:none;display:block;}
+  /* Riga primaria — pos / nickname / score */
+  .lb-rank{font-size:13px;min-width:32px;width:auto;}
+  .lb-nickname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13.5px;}
+  .lb-nickname .lb-mode-badge{font-size:8.5px;padding:.12rem .4rem;margin-left:.35rem;letter-spacing:.1em;}
+  .lb-score{font-size:15px;justify-self:end;font-weight:500;}
+  /* Chevron a destra (rotates on expand) */
+  .lb-table tbody tr::after{
+    content:'';
+    position:absolute;
+    right:.85rem;
+    top:50%;
+    width:7px;height:7px;
+    border-right:1.5px solid var(--text-meta);
+    border-bottom:1.5px solid var(--text-meta);
+    transform:translateY(-70%) rotate(45deg);
+    transition:transform .25s;
+    pointer-events:none;
+  }
+  .lb-table tbody tr.expanded::after{transform:translateY(-30%) rotate(-135deg);border-color:var(--amber);}
+  /* Dettagli: full-width, srotolati on .expanded */
+  .lb-cell-detail{
+    grid-column:1 / -1;
+    display:none;
+    justify-content:space-between;
+    align-items:center;
+    padding:.4rem .15rem;
+    font-size:12px;
+  }
+  .lb-cell-detail:first-of-type{
+    margin-top:.6rem;
+    padding-top:.55rem;
+    border-top:1px solid rgba(185,161,116,.15);
+  }
+  .lb-cell-detail::before{
+    content:attr(data-label);
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--text-meta);
+  }
+  tr.expanded .lb-cell-detail{display:flex;}
+  /* Date e numeri allineati a destra dentro la cella detail (label sx, valore dx) */
+  .lb-cell-detail.lb-num, .lb-cell-detail.lb-date{text-align:right;}
 }
 </style>
 </head>
@@ -183,11 +234,11 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
 <tr class="${cls}" data-mode="${esc(entry.mode)}">
   <td class="lb-rank lb-cell-primary" data-label="Pos">${rankMedal(entry.rank)}</td>
   <td class="lb-nickname lb-cell-primary" data-label="Nickname">${esc(entry.nickname)}${modeBadge(entry.mode)}</td>
-  <td class="lb-score" data-label="Indice">${entry.score_final}</td>
-  <td class="lb-num" data-label="Penalità supporti" title="Atto I: ${entry.hints_act1} · Atto II: ${entry.hints_act2} · Atto III: ${entry.hints_act3}">${entry.hints_total}</td>
-  <td class="lb-num" data-label="Errori">${entry.errors_terminal}</td>
-  <td class="lb-num" data-label="Reset">${entry.resets_used}</td>
-  <td class="lb-date" data-label="Data" title="${esc(dateAbs)}">${dateRel}</td>
+  <td class="lb-score lb-cell-primary" data-label="Indice">${entry.score_final}</td>
+  <td class="lb-num lb-cell-detail" data-label="Penalità supporti" title="Atto I: ${entry.hints_act1} · Atto II: ${entry.hints_act2} · Atto III: ${entry.hints_act3}">${entry.hints_total}</td>
+  <td class="lb-num lb-cell-detail" data-label="Errori">${entry.errors_terminal}</td>
+  <td class="lb-num lb-cell-detail" data-label="Reset">${entry.resets_used}</td>
+  <td class="lb-date lb-cell-detail" data-label="Data" title="${esc(dateAbs)}">${dateRel}</td>
 </tr>`;
   }
 
@@ -244,6 +295,17 @@ body.leaderboard-page{background:var(--bg-main);color:var(--text-main);min-heigh
       currentFilter = btn.dataset.filter;
       render(allEntries, currentFilter);
     });
+  });
+
+  // Tap su riga (mobile): toggle dettagli. Su desktop le colonne sono tutte
+  // visibili e non si attiva. Delegation su tbody per coprire tutte le righe
+  // ri-renderizzate al filter change.
+  const MOBILE_QUERY = window.matchMedia('(max-width: 720px)');
+  document.getElementById('lb-tbody').addEventListener('click', (e) => {
+    if(!MOBILE_QUERY.matches) return;
+    const tr = e.target.closest('tr');
+    if(!tr) return;
+    tr.classList.toggle('expanded');
   });
 
   // Fetch
