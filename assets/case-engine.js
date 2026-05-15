@@ -2348,6 +2348,21 @@ function submitTerminal(termId){
       });
     });
 
+    // Propagazione immediata del flag t{id}_completed (+ act{N}_completed se
+    // completesAct) al backend, fuori dal debounce 600ms del saveState sotto.
+    // Senza questo, B può fare polling tick nella finestra precedente al
+    // debounce e ricevere uno stato in cui saveActScore ha già scritto
+    // act{N}_completed=true ma t{id}_completed è ancora false → su terminali
+    // di parte narrativeOnly (es. T3C, requiredDocs=0) il marker sidebar resta
+    // "ambra/available" invece di "verde/validated" finché il tick successivo
+    // (entro 10s) non porta il flag aggiornato. Il fix UI di updateUI risolve
+    // il caso pre-reset; questo chiude la finestra anche post-completion.
+    if(term.completesAct && _sessionToken && _codeId){
+      const fastUpdates = { [term.id + '_completed']: true };
+      fastUpdates['act' + config.actNum + '_completed'] = true;
+      _sendUpdateNow(fastUpdates);
+    }
+
     saveState();
     updateUI();
     renderEsito();
@@ -2814,8 +2829,17 @@ function updateUI(){
     const opened = state.docsOpened[p.id] || [];
     const tState = state.terminals[term.id] || {};
     const lbls = data.investigationPanel.terminalLabels;
-    const text = tState.completed ? lbls.validated : (opened.length >= p.requiredDocs ? lbls.available : lbls.locked);
-    const cls  = tState.completed ? 'ok'              : (opened.length >= p.requiredDocs ? 'active'      : 'blocked');
+    // Per parti narrativeOnly con requiredDocs=0 (es. atto3 p3 → T3C) la
+    // ternaria `opened.length >= requiredDocs` è 0>=0 sempre true → il marker
+    // resterebbe "ambra/available" indipendentemente dal prerequisito reale.
+    // Includiamo lockedUntilTerminal nel ramo "disponibile" così T3C torna
+    // a "grigio/locked" finché T3B non è completed (allinea sidebar al resto
+    // della UI, dove renderInvestigationFlow già rispetta lockedUntilTerminal).
+    const blocker = p.lockedUntilTerminal;
+    const blockerDone = blocker ? !!(state.terminals[blocker] || {}).completed : true;
+    const available = blockerDone && opened.length >= p.requiredDocs;
+    const text = tState.completed ? lbls.validated : (available ? lbls.available : lbls.locked);
+    const cls  = tState.completed ? 'ok'           : (available ? 'active'       : 'blocked');
     setStatus('inv-' + term.id, text, cls);
     setStatus('minv-' + term.id, text, cls);
   });
