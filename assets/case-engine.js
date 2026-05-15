@@ -1425,8 +1425,12 @@ function _applyPresence(presence){
 // il primo cambio null→T1 veniva trattato come "primo memoize" e NON
 // triggerava il reload sui device remoti.
 const _lastSeenResetAt = { 1: undefined, 2: undefined, 3: undefined };
-function _detectReset(gs, _isInitial, isSelfWrite){
-  if(isSelfWrite) return 0;
+function _detectReset(gs, _isInitial, _isSelfWrite){
+  // Hotfix #6 Lotto 4: NON gated su isSelfWrite. Quando B sta scrivendo
+  // attivamente, last_updated_by=B sul backend → polling vede isSelfWrite=true
+  // permanente → reset di A non veniva mai detect-ato su B. Protezione
+  // auto-reload di A garantita da memoize esplicito in confirmReset
+  // (_lastSeenResetAt[config.actNum] = d.reset_at).
   for(let n = 1; n <= 3; n++){
     const key = 'reset_act' + n + '_at';
     const raw = gs[key];
@@ -1565,7 +1569,13 @@ function mergeServerState(gs, presence){
     return;
   }
 
-  const preSnap = (isSelfWrite || isInitial) ? null : _snapshotForDiff();
+  // Hotfix #6 Lotto 4: preSnap catturato SEMPRE (no gate isSelfWrite).
+  // Quando B sta scrivendo, last_updated_by=B → polling vedrebbe isSelfWrite=true
+  // anche se A ha fatto cambi in parallelo → eventi remote-* mai dispatched →
+  // niente toast. Il diff naturalmente NON scatta su self-write puri (preSnap
+  // == postSnap perché state locale già allineato), ma cattura i cambi remoti
+  // accumulati nel gs quando ci sono write paralleli A+B.
+  const preSnap = isInitial ? null : _snapshotForDiff();
 
   data.parts.forEach(p => {
     const t = p.terminal;
@@ -1791,7 +1801,11 @@ function mergeServerState(gs, presence){
   // chiusura dell'atto non vedevano mai il banner. Self-write escluso (è A che
   // chiude l'atto, non vuole il banner inter-atto su se stesso). Presence applicata
   // PRIMA del check così _lastPresenceState.max è valido. Vedi Bug 3 e Bug 7.
-  if(!wasFinalUnlocked && state.finalUnlocked && !isSelfWrite){
+  // Hotfix #6 Lotto 4: NON gated su isSelfWrite. Protezione auto-banner di B
+  // che chiude T3C localmente garantita dalla condizione wasFinalUnlocked:
+  // submitTerminal con completesAct setta state.finalUnlocked=true PRIMA
+  // del polling tick → wasFinalUnlocked=true al merge → trigger non scatta.
+  if(!wasFinalUnlocked && state.finalUnlocked){
     if(presence) _applyPresence(presence);
     try { _showRemoteJumpBanner(); } catch(_){}
   }

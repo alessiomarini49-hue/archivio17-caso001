@@ -230,6 +230,29 @@
       casella3Plugin._syncView(ctx);
       casella3Plugin._wireSubmit(ctx);
       casella3Plugin._wireEmails(ctx);
+      casella3Plugin._wireRemoteUpdate(ctx);
+    },
+
+    // Hotfix #7 Lotto 4: il plugin costruisce il DOM una volta in render() +
+    // init(); mergeServerState aggiorna state.plugins.casella3 in memoria ma
+    // il DOM resta fermo. In team B non vedeva il contatore scendere quando A
+    // sbagliava né la casella sbloccarsi quando A inseriva il codice corretto.
+    // Listener su 'a17:remote-update' (dispatched da mergeServerState dopo
+    // ogni merge inbound) sincronizza label + visibility + disabled state.
+    _wireRemoteUpdate: function(ctx){
+      window.addEventListener('a17:remote-update', function(){
+        const s = ctx.state.plugins.casella3;
+        if(!s) return;
+        const lbl   = document.getElementById('casella3-attempts-label');
+        const input = document.getElementById('casella3-input');
+        const btn   = document.getElementById('casella3-submit');
+        if(lbl && typeof s.attempts === 'number') lbl.textContent = s.attempts;
+        if(s.unlocked || s.blocked){
+          if(input) input.disabled = true;
+          if(btn)   btn.disabled   = true;
+        }
+        casella3Plugin._syncView(ctx);
+      });
     },
 
     onReset: function(ctx){
