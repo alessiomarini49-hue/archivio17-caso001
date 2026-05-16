@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.base44.app;">
+<title>Feedback Beta — Archivio 17 · Caso 001</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/case-app.css">
+<style>
+/* ───────── Feedback page ─────────
+   Riusa le custom properties di case-app.css (--panel-1, --amber, --font-mono, ecc.)
+   per restare coerente con DESIGN.md: dark, premium, cinematografico.
+   Pattern allineato a leaderboard.html: pagina standalone, no shell case-app.
+*/
+body.feedback-page{background:var(--bg-main);color:var(--text-main);min-height:100vh;font-family:var(--font-sans);}
+.fb-shell{max-width:780px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+.fb-header{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;flex-wrap:wrap;border-bottom:1px solid var(--border-gold);padding-bottom:1.25rem;margin-bottom:2rem;}
+.fb-brand{font-family:var(--font-mono);letter-spacing:.18em;color:var(--amber);font-size:13px;text-transform:uppercase;}
+.fb-back{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--text-meta);text-decoration:none;text-transform:uppercase;transition:var(--transition);}
+.fb-back:hover{color:var(--amber);}
+
+.fb-hero{text-align:center;margin-bottom:2.5rem;}
+.fb-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.32em;color:var(--text-meta);text-transform:uppercase;margin-bottom:.6rem;}
+.fb-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:clamp(2rem,5vw,2.8rem);line-height:1.2;color:var(--text-main);margin-bottom:.7rem;}
+.fb-subtitle{font-size:14px;color:var(--text-secondary);max-width:620px;margin:0 auto;line-height:1.65;}
+
+.fb-status-box{padding:2.5rem 1.5rem;text-align:center;background:var(--panel-1);border:1px solid var(--border-gold);}
+.fb-status-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;color:var(--text-meta);text-transform:uppercase;margin-bottom:1rem;}
+.fb-status-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.6rem;color:var(--amber);margin-bottom:.8rem;}
+.fb-status-msg{font-size:14px;color:var(--text-secondary);line-height:1.6;max-width:520px;margin:0 auto 1.5rem;}
+.fb-status-cta{display:inline-block;padding:.7rem 1.4rem;border:1px solid var(--amber);color:var(--amber);background:transparent;font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:var(--transition);}
+.fb-status-cta:hover{background:rgba(183,131,59,.12);}
+.fb-status-error .fb-status-title{color:var(--red-highlight);}
+
+.fb-identity{background:rgba(183,131,59,.06);border:1px solid rgba(185,161,116,.25);padding:.9rem 1.2rem;margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;}
+.fb-identity-label{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;color:var(--text-meta);text-transform:uppercase;}
+.fb-identity-value{font-family:var(--font-sans);font-size:14px;color:var(--text-main);font-weight:500;}
+.fb-identity-mode{display:inline-block;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;padding:.18rem .55rem;border:1px solid;border-radius:2px;margin-left:.5rem;vertical-align:middle;}
+.fb-mode-individual{color:#a8c9e6;border-color:rgba(168,201,230,.4);}
+.fb-mode-team{color:#e6c188;border-color:rgba(230,193,136,.45);}
+.fb-mode-anonymous{color:var(--text-meta);border-color:rgba(185,161,116,.3);}
+
+.fb-section{background:var(--panel-1);border:1px solid var(--border-gold);padding:1.6rem 1.5rem;margin-bottom:1.5rem;}
+.fb-section-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:1.35rem;color:var(--amber);margin-bottom:.4rem;}
+.fb-section-hint{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--text-meta);text-transform:uppercase;margin-bottom:1.5rem;}
+
+.fb-field{margin-bottom:1.4rem;}
+.fb-field:last-child{margin-bottom:0;}
+.fb-label{display:block;font-family:var(--font-sans);font-size:14px;color:var(--text-main);margin-bottom:.5rem;line-height:1.4;}
+.fb-label-hint{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;color:var(--text-meta);margin-top:.25rem;text-transform:none;}
+
+/* Rating 1-5: cinque diamanti cliccabili. */
+.fb-rating{display:flex;align-items:center;gap:.55rem;margin-top:.3rem;flex-wrap:wrap;}
+.fb-rating-btn{background:transparent;border:none;color:var(--text-meta);font-size:24px;cursor:pointer;padding:.15rem .3rem;line-height:1;transition:color .15s, transform .12s;font-family:serif;}
+.fb-rating-btn:hover{color:var(--amber);transform:scale(1.1);}
+.fb-rating-btn.active{color:var(--amber);}
+.fb-rating-clear{background:transparent;border:none;color:var(--text-meta);font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;padding:.3rem .5rem;margin-left:.4rem;transition:color .15s;}
+.fb-rating-clear:hover{color:var(--red-highlight);}
+.fb-rating-value{font-family:var(--font-mono);font-size:12px;color:var(--text-secondary);margin-left:.5rem;min-width:42px;letter-spacing:.06em;}
+
+/* NPS: slider 0-10 con label endpoints. */
+.fb-nps-wrap{padding:.5rem 0;}
+.fb-nps-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;background:rgba(185,161,116,.25);outline:none;border-radius:2px;}
+.fb-nps-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;background:var(--amber);border-radius:50%;cursor:pointer;border:2px solid var(--bg-main);}
+.fb-nps-slider::-moz-range-thumb{width:18px;height:18px;background:var(--amber);border-radius:50%;cursor:pointer;border:2px solid var(--bg-main);}
+.fb-nps-scale{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;color:var(--text-meta);text-transform:uppercase;margin-top:.6rem;}
+.fb-nps-value{text-align:center;font-family:var(--font-mono);font-size:14px;color:var(--amber);margin-top:.5rem;letter-spacing:.06em;}
+
+/* Textarea + input */
+.fb-textarea, .fb-input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(185,161,116,.22);color:var(--text-main);font-family:var(--font-sans);font-size:14px;padding:.7rem .85rem;line-height:1.55;transition:border-color .15s;box-sizing:border-box;}
+.fb-textarea{min-height:90px;resize:vertical;}
+.fb-textarea:focus, .fb-input:focus{outline:none;border-color:var(--amber);}
+.fb-textarea::placeholder, .fb-input::placeholder{color:var(--text-meta);opacity:.55;font-style:italic;}
+.fb-charcount{display:block;text-align:right;font-family:var(--font-mono);font-size:10px;color:var(--text-meta);margin-top:.3rem;letter-spacing:.06em;}
+
+/* Acts gating: nascosto fino a quando l'utente non lo abilita o lo deduciamo. */
+.fb-act-block{padding:1rem 0;border-top:1px dashed rgba(185,161,116,.15);}
+.fb-act-block:first-child{border-top:none;padding-top:0;}
+.fb-act-toggle{display:flex;align-items:center;gap:.6rem;cursor:pointer;user-select:none;}
+.fb-act-toggle input[type="checkbox"]{accent-color:var(--amber);}
+.fb-act-toggle-label{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;color:var(--text-secondary);text-transform:uppercase;}
+.fb-act-content{margin-top:1rem;}
+.fb-act-content[hidden]{display:none;}
+
+.fb-submit-wrap{text-align:center;padding:1rem 0 0;}
+.fb-submit{background:var(--amber);color:#1a120a;border:none;font-family:var(--font-mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;padding:1rem 2.2rem;cursor:pointer;transition:opacity .15s, transform .12s;font-weight:500;}
+.fb-submit:hover:not(:disabled){opacity:.92;transform:translateY(-1px);}
+.fb-submit:disabled{opacity:.45;cursor:not-allowed;}
+.fb-submit-hint{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--text-meta);text-transform:uppercase;margin-top:.9rem;}
+.fb-submit-error{color:var(--red-highlight);font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;margin-top:1rem;text-transform:uppercase;}
+
+.fb-footer{text-align:center;margin-top:2rem;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;color:var(--text-meta);}
+
+@media (max-width: 600px){
+  .fb-shell{padding:1.5rem 1rem 3rem;}
+  .fb-section{padding:1.3rem 1.1rem;}
+  .fb-title{font-size:1.8rem;}
+  .fb-rating-btn{font-size:22px;padding:.15rem .25rem;}
+  .fb-identity{flex-direction:column;align-items:flex-start;gap:.4rem;}
+}
+</style>
+</head>
+<body class="feedback-page">
+
+<div class="fb-shell">
+
+  <header class="fb-header">
+    <div class="fb-brand">Archivio 17 · Caso 001</div>
+    <a href="index.html" class="fb-back">← Torna al fascicolo</a>
+  </header>
+
+  <section class="fb-hero">
+    <div class="fb-eyebrow">Feedback Beta</div>
+    <h1 class="fb-title">Aiutaci a perfezionare il caso</h1>
+    <p class="fb-subtitle">Stai testando una versione in sviluppo. Il tuo parere — anche brutale — ci serve per capire cosa funziona, cosa stona e cosa migliorare prima del lancio. Stimato 4-5 minuti.</p>
+  </section>
+
+  <!-- Stati: loading / blocked / done / error / form -->
+  <div id="fb-loading" class="fb-status-box">
+    <div class="fb-status-eyebrow">Verifica in corso</div>
+    <div class="fb-status-title">Apertura del modulo…</div>
+  </div>
+
+  <div id="fb-blocked" class="fb-status-box" style="display:none">
+    <div class="fb-status-eyebrow">Già inviato</div>
+    <div class="fb-status-title">Grazie, abbiamo già il tuo feedback</div>
+    <p class="fb-status-msg" id="fb-blocked-msg">Hai già inviato un feedback con questo codice. Se hai altre osservazioni puoi scriverle direttamente a chi ti ha consegnato il codice.</p>
+    <a href="index.html" class="fb-status-cta">Torna al gioco</a>
+  </div>
+
+  <div id="fb-done" class="fb-status-box" style="display:none">
+    <div class="fb-status-eyebrow">Inviato</div>
+    <div class="fb-status-title">Grazie. Riceviamo forte e chiaro.</div>
+    <p class="fb-status-msg">Il tuo feedback è stato salvato. Ogni dettaglio ci aiuta a calibrare il caso prima del lancio pubblico.</p>
+    <a href="index.html" class="fb-status-cta">Torna al gioco</a>
+  </div>
+
+  <div id="fb-error" class="fb-status-box fb-status-error" style="display:none">
+    <div class="fb-status-eyebrow">Errore</div>
+    <div class="fb-status-title">Qualcosa non ha funzionato</div>
+    <p class="fb-status-msg" id="fb-error-msg">Riprova tra qualche istante.</p>
+    <button type="button" class="fb-status-cta" onclick="window.location.reload()">Ricarica</button>
+  </div>
+
+  <form id="fb-form" style="display:none" novalidate>
+
+    <div id="fb-identity" class="fb-identity" style="display:none">
+      <div>
+        <span class="fb-identity-label">Identificato come:</span>
+        <span class="fb-identity-value" id="fb-identity-nickname">—</span><span id="fb-identity-mode-badge"></span>
+      </div>
+      <span class="fb-identity-label" id="fb-identity-code"></span>
+    </div>
+
+    <!-- ────── Sezione 1: Esperienza generale ────── -->
+    <section class="fb-section">
+      <h2 class="fb-section-title">Esperienza generale</h2>
+      <div class="fb-section-hint">Valuta da 1 a 5 — clicca i diamanti</div>
+
+      <div class="fb-field" data-rating="atmosphere">
+        <label class="fb-label">Atmosfera e regia narrativa (dark / cinematografica)</label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="writing">
+        <label class="fb-label">Qualità della scrittura (fascicoli, testimonianze, hint)</label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="puzzle_balance">
+        <label class="fb-label">Equilibrio di difficoltà dei puzzle
+          <span class="fb-label-hint">1 = troppo facile · 3 = giusto · 5 = troppo difficile</span>
+        </label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="hints">
+        <label class="fb-label">Sistema hint (utili senza svelare troppo)</label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="score_system">
+        <label class="fb-label">Sistema punteggio + grado finale</label>
+        <div class="fb-rating"></div>
+      </div>
+    </section>
+
+    <!-- ────── Sezione 2: UX e tecnica ────── -->
+    <section class="fb-section">
+      <h2 class="fb-section-title">Interfaccia e tecnica</h2>
+      <div class="fb-section-hint">Quanto fila liscio l'uso del prodotto</div>
+
+      <div class="fb-field" data-rating="ui_clarity">
+        <label class="fb-label">Chiarezza dell'interfaccia (sai sempre dove sei e cosa fare)</label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="fluidity">
+        <label class="fb-label">Fluidità complessiva (niente freeze, bug, attese strane)</label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="mobile">
+        <label class="fb-label">Esperienza mobile
+          <span class="fb-label-hint">lascia vuoto se non hai testato su smartphone</span>
+        </label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="team_sync">
+        <label class="fb-label">Modalità team / multi-device
+          <span class="fb-label-hint">lascia vuoto se non hai giocato in team</span>
+        </label>
+        <div class="fb-rating"></div>
+      </div>
+
+      <div class="fb-field" data-rating="leaderboard">
+        <label class="fb-label">Classifica top 30
+          <span class="fb-label-hint">lascia vuoto se non l'hai vista</span>
+        </label>
+        <div class="fb-rating"></div>
+      </div>
+    </section>
+
+    <!-- ────── Sezione 3: Atti specifici ────── -->
+    <section class="fb-section">
+      <h2 class="fb-section-title">Atti specifici</h2>
+      <div class="fb-section-hint">Solo gli atti che hai effettivamente completato</div>
+
+      <div class="fb-act-block">
+        <label class="fb-act-toggle">
+          <input type="checkbox" data-act-toggle="act1">
+          <span class="fb-act-toggle-label">Atto I — L'avvio dell'indagine</span>
+        </label>
+        <div class="fb-act-content" data-act-content="act1" hidden>
+          <div class="fb-field" data-rating-act="act1">
+            <label class="fb-label">Voto Atto I</label>
+            <div class="fb-rating"></div>
+          </div>
+          <div class="fb-field">
+            <label class="fb-label" for="fb-act1-text">Cosa miglioreresti dell'Atto I?</label>
+            <textarea class="fb-textarea" id="fb-act1-text" data-act-text="act1" maxlength="2000" placeholder="Puzzle, ritmo, indizi, testimonianze…"></textarea>
+            <span class="fb-charcount" data-charcount="fb-act1-text">0 / 2000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fb-act-block">
+        <label class="fb-act-toggle">
+          <input type="checkbox" data-act-toggle="act2">
+          <span class="fb-act-toggle-label">Atto II — Le piste</span>
+        </label>
+        <div class="fb-act-content" data-act-content="act2" hidden>
+          <div class="fb-field" data-rating-act="act2">
+            <label class="fb-label">Voto Atto II</label>
+            <div class="fb-rating"></div>
+          </div>
+          <div class="fb-field">
+            <label class="fb-label" for="fb-act2-text">Cosa miglioreresti dell'Atto II?</label>
+            <textarea class="fb-textarea" id="fb-act2-text" data-act-text="act2" maxlength="2000" placeholder="Terminali, branch sospetto, dinamica…"></textarea>
+            <span class="fb-charcount" data-charcount="fb-act2-text">0 / 2000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fb-act-block">
+        <label class="fb-act-toggle">
+          <input type="checkbox" data-act-toggle="act3">
+          <span class="fb-act-toggle-label">Atto III — Risoluzione + casella email</span>
+        </label>
+        <div class="fb-act-content" data-act-content="act3" hidden>
+          <div class="fb-field" data-rating-act="act3">
+            <label class="fb-label">Voto Atto III</label>
+            <div class="fb-rating"></div>
+          </div>
+          <div class="fb-field">
+            <label class="fb-label" for="fb-act3-text">Cosa miglioreresti dell'Atto III?</label>
+            <textarea class="fb-textarea" id="fb-act3-text" data-act-text="act3" maxlength="2000" placeholder="Casella, verifiche, esito, classifica…"></textarea>
+            <span class="fb-charcount" data-charcount="fb-act3-text">0 / 2000</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ────── Sezione 4: Domande aperte ────── -->
+    <section class="fb-section">
+      <h2 class="fb-section-title">Le cose dette a voce</h2>
+      <div class="fb-section-hint">Risposte libere — quello che i rating non catturano</div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-liked">Cosa ti è piaciuto di più?</label>
+        <textarea class="fb-textarea" id="fb-liked" maxlength="2000" placeholder="Il momento, il dettaglio, il puzzle che ti è rimasto…"></textarea>
+        <span class="fb-charcount" data-charcount="fb-liked">0 / 2000</span>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-frustrated">Cosa ti ha frustrato o annoiato?</label>
+        <textarea class="fb-textarea" id="fb-frustrated" maxlength="2000" placeholder="Dove hai pensato di mollare, cosa ti ha rotto l'immersione…"></textarea>
+        <span class="fb-charcount" data-charcount="fb-frustrated">0 / 2000</span>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-bugs">Bug o malfunzionamenti notati
+          <span class="fb-label-hint">se possibile: browser, atto, cosa hai cliccato, cosa è successo</span>
+        </label>
+        <textarea class="fb-textarea" id="fb-bugs" maxlength="2000" placeholder="Esempio: «Chrome desktop, Atto II, terminale T2A: il banner di conferma non spariva dopo refresh»"></textarea>
+        <span class="fb-charcount" data-charcount="fb-bugs">0 / 2000</span>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-feature">Una funzione che vorresti vedere</label>
+        <textarea class="fb-textarea" id="fb-feature" maxlength="2000" placeholder="Cosa aggiungeresti, anche solo per il prossimo caso…"></textarea>
+        <span class="fb-charcount" data-charcount="fb-feature">0 / 2000</span>
+      </div>
+    </section>
+
+    <!-- ────── Sezione 5: Closing ────── -->
+    <section class="fb-section">
+      <h2 class="fb-section-title">Per chiudere</h2>
+      <div class="fb-section-hint">Tre domande veloci</div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-nps">Consiglieresti Archivio 17 a un amico appassionato di gialli/escape room?
+          <span class="fb-label-hint">0 = mai · 10 = subito</span>
+        </label>
+        <div class="fb-nps-wrap">
+          <input type="range" id="fb-nps" class="fb-nps-slider" min="0" max="10" step="1" value="7">
+          <div class="fb-nps-scale">
+            <span>0 — mai</span>
+            <span>5 — forse</span>
+            <span>10 — sicuro</span>
+          </div>
+          <div class="fb-nps-value" id="fb-nps-value">7 / 10</div>
+        </div>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-price">Quanto pagheresti per un caso completo (singolo)?
+          <span class="fb-label-hint">0 € se preferisci non rispondere · scegli a tuo intuito</span>
+        </label>
+        <div class="fb-nps-wrap">
+          <input type="range" id="fb-price" class="fb-nps-slider" min="0" max="30" step="1" value="0">
+          <div class="fb-nps-scale">
+            <span>0 €</span>
+            <span>15 €</span>
+            <span>30 € +</span>
+          </div>
+          <div class="fb-nps-value" id="fb-price-value">— € (non rispondo)</div>
+        </div>
+      </div>
+
+      <div class="fb-field">
+        <label class="fb-label" for="fb-email">Email per contatto follow-up
+          <span class="fb-label-hint">opzionale — solo per chiarimenti su quanto scritto qui</span>
+        </label>
+        <input type="email" id="fb-email" class="fb-input" maxlength="200" placeholder="tu@esempio.it" autocomplete="email">
+      </div>
+    </section>
+
+    <div class="fb-submit-wrap">
+      <button type="submit" class="fb-submit" id="fb-submit">Invia feedback</button>
+      <span class="fb-submit-hint">Servono almeno un rating o un campo di testo</span>
+      <div class="fb-submit-error" id="fb-submit-error" style="display:none"></div>
+    </div>
+
+  </form>
+
+  <p class="fb-footer">
+    Beta privata · Archivio 17 — Caso 001 « Il Caso Marini ». Risposte raccolte in modo riservato.
+  </p>
+
+</div>
+
+<script src="assets/config.js"></script>
+<script>
+(function(){
+  'use strict';
+  const API_URL = (typeof API_BASE === 'string' ? API_BASE : '') + '/feedback';
+  const CASE_ID = '001';
+
+  // ── Lettura sessione locale per pre-fill identità + progresso. Best-effort: ──
+  // se localStorage è vuoto o malformato, si va in modalità anonima.
+  function readSession(){
+    try {
+      const raw = localStorage.getItem('a17_session');
+      if(!raw) return null;
+      return JSON.parse(raw);
+    } catch(_){ return null; }
+  }
+
+  function deduceMode(code){
+    if(typeof code !== 'string') return null;
+    const c = code.trim().toUpperCase();
+    if(c.startsWith('A17T')) return 'team';
+    if(c.startsWith('A17I')) return 'individual';
+    return null;
+  }
+
+  const session = readSession();
+  const shared = session && session.cloud && session.cloud.shared || {};
+  const global = session && session.global || {};
+  const identity = {
+    code_id: shared.codeId || null,
+    code: shared.code || null,
+    nickname: shared.nickname || null,
+    mode: deduceMode(shared.code) || 'anonymous',
+  };
+  const progress = {
+    current_act: Number(global.current_act) || (global.act3_done ? 3 : global.act2_done ? 2 : global.act1_done ? 1 : 0),
+    act1_completed: !!global.act1_done,
+    act2_completed: !!global.act2_done,
+    act3_completed: !!global.act3_done,
+    final_unlocked: !!global.locked,
+  };
+
+  // ── State machine UI ──
+  const elLoading = document.getElementById('fb-loading');
+  const elBlocked = document.getElementById('fb-blocked');
+  const elBlockedMsg = document.getElementById('fb-blocked-msg');
+  const elDone = document.getElementById('fb-done');
+  const elError = document.getElementById('fb-error');
+  const elErrorMsg = document.getElementById('fb-error-msg');
+  const elForm = document.getElementById('fb-form');
+  const elSubmit = document.getElementById('fb-submit');
+  const elSubmitError = document.getElementById('fb-submit-error');
+
+  function showOnly(el){
+    [elLoading, elBlocked, elDone, elError, elForm].forEach(e => { if(e) e.style.display = 'none'; });
+    if(el) el.style.display = '';
+  }
+
+  function showError(msg){
+    elErrorMsg.textContent = msg || 'Riprova tra qualche istante.';
+    showOnly(elError);
+  }
+
+  // ── Identity box: visibile solo se loggato ──
+  if(identity.nickname || identity.code_id){
+    const elId = document.getElementById('fb-identity');
+    const elIdNick = document.getElementById('fb-identity-nickname');
+    const elIdBadge = document.getElementById('fb-identity-mode-badge');
+    const elIdCode = document.getElementById('fb-identity-code');
+    elIdNick.textContent = identity.nickname || '(senza nickname)';
+    const modeLabel = identity.mode === 'team' ? 'TEAM' : identity.mode === 'individual' ? 'INDIVIDUALE' : '';
+    if(modeLabel){
+      elIdBadge.className = 'fb-identity-mode fb-mode-' + identity.mode;
+      elIdBadge.textContent = modeLabel;
+    }
+    if(identity.code){
+      elIdCode.textContent = 'Codice ' + identity.code;
+    }
+    elId.style.display = '';
+  }
+
+  // ── Pre-tick atti completati ──
+  ['act1','act2','act3'].forEach(act => {
+    if(progress[act + '_completed']){
+      const cb = document.querySelector('[data-act-toggle="' + act + '"]');
+      if(cb){ cb.checked = true; toggleActBlock(act, true); }
+    }
+  });
+  document.querySelectorAll('[data-act-toggle]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      toggleActBlock(cb.dataset.actToggle, cb.checked);
+    });
+  });
+  function toggleActBlock(act, show){
+    const content = document.querySelector('[data-act-content="' + act + '"]');
+    if(content) content.hidden = !show;
+    if(!show){
+      // Pulisci rating + testo se l'utente disattiva
+      const ratingBlock = document.querySelector('[data-rating-act="' + act + '"]');
+      if(ratingBlock) setRating(ratingBlock, 0);
+      const txt = document.querySelector('[data-act-text="' + act + '"]');
+      if(txt){ txt.value = ''; updateCharCount(txt); }
+    }
+  }
+
+  // ── Build rating buttons ──
+  function buildRating(container){
+    container.innerHTML = '';
+    for(let i = 1; i <= 5; i++){
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'fb-rating-btn';
+      btn.dataset.value = String(i);
+      btn.setAttribute('aria-label', 'Valuta ' + i + ' su 5');
+      btn.textContent = '◆';
+      btn.addEventListener('click', () => setRating(container.parentElement, i));
+      container.appendChild(btn);
+    }
+    const clearBtn = document.createElement('button');
+    clearBtn.type = 'button';
+    clearBtn.className = 'fb-rating-clear';
+    clearBtn.textContent = 'Azzera';
+    clearBtn.addEventListener('click', () => setRating(container.parentElement, 0));
+    container.appendChild(clearBtn);
+    const valueLabel = document.createElement('span');
+    valueLabel.className = 'fb-rating-value';
+    valueLabel.textContent = '—';
+    container.appendChild(valueLabel);
+  }
+  function setRating(fieldEl, value){
+    const ratingDiv = fieldEl.querySelector('.fb-rating');
+    if(!ratingDiv) return;
+    fieldEl.dataset.value = String(value || 0);
+    const btns = ratingDiv.querySelectorAll('.fb-rating-btn');
+    btns.forEach(b => {
+      const v = Number(b.dataset.value);
+      b.classList.toggle('active', value >= v);
+      b.textContent = value >= v ? '◆' : '◇';
+    });
+    const valueLabel = ratingDiv.querySelector('.fb-rating-value');
+    if(valueLabel) valueLabel.textContent = value ? (value + ' / 5') : '—';
+  }
+  document.querySelectorAll('.fb-rating').forEach(buildRating);
+
+  // ── Char count textarea ──
+  function updateCharCount(textarea){
+    const target = document.querySelector('[data-charcount="' + textarea.id + '"]');
+    if(target) target.textContent = (textarea.value.length || 0) + ' / ' + (textarea.maxLength || 2000);
+  }
+  document.querySelectorAll('textarea').forEach(t => {
+    updateCharCount(t);
+    t.addEventListener('input', () => updateCharCount(t));
+  });
+
+  // ── NPS + price live label ──
+  const elNps = document.getElementById('fb-nps');
+  const elNpsValue = document.getElementById('fb-nps-value');
+  elNps.addEventListener('input', () => { elNpsValue.textContent = elNps.value + ' / 10'; });
+
+  const elPrice = document.getElementById('fb-price');
+  const elPriceValue = document.getElementById('fb-price-value');
+  function updatePriceLabel(){
+    const v = Number(elPrice.value);
+    elPriceValue.textContent = v === 0 ? '— € (non rispondo)' : v >= 30 ? '30 € o più' : v + ' €';
+  }
+  elPrice.addEventListener('input', updatePriceLabel);
+  updatePriceLabel();
+
+  // ── Boot: check dedup se loggato, altrimenti mostra form ──
+  function bootCheck(){
+    if(!identity.code_id){
+      showOnly(elForm);
+      return;
+    }
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 10000);
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'check', code_id: identity.code_id }),
+      signal: ctrl.signal,
+    })
+      .then(r => { clearTimeout(tid); return r.json(); })
+      .then(d => {
+        if(!d || !d.ok){
+          // Failopen: errore di check non blocca, lascia compilare
+          showOnly(elForm);
+          return;
+        }
+        if(d.already_submitted){
+          if(d.submitted_at){
+            try {
+              const date = new Date(d.submitted_at);
+              if(!isNaN(date.getTime())){
+                elBlockedMsg.textContent = 'Hai già inviato un feedback con questo codice il ' +
+                  date.toLocaleDateString('it-IT', { day:'numeric', month:'long', year:'numeric' }) +
+                  '. Se hai altre osservazioni puoi scriverle direttamente a chi ti ha consegnato il codice.';
+              }
+            } catch(_){}
+          }
+          showOnly(elBlocked);
+        } else {
+          showOnly(elForm);
+        }
+      })
+      .catch(() => {
+        clearTimeout(tid);
+        // Failopen: errore di rete non blocca, lascia compilare
+        showOnly(elForm);
+      });
+  }
+
+  // ── Raccolta payload ──
+  function collectRatings(selector){
+    const out = {};
+    document.querySelectorAll(selector).forEach(el => {
+      const key = el.dataset.rating || el.dataset.ratingAct;
+      const v = Number(el.dataset.value);
+      if(key && v >= 1 && v <= 5) out[key] = v;
+    });
+    return out;
+  }
+  function collectActFeedback(){
+    const out = {};
+    ['act1','act2','act3'].forEach(act => {
+      const toggle = document.querySelector('[data-act-toggle="' + act + '"]');
+      if(!toggle || !toggle.checked) return;
+      const t = document.querySelector('[data-act-text="' + act + '"]');
+      const v = t && t.value.trim();
+      if(v) out[act] = v;
+    });
+    return out;
+  }
+  function txtVal(id){
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  // ── Submit ──
+  elForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    elSubmitError.style.display = 'none';
+    elSubmit.disabled = true;
+    elSubmit.textContent = 'Invio in corso…';
+
+    const ratings = collectRatings('[data-rating]');
+    const ratingsActs = collectRatings('[data-rating-act]');
+    const actFeedback = collectActFeedback();
+    const liked = txtVal('fb-liked');
+    const frustrated = txtVal('fb-frustrated');
+    const bugs = txtVal('fb-bugs');
+    const feature = txtVal('fb-feature');
+    const nps = Number(elNps.value);
+    const priceRaw = Number(elPrice.value);
+    const email = txtVal('fb-email');
+
+    // Validazione minima client-side
+    const hasAnyRating = Object.keys(ratings).length > 0 || Object.keys(ratingsActs).length > 0;
+    const hasAnyText = !!(liked || frustrated || bugs || feature || Object.keys(actFeedback).length > 0);
+    if(!hasAnyRating && !hasAnyText){
+      elSubmitError.style.display = '';
+      elSubmitError.textContent = 'Inserisci almeno un rating o un commento.';
+      elSubmit.disabled = false;
+      elSubmit.textContent = 'Invia feedback';
+      return;
+    }
+
+    const payload = {
+      action: 'submit',
+      case_id: CASE_ID,
+      mode: identity.mode,
+      nickname: identity.nickname || '',
+      code_id: identity.code_id || '',
+      email_contact: email,
+      progress: progress,
+      ratings: ratings,
+      ratings_acts: ratingsActs,
+      act_feedback: actFeedback,
+      liked_most: liked,
+      frustrated_by: frustrated,
+      bugs: bugs,
+      feature_wish: feature,
+      nps: nps,
+      // price 0 = "non rispondo", non inviare per non falsare le statistiche
+      price_willing: priceRaw > 0 ? priceRaw : null,
+    };
+
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 15000);
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: ctrl.signal,
+    })
+      .then(r => r.json().then(d => ({ status: r.status, body: d })))
+      .then(({ status, body }) => {
+        clearTimeout(tid);
+        if(body && body.ok){
+          showOnly(elDone);
+          return;
+        }
+        if(status === 409 || (body && body.error === 'ALREADY_SUBMITTED')){
+          showOnly(elBlocked);
+          return;
+        }
+        elSubmitError.style.display = '';
+        elSubmitError.textContent = (body && body.error) ? ('Errore: ' + body.error) : 'Invio fallito. Riprova.';
+        elSubmit.disabled = false;
+        elSubmit.textContent = 'Invia feedback';
+      })
+      .catch(err => {
+        clearTimeout(tid);
+        elSubmitError.style.display = '';
+        elSubmitError.textContent = err && err.name === 'AbortError'
+          ? 'Timeout connessione. Riprova.'
+          : 'Errore di rete. Riprova.';
+        elSubmit.disabled = false;
+        elSubmit.textContent = 'Invia feedback';
+      });
+  });
+
+  bootCheck();
+})();
+</script>
+
+</body>
+</html>
