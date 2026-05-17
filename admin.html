@@ -240,6 +240,61 @@ tr:hover td { background: rgba(255,255,255,.02); }
   z-index: 999; display: none;
 }
 .idle-warning.show { display: block; }
+
+/* ── FEEDBACK ── */
+.fb-stars { color: var(--amber); font-family: var(--mono); letter-spacing: .15em; font-size: .92rem; white-space: nowrap; }
+.fb-stars .off { color: var(--border); }
+.fb-nps { font-family: var(--mono); font-weight: 600; padding: .2rem .5rem; font-size: .8rem; }
+.fb-nps.promoter { background: rgba(76,175,128,.12); color: var(--green2); border: 1px solid rgba(76,175,128,.3); }
+.fb-nps.passive { background: rgba(183,131,59,.12); color: var(--amber); border: 1px solid rgba(183,131,59,.3); }
+.fb-nps.detractor { background: rgba(196,32,40,.12); color: var(--red2); border: 1px solid rgba(196,32,40,.3); }
+.fb-nps.none { color: var(--text3); }
+.fb-mode-badge { font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; padding: .15rem .45rem; }
+.fb-mode-individual { background: rgba(167,25,32,.15); color: var(--red2); border: 1px solid rgba(167,25,32,.3); }
+.fb-mode-team { background: rgba(183,131,59,.15); color: var(--amber); border: 1px solid rgba(183,131,59,.3); }
+.fb-mode-anonymous { background: rgba(122,114,104,.15); color: var(--text3); border: 1px solid var(--border); }
+.fb-text-snippet { color: var(--text2); font-size: .8rem; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fb-indicator { display: inline-flex; gap: .35rem; align-items: center; font-family: var(--mono); font-size: .7rem; color: var(--text3); }
+.fb-indicator .has-bug { color: var(--red2); }
+.fb-indicator .has-text { color: var(--text2); }
+.fb-dist-row { display: grid; grid-template-columns: 160px 1fr 60px; gap: .75rem; align-items: center; padding: .35rem 0; }
+.fb-dist-label { font-size: .78rem; color: var(--text2); }
+.fb-dist-track { background: var(--bg2); border: 1px solid var(--border); height: 10px; position: relative; overflow: hidden; }
+.fb-dist-segs { display: flex; height: 100%; }
+.fb-dist-seg { height: 100%; transition: width .3s; }
+.fb-dist-seg.s1 { background: rgba(196,32,40,.55); }
+.fb-dist-seg.s2 { background: rgba(196,32,40,.35); }
+.fb-dist-seg.s3 { background: rgba(183,131,59,.45); }
+.fb-dist-seg.s4 { background: rgba(76,175,128,.45); }
+.fb-dist-seg.s5 { background: rgba(76,175,128,.7); }
+.fb-dist-avg { font-family: var(--mono); font-size: .85rem; color: var(--amber); text-align: right; }
+.fb-dist-section-title {
+  font-family: var(--serif); font-size: .95rem; color: var(--text2);
+  margin: .75rem 0 .35rem; letter-spacing: .04em;
+}
+.fb-detail-section { margin-bottom: 1.5rem; }
+.fb-detail-section h4 {
+  font-family: var(--serif); font-size: .95rem; color: var(--text2);
+  margin-bottom: .6rem; padding-bottom: .35rem; border-bottom: 1px solid var(--border);
+  letter-spacing: .04em; font-weight: 600;
+}
+.fb-rating-row { display: grid; grid-template-columns: 1fr auto; gap: .5rem; padding: .35rem 0; }
+.fb-rating-row .label { color: var(--text3); font-size: .82rem; }
+.fb-text-block {
+  background: var(--bg2); border: 1px solid var(--border);
+  padding: .65rem .85rem; margin-bottom: .65rem; white-space: pre-wrap;
+  font-size: .85rem; line-height: 1.5; color: var(--text2);
+}
+.fb-text-block .meta { color: var(--text3); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .35rem; }
+.fb-empty-text { color: var(--text3); font-size: .78rem; font-style: italic; }
+.fb-nps-display { display: inline-flex; align-items: center; gap: .5rem; }
+.fb-nps-display .num { font-family: var(--serif); font-size: 1.4rem; color: var(--text); }
+.fb-progress-pill {
+  display: inline-block; padding: .15rem .55rem; font-family: var(--mono);
+  font-size: .72rem; background: var(--bg2); border: 1px solid var(--border);
+  color: var(--text2);
+}
+.fb-progress-pill.done { color: var(--green2); border-color: rgba(76,175,128,.3); background: rgba(76,175,128,.08); }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
@@ -283,6 +338,7 @@ tr:hover td { background: rgba(255,255,255,.02); }
     <div class="nav-tab" data-tab="codici" onclick="switchTab('codici')">Codici Accesso</div>
     <div class="nav-tab" data-tab="dispositivi" onclick="switchTab('dispositivi')">Dispositivi</div>
     <div class="nav-tab" data-tab="sessioni" onclick="switchTab('sessioni')">Sessioni</div>
+    <div class="nav-tab" data-tab="feedback" onclick="switchTab('feedback')">Feedback</div>
   </div>
 
   <!-- DASHBOARD -->
@@ -377,6 +433,82 @@ tr:hover td { background: rgba(255,255,255,.02); }
       <div class="loading">Caricamento...</div>
     </div>
   </div>
+
+  <!-- FEEDBACK -->
+  <div class="main tab-content" id="tab-feedback">
+    <div class="section-header">
+      <div class="section-title">Feedback Beta Tester</div>
+      <div class="section-actions">
+        <button class="btn secondary sm" onclick="exportCsv('feedback')">Esporta CSV</button>
+        <button class="btn secondary sm" onclick="loadFeedback()">↺ Aggiorna</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="fb-stats-grid">
+      <div class="stat-card"><div class="stat-val" id="fb-st-total">—</div><div class="stat-label">Feedback Ricevuti</div></div>
+      <div class="stat-card"><div class="stat-val amber" id="fb-st-nps">—</div><div class="stat-label">NPS Medio</div></div>
+      <div class="stat-card"><div class="stat-val green" id="fb-st-rating">—</div><div class="stat-label">Rating Medio</div></div>
+      <div class="stat-card"><div class="stat-val" id="fb-st-completed">—</div><div class="stat-label">Hanno Finito</div></div>
+      <div class="stat-card"><div class="stat-val" id="fb-st-price">—</div><div class="stat-label">Prezzo Medio</div></div>
+      <div class="stat-card"><div class="stat-val" id="fb-st-bugs">—</div><div class="stat-label">Segnalano Bug</div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+      <div>
+        <div class="section-header"><div class="section-title" style="font-size:1.1rem">Distribuzione NPS</div></div>
+        <div id="fb-nps-dist" class="loading">—</div>
+      </div>
+      <div>
+        <div class="section-header"><div class="section-title" style="font-size:1.1rem">Rating Medi</div></div>
+        <div id="fb-rating-dist" class="loading">—</div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <input type="text" id="filter-fb" placeholder="Cerca in nick o testi..." oninput="filterFeedback()">
+      <select id="filter-fb-mode" onchange="filterFeedback()">
+        <option value="">Tutte le modalità</option>
+        <option value="individual">Individuale</option>
+        <option value="team">Team</option>
+        <option value="anonymous">Anonimo</option>
+      </select>
+      <select id="filter-fb-nps" onchange="filterFeedback()">
+        <option value="">Tutti NPS</option>
+        <option value="promoter">Promoter (9-10)</option>
+        <option value="passive">Passive (7-8)</option>
+        <option value="detractor">Detractor (0-6)</option>
+        <option value="none">Senza NPS</option>
+      </select>
+      <select id="filter-fb-progress" onchange="filterFeedback()">
+        <option value="">Tutto il progresso</option>
+        <option value="completed">Caso chiuso</option>
+        <option value="atto3">Arrivati ad Atto III</option>
+        <option value="atto2">Arrivati ad Atto II</option>
+        <option value="atto1">Solo Atto I</option>
+      </select>
+      <select id="filter-fb-flags" onchange="filterFeedback()">
+        <option value="">Tutto</option>
+        <option value="bugs">Solo con bug</option>
+        <option value="text">Solo con testo libero</option>
+      </select>
+      <span class="filter-result-count" id="fb-result-count"></span>
+    </div>
+    <div class="table-wrap" id="fb-table-wrap">
+      <div class="loading">Caricamento...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETTAGLIO FEEDBACK -->
+<div class="modal-overlay" id="modal-feedback" role="dialog" aria-modal="true">
+  <div class="modal" style="width:680px;max-width:95vw">
+    <div class="modal-header">
+      <div class="modal-title" id="fb-detail-title">Feedback</div>
+      <button class="modal-close" onclick="closeModal('modal-feedback')">×</button>
+    </div>
+    <div class="modal-body" id="fb-detail-body"></div>
+    <div class="modal-footer" id="fb-detail-footer"></div>
+  </div>
 </div>
 
 <!-- MODAL CREA CODICE -->
@@ -470,7 +602,28 @@ let ADMIN_TOKEN = '';
 let allCodes = [];
 let allDevices = [];
 let allSessions = [];
+let allFeedback = [];
 let editingNotesId = null;
+
+// Etichette IT per le metriche di rating. Le chiavi devono corrispondere a
+// quelle inviate da feedback.html (data-rating="..." e data-rating-act="...").
+const FB_RATING_LABELS = {
+  atmosphere: 'Atmosfera',
+  writing: 'Scrittura',
+  puzzle_balance: 'Bilanciamento puzzle',
+  hints: 'Sistema hint',
+  score_system: 'Sistema punteggio',
+  ui_clarity: 'Chiarezza UI',
+  fluidity: 'Fluidità',
+  mobile: 'Esperienza mobile',
+  team_sync: 'Sync team',
+  leaderboard: 'Classifica',
+};
+const FB_RATING_ACT_LABELS = {
+  act1: 'Atto I',
+  act2: 'Atto II',
+  act3: 'Atto III',
+};
 let autoRefreshTimer = null;
 let idleTimer = null;
 let idleWarningTimer = null;
@@ -641,7 +794,7 @@ function doLogout(reason) {
     }, 4000).catch(() => { /* niente: la sessione viene comunque chiusa lato client */ });
   }
   ADMIN_TOKEN = '';
-  allCodes = []; allDevices = []; allSessions = [];
+  allCodes = []; allDevices = []; allSessions = []; allFeedback = [];
   try { sessionStorage.removeItem(SESSION_KEY); } catch(_) {}
   stopAutoRefresh();
   stopIdleTracking();
@@ -732,7 +885,7 @@ async function adminAction(action, params = {}) {
 
 // ── LOAD ALL ─────────────────────────────────────────────────────────────────
 async function loadAll(silent) {
-  const results = await Promise.allSettled([loadCodes(silent), loadDevices(silent), loadSessions(silent)]);
+  const results = await Promise.allSettled([loadCodes(silent), loadDevices(silent), loadSessions(silent), loadFeedback(silent)]);
   const failed = results.filter(r => r.status === 'rejected');
   if (failed.length === results.length && !silent) {
     showToast('Tutti i caricamenti sono falliti. Verifica connessione e chiave admin.', 'error');
@@ -779,6 +932,451 @@ async function loadSessions(silent) {
     console.error('loadSessions:', e);
     if (!silent) showToast('Errore caricamento sessioni: ' + e.message, 'error');
     throw e;
+  }
+}
+
+async function loadFeedback(silent) {
+  try {
+    const res = await adminAction('list_feedback');
+    if (!res.ok) throw new Error(res.error || 'Errore caricamento feedback');
+    allFeedback = res.feedback || [];
+    allFeedback.sort((a, b) => new Date(b.submitted_at || 0) - new Date(a.submitted_at || 0));
+    renderFeedbackStats();
+    renderFeedbackDistributions();
+    renderFeedbackTable(filteredFeedback());
+  } catch(e) {
+    console.error('loadFeedback:', e);
+    if (!silent) showToast('Errore caricamento feedback: ' + e.message, 'error');
+    throw e;
+  }
+}
+
+// ── FEEDBACK HELPERS ─────────────────────────────────────────────────────────
+function npsBucket(n) {
+  if (n == null || !isFinite(Number(n))) return 'none';
+  const v = Number(n);
+  if (v >= 9) return 'promoter';
+  if (v >= 7) return 'passive';
+  return 'detractor';
+}
+
+// Media rating "ratings" (10 metriche UX/esperienza), 1-5. Null se non ne ha.
+function averageRating(fb) {
+  const r = fb.ratings || {};
+  const vals = Object.values(r).map(Number).filter(v => isFinite(v) && v >= 1 && v <= 5);
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0) / vals.length;
+}
+
+// Atto raggiunto in base a progress (max tra current_act e flag completati).
+function feedbackProgressActReached(fb) {
+  const p = fb.progress || {};
+  if (p.final_unlocked || p.act3_completed) return 3;
+  let n = Number(p.current_act) || 1;
+  if (p.act2_completed && n < 3) n = 3;
+  else if (p.act1_completed && n < 2) n = 2;
+  return Math.max(1, Math.min(3, n));
+}
+function feedbackHasCompletedCase(fb) {
+  const p = fb.progress || {};
+  return !!(p.final_unlocked || p.act3_completed);
+}
+
+function renderStarRow(value) {
+  const v = Math.round(Number(value) || 0);
+  let html = '<span class="fb-stars">';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= v) html += '◆';
+    else html += '<span class="off">◇</span>';
+  }
+  html += '</span>';
+  return html;
+}
+
+function renderNpsBadge(n) {
+  if (n == null || !isFinite(Number(n))) return '<span class="fb-nps none">—</span>';
+  const bucket = npsBucket(n);
+  return `<span class="fb-nps ${bucket}">${Number(n)}</span>`;
+}
+
+// ── FEEDBACK STATS ───────────────────────────────────────────────────────────
+function renderFeedbackStats() {
+  const list = allFeedback;
+  const total = list.length;
+  setText('fb-st-total', total);
+
+  if (!total) {
+    setText('fb-st-nps', '—');
+    setText('fb-st-rating', '—');
+    setText('fb-st-completed', '—');
+    setText('fb-st-price', '—');
+    setText('fb-st-bugs', '—');
+    return;
+  }
+
+  // NPS score = % promoter - % detractor (su chi ha dato NPS).
+  const withNps = list.filter(f => f.nps != null && isFinite(Number(f.nps)));
+  if (withNps.length) {
+    const prom = withNps.filter(f => npsBucket(f.nps) === 'promoter').length;
+    const det = withNps.filter(f => npsBucket(f.nps) === 'detractor').length;
+    const nps = Math.round(((prom - det) / withNps.length) * 100);
+    setText('fb-st-nps', (nps > 0 ? '+' : '') + nps);
+  } else {
+    setText('fb-st-nps', '—');
+  }
+
+  // Rating medio: media delle medie individuali, scala 0-5.
+  const avgs = list.map(averageRating).filter(v => v != null);
+  if (avgs.length) {
+    const m = avgs.reduce((a, b) => a + b, 0) / avgs.length;
+    setText('fb-st-rating', m.toFixed(1));
+  } else {
+    setText('fb-st-rating', '—');
+  }
+
+  // Hanno finito il caso.
+  const completed = list.filter(feedbackHasCompletedCase).length;
+  setText('fb-st-completed', completed + '/' + total);
+
+  // Prezzo medio (esclude 0 e null).
+  const prices = list
+    .map(f => Number(f.price_willing))
+    .filter(v => isFinite(v) && v > 0);
+  if (prices.length) {
+    const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
+    setText('fb-st-price', avg.toFixed(2) + ' €');
+  } else {
+    setText('fb-st-price', '—');
+  }
+
+  // Bug segnalati.
+  const bugs = list.filter(f => (f.bugs || '').trim().length > 0).length;
+  setText('fb-st-bugs', bugs);
+}
+
+function renderFeedbackDistributions() {
+  // ── Distribuzione NPS (3 bucket) ──
+  const npsBox = document.getElementById('fb-nps-dist');
+  const withNps = allFeedback.filter(f => f.nps != null && isFinite(Number(f.nps)));
+  if (!withNps.length) {
+    npsBox.innerHTML = '<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">Nessun dato NPS.</div>';
+  } else {
+    const prom = withNps.filter(f => npsBucket(f.nps) === 'promoter').length;
+    const pass = withNps.filter(f => npsBucket(f.nps) === 'passive').length;
+    const det = withNps.filter(f => npsBucket(f.nps) === 'detractor').length;
+    const tot = withNps.length;
+    const pct = n => Math.round((n / tot) * 100);
+    npsBox.innerHTML = `
+      <div class="fb-dist-row">
+        <span class="fb-dist-label">Promoter (9-10)</span>
+        <div class="fb-dist-track"><div class="fb-dist-segs"><div class="fb-dist-seg s5" style="width:${pct(prom)}%"></div></div></div>
+        <span class="fb-dist-avg" style="color:var(--green2)">${prom} · ${pct(prom)}%</span>
+      </div>
+      <div class="fb-dist-row">
+        <span class="fb-dist-label">Passive (7-8)</span>
+        <div class="fb-dist-track"><div class="fb-dist-segs"><div class="fb-dist-seg s3" style="width:${pct(pass)}%"></div></div></div>
+        <span class="fb-dist-avg" style="color:var(--amber)">${pass} · ${pct(pass)}%</span>
+      </div>
+      <div class="fb-dist-row">
+        <span class="fb-dist-label">Detractor (0-6)</span>
+        <div class="fb-dist-track"><div class="fb-dist-segs"><div class="fb-dist-seg s1" style="width:${pct(det)}%"></div></div></div>
+        <span class="fb-dist-avg" style="color:var(--red2)">${det} · ${pct(det)}%</span>
+      </div>
+    `;
+  }
+
+  // ── Distribuzione rating: media + barra segmentata 1-5 per ogni metrica ──
+  const ratingBox = document.getElementById('fb-rating-dist');
+  if (!allFeedback.length) {
+    ratingBox.innerHTML = '<div style="color:var(--text3);font-size:.82rem;padding:.5rem 0">Nessun rating raccolto.</div>';
+    return;
+  }
+  const buildRows = (labels, getterField) => {
+    return Object.keys(labels).map(key => {
+      const values = allFeedback
+        .map(f => Number((f[getterField] || {})[key]))
+        .filter(v => isFinite(v) && v >= 1 && v <= 5);
+      if (!values.length) {
+        return `
+          <div class="fb-dist-row">
+            <span class="fb-dist-label">${escHtml(labels[key])}</span>
+            <div class="fb-dist-track"></div>
+            <span class="fb-dist-avg" style="color:var(--text3)">—</span>
+          </div>`;
+      }
+      const counts = [0, 0, 0, 0, 0];
+      values.forEach(v => { counts[Math.round(v) - 1]++; });
+      const total = values.length;
+      const segs = counts.map((c, i) => c > 0
+        ? `<div class="fb-dist-seg s${i+1}" style="width:${(c/total)*100}%"></div>`
+        : ''
+      ).join('');
+      const avg = values.reduce((a, b) => a + b, 0) / values.length;
+      return `
+        <div class="fb-dist-row" title="n=${total}">
+          <span class="fb-dist-label">${escHtml(labels[key])}</span>
+          <div class="fb-dist-track"><div class="fb-dist-segs">${segs}</div></div>
+          <span class="fb-dist-avg">${avg.toFixed(1)}</span>
+        </div>`;
+    }).join('');
+  };
+
+  ratingBox.innerHTML = `
+    <div class="fb-dist-section-title">Esperienza / UX</div>
+    ${buildRows(FB_RATING_LABELS, 'ratings')}
+    <div class="fb-dist-section-title">Per atto</div>
+    ${buildRows(FB_RATING_ACT_LABELS, 'ratings_acts')}
+  `;
+}
+
+// ── FEEDBACK TABLE ───────────────────────────────────────────────────────────
+function filteredFeedback() {
+  const q = (document.getElementById('filter-fb')?.value || '').toLowerCase();
+  const mode = document.getElementById('filter-fb-mode')?.value || '';
+  const nps = document.getElementById('filter-fb-nps')?.value || '';
+  const prog = document.getElementById('filter-fb-progress')?.value || '';
+  const flags = document.getElementById('filter-fb-flags')?.value || '';
+
+  return allFeedback.filter(f => {
+    if (mode && f.mode !== mode) return false;
+    if (nps) {
+      if (nps === 'none') {
+        if (f.nps != null && isFinite(Number(f.nps))) return false;
+      } else if (npsBucket(f.nps) !== nps) return false;
+    }
+    if (prog) {
+      const reached = feedbackProgressActReached(f);
+      const done = feedbackHasCompletedCase(f);
+      if (prog === 'completed' && !done) return false;
+      if (prog === 'atto3' && (reached < 3 || done)) return false;
+      if (prog === 'atto2' && reached !== 2) return false;
+      if (prog === 'atto1' && reached !== 1) return false;
+    }
+    if (flags === 'bugs' && !(f.bugs || '').trim()) return false;
+    if (flags === 'text') {
+      const hasText = (f.liked_most || f.frustrated_by || f.bugs || f.feature_wish || '').trim()
+        || Object.values(f.act_feedback || {}).some(t => (t || '').trim());
+      if (!hasText) return false;
+    }
+    if (q) {
+      const hay = [
+        f.nickname, f.liked_most, f.frustrated_by, f.bugs, f.feature_wish,
+        ...Object.values(f.act_feedback || {}),
+      ].join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function filterFeedback() {
+  renderFeedbackTable(filteredFeedback());
+}
+
+function renderFeedbackTable(list) {
+  const wrap = document.getElementById('fb-table-wrap');
+  const counter = document.getElementById('fb-result-count');
+  if (counter) counter.textContent = list.length + ' / ' + allFeedback.length;
+
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty-state"><p>Nessun feedback</p><small>I beta tester compileranno il form da feedback.html</small></div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Nickname</th>
+          <th>Mode</th>
+          <th>Progresso</th>
+          <th>Rating medio</th>
+          <th>NPS</th>
+          <th>Prezzo</th>
+          <th>Segnali</th>
+          <th>Azioni</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${list.map(f => {
+          const avg = averageRating(f);
+          const reached = feedbackProgressActReached(f);
+          const done = feedbackHasCompletedCase(f);
+          const progPill = done
+            ? '<span class="fb-progress-pill done">Caso chiuso</span>'
+            : `<span class="fb-progress-pill">Atto ${reached}</span>`;
+          const hasBug = (f.bugs || '').trim().length > 0;
+          const hasText = !!((f.liked_most||'').trim() || (f.frustrated_by||'').trim() || (f.feature_wish||'').trim()
+            || Object.values(f.act_feedback||{}).some(t => (t||'').trim()));
+          const signals = [];
+          if (hasBug) signals.push('<span class="has-bug">▲ bug</span>');
+          if (hasText) signals.push('<span class="has-text">✎ testo</span>');
+          if (!signals.length) signals.push('<span style="color:var(--text3)">—</span>');
+          const price = (f.price_willing != null && Number(f.price_willing) > 0)
+            ? Number(f.price_willing).toFixed(2) + ' €'
+            : '<span style="color:var(--text3)">—</span>';
+          return `
+            <tr>
+              <td class="date-cell">${fmtDate(f.submitted_at)}</td>
+              <td><span style="font-family:var(--mono);font-size:.85rem">${escHtml(f.nickname || '—')}</span></td>
+              <td><span class="fb-mode-badge fb-mode-${escAttr(f.mode || 'anonymous')}">${escHtml(f.mode || 'anonymous')}</span></td>
+              <td>${progPill}</td>
+              <td>${avg != null ? avg.toFixed(1) + ' / 5' : '<span style="color:var(--text3)">—</span>'}</td>
+              <td>${renderNpsBadge(f.nps)}</td>
+              <td style="font-family:var(--mono);font-size:.82rem">${price}</td>
+              <td><span class="fb-indicator">${signals.join(' ')}</span></td>
+              <td>
+                <div class="actions-cell">
+                  <button class="btn sm secondary" data-action="open-fb" data-fb-id="${escAttr(f.id)}">Vedi</button>
+                  <button class="btn sm danger" data-action="delete-fb" data-fb-id="${escAttr(f.id)}">Elimina</button>
+                </div>
+              </td>
+            </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+  wrap.querySelectorAll('[data-action]').forEach(el => {
+    el.addEventListener('click', () => {
+      const a = el.dataset.action;
+      const id = el.dataset.fbId;
+      if (a === 'open-fb') openFeedbackDetail(id);
+      else if (a === 'delete-fb') deleteFeedback(id, el);
+    });
+  });
+}
+
+function openFeedbackDetail(id) {
+  const f = allFeedback.find(x => x.id === id);
+  if (!f) return;
+
+  const ratingsRows = Object.keys(FB_RATING_LABELS).map(k => {
+    const v = (f.ratings || {})[k];
+    if (v == null) return `
+      <div class="fb-rating-row">
+        <span class="label">${escHtml(FB_RATING_LABELS[k])}</span>
+        <span style="color:var(--text3);font-size:.8rem">—</span>
+      </div>`;
+    return `
+      <div class="fb-rating-row">
+        <span class="label">${escHtml(FB_RATING_LABELS[k])}</span>
+        ${renderStarRow(v)}
+      </div>`;
+  }).join('');
+
+  const ratingsActsRows = Object.keys(FB_RATING_ACT_LABELS).map(k => {
+    const v = (f.ratings_acts || {})[k];
+    if (v == null) return '';
+    return `
+      <div class="fb-rating-row">
+        <span class="label">${escHtml(FB_RATING_ACT_LABELS[k])}</span>
+        ${renderStarRow(v)}
+      </div>`;
+  }).filter(Boolean).join('') || '<div class="fb-empty-text">Nessun rating per atto.</div>';
+
+  const textBlock = (label, content) => content && content.trim()
+    ? `<div class="fb-text-block"><div class="meta">${escHtml(label)}</div>${escHtml(content)}</div>`
+    : '';
+
+  const actTexts = Object.keys(FB_RATING_ACT_LABELS).map(k => {
+    const t = (f.act_feedback || {})[k];
+    return t && t.trim()
+      ? `<div class="fb-text-block"><div class="meta">Miglioramenti ${FB_RATING_ACT_LABELS[k]}</div>${escHtml(t)}</div>`
+      : '';
+  }).filter(Boolean).join('');
+
+  const openTexts = [
+    textBlock('Cosa è piaciuto di più', f.liked_most),
+    textBlock('Cosa ha frustrato', f.frustrated_by),
+    textBlock('Bug segnalati', f.bugs),
+    textBlock('Feature desiderate', f.feature_wish),
+  ].filter(Boolean).join('');
+
+  const reached = feedbackProgressActReached(f);
+  const done = feedbackHasCompletedCase(f);
+
+  document.getElementById('fb-detail-title').textContent =
+    (f.nickname || '(senza nickname)') + ' · ' + (f.mode || 'anonymous');
+
+  document.getElementById('fb-detail-body').innerHTML = `
+    <div class="fb-detail-section">
+      <h4>Identità e contesto</h4>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1rem">
+        <div class="session-row"><span class="session-key">Inviato</span><span class="session-val">${fmtDate(f.submitted_at)}</span></div>
+        <div class="session-row"><span class="session-key">Modalità</span><span class="session-val">${escHtml(f.mode || 'anonymous')}</span></div>
+        <div class="session-row"><span class="session-key">Nickname</span><span class="session-val">${escHtml(f.nickname || '—')}</span></div>
+        <div class="session-row"><span class="session-key">Email contatto</span><span class="session-val">${escHtml(f.email_contact || '—')}</span></div>
+        <div class="session-row"><span class="session-key">Code ID</span><span class="session-val" style="font-size:.7rem;color:var(--text3)">${escHtml(f.code_id || '—')}</span></div>
+        <div class="session-row"><span class="session-key">Case ID</span><span class="session-val">${escHtml(f.case_id || '—')}</span></div>
+        <div class="session-row"><span class="session-key">Progresso</span><span class="session-val">${done ? 'Caso chiuso' : 'Atto ' + reached}</span></div>
+        <div class="session-row"><span class="session-key">User Agent</span><span class="session-val" style="font-size:.7rem;color:var(--text3);max-width:240px;text-align:right;word-break:break-all;line-height:1.3">${escHtml(f.user_agent || '—')}</span></div>
+      </div>
+    </div>
+
+    <div class="fb-detail-section">
+      <h4>Rating esperienza / UX (1-5)</h4>
+      ${ratingsRows}
+    </div>
+
+    <div class="fb-detail-section">
+      <h4>Rating per atto</h4>
+      ${ratingsActsRows}
+    </div>
+
+    <div class="fb-detail-section">
+      <h4>NPS e prezzo</h4>
+      <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
+        <div class="fb-nps-display">
+          <span class="num">${f.nps != null ? Number(f.nps) : '—'}</span>
+          ${renderNpsBadge(f.nps)}
+        </div>
+        <div style="font-family:var(--mono);font-size:.95rem;color:var(--amber)">
+          ${(f.price_willing != null && Number(f.price_willing) > 0) ? Number(f.price_willing).toFixed(2) + ' €' : '<span style="color:var(--text3);font-size:.85rem">prezzo non indicato</span>'}
+        </div>
+      </div>
+    </div>
+
+    <div class="fb-detail-section">
+      <h4>Risposte aperte</h4>
+      ${openTexts || '<div class="fb-empty-text">Nessun testo libero.</div>'}
+      ${actTexts}
+    </div>
+  `;
+
+  document.getElementById('fb-detail-footer').innerHTML = `
+    <button class="btn secondary" onclick="closeModal('modal-feedback')">Chiudi</button>
+    <button class="btn danger sm" data-action="delete-fb-modal" data-fb-id="${escAttr(f.id)}">Elimina</button>
+  `;
+  const modal = document.getElementById('modal-feedback');
+  modal.querySelectorAll('[data-action="delete-fb-modal"]').forEach(el => {
+    el.addEventListener('click', () => deleteFeedback(el.dataset.fbId, el));
+  });
+  modal.classList.add('visible');
+}
+
+async function deleteFeedback(id, btn) {
+  if (btn && btn.disabled) return;
+  const ok = await confirmModal({
+    title: 'Eliminare feedback',
+    message: 'Il feedback verrà eliminato definitivamente. Procedere?',
+    confirmLabel: 'Elimina',
+    danger: true,
+  });
+  if (!ok) return;
+  lockBtn(btn);
+  try {
+    const res = await adminAction('delete_feedback', { feedback_id: id });
+    if (res.ok) {
+      showToast('Feedback eliminato.', 'success');
+      closeModal('modal-feedback');
+      await loadFeedback();
+    } else {
+      showToast('Errore: ' + res.error, 'error');
+    }
+  } catch(e) {
+    showToast('Errore di rete: ' + e.message, 'error');
+  } finally {
+    unlockBtn(btn);
   }
 }
 
@@ -1414,6 +2012,52 @@ function exportCsv(type) {
     headers = ['access_code','device_label','is_active','first_seen','last_seen','ip_last','fingerprint'];
     rows = allDevices;
     filename = 'archivio17-dispositivi.csv';
+  } else if (type === 'feedback') {
+    // Flatten ratings/ratings_acts/act_feedback in colonne dedicate, così
+    // il CSV è leggibile in Excel/Sheets senza preprocessing.
+    const ratingKeys = Object.keys(FB_RATING_LABELS);
+    const ratingActKeys = Object.keys(FB_RATING_ACT_LABELS);
+    headers = [
+      'submitted_at', 'mode', 'nickname', 'email_contact', 'code_id', 'case_id',
+      ...ratingKeys.map(k => 'r_' + k),
+      ...ratingActKeys.map(k => 'r_' + k),
+      ...ratingActKeys.map(k => 'text_' + k),
+      'liked_most', 'frustrated_by', 'bugs', 'feature_wish',
+      'nps', 'price_willing',
+      'current_act', 'act1_completed', 'act2_completed', 'act3_completed', 'final_unlocked',
+      'user_agent',
+    ];
+    rows = allFeedback.map(f => {
+      const r = f.ratings || {};
+      const ra = f.ratings_acts || {};
+      const af = f.act_feedback || {};
+      const p = f.progress || {};
+      const out = {
+        submitted_at: f.submitted_at,
+        mode: f.mode,
+        nickname: f.nickname,
+        email_contact: f.email_contact,
+        code_id: f.code_id,
+        case_id: f.case_id,
+        liked_most: f.liked_most,
+        frustrated_by: f.frustrated_by,
+        bugs: f.bugs,
+        feature_wish: f.feature_wish,
+        nps: f.nps,
+        price_willing: f.price_willing,
+        current_act: p.current_act,
+        act1_completed: p.act1_completed,
+        act2_completed: p.act2_completed,
+        act3_completed: p.act3_completed,
+        final_unlocked: p.final_unlocked,
+        user_agent: f.user_agent,
+      };
+      ratingKeys.forEach(k => { out['r_' + k] = r[k]; });
+      ratingActKeys.forEach(k => { out['r_' + k] = ra[k]; });
+      ratingActKeys.forEach(k => { out['text_' + k] = af[k]; });
+      return out;
+    });
+    filename = 'archivio17-feedback.csv';
   } else {
     headers = ['access_code','current_act','t1_completed','t2a_completed','t2b_completed','t3a_completed','t3b_completed','t3c_completed','score_act1','score_act2','score_act3','score_final','classification','hint_penalty_total','errors_terminal','consultation_mode','last_updated'];
     rows = allSessions;
